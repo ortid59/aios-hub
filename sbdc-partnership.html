@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advisor AI Partners × Florida SBDC at UNF</title>
+<style>
+  :root {
+    --blue: #1B4FD8;
+    --blue-dark: #1340B8;
+    --blue-light: #EBF0FD;
+    --teal: #0AADA8;
+    --teal-light: #E6F7F7;
+    --gold: #D4A017;
+    --gold-light: #FDF5DC;
+    --gray-50: #F8F9FB;
+    --gray-100: #EFF1F5;
+    --gray-200: #D8DCE6;
+    --gray-400: #9AA3B5;
+    --gray-600: #5A6478;
+    --gray-800: #1E2535;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 48px; height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .nav-brand span { font-size: 13px; font-weight: 700; letter-spacing: 0.3px; color: var(--blue); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--gray-600); text-decoration: none; transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-meta { font-size: 11px; color: var(--gray-400); letter-spacing: 0.3px; }
+
+  section { padding: 100px 0 80px; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 48px; }
+
+  /* ── LABELS & HEADINGS ── */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 16px;
+  }
+  .eyebrow::before { content: ''; display: block; width: 20px; height: 2px; background: var(--teal); }
+  h1 {
+    font-size: clamp(38px, 5.5vw, 64px); font-weight: 700; line-height: 1.1;
+    letter-spacing: -1.5px; color: var(--gray-800); margin-bottom: 20px;
+  }
+  h1 em { font-style: normal; color: var(--blue); }
+  h2 {
+    font-size: clamp(26px, 3.5vw, 42px); font-weight: 700; line-height: 1.15;
+    letter-spacing: -0.8px; color: var(--gray-800); margin-bottom: 16px;
+  }
+  h2 em { font-style: normal; color: var(--blue); }
+  .lead {
+    font-size: 17px; color: var(--gray-600); max-width: 600px; line-height: 1.65;
+    margin-bottom: 52px;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    background: var(--white);
+    padding-top: 120px; padding-bottom: 0; min-height: 100vh;
+    display: flex; align-items: center; position: relative; overflow: hidden;
+  }
+  .hero-bg-stripe {
+    position: absolute; top: 0; right: 0; width: 45%; bottom: 0;
+    background: linear-gradient(135deg, var(--blue-light) 0%, #dce9fd 100%);
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
+    z-index: 0;
+  }
+  .hero-bg-dots {
+    position: absolute; top: 0; right: 0; width: 45%; bottom: 0;
+    background-image: radial-gradient(circle, var(--blue) 1px, transparent 1px);
+    background-size: 28px 28px; opacity: 0.08; z-index: 1;
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+  .hero-inner { position: relative; z-index: 2; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue-light); border: 1px solid rgba(27,79,216,0.2);
+    border-radius: 30px; padding: 6px 16px; margin-bottom: 32px;
+  }
+  .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); }
+  .hero-badge span { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--blue); }
+  .hero-logos { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; margin-top: 4px; }
+  .logo-chip {
+    background: var(--gray-100); border: 1px solid var(--gray-200);
+    border-radius: 8px; padding: 10px 18px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.3px; color: var(--gray-600);
+  }
+  .logo-chip.blue { background: var(--blue-light); border-color: rgba(27,79,216,0.2); color: var(--blue); }
+  .logo-x { font-size: 22px; color: var(--gray-400); font-weight: 300; }
+  .hero-stats {
+    display: flex; gap: 40px;
+    padding-top: 40px; border-top: 1px solid var(--gray-200);
+  }
+  .stat-num { font-size: 32px; font-weight: 700; color: var(--blue); line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── DEBBIE ── */
+  #debbie { background: var(--gray-50); }
+  .debbie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .quote-card {
+    background: var(--blue); border-radius: 16px; padding: 40px;
+    position: relative; overflow: hidden;
+  }
+  .quote-card::before {
+    content: '"'; position: absolute; top: -24px; left: 20px;
+    font-size: 160px; color: rgba(255,255,255,0.06); line-height: 1; pointer-events: none;
+    font-family: Georgia, serif;
+  }
+  .quote-text {
+    font-size: 19px; color: rgba(255,255,255,0.9); line-height: 1.55;
+    font-style: italic; margin-bottom: 28px; position: relative; z-index: 1;
+    font-family: Georgia, serif;
+  }
+  .quote-attr { font-size: 13px; font-weight: 700; color: var(--gold); }
+  .quote-attr span { display: block; font-weight: 400; color: rgba(255,255,255,0.45); font-size: 11px; margin-top: 3px; }
+  .debbie-name { font-size: 26px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
+  .debbie-role {
+    display: inline-block; background: var(--gold-light); border: 1px solid rgba(212,160,23,0.3);
+    border-radius: 4px; padding: 3px 12px; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.5px; color: #8B6200; margin-bottom: 20px;
+  }
+  .debbie-bio { font-size: 15px; color: var(--gray-600); line-height: 1.7; margin-bottom: 24px; }
+  .cred-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .cred-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--gray-600);
+  }
+  .cred-list li::before { content: '→'; color: var(--teal); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .cred-list strong { color: var(--gray-800); }
+
+  /* ── WHY NOW ── */
+  #why { background: var(--white); }
+  .why-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 40px; }
+  .why-card {
+    background: var(--gray-50); border-radius: 12px; padding: 28px;
+    border: 1px solid var(--gray-200); transition: all 0.2s;
+  }
+  .why-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(27,79,216,0.08); }
+  .why-num { font-size: 40px; font-weight: 800; color: var(--gray-200); line-height: 1; margin-bottom: 14px; }
+  .why-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--gray-800); }
+  .why-card p { font-size: 14px; color: var(--gray-600); line-height: 1.6; }
+  .why-banner {
+    background: linear-gradient(135deg, var(--teal) 0%, #088A85 100%);
+    border-radius: 12px; padding: 32px 40px;
+    display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  }
+  .why-banner h3 { font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .why-banner p { font-size: 14px; color: rgba(255,255,255,0.7); }
+  .banner-num { font-size: 52px; font-weight: 800; color: var(--white); line-height: 1; }
+  .banner-num-label { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── AIOS ── */
+  #aios { background: var(--gray-50); }
+  .aios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .layer-row {
+    display: flex; gap: 18px; padding: 18px 0;
+    border-bottom: 1px solid var(--gray-200); align-items: flex-start;
+  }
+  .layer-row:last-child { border-bottom: none; }
+  .layer-badge {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--blue); color: var(--white);
+    font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .layer-badge.t { background: var(--teal); }
+  .layer-badge.g { background: var(--gold); color: var(--white); }
+  .layer-name { font-size: 15px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+  .layer-desc { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+
+  .aios-panel {
+    background: var(--white); border-radius: 16px; padding: 36px;
+    border: 1px solid var(--gray-200);
+  }
+  .panel-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 28px;
+  }
+  .funnel { display: flex; flex-direction: column; gap: 6px; }
+  .funnel-row {
+    border-radius: 8px; padding: 14px 18px;
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .funnel-row.active {
+    background: var(--blue-light); border-color: rgba(27,79,216,0.25);
+  }
+  .funnel-row .fn { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+  .funnel-row.active .fn { color: var(--blue); }
+  .funnel-row .fd { font-size: 11px; color: var(--gray-400); }
+  .kpi-strip {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
+    margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--gray-200);
+  }
+  .kpi-box { text-align: center; }
+  .kpi-v { font-size: 18px; font-weight: 700; color: var(--teal); }
+  .kpi-l { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  /* ── PARTNERSHIP ── */
+  #partnership { background: var(--white); }
+  .partner-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-bottom: 40px; }
+  .partner-card {
+    background: var(--gray-50); border-radius: 14px; padding: 32px 24px;
+    border: 1px solid var(--gray-200); position: relative; overflow: hidden;
+  }
+  .partner-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .c1::before { background: var(--blue); }
+  .c2::before { background: var(--teal); }
+  .c3::before { background: var(--gold); }
+  .p-icon { width: 44px; height: 44px; border-radius: 10px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .pi-blue { background: var(--blue-light); }
+  .pi-teal { background: var(--teal-light); }
+  .pi-gold { background: var(--gold-light); }
+  .partner-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .partner-card p { font-size: 14px; color: var(--gray-600); line-height: 1.6; margin-bottom: 18px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { background: var(--white); border: 1px solid var(--gray-200); border-radius: 4px; padding: 3px 10px; font-size: 11px; color: var(--gray-600); }
+  .vs-bar {
+    background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px;
+    padding: 36px 40px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 0;
+    align-items: start;
+  }
+  .vs-col h4 { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 18px; }
+  .vs-col.right h4 { color: var(--blue); }
+  .vs-divider { width: 1px; background: var(--gray-200); margin: 0 40px; align-self: stretch; }
+  .vs-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .vs-list li { display: flex; gap: 8px; font-size: 14px; color: var(--gray-600); align-items: flex-start; }
+  .vs-list li::before { content: '→'; color: var(--teal); font-weight: 700; flex-shrink: 0; }
+  .vs-col.right .vs-list li::before { color: var(--blue); }
+
+  /* ── CURRICULUM ── */
+  #curriculum { background: var(--gray-50); }
+  .curriculum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  .course-row {
+    background: var(--white); border-radius: 10px; padding: 20px 24px;
+    display: flex; gap: 18px; border: 1px solid var(--gray-200); margin-bottom: 14px;
+  }
+  .course-num { font-size: 10px; font-weight: 800; color: var(--teal); letter-spacing: 1px; flex-shrink: 0; padding-top: 3px; }
+  .course-name { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+  .course-desc { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+  .impact-card {
+    background: var(--blue); border-radius: 16px; padding: 36px;
+  }
+  .impact-card h3 { font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .impact-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 28px; }
+  .impact-row {
+    display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
+    align-items: flex-start;
+  }
+  .impact-row:last-child { border-bottom: none; }
+  .impact-icon {
+    width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .ir-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); }
+  .ir-sub { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.4; margin-top: 2px; }
+
+  /* ── DISCOVERY ── */
+  #discovery { background: var(--white); }
+  .discovery-intro {
+    background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 14px;
+    padding: 36px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    align-items: center; margin-bottom: 36px;
+  }
+  .discovery-intro h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .discovery-intro p { font-size: 15px; color: var(--gray-600); line-height: 1.7; }
+  .intent-chip {
+    border-radius: 10px; padding: 18px 20px; margin-bottom: 12px;
+  }
+  .intent-chip.blue { background: var(--blue-light); border-left: 3px solid var(--blue); }
+  .intent-chip.teal { background: var(--teal-light); border-left: 3px solid var(--teal); }
+  .ic-label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--blue); margin-bottom: 6px; }
+  .intent-chip.teal .ic-label { color: var(--teal); }
+  .ic-text { font-size: 14px; color: var(--gray-600); }
+  .q-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+  .q-card { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 10px; padding: 22px; }
+  .q-topic { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+  .q-text { font-size: 15px; color: var(--gray-800); line-height: 1.5; }
+  .q-note { font-size: 12px; color: var(--gray-400); margin-top: 8px; font-style: italic; }
+
+  /* ── NEXT STEPS ── */
+  #next { background: var(--gray-50); }
+  .steps-bar {
+    background: var(--white); border: 1px solid var(--gray-200); border-radius: 16px;
+    display: flex; margin-bottom: 36px; overflow: hidden;
+  }
+  .step-col {
+    flex: 1; padding: 28px 24px; border-right: 1px solid var(--gray-200);
+  }
+  .step-col:last-child { border-right: none; }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 2px solid var(--blue-light); background: var(--blue-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: var(--blue); margin-bottom: 14px;
+  }
+  .step-title { font-size: 14px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
+  .step-desc { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+  .cta-bar {
+    background: var(--blue); border-radius: 14px; padding: 40px 48px;
+    display: flex; justify-content: space-between; align-items: center; gap: 32px;
+  }
+  .cta-bar h3 { font-size: 22px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .cta-bar p { font-size: 15px; color: rgba(255,255,255,0.55); }
+  .cta-contact { text-align: right; }
+  .cta-name { font-size: 20px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .cta-line { font-size: 14px; color: var(--gold); margin-bottom: 2px; }
+  .cta-line a { color: var(--gold); text-decoration: none; }
+  .cta-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 8px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--white); border-top: 1px solid var(--gray-200);
+    padding: 24px 48px; display: flex; align-items: center; justify-content: space-between;
+  }
+  footer .left { font-size: 13px; font-weight: 700; color: var(--gray-600); }
+  footer .right { font-size: 11px; color: var(--gray-400); letter-spacing: 0.3px; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (max-width: 768px) {
+    .debbie-grid, .aios-grid, .curriculum-grid,
+    .why-cards, .partner-grid, .q-grid, .discovery-intro, .vs-bar { grid-template-columns: 1fr; }
+    .steps-bar { flex-direction: column; }
+    .cta-bar { flex-direction: column; }
+    .cta-contact { text-align: left; }
+    .vs-divider { display: none; }
+    .hero-stats { flex-wrap: wrap; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    <span>Advisor AI Partners</span>
+  </div>
+  <div class="nav-links">
+    <a href="#why">Why Now</a>
+    <a href="#aios">The System</a>
+    <a href="#partnership">Partnership</a>
+    <a href="#curriculum">Curriculum</a>
+    <a href="#discovery">Discovery</a>
+    <a href="#next">Next Steps</a>
+  </div>
+  <div class="nav-meta">April 2026 &nbsp;·&nbsp; First Meeting</div>
+</nav>
+
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-bg-stripe"></div>
+  <div class="hero-bg-dots"></div>
+  <div class="wrap hero-inner">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>Partnership Proposal &nbsp;·&nbsp; First Meeting</span>
+    </div>
+    <h1>Equipping Small Businesses<br>for the <em>AI Renaissance</em></h1>
+    <p style="font-size: 18px; color: var(--gray-600); max-width: 560px; line-height: 1.6; margin-bottom: 36px;">
+      A proposed collaboration between Advisor AI Partners and the Florida SBDC at UNF — bringing practical AI operating systems to the small businesses you already serve.
+    </p>
+    <div class="hero-logos">
+      <div class="logo-chip blue">Advisor AI Partners</div>
+      <div class="logo-x">×</div>
+      <div class="logo-chip">Florida SBDC at UNF</div>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">2,000+</div>
+        <div class="stat-label">SBDC Clients Annually</div>
+      </div>
+      <div>
+        <div class="stat-num">18</div>
+        <div class="stat-label">Florida Counties Served</div>
+      </div>
+      <div>
+        <div class="stat-num">5</div>
+        <div class="stat-label">AIOS Layers Delivered</div>
+      </div>
+      <div>
+        <div class="stat-num">80%</div>
+        <div class="stat-label">Tasks Automatable Today</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ DEBBIE ═══ -->
+<section id="debbie">
+  <div class="wrap">
+    <div class="eyebrow">Our Champion</div>
+    <h2>Why Deborah Magyar <em>Gets It</em></h2>
+    <p class="lead">
+      Most leaders in this space talk about innovation. Debbie has lived it — as a business owner, educator, technologist, and now as the person who decides what small businesses across 18 Florida counties learn next.
+    </p>
+    <div class="debbie-grid">
+      <div class="quote-card">
+        <p class="quote-text">
+          "Debbie is a proven leader in small business advocacy and development who combines extensive experience with practical SBDC operations knowledge and firsthand small business ownership."
+        </p>
+        <div class="quote-attr">
+          Dr. Richard J. Buttimer
+          <span>Dean, Coggin College of Business at UNF</span>
+        </div>
+      </div>
+      <div>
+        <div class="debbie-name">Deborah Magyar</div>
+        <div class="debbie-role">Regional Director · Florida SBDC at UNF</div>
+        <p class="debbie-bio">
+          Debbie joined UNF's SBDC in October 2023 with a rare combination of entrepreneurial experience, academic teaching, and technology literacy. She ran her own consulting firm, taught at Chatham University's Center for Women's Entrepreneurship, directed innovation programs at West Virginia SBDC, and is currently an adjunct professor of entrepreneurship at UNF.
+        </p>
+        <p class="debbie-bio">
+          She didn't hire someone to run the AI Institute — she got her Google AI certification in 2025 herself. That's not delegation. That's conviction.
+        </p>
+        <ul class="cred-list">
+          <li><div><strong>Serial entrepreneur</strong> — CEO of Launch and Balance Consulting; 30+ years of ownership before leading SBDC</div></li>
+          <li><div><strong>Dale Carnegie certified</strong> — Sales & Public Speaking Instructor, Leadership Award recipient</div></li>
+          <li><div><strong>Google AI Certified (2025)</strong> — AI Basics for Business Advising; actively learning, not just overseeing</div></li>
+          <li><div><strong>UNF Adjunct Professor</strong> — teaches entrepreneurship now, meaning she already controls the curriculum pipeline</div></li>
+          <li><div><strong>Community builder</strong> — Genesis Women's Shelter (10+ yrs), United Way, Meals on Wheels</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ WHY NOW ═══ -->
+<section id="why">
+  <div class="wrap">
+    <div class="eyebrow">The Opportunity</div>
+    <h2>Why This Matters <em>Right Now</em></h2>
+    <p class="lead">Small businesses are entering the most disruptive decade of their existence. The SBDC has the trust and reach. We have the system. Together, we fill the gap no one else is filling.</p>
+    <div class="why-cards">
+      <div class="why-card">
+        <div class="why-num">01</div>
+        <h4>The AI Wave Is Here</h4>
+        <p>AI tools are no longer for tech companies. Every plumber, restaurant owner, and financial advisor needs to understand how to use AI to run their business — or they'll be outcompeted by one who does.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">02</div>
+        <h4>The SBDC Has the Trust</h4>
+        <p>2,000+ regional clients already trust the SBDC for no-cost, unbiased guidance. That trust is irreplaceable — every client who walks through the door is a warm introduction to education that actually matters.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-num">03</div>
+        <h4>The Curriculum Gap</h4>
+        <p>Most AI content is either too theoretical, too technical, or built to sell software. There's nothing that teaches a small business owner how to build a real AI operating system in plain English.</p>
+      </div>
+    </div>
+    <div class="why-banner">
+      <div>
+        <h3>The SBDC already has a dedicated AI Institute.</h3>
+        <p>They're not starting from scratch — they're looking for the right content partner to make it real.</p>
+      </div>
+      <div style="text-align: center; flex-shrink: 0;">
+        <div class="banner-num">18</div>
+        <div class="banner-num-label">Counties Ready to Learn</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ AIOS ═══ -->
+<section id="aios">
+  <div class="wrap">
+    <div class="eyebrow">What We Bring</div>
+    <h2>The AI Operating System <em>For Small Business</em></h2>
+    <p class="lead">Not another AI tool. Not another ChatGPT course. A complete five-layer system that gives any business owner their time back — one layer at a time.</p>
+    <div class="aios-grid">
+      <div>
+        <div class="layer-row">
+          <div class="layer-badge">1</div>
+          <div>
+            <div class="layer-name">Context — Your AI Knows the Business</div>
+            <div class="layer-desc">Strategy, team, processes, history — organized so AI acts on real information, not guesses. The foundation everything else builds on.</div>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge t">2</div>
+          <div>
+            <div class="layer-name">Data — Real Numbers, In Real Time</div>
+            <div class="layer-desc">Collectors pull from your actual data sources daily. No more spreadsheets. Your AI sees what's happening as it happens.</div>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge">3</div>
+          <div>
+            <div class="layer-name">Intelligence — Your Daily Brief</div>
+            <div class="layer-desc">Every morning, AI synthesizes meetings, messages, and signals into one brief. Walk in knowing exactly where things stand.</div>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge t">4</div>
+          <div>
+            <div class="layer-name">Automate — Audit, Score, Eliminate</div>
+            <div class="layer-desc">Every recurring task gets scored for automation potential. Eliminate them one by one. Each task automated = real bandwidth returned.</div>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge g">5</div>
+          <div>
+            <div class="layer-name">Build — Apply Freed Bandwidth to Growth</div>
+            <div class="layer-desc">10 extra hours a week. New revenue streams, more clients, a business that runs while you sleep. This is where AIOS pays off.</div>
+          </div>
+        </div>
+      </div>
+      <div class="aios-panel">
+        <div class="panel-title">AIOS Framework</div>
+        <div class="funnel">
+          <div class="funnel-row">
+            <div>
+              <div class="fn">Layer 5: Build</div>
+              <div class="fd">Growth · New revenue · Scale</div>
+            </div>
+          </div>
+          <div class="funnel-row">
+            <div>
+              <div class="fn">Layer 4: Automate</div>
+              <div class="fd">Task audit · Score · Eliminate</div>
+            </div>
+          </div>
+          <div class="funnel-row">
+            <div>
+              <div class="fn">Layer 3: Intelligence</div>
+              <div class="fd">Daily brief · Synthesis · Signals</div>
+            </div>
+          </div>
+          <div class="funnel-row">
+            <div>
+              <div class="fn">Layer 2: Data</div>
+              <div class="fd">Collectors · Real-time · Live metrics</div>
+            </div>
+          </div>
+          <div class="funnel-row active">
+            <div>
+              <div class="fn">Layer 1: Context</div>
+              <div class="fd">Foundation · Business intelligence</div>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-strip">
+          <div class="kpi-box">
+            <div class="kpi-v">Away</div>
+            <div class="kpi-l">Desk Autonomy</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-v">Task%</div>
+            <div class="kpi-l">Automated</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-v">Rev÷Team</div>
+            <div class="kpi-l">Per Employee</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ PARTNERSHIP ═══ -->
+<section id="partnership">
+  <div class="wrap">
+    <div class="eyebrow">The Model</div>
+    <h2>Three Ways We <em>Work Together</em></h2>
+    <p class="lead">This isn't a vendor relationship. Both organizations show up with their best — and small businesses leave with something that actually changes their business.</p>
+    <div class="partner-grid">
+      <div class="partner-card c1">
+        <div class="p-icon pi-blue">🎓</div>
+        <h4>AIOS Curriculum Integration</h4>
+        <p>We co-develop and deliver AI Operating System training as part of the SBDC's existing education programs — workshops, bootcamps, or a dedicated AIOS track within the AI Institute.</p>
+        <div class="tags">
+          <span class="tag">STARTUP Workshops</span>
+          <span class="tag">AI Institute</span>
+          <span class="tag">Small Business Summit</span>
+        </div>
+      </div>
+      <div class="partner-card c2">
+        <div class="p-icon pi-teal">🤝</div>
+        <h4>Consulting Client Referral</h4>
+        <p>SBDC clients who need hands-on AIOS implementation — custom builds, data pipelines, or full fractional AI officer engagements — are referred to Advisor AI Partners for deeper work.</p>
+        <div class="tags">
+          <span class="tag">Fractional AI Officer</span>
+          <span class="tag">Custom Builds</span>
+          <span class="tag">AIOS Installation</span>
+        </div>
+      </div>
+      <div class="partner-card c3">
+        <div class="p-icon pi-gold">📣</div>
+        <h4>Speaking & Thought Leadership</h4>
+        <p>David Ortiz joins SBDC's speaker roster — including the 2026 Small Business Success Summit — delivering the AI Renaissance talk already proven at UNF's own symposium.</p>
+        <div class="tags">
+          <span class="tag">2026 Summit (Aug 17–18)</span>
+          <span class="tag">Keynote</span>
+          <span class="tag">AI Renaissance</span>
+        </div>
+      </div>
+    </div>
+    <div class="vs-bar">
+      <div class="vs-col">
+        <h4>What SBDC Brings</h4>
+        <ul class="vs-list">
+          <li>Trusted brand with 2,000+ warm clients per year</li>
+          <li>18-county reach and downtown Jacksonville presence</li>
+          <li>Existing AI Institute infrastructure and audience</li>
+          <li>No-cost consulting model that creates trust first</li>
+          <li>University affiliation, credibility, and academic calendar</li>
+        </ul>
+      </div>
+      <div class="vs-divider"></div>
+      <div class="vs-col right">
+        <h4>What We Bring</h4>
+        <ul class="vs-list">
+          <li>Proven AIOS framework built for non-technical owners</li>
+          <li>Practical, voice-first curriculum — no coding, no jargon</li>
+          <li>#1 rated talk at UNF symposium — this audience validated it</li>
+          <li>Real implementations, not slides — working systems</li>
+          <li>Fractional AI Officer model for ongoing relationships</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ CURRICULUM ═══ -->
+<section id="curriculum">
+  <div class="wrap">
+    <div class="eyebrow">The Education</div>
+    <h2>What Small Businesses <em>Actually Learn</em></h2>
+    <p class="lead">Each module is a standalone workshop that delivers immediate value — and builds toward a complete AI Operating System if a business goes through all five.</p>
+    <div class="curriculum-grid">
+      <div>
+        <div class="course-row">
+          <div class="course-num">MOD 01</div>
+          <div>
+            <div class="course-name">Just Ask — Communicating with AI</div>
+            <div class="course-desc">How to describe your business so AI can actually help. No jargon — plain English conversations that produce real work.</div>
+          </div>
+        </div>
+        <div class="course-row">
+          <div class="course-num">MOD 02</div>
+          <div>
+            <div class="course-name">Context OS — Teaching AI Your Business</div>
+            <div class="course-desc">Build your Context Layer in one session. Strategy, team, processes, history — organized so any AI tool already knows who you are.</div>
+          </div>
+        </div>
+        <div class="course-row">
+          <div class="course-num">MOD 03</div>
+          <div>
+            <div class="course-name">The Daily Brief — AI Runs Morning Ops</div>
+            <div class="course-desc">An automated daily brief that tells you what needs attention — before you've had coffee. No more inbox paralysis.</div>
+          </div>
+        </div>
+        <div class="course-row">
+          <div class="course-num">MOD 04</div>
+          <div>
+            <div class="course-name">Task Audit — Find & Eliminate Busywork</div>
+            <div class="course-desc">Map every recurring task. Score it for automation potential. A prioritized plan to get your time back — this month, not someday.</div>
+          </div>
+        </div>
+        <div class="course-row">
+          <div class="course-num">MOD 05</div>
+          <div>
+            <div class="course-name">AIOS Full Build — Complete Operating System</div>
+            <div class="course-desc">All five layers installed and running. Owners leave with a live AI operating system, not a certificate. This is the capstone.</div>
+          </div>
+        </div>
+      </div>
+      <div class="impact-card">
+        <h3>What Changes After AIOS</h3>
+        <div class="impact-sub">Measurable outcomes for SBDC clients</div>
+        <div class="impact-row">
+          <div class="impact-icon">⏱️</div>
+          <div>
+            <div class="ir-label">Hours Reclaimed Weekly</div>
+            <div class="ir-sub">Avg. 8–12 hrs returned to the owner per week after full AIOS installation</div>
+          </div>
+        </div>
+        <div class="impact-row">
+          <div class="impact-icon">🤖</div>
+          <div>
+            <div class="ir-label">Task Automation Rate</div>
+            <div class="ir-sub">80%+ of recurring tasks are automatable today with existing free tools</div>
+          </div>
+        </div>
+        <div class="impact-row">
+          <div class="impact-icon">📊</div>
+          <div>
+            <div class="ir-label">Business Intelligence</div>
+            <div class="ir-sub">Daily snapshot of key metrics — no more "I don't know my numbers" in consulting sessions</div>
+          </div>
+        </div>
+        <div class="impact-row">
+          <div class="impact-icon">📈</div>
+          <div>
+            <div class="ir-label">Revenue Per Employee</div>
+            <div class="ir-sub">AIOS clients aim for leaner, more profitable teams — not bigger ones</div>
+          </div>
+        </div>
+        <div class="impact-row">
+          <div class="impact-icon">🛡️</div>
+          <div>
+            <div class="ir-label">Business Continuity</div>
+            <div class="ir-sub">Documented context means businesses survive team changes and scale sustainably</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ DISCOVERY ═══ -->
+<section id="discovery">
+  <div class="wrap">
+    <div class="eyebrow">This Meeting</div>
+    <h2>What We Want to <em>Learn Today</em></h2>
+    <p class="lead">We're not here to pitch a finished product. We're here to understand your clients, your constraints, and where there's a real fit.</p>
+    <div class="discovery-intro">
+      <div>
+        <h3>A Note on How We Work</h3>
+        <p>Everything we build starts with listening. The SBDC has 50 years of relationship capital with small businesses across Northeast Florida. We have a system that's working. The job of this meeting is to find where those two things fit together — not to sign anything.</p>
+        <p style="margin-top: 14px;">We'll ask questions, share what we've built, and leave with a clear picture of whether there's a real partnership here — and if so, what the first step looks like.</p>
+      </div>
+      <div>
+        <div class="intent-chip blue">
+          <div class="ic-label">Our Intent</div>
+          <div class="ic-text">Leave with mutual clarity on fit, one agreed-upon pilot format, and a path to the 2026 Small Business Summit.</div>
+        </div>
+        <div class="intent-chip teal">
+          <div class="ic-label">Not On the Table Today</div>
+          <div class="ic-text">Contracts, budgets, or formal proposals. This is a discovery conversation.</div>
+        </div>
+      </div>
+    </div>
+    <div class="q-grid">
+      <div class="q-card">
+        <div class="q-topic">For Debbie</div>
+        <div class="q-text">What does your average AI Institute participant walk in with — curiosity, fear, or skepticism?</div>
+        <div class="q-note">Shapes how we pitch the entry point for the curriculum</div>
+      </div>
+      <div class="q-card">
+        <div class="q-topic">On the SBDC Model</div>
+        <div class="q-text">How do you bring in outside content partners? Is there a formal vetting process or does it start with a pilot?</div>
+        <div class="q-note">Understanding the path from conversation to program</div>
+      </div>
+      <div class="q-card">
+        <div class="q-topic">On Clients</div>
+        <div class="q-text">What's the #1 reason small businesses in your region struggle — still undercapitalization and management inexperience, or something new emerging?</div>
+        <div class="q-note">SBDC research cites those as the top two — our Task Audit directly addresses both</div>
+      </div>
+      <div class="q-card">
+        <div class="q-topic">On the 2026 Summit</div>
+        <div class="q-text">The Small Business Success Summit is August 17–18. Is there a fit for an AI Operating System keynote — and what does speaker selection look like?</div>
+        <div class="q-note">David's UNF talk was rated #1 — the audience overlap is direct</div>
+      </div>
+      <div class="q-card">
+        <div class="q-topic">On the AI Institute</div>
+        <div class="q-text">What does the AI Institute currently cover, and where are clients saying "I need more than this"?</div>
+        <div class="q-note">Identifies the exact gap AIOS fills without duplicating existing content</div>
+      </div>
+      <div class="q-card">
+        <div class="q-topic">On What Works</div>
+        <div class="q-text">What's been the most successful outside partnership the SBDC has run? What made it work?</div>
+        <div class="q-note">Model after success rather than invent a new partnership format</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ NEXT STEPS ═══ -->
+<section id="next">
+  <div class="wrap">
+    <div class="eyebrow">Moving Forward</div>
+    <h2>The Path from First Meeting <em>to Partnership</em></h2>
+    <p class="lead">We're not asking for a commitment today. We're asking for a clear first step — small enough to start, real enough to prove value.</p>
+    <div class="steps-bar">
+      <div class="step-col">
+        <div class="step-circle">1</div>
+        <div class="step-title">Discovery Meeting</div>
+        <div class="step-desc">Today. Share context, ask questions, align on where the real fit is. No commitments. Just clarity.</div>
+      </div>
+      <div class="step-col">
+        <div class="step-circle">2</div>
+        <div class="step-title">Pilot Workshop Design</div>
+        <div class="step-desc">Co-design one AIOS workshop for an existing SBDC audience — STARTUP cohort, AI Institute session, or custom group.</div>
+      </div>
+      <div class="step-col">
+        <div class="step-circle">3</div>
+        <div class="step-title">Deliver & Measure</div>
+        <div class="step-desc">Run the pilot. Collect feedback. Let the clients tell us what worked. No agenda beyond building something that helps.</div>
+      </div>
+      <div class="step-col">
+        <div class="step-circle">4</div>
+        <div class="step-title">2026 Summit</div>
+        <div class="step-desc">If the pilot lands, bring the AI Renaissance talk to the Small Business Success Summit on August 17–18.</div>
+      </div>
+      <div class="step-col">
+        <div class="step-circle">5</div>
+        <div class="step-title">Ongoing Partnership</div>
+        <div class="step-desc">Formalize a curriculum partnership where the SBDC becomes the trusted on-ramp to every client's full AIOS journey.</div>
+      </div>
+    </div>
+    <div class="cta-bar">
+      <div>
+        <h3>Let's build something that matters for Jacksonville's small businesses.</h3>
+        <p>The tools exist. The audience is ready. The trust is already there. All we need is a first step.</p>
+      </div>
+      <div class="cta-contact">
+        <div class="cta-name">David Ortiz</div>
+        <div class="cta-line">Advisor AI Partners</div>
+        <div class="cta-line"><a href="mailto:david@advisoraipartners.com">david@advisoraipartners.com</a></div>
+        <div class="cta-sub">Fractional AI Officer &nbsp;·&nbsp; Jacksonville → Lisbon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="left">Advisor AI Partners &nbsp;×&nbsp; Florida SBDC at UNF</div>
+  <div class="right">Confidential &nbsp;·&nbsp; First Meeting &nbsp;·&nbsp; April 2026</div>
+</footer>
+
+</body>
+</html>
