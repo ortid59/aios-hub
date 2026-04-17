@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>Deal Tracker — Five Pillars</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #F7F8FB; color: #0F1E35; font-size: 14px;
+}
+header {
+  background: #FFFFFF; border-bottom: 1px solid #E2E7EF;
+  padding: 20px 28px; display: flex; justify-content: space-between; align-items: center;
+}
+header h1 { margin: 0; font-size: 22px; color: #1E4B8F; }
+header .meta-date { color: #6B7A8F; font-size: 12px; }
+
+.rev-bar {
+  display: flex; gap: 16px; padding: 16px 28px;
+  background: #FFFFFF; border-bottom: 1px solid #E2E7EF;
+  flex-wrap: wrap;
+}
+.rev-card {
+  flex: 1; min-width: 160px; padding: 12px 16px;
+  background: #F7F8FB; border-radius: 8px; border: 1px solid #E2E7EF;
+}
+.rev-card .label { color: #6B7A8F; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+.rev-card .value { font-size: 20px; font-weight: 600; margin-top: 4px; color: #1E4B8F; }
+.rev-card.won .value { color: #2FA88A; }
+.rev-card.pipe .value { color: #2FA8A0; }
+.rev-card.projected .value { color: #C8A54B; }
+
+.board {
+  display: flex; gap: 14px; padding: 20px 28px; overflow-x: auto; min-height: calc(100vh - 200px);
+}
+.lane {
+  flex: 0 0 260px; background: #FFFFFF; border: 1px solid #E2E7EF;
+  border-radius: 10px; padding: 12px; max-height: calc(100vh - 240px); overflow-y: auto;
+}
+.lane-head {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  padding-bottom: 8px; border-bottom: 1px solid #E2E7EF;
+}
+.lane-title { font-weight: 600; flex: 1; font-size: 13px; }
+.lane-count {
+  background: #1E4B8F; color: #fff; padding: 2px 8px;
+  border-radius: 10px; font-size: 11px; font-weight: 600;
+}
+.stage-mrr { color: #6B7A8F; font-size: 11px; }
+
+.deal-card {
+  background: #F7F8FB; border: 1px solid #E2E7EF; border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 8px; cursor: pointer;
+  transition: all 0.15s;
+}
+.deal-card:hover {
+  border-color: #1E4B8F;
+  box-shadow: 0 2px 8px rgba(30,75,143,0.08);
+  transform: translateY(-1px);
+}
+.card-head {
+  display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+}
+.company { font-weight: 600; flex: 1; }
+.contact { color: #6B7A8F; font-size: 12px; margin-bottom: 4px; }
+.money { color: #2FA8A0; font-size: 12px; font-weight: 500; margin-bottom: 4px; }
+.money.pending { color: #E89A3C; font-style: italic; }
+.meta {
+  display: flex; justify-content: space-between; font-size: 11px; color: #6B7A8F;
+}
+.silent { font-weight: 500; }
+
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-green { background: #2FA88A; }
+.dot-yellow { background: #C8A54B; }
+.dot-orange { background: #E89A3C; }
+.dot-red { background: #C46464; }
+.dot-gray { background: #6B7A8F; }
+
+.badge {
+  font-size: 9px; padding: 2px 6px; border-radius: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.badge-replied { background: #2FA88A; color: #fff; }
+
+.empty { color: #6B7A8F; font-size: 12px; text-align: center; padding: 20px 0; font-style: italic; }
+
+.detail-pane {
+  position: fixed; top: 0; right: 0; width: 480px; height: 100vh;
+  background: #FFFFFF; border-left: 1px solid #E2E7EF;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.08); overflow-y: auto; z-index: 100;
+}
+.detail-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; border-bottom: 1px solid #E2E7EF;
+}
+.detail-head h2 { margin: 0; font-size: 18px; color: #1E4B8F; }
+.close-btn {
+  background: none; border: none; font-size: 20px; cursor: pointer;
+  color: #6B7A8F; padding: 4px 10px;
+}
+.detail-body { padding: 20px 24px; }
+.detail-row { margin-bottom: 12px; line-height: 1.5; }
+.detail-body h3 { margin-top: 24px; margin-bottom: 10px; font-size: 14px; color: #6B7A8F; text-transform: uppercase; letter-spacing: 0.05em; }
+.thread {
+  background: #F7F8FB; padding: 12px; border-radius: 8px; margin-bottom: 10px;
+  border-left: 3px solid #2FA8A0;
+}
+.thread-sub { font-weight: 600; margin-bottom: 4px; }
+.thread-meta { color: #6B7A8F; font-size: 11px; margin-bottom: 6px; }
+.thread-snip { font-size: 13px; line-height: 1.5; }
+.muted { color: #6B7A8F; font-style: italic; }
+</style></head>
+<body>
+
+<header>
+  <h1>Deal Tracker — Five Pillars</h1>
+  <span class="meta-date">Refreshed 2026-04-16 18:56</span>
+</header>
+
+<div class="rev-bar">
+  <div class="rev-card pipe">
+    <div class="label">Open Pipeline MRR</div>
+    <div class="value">$0/mo</div>
+  </div>
+  <div class="rev-card pipe">
+    <div class="label">Open Setup Fees</div>
+    <div class="value">$0</div>
+  </div>
+  <div class="rev-card won">
+    <div class="label">Closed Won MRR</div>
+    <div class="value">$0/mo</div>
+  </div>
+  <div class="rev-card won">
+    <div class="label">Closed Won Setup</div>
+    <div class="value">$0</div>
+  </div>
+  <div class="rev-card projected">
+    <div class="label">Projected MRR (if all open close)</div>
+    <div class="value">$0/mo</div>
+  </div>
+</div>
+
+<div class="board">
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Proposal Sent</span>
+    <span class="lane-count">4</span>
+    
+  </div>
+  
+<div class="deal-card" data-deal-id="hartley-press" onclick="openDeal('hartley-press')">
+  <div class="card-head">
+    <span class="dot dot-orange"></span>
+    <span class="company">Hartley Press</span>
+    
+  </div>
+  <div class="contact">Patty · patty@hartleyprint.com</div>
+  <div class="money pending">No pricing set</div>
+  <div class="meta">
+    <span>Sent 2026-04-06</span>
+    <span class="silent">10d silent</span>
+  </div>
+</div>
+
+<div class="deal-card" data-deal-id="dublase" onclick="openDeal('dublase')">
+  <div class="card-head">
+    <span class="dot dot-orange"></span>
+    <span class="company">DuBlase</span>
+    
+  </div>
+  <div class="contact">Darrin · dceakins@dublase.com</div>
+  <div class="money pending">No pricing set</div>
+  <div class="meta">
+    <span>Sent 2026-04-06</span>
+    <span class="silent">10d silent</span>
+  </div>
+</div>
+
+<div class="deal-card" data-deal-id="precision-medicine" onclick="openDeal('precision-medicine')">
+  <div class="card-head">
+    <span class="dot dot-orange"></span>
+    <span class="company">Precision Medicine Jax</span>
+    
+  </div>
+  <div class="contact">Elizabeth Bagan · elizabeth@elizabethbagan.com</div>
+  <div class="money pending">No pricing set</div>
+  <div class="meta">
+    <span>Sent 2026-03-31</span>
+    <span class="silent">16d silent</span>
+  </div>
+</div>
+
+<div class="deal-card" data-deal-id="pincom" onclick="openDeal('pincom')">
+  <div class="card-head">
+    <span class="dot dot-red"></span>
+    <span class="company">Pincom Group</span>
+    
+  </div>
+  <div class="contact">Sonya · sonya@pincomgroup.com</div>
+  <div class="money pending">No pricing set</div>
+  <div class="meta">
+    <span>Sent 2026-03-19</span>
+    <span class="silent">28d silent</span>
+  </div>
+</div>
+  
+</div>
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Engaged</span>
+    <span class="lane-count">0</span>
+    
+  </div>
+  
+  <div class="empty">— no deals —</div>
+</div>
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Following Up</span>
+    <span class="lane-count">0</span>
+    
+  </div>
+  
+  <div class="empty">— no deals —</div>
+</div>
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Call Scheduled</span>
+    <span class="lane-count">0</span>
+    
+  </div>
+  
+  <div class="empty">— no deals —</div>
+</div>
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Negotiating</span>
+    <span class="lane-count">0</span>
+    
+  </div>
+  
+  <div class="empty">— no deals —</div>
+</div>
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Closed Won</span>
+    <span class="lane-count">0</span>
+    
+  </div>
+  
+  <div class="empty">— no deals —</div>
+</div>
+<div class="lane">
+  <div class="lane-head">
+    <span class="lane-title">Closed Lost</span>
+    <span class="lane-count">0</span>
+    
+  </div>
+  
+  <div class="empty">— no deals —</div>
+</div></div>
+
+
+<div id="detail-hartley-press" class="detail-pane" style="display:none">
+  <div class="detail-head">
+    <h2>Hartley Press</h2>
+    <button class="close-btn" onclick="closeDeal()">✕</button>
+  </div>
+  <div class="detail-body">
+    <div class="detail-row"><strong>Contact:</strong> Patty &lt;patty@hartleyprint.com&gt;</div>
+    <div class="detail-row"><strong>Deal:</strong> Hartley Press Growth Plan — Five Pillar System</div>
+    <div class="detail-row"><strong>Stage:</strong> Proposal Sent</div>
+    <div class="detail-row"><strong>Proposal sent:</strong> 2026-04-06</div>
+    <div class="detail-row"><strong>Setup fee:</strong> — &nbsp;·&nbsp; <strong>MRR:</strong> —/mo</div>
+    <div class="detail-row"><strong>Notes:</strong> <span class="muted">—</span></div>
+    <h3>Gmail Threads</h3>
+    
+<div class="thread">
+  <div class="thread-sub">Hartley Press Growth Plan — Five Pillar System</div>
+  <div class="thread-meta">1 sent · 0 received · last activity 2026-04-06 (10d ago)</div>
+  <div class="thread-snip">Five Pillar Growth Engine Hartley Press Growth Plan 63 years of ink under your nails...</div>
+</div>
+  </div>
+</div>
+
+<div id="detail-dublase" class="detail-pane" style="display:none">
+  <div class="detail-head">
+    <h2>DuBlase</h2>
+    <button class="close-btn" onclick="closeDeal()">✕</button>
+  </div>
+  <div class="detail-body">
+    <div class="detail-row"><strong>Contact:</strong> Darrin &lt;dceakins@dublase.com&gt;</div>
+    <div class="detail-row"><strong>Deal:</strong> DuBlase — Recap &amp; Next Steps</div>
+    <div class="detail-row"><strong>Stage:</strong> Proposal Sent</div>
+    <div class="detail-row"><strong>Proposal sent:</strong> 2026-04-06</div>
+    <div class="detail-row"><strong>Setup fee:</strong> — &nbsp;·&nbsp; <strong>MRR:</strong> —/mo</div>
+    <div class="detail-row"><strong>Notes:</strong> First send to darrin@dublase.com bounced; resent to dceakins@dublase.com same day.</div>
+    <h3>Gmail Threads</h3>
+    
+<div class="thread">
+  <div class="thread-sub">Good talking with you Friday, Darrin — recap + what&#x27;s next</div>
+  <div class="thread-meta">2 sent · 0 received · last activity 2026-04-06 (10d ago)</div>
+  <div class="thread-snip">Resent to dceakins@dublase.com after darrin@ bounced. No reply yet.</div>
+</div>
+  </div>
+</div>
+
+<div id="detail-precision-medicine" class="detail-pane" style="display:none">
+  <div class="detail-head">
+    <h2>Precision Medicine Jax</h2>
+    <button class="close-btn" onclick="closeDeal()">✕</button>
+  </div>
+  <div class="detail-body">
+    <div class="detail-row"><strong>Contact:</strong> Elizabeth Bagan &lt;elizabeth@elizabethbagan.com&gt;</div>
+    <div class="detail-row"><strong>Deal:</strong> Precision Medicine — Audit + Vendor Questions</div>
+    <div class="detail-row"><strong>Stage:</strong> Proposal Sent</div>
+    <div class="detail-row"><strong>Proposal sent:</strong> 2026-03-31</div>
+    <div class="detail-row"><strong>Setup fee:</strong> — &nbsp;·&nbsp; <strong>MRR:</strong> —/mo</div>
+    <div class="detail-row"><strong>Notes:</strong> <span class="muted">—</span></div>
+    <h3>Gmail Threads</h3>
+    
+<div class="thread">
+  <div class="thread-sub">Good sitting down with you Thursday — audit + questions for your new team</div>
+  <div class="thread-meta">2 sent · 0 received · last activity 2026-03-31 (16d ago)</div>
+  <div class="thread-snip">Recap + audit materials sent. Forwarded a copy to self. No reply.</div>
+</div>
+  </div>
+</div>
+
+<div id="detail-pincom" class="detail-pane" style="display:none">
+  <div class="detail-head">
+    <h2>Pincom Group</h2>
+    <button class="close-btn" onclick="closeDeal()">✕</button>
+  </div>
+  <div class="detail-body">
+    <div class="detail-row"><strong>Contact:</strong> Sonya &lt;sonya@pincomgroup.com&gt;</div>
+    <div class="detail-row"><strong>Deal:</strong> Pincom Group — Proposal (Amara, Amanda, Jim review)</div>
+    <div class="detail-row"><strong>Stage:</strong> Proposal Sent</div>
+    <div class="detail-row"><strong>Proposal sent:</strong> 2026-03-19</div>
+    <div class="detail-row"><strong>Setup fee:</strong> — &nbsp;·&nbsp; <strong>MRR:</strong> —/mo</div>
+    <div class="detail-row"><strong>Notes:</strong> Action item: Sonya to review proposal with internal team (Amara, Amanda, Jim).</div>
+    <h3>Gmail Threads</h3>
+    
+<div class="thread">
+  <div class="thread-sub">Meeting Summary</div>
+  <div class="thread-meta">1 sent · 0 received · last activity 2026-03-19 (28d ago)</div>
+  <div class="thread-snip">Meeting summary + action: Sonya to review proposal with Amara, Amanda, Jim.</div>
+</div>
+  </div>
+</div>
+
+<script>
+function openDeal(id) {
+  closeDeal();
+  const pane = document.getElementById('detail-' + id);
+  if (pane) pane.style.display = 'block';
+}
+function closeDeal() {
+  document.querySelectorAll('.detail-pane').forEach(p => p.style.display = 'none');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDeal(); });
+</script>
+
+</body></html>

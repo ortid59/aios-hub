@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deliverables — Advisor AI Partners</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue:    #2563EB; --blue-l:   #DBEAFE;
+      --teal:    #0D9488; --teal-l:   #CCFBF1;
+      --green:   #059669; --green-l:  #D1FAE5;
+      --orange:  #EA580C; --orange-l: #FFEDD5;
+      --purple:  #7C3AED; --purple-l: #EDE9FE;
+      --slate:   #475569; --slate-l:  #F1F5F9;
+      --gold:    #D97706; --gold-l:   #FEF3C7;
+      --border:  #E2E8F0; --bg: #F8FAFC; --text: #0F172A; --muted: #64748B;
+    }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); }
+    .syne { font-family: 'Syne', sans-serif; }
+    .mono { font-family: 'Geist Mono', monospace; }
+
+    /* ── Filter pills ── */
+    .filter-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 999px; cursor: pointer;
+      border: 1.5px solid var(--border); background: #fff;
+      font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--muted); letter-spacing: 0.05em;
+      transition: all 0.15s ease; white-space: nowrap; user-select: none;
+    }
+    .filter-pill:hover { border-color: #94A3B8; color: var(--text); }
+    .filter-pill .count {
+      background: var(--slate-l); color: var(--muted);
+      border-radius: 999px; padding: 1px 7px; font-size: 10px;
+      transition: all 0.15s;
+    }
+    /* Active states per type */
+    .filter-pill.active-all    { background: var(--text);    border-color: var(--text);    color: #fff; }
+    .filter-pill.active-all .count { background: rgba(255,255,255,0.2); color: #fff; }
+    .filter-pill.active-dashboard { background: var(--blue);    border-color: var(--blue);    color: #fff; }
+    .filter-pill.active-dashboard .count { background: rgba(255,255,255,0.25); color: #fff; }
+    .filter-pill.active-page      { background: var(--teal);    border-color: var(--teal);    color: #fff; }
+    .filter-pill.active-page .count { background: rgba(255,255,255,0.25); color: #fff; }
+    .filter-pill.active-automation { background: var(--orange);  border-color: var(--orange);  color: #fff; }
+    .filter-pill.active-automation .count { background: rgba(255,255,255,0.25); color: #fff; }
+    .filter-pill.active-bot       { background: var(--purple);  border-color: var(--purple);  color: #fff; }
+    .filter-pill.active-bot .count { background: rgba(255,255,255,0.25); color: #fff; }
+    .filter-pill.active-diagram   { background: var(--slate);   border-color: var(--slate);   color: #fff; }
+    .filter-pill.active-diagram .count { background: rgba(255,255,255,0.25); color: #fff; }
+    .filter-pill.active-document  { background: var(--gold);    border-color: var(--gold);    color: #fff; }
+    .filter-pill.active-document .count { background: rgba(255,255,255,0.25); color: #fff; }
+
+    /* ── Dot ── */
+    .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-dashboard { background: var(--blue); }
+    .dot-page      { background: var(--teal); }
+    .dot-automation{ background: var(--orange); }
+    .dot-bot       { background: var(--purple); }
+    .dot-diagram   { background: var(--slate); }
+    .dot-document  { background: var(--gold); }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 18px 20px; position: relative; overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-color: #CBD5E1; }
+    .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 10px 0 0 10px; }
+    .card[data-type="dashboard"]::before  { background: var(--blue); }
+    .card[data-type="page"]::before       { background: var(--teal); }
+    .card[data-type="automation"]::before { background: var(--orange); }
+    .card[data-type="bot"]::before        { background: var(--purple); }
+    .card[data-type="diagram"]::before    { background: var(--slate); }
+    .card[data-type="document"]::before   { background: var(--gold); }
+
+    .card.hidden { display: none; }
+
+    /* ── Open button ── */
+    .open-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--blue); padding: 5px 11px; border-radius: 6px;
+      background: var(--blue-l); border: 1px solid #BFDBFE;
+      text-decoration: none; transition: all 0.15s ease; letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+    .open-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .open-btn.disabled { background: var(--slate-l); color: var(--muted); border-color: var(--border); pointer-events: none; }
+
+    /* ── Misc ── */
+    .type-tag {
+      font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .path-chip {
+      font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted);
+      background: var(--slate-l); padding: 3px 8px; border-radius: 4px; word-break: break-all;
+    }
+    .script-row {
+      font-family: 'Geist Mono', monospace; font-size: 10.5px; color: var(--muted);
+      padding: 2px 0; display: flex; align-items: center; gap: 6px;
+      border-bottom: 1px solid #F1F5F9;
+    }
+    .script-row:last-child { border-bottom: none; }
+    .script-row::before { content: '›'; color: var(--orange); }
+
+    .empty-state { display: none; text-align: center; padding: 60px 20px; color: var(--muted); font-size: 13px; }
+    .empty-state.visible { display: block; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="border-b border-[#E2E8F0] bg-white sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-md bg-[#2563EB] flex items-center justify-center">
+          <span class="text-white text-xs font-bold syne">A</span>
+        </div>
+        <span class="syne font-bold text-sm tracking-tight">Advisor AI Partners</span>
+        <span class="text-[#CBD5E1]">·</span>
+        <span class="mono text-xs text-[#64748B]">All Deliverables</span>
+      </div>
+      <span id="result-count" class="mono text-[10px] text-[#94A3B8] tracking-wide"></span>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- TITLE -->
+    <div class="mb-8">
+      <h1 class="syne text-3xl font-bold mb-2">Everything Built For You</h1>
+      <p class="text-[#64748B] text-sm">Click a category to filter. Click any card's link to open it.</p>
+    </div>
+
+    <!-- FILTER PILLS -->
+    <div class="flex flex-wrap gap-2 mb-8" id="filters">
+      <button class="filter-pill active-all" data-filter="all" onclick="setFilter('all', this)">
+        All <span class="count" id="count-all">25</span>
+      </button>
+      <button class="filter-pill" data-filter="dashboard" onclick="setFilter('dashboard', this)">
+        <span class="dot dot-dashboard"></span>Dashboards <span class="count" id="count-dashboard">7</span>
+      </button>
+      <button class="filter-pill" data-filter="page" onclick="setFilter('page', this)">
+        <span class="dot dot-page"></span>Pages &amp; Emails <span class="count" id="count-page">3</span>
+      </button>
+      <button class="filter-pill" data-filter="automation" onclick="setFilter('automation', this)">
+        <span class="dot dot-automation"></span>Automation <span class="count" id="count-automation">4</span>
+      </button>
+      <button class="filter-pill" data-filter="bot" onclick="setFilter('bot', this)">
+        <span class="dot dot-bot"></span>Live App <span class="count" id="count-bot">1</span>
+      </button>
+      <button class="filter-pill" data-filter="diagram" onclick="setFilter('diagram', this)">
+        <span class="dot dot-diagram"></span>Diagrams <span class="count" id="count-diagram">2</span>
+      </button>
+      <button class="filter-pill" data-filter="document" onclick="setFilter('document', this)">
+        <span class="dot dot-document"></span>Documents <span class="count" id="count-document">8</span>
+      </button>
+    </div>
+
+    <!-- GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="grid">
+
+      <!-- ── DASHBOARDS ──────────────────────────────────────────────────── -->
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">GTD Command Center</h3>
+          </div>
+          <a href="./gtd-dashboard.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Daily task management — inbox processing, Today / Aamish / Waiting For / Someday views, weekly review checklist, quick capture bar.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">AIOS · GTD System</span>
+          <span class="path-chip">outputs/gtd-dashboard.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">Deal Tracker</h3>
+          </div>
+          <a href="./deal-tracker.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Post-proposal pipeline kanban — Proposal Sent → Closed Won/Lost. Revenue rollup bar, Gmail thread matching, deal detail side pane.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">AIOS · Sales Pipeline</span>
+          <span class="path-chip">outputs/deal-tracker.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">Task Audit Dashboard</h3>
+          </div>
+          <a href="./task-audit-dashboard.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">73-task automation scoreboard. Tracks automation %, task priority scores, bandwidth recovered — the core KPI view for AIOS progress.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">AIOS · Automation</span>
+          <span class="path-chip">outputs/task-audit-dashboard.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">Meeting Intelligence</h3>
+          </div>
+          <a href="./meeting-dashboard.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Browse and search meeting transcripts from Fireflies and Notion. Speaker-attributed lines, action items, overviews — all searchable.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">IntelOS</span>
+          <span class="path-chip">outputs/meeting-dashboard.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">LinkedIn Content System</h3>
+          </div>
+          <a href="./linkedin-content-system.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Content planning and scheduling for LinkedIn — post templates, content calendar, topic library for Advisor AI Partners.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Content</span>
+          <span class="path-chip">outputs/linkedin-content-system.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">Project Portfolio</h3>
+          </div>
+          <a href="./project-dashboard.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Visual portfolio map of all 16 active projects — color-coded by priority, grouped by category, with observations and full detail cards.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#EDE9FE] text-[#7C3AED] rounded-full">This Session</span>
+          <span class="path-chip">outputs/project-dashboard.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="dashboard">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--blue-l);color:var(--blue)">Dashboard</span>
+            <h3 class="syne font-bold text-sm mt-2">AIOS Proposal — Founders</h3>
+          </div>
+          <a href="./aios-proposal-founders.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Sales proposal page — AI Operating System for Founders. Full interactive presentation for prospecting conversations.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Sales</span>
+          <span class="path-chip">outputs/aios-proposal-founders.html</span>
+        </div>
+      </div>
+
+      <!-- ── PAGES & EMAILS ──────────────────────────────────────────────── -->
+
+      <div class="card" data-type="page">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--teal-l);color:var(--teal)">Landing Page</span>
+            <h3 class="syne font-bold text-sm mt-2">AIOS Landing Page</h3>
+          </div>
+          <a href="./pages/aios-landing-page.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Full marketing landing page — "AI Operating System | Advisor AI Partners." Hero, features, social proof, CTA. Production-ready.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Marketing</span>
+          <span class="path-chip">outputs/pages/aios-landing-page.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="page">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--teal-l);color:var(--teal)">Landing Page</span>
+            <h3 class="syne font-bold text-sm mt-2">AI-Powered Growth System</h3>
+          </div>
+          <a href="./pages/five-pillars.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Five Pillars brand page — "All-in-One AI-Powered Growth System." Pre-rebrand marketing page for the Five Pillars positioning.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Marketing · Pre-rebrand</span>
+          <span class="path-chip">outputs/pages/five-pillars.html</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="page">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--green-l);color:var(--green)">Email</span>
+            <h3 class="syne font-bold text-sm mt-2">Thomas — Close Email</h3>
+          </div>
+          <a href="./email-thomas-close.html" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">HTML sales email for closing Thomas. Written in David's voice — warm, direct, consultative. Ready to copy into Gmail.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Sales</span>
+          <span class="path-chip">outputs/email-thomas-close.html</span>
+        </div>
+      </div>
+
+      <!-- ── AUTOMATION ──────────────────────────────────────────────────── -->
+
+      <div class="card" data-type="automation">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--orange-l);color:var(--orange)">Automation</span>
+            <h3 class="syne font-bold text-sm mt-2">DataOS — Data Pipeline</h3>
+          </div>
+          <span class="mono text-[9px] bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded-full flex-shrink-0">● 6am daily</span>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Pulls live data from GoHighLevel, Monarch Money, and FX rates into SQLite. Auto-generates key-metrics.md loaded at every session start.</p>
+        <div class="space-y-0.5">
+          <div class="script-row">db.py — database framework &amp; connection helpers</div>
+          <div class="script-row">config.py — environment variable loader</div>
+          <div class="script-row">collect.py — orchestrator (runs all collectors)</div>
+          <div class="script-row">collect_ghl.py — GoHighLevel: contacts, opps, pipeline</div>
+          <div class="script-row">collect_monarch.py — Monarch Money: all bank accounts</div>
+          <div class="script-row">collect_fx_rates.py — EUR/GBP/CAD live rates</div>
+          <div class="script-row">generate_metrics.py — writes key-metrics.md</div>
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">DataOS</span>
+          <span class="path-chip">scripts/</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="automation">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--orange-l);color:var(--orange)">Automation</span>
+            <h3 class="syne font-bold text-sm mt-2">IntelOS — Intelligence Collectors</h3>
+          </div>
+          <span class="mono text-[9px] bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] px-2 py-1 rounded-full flex-shrink-0">on demand</span>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Collects meeting transcripts from Fireflies (2,176 available) and Notion, plus Slack messages — stored in data.db for search and synthesis.</p>
+        <div class="space-y-0.5">
+          <div class="script-row">intel/db.py — meetings, slack_messages, slack_users tables</div>
+          <div class="script-row">intel/collect_all.py — master orchestrator</div>
+          <div class="script-row">intel/collect_fireflies.py — Fireflies GraphQL API</div>
+          <div class="script-row">intel/collect_notion_meetings.py — Google Meet via Notion</div>
+          <div class="script-row">intel/collect_slack.py — Slack message collector</div>
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">IntelOS</span>
+          <span class="path-chip">scripts/intel/</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="automation">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--orange-l);color:var(--orange)">Automation</span>
+            <h3 class="syne font-bold text-sm mt-2">Daily Brief Pipeline</h3>
+          </div>
+          <span class="mono text-[9px] bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded-full flex-shrink-0">● 7am daily</span>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Queries DB → Gemini synthesis → dashboard image → Telegram delivery. Solo Operator preset, ~1,500 words. Costs ~$0.002/day.</p>
+        <div class="space-y-0.5">
+          <div class="script-row">daily_brief.py — main orchestrator</div>
+          <div class="script-row">metrics.py — custom GHL funnel metrics builder</div>
+          <div class="script-row">prompt.py — Solo Operator synthesis prompt</div>
+          <div class="script-row">dashboard.py — matplotlib funnel image generator</div>
+          <div class="script-row">deliver.py — delivers to Telegram "📊 Daily Brief" topic</div>
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Daily Brief</span>
+          <span class="path-chip">scripts/</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="automation">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--orange-l);color:var(--orange)">Automation</span>
+            <h3 class="syne font-bold text-sm mt-2">Content &amp; Dashboard Renderers</h3>
+          </div>
+          <span class="mono text-[9px] bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0] px-2 py-1 rounded-full flex-shrink-0">on demand</span>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Dashboard rendering pipeline and content automation — regenerates HTML dashboards from live DB data, plus AI-powered content creation scripts.</p>
+        <div class="space-y-0.5">
+          <div class="script-row">render_deal_dashboard.py — regenerates deal-tracker.html from DB</div>
+          <div class="script-row">generate_diagrams.sh — renders all .d2 files → PNG</div>
+          <div class="script-row">content_aggregator.py — aggregates content sources</div>
+          <div class="script-row">content_db.py — content database layer</div>
+          <div class="script-row">content_writer.py — AI-powered content writer</div>
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Content Pipeline</span>
+          <span class="path-chip">scripts/</span>
+        </div>
+      </div>
+
+      <!-- ── BOT ────────────────────────────────────────────────────────── -->
+
+      <div class="card" data-type="bot">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--purple-l);color:var(--purple)">Live App</span>
+            <h3 class="syne font-bold text-sm mt-2">CommandOS — Telegram Bot</h3>
+          </div>
+          <span class="mono text-[9px] bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded-full flex-shrink-0">● @aios_david_bot</span>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Full Claude agent on your phone via Telegram. Text, voice notes, PDF reports, charts. 13 Python modules. Always-on macOS launchd service.</p>
+        <div class="grid grid-cols-2 gap-2 text-[10.5px]">
+          <div class="bg-[#FAFAFA] rounded-lg p-2 border border-[#F1F5F9]">
+            <div class="mono text-[9px] text-[#94A3B8] mb-1">ENTRY</div>
+            <div class="mono text-[#64748B]">main.py · bot.py</div>
+          </div>
+          <div class="bg-[#FAFAFA] rounded-lg p-2 border border-[#F1F5F9]">
+            <div class="mono text-[9px] text-[#94A3B8] mb-1">ENGINE</div>
+            <div class="mono text-[#64748B]">orchestrator.py · worker.py · agent_sdk.py · session_manager.py</div>
+          </div>
+          <div class="bg-[#FAFAFA] rounded-lg p-2 border border-[#F1F5F9]">
+            <div class="mono text-[9px] text-[#94A3B8] mb-1">OUTPUT</div>
+            <div class="mono text-[#64748B]">pdf_generator.py · chart_style.py · formatting.py</div>
+          </div>
+          <div class="bg-[#FAFAFA] rounded-lg p-2 border border-[#F1F5F9]">
+            <div class="mono text-[9px] text-[#94A3B8] mb-1">INFRA</div>
+            <div class="mono text-[#64748B]">cost_tracker.py · logger.py · config.py · telegram_utils.py</div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">CommandOS</span>
+          <span class="path-chip">apps/command/</span>
+        </div>
+      </div>
+
+      <!-- ── DIAGRAMS ────────────────────────────────────────────────────── -->
+
+      <div class="card" data-type="diagram">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--slate-l);color:var(--slate)">Diagram</span>
+            <h3 class="syne font-bold text-sm mt-2">My First Diagram</h3>
+          </div>
+          <a href="../diagrams/my-system.png" target="_blank" class="open-btn">View PNG →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Starter diagram from the Diagram Engine install — User → Web App → Database. Verified the full D2 render pipeline end to end.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Diagram Engine</span>
+          <span class="path-chip">diagrams/my-system.d2 + .png</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="diagram">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--slate-l);color:var(--slate)">Diagram</span>
+            <h3 class="syne font-bold text-sm mt-2">AIOS Architecture</h3>
+          </div>
+          <a href="../diagrams/aios-architecture.png" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Full AIOS system architecture — 6 layers, all modules, data flow from external sources through collectors, storage, intelligence, to outputs.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#DCFCE7] text-[#059669] rounded-full">Rendered 809K</span>
+          <span class="path-chip">diagrams/aios-architecture.png</span>
+        </div>
+      </div>
+
+      <!-- ── DOCUMENTS ──────────────────────────────────────────────────── -->
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Business Info</h3>
+          </div>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Full business overview — three revenue engines (GHL agency, LifeBridge LTC, custom AI apps), corporate structure, pricing, and target market.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">ContextOS</span>
+          <span class="path-chip">context/business-info.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Business Strategy</h3>
+          </div>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Current strategic priorities — GHL MRR growth, Image Studios 360, LifeBridge advisor recruitment, September 2026 Lisbon readiness plan.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">ContextOS</span>
+          <span class="path-chip">context/strategy.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Current Data &amp; State</h3>
+          </div>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Qualitative state snapshot — current revenue, active clients, pipeline status, what's working and what needs attention. Manually maintained.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">ContextOS</span>
+          <span class="path-chip">context/current-data.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Funnel Map</h3>
+          </div>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Maps GHL pipeline stages to business funnel for the daily brief metrics engine — Lead Gen → Outreach → Appointments → Pipeline → Closed.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Daily Brief</span>
+          <span class="path-chip">context/funnel.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Task Audit Scoreboard</h3>
+          </div>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">All 73 mapped tasks with automation scores, time saved estimates, and priority ranks. Source data behind the Task Audit Dashboard.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">AIOS · Automation</span>
+          <span class="path-chip">context/task-audit.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Data Access Reference</h3>
+          </div>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Full table schemas, SQL examples, and collection details for every table in data.db. The developer guide for querying business metrics.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">DataOS</span>
+          <span class="path-chip">reference/data-access.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Advisor Niche Lead Engine — Scope</h3>
+          </div>
+          <a href="./advisor-niche-lead-engine-scope.md" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">Scoping doc for the AI-powered advisor lead list system. Hyper-specific targeting, FINRA/SEC compliance, differentiation over Clay/Apollo.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Business Strategy</span>
+          <span class="path-chip">outputs/advisor-niche-lead-engine-scope.md</span>
+        </div>
+      </div>
+
+      <div class="card" data-type="document">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <span class="type-tag" style="background:var(--gold-l);color:var(--gold)">Document</span>
+            <h3 class="syne font-bold text-sm mt-2">Daily Brief — Apr 13, 2026</h3>
+          </div>
+          <a href="./daily-brief/2026-04-13.md" target="_blank" class="open-btn">Open →</a>
+        </div>
+        <p class="text-[12px] text-[#64748B] leading-relaxed">First archived morning intelligence report — executive summary, key signals, GHL metrics analysis, action items. Delivered to Telegram.</p>
+        <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-[#F1F5F9]">
+          <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Daily Brief</span>
+          <span class="path-chip">outputs/daily-brief/2026-04-13.md</span>
+        </div>
+      </div>
+
+    </div><!-- /grid -->
+
+    <div class="empty-state" id="empty-state">
+      No deliverables in this category yet.
+    </div>
+
+    <!-- FOOTER -->
+    <div class="border-t border-[#E2E8F0] mt-12 pt-6 pb-4 flex items-center justify-between">
+      <span class="mono text-[10px] text-[#94A3B8]">ADVISOR AI PARTNERS · ALL DELIVERABLES · APRIL 2026</span>
+      <span class="mono text-[10px] text-[#94A3B8]">outputs/ · scripts/ · apps/ · diagrams/ · context/</span>
+    </div>
+  </div>
+
+  <script>
+    let activeFilter = 'all';
+
+    function setFilter(type, btn) {
+      activeFilter = type;
+
+      // Update pill states
+      document.querySelectorAll('.filter-pill').forEach(p => {
+        p.className = 'filter-pill'; // reset
+      });
+      btn.classList.add('active-' + type);
+
+      // Show/hide cards
+      const cards = document.querySelectorAll('.card');
+      let visible = 0;
+      cards.forEach(card => {
+        const match = type === 'all' || card.dataset.type === type;
+        card.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+
+      // Result count
+      const total = cards.length;
+      const label = type === 'all' ? `${total} deliverables` : `${visible} of ${total}`;
+      document.getElementById('result-count').textContent = label.toUpperCase();
+
+      // Empty state
+      document.getElementById('empty-state').classList.toggle('visible', visible === 0);
+    }
+
+    // Init count
+    const total = document.querySelectorAll('.card').length;
+    document.getElementById('result-count').textContent = `${total} DELIVERABLES`;
+    document.getElementById('count-all').textContent = total;
+  </script>
+
+</body>
+</html>

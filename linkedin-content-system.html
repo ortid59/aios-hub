@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Content System — Advisor AI Partners</title>
+<style>
+  :root {
+    --blue: #1e4d8c;
+    --blue-light: #2d6bc4;
+    --teal: #1a9b8a;
+    --teal-light: #22b5a2;
+    --gold: #c8a84b;
+    --gold-light: #e5c76a;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --pillar1: #1e4d8c;
+    --pillar2: #1a9b8a;
+    --pillar3: #c8a84b;
+    --pillar4: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px; min-width: 220px; background: var(--blue); color: white;
+    display: flex; flex-direction: column; position: fixed; height: 100vh; overflow-y: auto; z-index: 100;
+  }
+  .sidebar-logo { padding: 20px 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.15); }
+  .sidebar-logo .brand { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; color: var(--gold-light); text-transform: uppercase; }
+  .sidebar-logo .sub { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .nav-section { padding: 16px 8px 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.45); font-weight: 600; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 16px;
+    cursor: pointer; font-size: 13px; color: rgba(255,255,255,0.8);
+    border-radius: 0; transition: all 0.15s; border-left: 3px solid transparent;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+  .nav-item.active { background: rgba(255,255,255,0.12); color: white; border-left-color: var(--gold); font-weight: 600; }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* Main */
+  .main { margin-left: 220px; flex: 1; min-height: 100vh; }
+  .section { display: none; padding: 32px 36px; max-width: 1100px; }
+  .section.active { display: block; }
+
+  /* Page headers */
+  .page-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .page-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.5; }
+
+  /* Cards */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .card-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .card-title .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+  /* ICP Section */
+  .icp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .icp-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .icp-card.smb { border-top: 4px solid var(--blue); }
+  .icp-card.advisor { border-top: 4px solid var(--teal); }
+  .icp-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .icp-label.smb { color: var(--blue); }
+  .icp-label.advisor { color: var(--teal); }
+  .icp-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .icp-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+  .icp-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; margin-top: 16px; }
+  .outcome-list { list-style: none; }
+  .outcome-list li { font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--border); color: var(--text); display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .outcome-list li:last-child { border-bottom: none; }
+  .outcome-list li::before { content: '→'; color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .problem-list { list-style: none; }
+  .problem-list li { font-size: 12px; padding: 4px 0; color: var(--text-muted); display: flex; gap: 8px; line-height: 1.4; }
+  .problem-list li::before { content: '•'; color: var(--text-muted); flex-shrink: 0; }
+
+  /* Pillars */
+  .pillar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pillar-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .pillar-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .pillar-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .pillar-icon.p1 { background: rgba(30, 77, 140, 0.12); }
+  .pillar-icon.p2 { background: rgba(26, 155, 138, 0.12); }
+  .pillar-icon.p3 { background: rgba(200, 168, 75, 0.12); }
+  .pillar-icon.p4 { background: rgba(124, 58, 237, 0.12); }
+  .pillar-name { font-size: 15px; font-weight: 700; }
+  .pillar-freq { font-size: 12px; font-weight: 600; border-radius: 20px; padding: 2px 10px; display: inline-block; margin-bottom: 10px; }
+  .pillar-freq.p1 { background: rgba(30, 77, 140, 0.1); color: var(--pillar1); }
+  .pillar-freq.p2 { background: rgba(26, 155, 138, 0.1); color: var(--pillar2); }
+  .pillar-freq.p3 { background: rgba(200, 168, 75, 0.15); color: #a07c20; }
+  .pillar-freq.p4 { background: rgba(124, 58, 237, 0.1); color: var(--pillar4); }
+  .pillar-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+  .topic-list { list-style: none; }
+  .topic-list li { font-size: 12px; color: var(--text-muted); padding: 3px 0; display: flex; gap: 6px; line-height: 1.4; }
+  .topic-list li::before { content: '—'; font-weight: 700; flex-shrink: 0; }
+
+  /* Hooks */
+  .hook-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+    background: white; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; color: var(--text-muted);
+  }
+  .filter-btn.active { border-color: var(--blue); background: var(--blue); color: white; }
+  .filter-btn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+  .hook-grid { display: grid; gap: 10px; }
+  .hook-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+    cursor: pointer; transition: all 0.15s; position: relative;
+  }
+  .hook-item:hover { border-color: var(--blue-light); box-shadow: 0 2px 8px rgba(30,77,140,0.1); }
+  .hook-item.copied { border-color: var(--teal); background: rgba(26,155,138,0.04); }
+  .hook-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: inline-block; padding: 2px 8px; border-radius: 4px; }
+  .hook-tag.howto { background: rgba(30,77,140,0.1); color: var(--blue); }
+  .hook-tag.casestudy { background: rgba(26,155,138,0.1); color: var(--teal); }
+  .hook-tag.personal { background: rgba(200,168,75,0.15); color: #8a6a10; }
+  .hook-tag.leadmagnet { background: rgba(124,58,237,0.1); color: var(--pillar4); }
+  .hook-tag.advisor { background: rgba(200,168,75,0.15); color: #8a6a10; }
+  .hook-text { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
+  .hook-copy-hint { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-muted); opacity: 0; transition: opacity 0.15s; }
+  .hook-item:hover .hook-copy-hint { opacity: 1; }
+  .hook-item.copied .hook-copy-hint { opacity: 1; color: var(--teal); }
+
+  /* Calendar */
+  .cal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px; }
+  .cal-day { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .cal-day-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
+  .cal-slot { border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; font-weight: 600; line-height: 1.3; }
+  .cal-slot.p1 { background: rgba(30,77,140,0.1); color: var(--pillar1); }
+  .cal-slot.p2 { background: rgba(26,155,138,0.1); color: var(--pillar2); }
+  .cal-slot.p3 { background: rgba(200,168,75,0.15); color: #8a6a10; }
+  .cal-slot.p4 { background: rgba(124,58,237,0.1); color: var(--pillar4); }
+  .cal-slot .slot-type { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; display: block; margin-bottom: 2px; }
+  .cal-legend { display: flex; gap: 16px; flex-wrap: wrap; }
+  .cal-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* Batch Schedule */
+  .batch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .batch-option { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .batch-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .batch-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+  .batch-block { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .batch-time { font-size: 11px; font-weight: 700; color: var(--blue); width: 90px; flex-shrink: 0; padding-top: 2px; }
+  .batch-task { font-size: 13px; background: var(--bg); border-radius: 6px; padding: 8px 10px; flex: 1; line-height: 1.4; }
+  .batch-task strong { display: block; font-weight: 700; margin-bottom: 2px; }
+  .batch-task span { font-size: 12px; color: var(--text-muted); }
+  .recommended-badge { display: inline-block; background: var(--teal); color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; margin-left: 8px; vertical-align: middle; }
+
+  /* Post Builder */
+  .post-anatomy { display: grid; gap: 14px; }
+  .anatomy-block { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .anatomy-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .anatomy-header.hook { background: rgba(30,77,140,0.06); border-bottom: 1px solid var(--border); }
+  .anatomy-header.interest { background: rgba(26,155,138,0.06); border-bottom: 1px solid var(--border); }
+  .anatomy-header.value { background: rgba(200,168,75,0.08); border-bottom: 1px solid var(--border); }
+  .anatomy-header.cta { background: rgba(124,58,237,0.06); border-bottom: 1px solid var(--border); }
+  .anatomy-label { font-size: 13px; font-weight: 700; }
+  .anatomy-tip { font-size: 11px; color: var(--text-muted); }
+  .anatomy-body { padding: 14px 16px; }
+  .anatomy-body p { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+  .anatomy-body .formula { background: var(--bg); border-radius: 6px; padding: 10px 12px; font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.5; border-left: 3px solid var(--blue); }
+  .example-post { background: var(--bg); border-radius: 10px; padding: 20px; border: 1px solid var(--border); }
+  .example-post .ex-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
+  .post-section { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .post-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .post-section-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .post-section-tag.hook { color: var(--pillar1); }
+  .post-section-tag.interest { color: var(--pillar2); }
+  .post-section-tag.value { color: #8a6a10; }
+  .post-section-tag.cta { color: var(--pillar4); }
+  .post-section p { font-size: 13px; line-height: 1.6; }
+
+  /* Story Bank */
+  .story-grid { display: grid; gap: 14px; }
+  .story-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .story-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .story-title { font-size: 15px; font-weight: 700; }
+  .story-result { font-size: 12px; font-weight: 700; background: rgba(26,155,138,0.1); color: var(--teal); padding: 3px 10px; border-radius: 20px; white-space: nowrap; margin-left: 8px; flex-shrink: 0; }
+  .story-hook { background: rgba(30,77,140,0.06); border-left: 3px solid var(--blue); padding: 10px 12px; border-radius: 0 6px 6px 0; font-size: 13px; font-weight: 600; line-height: 1.4; margin-bottom: 10px; }
+  .story-details { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+  .story-details strong { color: var(--text); }
+
+  /* Prompts */
+  .prompt-grid { display: grid; gap: 16px; }
+  .prompt-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .prompt-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .prompt-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; }
+  .prompt-box {
+    background: #1a1a2e; color: #e2e8f0; border-radius: 8px; padding: 14px 16px;
+    font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.6;
+    white-space: pre-wrap; cursor: pointer; position: relative; transition: all 0.15s;
+  }
+  .prompt-box:hover { background: #252540; }
+  .prompt-box .copy-badge {
+    position: absolute; top: 8px; right: 10px; background: var(--teal);
+    color: white; font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 4px; cursor: pointer; opacity: 0; transition: opacity 0.15s;
+    font-family: -apple-system, sans-serif;
+  }
+  .prompt-box:hover .copy-badge { opacity: 1; }
+  .prompt-box.copied .copy-badge { opacity: 1; background: var(--gold); content: 'Copied!'; }
+  .prompt-highlight { color: var(--gold-light); font-weight: 700; }
+
+  /* Stats */
+  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-number { font-size: 28px; font-weight: 800; color: var(--blue); margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: var(--text-muted); }
+
+  /* Misc */
+  .tip-box { background: rgba(26,155,138,0.06); border: 1px solid rgba(26,155,138,0.2); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--text); margin-bottom: 16px; line-height: 1.5; }
+  .tip-box strong { color: var(--teal); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--text); color: white; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; opacity: 0; transform: translateY(10px); transition: all 0.2s; z-index: 1000; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">Advisor AI Partners</div>
+    <div class="sub">LinkedIn Content System</div>
+  </div>
+  <div class="nav-section">Strategy</div>
+  <div class="nav-item active" onclick="showSection('overview')"><span class="nav-icon">🎯</span> Overview</div>
+  <div class="nav-item" onclick="showSection('icp')"><span class="nav-icon">👤</span> ICP Profiles</div>
+  <div class="nav-item" onclick="showSection('pillars')"><span class="nav-icon">🏛️</span> Content Pillars</div>
+  <div class="nav-section">Create</div>
+  <div class="nav-item" onclick="showSection('hooks')"><span class="nav-icon">🎣</span> Hook Bank</div>
+  <div class="nav-item" onclick="showSection('calendar')"><span class="nav-icon">📅</span> Weekly Calendar</div>
+  <div class="nav-item" onclick="showSection('batching')"><span class="nav-icon">⚡</span> Batching Schedule</div>
+  <div class="nav-section">Execute</div>
+  <div class="nav-item" onclick="showSection('postbuilder')"><span class="nav-icon">✍️</span> Post Builder</div>
+  <div class="nav-item" onclick="showSection('storybank')"><span class="nav-icon">📖</span> Story Bank</div>
+  <div class="nav-item" onclick="showSection('prompts')"><span class="nav-icon">🤖</span> AI Prompts</div>
+</nav>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+<div id="overview" class="section active">
+  <div class="page-title">LinkedIn Content System</div>
+  <div class="page-sub">Built on Nick Roco's Ferrari or Honda framework — fully applied to Advisor AI Partners. Your strategic content machine for generating inbound leads from LinkedIn.</div>
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-number">4–5x</div><div class="stat-label">Posts per week</div></div>
+    <div class="stat-card"><div class="stat-number">4</div><div class="stat-label">Content pillars</div></div>
+    <div class="stat-card"><div class="stat-number">55+</div><div class="stat-label">Ready-to-use hooks</div></div>
+    <div class="stat-card"><div class="stat-number">2</div><div class="stat-label">ICP targets</div></div>
+  </div>
+
+  <div class="tip-box"><strong>Your September Deadline Changes Everything.</strong> The Chamber — your #1 lead source — goes away when you relocate to Lisbon. LinkedIn must become your primary inbound engine before September 2026. This system is your replacement for in-person networking. Start now.</div>
+
+  <div class="card">
+    <div class="card-title">The Core Principle</div>
+    <p style="font-size:14px; line-height:1.7; color:var(--text-muted);">Most people post AI news. They get impressions. They get zero leads.<br><br>
+    <strong style="color:var(--text);">Content that converts = Content that solves problems your ICP has every day.</strong><br><br>
+    Your ICP (SMB owners) doesn't need another recap of the ChatGPT update. They need to know how to stop losing leads after 5pm. They need to know how a CPA firm cut 25 hours of work per audit. They need to see you solve the exact problem that's costing them money right now.<br><br>
+    That's your content. That's what generates DMs. That's what books calls.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">The 4-Step Framework (Applied to You)</div>
+    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap:12px; margin-top:4px;">
+      <div style="background:rgba(30,77,140,0.06); border-radius:8px; padding:14px;">
+        <div style="font-size:11px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Step 1</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Dream Outcomes</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">What your SMB clients actually want: more leads, less manual work, phone always answered, business runs without them.</div>
+      </div>
+      <div style="background:rgba(26,155,138,0.06); border-radius:8px; padding:14px;">
+        <div style="font-size:11px;font-weight:800;color:var(--teal);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Step 2</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Their Problems</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Missed calls after 5pm, leads falling through cracks, manually following up, no automation, don't know where to start.</div>
+      </div>
+      <div style="background:rgba(200,168,75,0.08); border-radius:8px; padding:14px;">
+        <div style="font-size:11px;font-weight:800;color:#8a6a10;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Step 3</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px;">How-To Solutions</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Mirror the problem as a solution. "Creating follow-up is hard" → "How to build a follow-up machine that works while you sleep."</div>
+      </div>
+      <div style="background:rgba(124,58,237,0.06); border-radius:8px; padding:14px;">
+        <div style="font-size:11px;font-weight:800;color:var(--pillar4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Step 4</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Content Hooks</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">5 hooks per how-to. Each hook is a complete post idea. You now have endless content that directly speaks to your ICP's problems.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ICP -->
+<div id="icp" class="section">
+  <div class="page-title">ICP Profiles</div>
+  <div class="page-sub">Two audiences. Two content strategies. SMB owners are your primary LinkedIn target. Financial advisors are secondary — great for building authority in the LifeBridge niche.</div>
+  <div class="icp-grid">
+    <div class="icp-card smb">
+      <div class="icp-label smb">Primary ICP</div>
+      <div class="icp-name">SMB Service Business Owner</div>
+      <div class="icp-desc">Small to mid-sized service businesses. Can make their own decisions. Currently leaking revenue from unanswered calls, weak lead capture, and zero automation. Want to grow without hiring.</div>
+      <div class="icp-section-label">Dream Outcomes (Top 10)</div>
+      <ul class="outcome-list">
+        <li>Never miss a lead — every inquiry captured and followed up automatically</li>
+        <li>Phone always answered 24/7 — zero missed revenue from unanswered calls</li>
+        <li>Online reputation grows automatically — more Google reviews without asking</li>
+        <li>Business runs without them — operators can take a week off without chaos</li>
+        <li>Close more deals with less manual effort — automated follow-up that converts</li>
+        <li>Know exactly which tasks to automate for maximum ROI — no guessing</li>
+        <li>Consistent qualified leads without cold outreach</li>
+        <li>Scale without proportional headcount increases</li>
+        <li>Look like a bigger, more professional business to clients</li>
+        <li>Reclaim 10+ hours per week to work ON the business, not in it</li>
+      </ul>
+      <div class="icp-section-label">Top Problems Blocking Those Outcomes</div>
+      <ul class="problem-list">
+        <li>Leads fill out forms and never hear back — fall through the cracks</li>
+        <li>After-hours calls go to voicemail, never get returned</li>
+        <li>Not systematically asking for reviews — reputation lagging behind quality</li>
+        <li>Owner is the bottleneck for everything — can't delegate without quality suffering</li>
+        <li>Follow-up is manual, inconsistent, depends on memory</li>
+        <li>Overwhelmed by AI options — don't know where to start or what's worth it</li>
+        <li>100% reliant on referrals and word-of-mouth — no repeatable lead source</li>
+        <li>Adding people to scale = profit margins shrink</li>
+      </ul>
+    </div>
+    <div class="icp-card advisor">
+      <div class="icp-label advisor">Secondary ICP</div>
+      <div class="icp-name">Financial Advisor (Workshop Niche)</div>
+      <div class="icp-desc">Advisors who run educational workshops for clients. Looking to differentiate, increase practice revenue, and add a uniquely profitable product. LifeBridge LTC fits this niche perfectly.</div>
+      <div class="icp-section-label">Dream Outcomes (Top 5)</div>
+      <ul class="outcome-list">
+        <li>Add $50K–$65K average case to practice without adding more clients</li>
+        <li>Stand out from every other advisor in the market with a differentiated product</li>
+        <li>Turn educational workshops into consistent revenue generators</li>
+        <li>Build a repeatable pipeline: workshop attendee → closed LTC case</li>
+        <li>Have a legacy protection solution clients immediately understand and want</li>
+      </ul>
+      <div class="icp-section-label">Top Problems</div>
+      <ul class="problem-list">
+        <li>Average case size too small — need bigger cases, not just more cases</li>
+        <li>Commodity positioning — clients feel they can go anywhere</li>
+        <li>Workshops generate awareness but no direct revenue</li>
+        <li>LTC is a hard conversation — clients resist the premium as an "expense"</li>
+        <li>No consistent system to convert workshop attendees into clients</li>
+      </ul>
+      <div class="icp-section-label">Your Unique Positioning</div>
+      <div style="background:rgba(26,155,138,0.06);border-radius:8px;padding:12px;font-size:13px;line-height:1.6;color:var(--text);">You're a <strong>former 30-year CFP</strong> who understands their world completely. You provide full case design, illustrations, and underwriting support — advisors just bring the client relationship. That's not a product pitch. That's a revenue partnership.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PILLARS -->
+<div id="pillars" class="section">
+  <div class="page-title">Content Pillars</div>
+  <div class="page-sub">Four pillars. Post 4–5x per week. Mix them in the ratio below. Each pillar has a specific goal — together they build expertise, trust, and leads.</div>
+  <div class="pillar-grid">
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon p1">📚</div>
+        <div>
+          <div class="pillar-name">How To / Educational</div>
+          <span class="pillar-freq p1">2–3x per week</span>
+        </div>
+      </div>
+      <div class="pillar-desc"><strong>Goal: Establish expertise.</strong> Teach your ICP something specific and actionable. Show them you know how to solve their problem — not just that AI exists.</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Topic Ideas for You</div>
+      <ul class="topic-list">
+        <li>How to set up a 24/7 AI voice agent for a local service business</li>
+        <li>How to automate your Google review requests in 3 steps</li>
+        <li>How to build a follow-up sequence that converts cold leads</li>
+        <li>How to run an AI audit of your business in 20 minutes</li>
+        <li>The 3 AI tools every service business should install first</li>
+        <li>How to reactivate dead leads with an automated campaign</li>
+        <li>How to build a proposal system that generates in minutes, not hours</li>
+      </ul>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon p2">📹</div>
+        <div>
+          <div class="pillar-name">How I / Case Studies</div>
+          <span class="pillar-freq p2">1–2x per week</span>
+        </div>
+      </div>
+      <div class="pillar-desc"><strong>Goal: Prove you've done it.</strong> Showcase real work. Show the before, show the build, show the result. This is what converts readers into leads. <em>Demo videos are gold.</em></div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Your Real Case Studies</div>
+      <ul class="topic-list">
+        <li>CPA firm: 30-hour audit → 5–7 hours (37 schools → 100 capacity)</li>
+        <li>Outdoor advertising: 5-hour proposals → 30 minutes</li>
+        <li>Stella: AI leasing agent that books studio tours 24/7</li>
+        <li>Follow-Up Machine: custom CRM built because no existing CRM worked</li>
+        <li>Database reactivation: closed deals from contacts dormant 60+ days</li>
+      </ul>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon p3">🧭</div>
+        <div>
+          <div class="pillar-name">Personal Story</div>
+          <span class="pillar-freq p3">1–2x per week</span>
+        </div>
+      </div>
+      <div class="pillar-desc"><strong>Goal: Build trust and likability.</strong> These generate the most long-term interest. People remember you as a person first. Get over the selfie cringe — it's worth it.</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Your Unique Stories</div>
+      <ul class="topic-list">
+        <li>30 years as a CFP → sold practice → built AI consulting firm</li>
+        <li>Building a business to run from Lisbon, Portugal by September</li>
+        <li>Former Disney chef at EPCOT — mise en place mindset in business</li>
+        <li>#1 rated speaker at UNF AI conference out of 7 speakers</li>
+        <li>66 years old and going all-in on AI — what that looks like</li>
+        <li>The article that launched the consulting career</li>
+      </ul>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-header">
+        <div class="pillar-icon p4">🎁</div>
+        <div>
+          <div class="pillar-name">Lead Magnet</div>
+          <span class="pillar-freq p4">Every 2–3 weeks</span>
+        </div>
+      </div>
+      <div class="pillar-desc"><strong>Goal: Convert viewers into leads.</strong> Offer something valuable in exchange for a DM or action. This trains your audience and fills your pipeline directly.</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin-bottom:6px;">Your Lead Magnets</div>
+      <ul class="topic-list">
+        <li>Free 60-minute AI Audit (your entry point to AIOS)</li>
+        <li>The Automation Priority Matrix worksheet</li>
+        <li>The Michelangelo Toolkit — 7 AI tools for business owners</li>
+        <li>Free demo: AI-powered sales system for your specific business</li>
+        <li>Live workshop invite: AI Renaissance for your audience</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box" style="margin-top:4px;"><strong>Video is non-negotiable.</strong> Nick: "Post videos as much as possible. 10–100x better than photos. Not a lot of people are doing it — massive white space opportunity." Use Loom or Screen Studio. Show your screen, show your face, walk them through a real build. That's what makes them DM you.</div>
+</div>
+
+<!-- HOOKS -->
+<div id="hooks" class="section">
+  <div class="page-title">Hook Bank</div>
+  <div class="page-sub">55+ hooks built specifically for your business and real case studies. Click any hook to copy it. Each one is a complete post idea — just add your story and CTA.</div>
+  <div class="hook-filters">
+    <button class="filter-btn active" onclick="filterHooks('all', this)">All (55+)</button>
+    <button class="filter-btn" onclick="filterHooks('howto', this)">📚 How To</button>
+    <button class="filter-btn" onclick="filterHooks('casestudy', this)">📹 Case Study</button>
+    <button class="filter-btn" onclick="filterHooks('personal', this)">🧭 Personal Story</button>
+    <button class="filter-btn" onclick="filterHooks('leadmagnet', this)">🎁 Lead Magnet</button>
+    <button class="filter-btn" onclick="filterHooks('advisor', this)">💼 Financial Advisor</button>
+  </div>
+  <div class="hook-grid" id="hookGrid"></div>
+</div>
+
+<!-- CALENDAR -->
+<div id="calendar" class="section">
+  <div class="page-title">Weekly Content Calendar</div>
+  <div class="page-sub">Post 4–5x per week. This template balances all 4 pillars. Adjust based on what case studies and stories you have ready that week.</div>
+  <div class="cal-grid">
+    <div class="cal-day">
+      <div class="cal-day-name">Monday</div>
+      <div class="cal-slot p1"><span class="slot-type">How To</span>Educational post — teach one specific thing your ICP needs to know</div>
+      <div style="font-size:11px;color:var(--text-muted);padding:4px 0;">Video walkthrough or carousel. Hook-first. Ends with soft CTA.</div>
+    </div>
+    <div class="cal-day">
+      <div class="cal-day-name">Tuesday</div>
+      <div class="cal-slot p3"><span class="slot-type">Personal Story</span>Behind-the-scenes, lesson learned, or life update</div>
+      <div style="font-size:11px;color:var(--text-muted);padding:4px 0;">Selfie or candid photo. Conversational. Build likability.</div>
+    </div>
+    <div class="cal-day">
+      <div class="cal-day-name">Wednesday</div>
+      <div class="cal-slot p2"><span class="slot-type">Case Study</span>Real build — walk through client problem, your solution, and the result</div>
+      <div style="font-size:11px;color:var(--text-muted);padding:4px 0;">Demo video preferred. Specific numbers. Strong CTA at end.</div>
+    </div>
+    <div class="cal-day">
+      <div class="cal-day-name">Thursday</div>
+      <div class="cal-slot p1"><span class="slot-type">How To</span>Tactical guide, framework, or tool breakdown</div>
+      <div style="font-size:11px;color:var(--text-muted);padding:4px 0;">List format works well. Screenshot or short Loom video.</div>
+    </div>
+    <div class="cal-day">
+      <div class="cal-day-name">Friday</div>
+      <div class="cal-slot p4"><span class="slot-type">Lead Magnet (2–3x/mo)</span>Offer something free in exchange for a DM</div>
+      <div class="cal-slot p2" style="margin-top:6px;"><span class="slot-type">OR: Case Study</span>Second case study or client win of the week</div>
+      <div style="font-size:11px;color:var(--text-muted);padding:4px 0;">Rotate between lead magnet and extra case study weekly.</div>
+    </div>
+  </div>
+  <div class="cal-legend">
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:rgba(30,77,140,0.4)"></div><span>How To / Educational</span></div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:rgba(26,155,138,0.4)"></div><span>Case Study</span></div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:rgba(200,168,75,0.4)"></div><span>Personal Story</span></div>
+    <div class="cal-legend-item"><div class="cal-legend-dot" style="background:rgba(124,58,237,0.4)"></div><span>Lead Magnet</span></div>
+  </div>
+  <hr class="divider">
+  <div class="card">
+    <div class="card-title">Weekly Rhythm Notes</div>
+    <ul style="list-style:none;display:grid;gap:8px;">
+      <li style="font-size:13px;display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--teal);font-weight:700;">→</span> <span><strong>Monday and Wednesday</strong> are your highest-engagement days on LinkedIn. Put your best content there.</span></li>
+      <li style="font-size:13px;display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--teal);font-weight:700;">→</span> <span><strong>Personal story (Tuesday)</strong> is where you build the human connection. These become the first thing people mention on discovery calls.</span></li>
+      <li style="font-size:13px;display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--teal);font-weight:700;">→</span> <span><strong>Lead magnet (Friday)</strong> should rotate every 2–3 weeks. Your free AI Audit offer should be in rotation consistently.</span></li>
+      <li style="font-size:13px;display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--teal);font-weight:700;">→</span> <span><strong>Every post needs a visual.</strong> Minimum: photo. Better: Loom or screen recording. Best: Screen Studio with face overlay.</span></li>
+      <li style="font-size:13px;display:flex;gap:10px;align-items:flex-start;"><span style="color:var(--teal);font-weight:700;">→</span> <span><strong>Every post needs a CTA</strong> — even personal stories. "What's the biggest time sink in your business right now? Comment below." is a CTA.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- BATCHING -->
+<div id="batching" class="section">
+  <div class="page-title">Batching Schedule</div>
+  <div class="page-sub">Consistency without systems is impossible. Pick one of these two batching approaches. The key: dedicate specific time blocks. Don't create content in between other tasks.</div>
+  <div class="batch-grid">
+    <div class="batch-option">
+      <div class="batch-title">Option A: Single Batch Day <span class="recommended-badge">Recommended for you</span></div>
+      <div class="batch-sub">Sunday = Content Day. One focused session. One week of posts ready by noon.</div>
+      <div class="batch-block">
+        <div class="batch-time">8:00–9:30 AM</div>
+        <div class="batch-task"><strong>Ideation (90 min)</strong><span>Open hook bank, pick 5 hooks for the week. Use the Claude prompt to generate 3 variations per hook. Choose the strongest. Decide on post type for each day.</span></div>
+      </div>
+      <div class="batch-block">
+        <div class="batch-time">9:30–11:00 AM</div>
+        <div class="batch-task"><strong>Write All Posts (90 min)</strong><span>Write all 5 posts. Use the Post Builder template: Hook → Interest → Value → CTA. Use Claude to draft, then edit in your voice. Don't overthink. Ship it.</span></div>
+      </div>
+      <div class="batch-block">
+        <div class="batch-time">11:00 AM–12:00 PM</div>
+        <div class="batch-task"><strong>Visuals + Video (60 min)</strong><span>Record any Loom walkthroughs. Take photos if needed. Create graphics in Canva for educational posts. Attach to each post draft.</span></div>
+      </div>
+      <div class="batch-block">
+        <div class="batch-time">12:00–12:30 PM</div>
+        <div class="batch-task"><strong>Schedule + Finalize (30 min)</strong><span>Review all 5 posts. Final edits. Schedule in Taplio or LinkedIn native scheduler. Week is done.</span></div>
+      </div>
+    </div>
+    <div class="batch-option">
+      <div class="batch-title">Option B: Multi-Day Batching</div>
+      <div class="batch-sub">Spread across the week. Better if Sunday is unavailable.</div>
+      <div class="batch-block">
+        <div class="batch-time">Monday AM</div>
+        <div class="batch-task"><strong>Ideation</strong><span>30–45 min. Open hook bank. Pick this week's 5 hooks. Write short notes on each post concept. Input into Claude prompt for drafts.</span></div>
+      </div>
+      <div class="batch-block">
+        <div class="batch-time">Tuesday AM</div>
+        <div class="batch-task"><strong>Write All Drafts</strong><span>60–90 min. Turn notes/AI drafts into real posts. Edit voice. Add specifics from your real experience.</span></div>
+      </div>
+      <div class="batch-block">
+        <div class="batch-time">Tuesday PM</div>
+        <div class="batch-task"><strong>Visuals + Video</strong><span>60 min. Record videos, create graphics, prep visual assets for all 5 posts.</span></div>
+      </div>
+      <div class="batch-block">
+        <div class="batch-time">Wednesday AM</div>
+        <div class="batch-task"><strong>Edit + Schedule</strong><span>30 min. Final polish. Schedule all posts for Mon–Fri. Done until next week.</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="tip-box" style="margin-top:20px;"><strong>Nick's rule:</strong> The goal is to eventually get your weekly content creation down to 3–4 hours total. At the start, give yourself a full morning. As you build your story bank and hook library, it gets faster every week.</div>
+  <div class="card" style="margin-top:20px;">
+    <div class="card-title">Recommended Tools</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="font-size:13px;line-height:1.6;">
+        <strong>For writing:</strong> Claude (Nick's #1 recommendation). Use the prompts in the AI Prompts section to generate first drafts instantly.<br><br>
+        <strong>For recording:</strong> Loom (free) or Screen Studio ($80/year) for the professional face-in-corner look. Nick got 29K impressions on an 8-minute walkthrough video using this format.
+      </div>
+      <div style="font-size:13px;line-height:1.6;">
+        <strong>For scheduling:</strong> Taplio (LinkedIn-specific, ~$49/mo) or LinkedIn native scheduler (free). Taplio also tracks analytics.<br><br>
+        <strong>For inspiration:</strong> Check your Story Bank in this app. You have 5 real client case studies and multiple personal angles that nobody else has.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POST BUILDER -->
+<div id="postbuilder" class="section">
+  <div class="page-title">Post Builder</div>
+  <div class="page-sub">The anatomy of a high-converting LinkedIn post. Every post = Hook → Interest → Value → CTA. Use the template, then see a real example from your case studies.</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">The Template</div>
+      <div class="post-anatomy">
+        <div class="anatomy-block">
+          <div class="anatomy-header hook">
+            <div class="anatomy-label" style="color:var(--blue);">① Hook (first 7–10 words)</div>
+            <div class="anatomy-tip">80% of your time</div>
+          </div>
+          <div class="anatomy-body">
+            <p>David Ogilvy: "5x as many people read the headline as read the body." Spend 80% of your writing time on this. Stop their scroll.</p>
+            <div class="formula">Pick from your Hook Bank → customize with a specific number, client, or result.</div>
+          </div>
+        </div>
+        <div class="anatomy-block">
+          <div class="anatomy-header interest">
+            <div class="anatomy-label" style="color:var(--teal);">② Build Interest</div>
+            <div class="anatomy-tip">Keep them reading</div>
+          </div>
+          <div class="anatomy-body">
+            <p>Tell a story. Dig into the problem. Mention a client (by type, not name). Make them nod and say "that's me."</p>
+            <div class="formula">"When I first met this [client type], they told me [problem]. Their biggest bottleneck was [specific pain]..."</div>
+          </div>
+        </div>
+        <div class="anatomy-block">
+          <div class="anatomy-header value">
+            <div class="anatomy-label" style="color:#8a6a10;">③ Deliver Value</div>
+            <div class="anatomy-tip">Teach them something</div>
+          </div>
+          <div class="anatomy-body">
+            <p>Give 3–5 specific, actionable things. Numbered list. Specific steps, tools, or results. Leave them smarter than when they started reading.</p>
+            <div class="formula">Step 1: [action]<br>Step 2: [action]<br>Step 3: [result / what changed]<br>→ [specific outcome with number]</div>
+          </div>
+        </div>
+        <div class="anatomy-block">
+          <div class="anatomy-header cta">
+            <div class="anatomy-label" style="color:var(--pillar4);">④ Clear CTA</div>
+            <div class="anatomy-tip">Every. Single. Post.</div>
+          </div>
+          <div class="anatomy-body">
+            <p>Don't make them guess what to do next. One clear action. Keep it low-friction and non-pushy.</p>
+            <div class="formula">DM me "[keyword]" if you want to see how this works for your business.<br><br>OR: What's your biggest [problem]? Comment below.<br><br>OR: I'm doing 3 free AI audits this week. DM me "audit" to grab one.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Real Example (Your Business)</div>
+      <div class="example-post">
+        <div class="ex-label">Based on the CPA Compliance Platform Build</div>
+        <div class="post-section">
+          <div class="post-section-tag hook">Hook</div>
+          <p>How I turned a 30-hour CPA audit into a 5-hour process with AI — and helped them go from 37 schools to 100.</p>
+        </div>
+        <div class="post-section">
+          <div class="post-section-tag interest">Interest</div>
+          <p>When I first started working with this CPA firm, the partner told me everything was going great. They had a solid client base — 37 schools.<br><br>But then she showed me how their audit process worked. 30 hours. Per school. Manual document review. Manual matching. A team chasing paper trails from sunup to sundown.<br><br>They couldn't take on more schools even if they wanted to. The bottleneck wasn't clients — it was the audit itself.</p>
+        </div>
+        <div class="post-section">
+          <div class="post-section-tag value">Value</div>
+          <p>Here's what we built together:<br><br><strong>1. School portal with AI document intake</strong> — schools upload ledgers directly. No email chains, no missing files.<br><br><strong>2. AI document sorter</strong> — reads deposits, expenses, and GL entries automatically. Flags anomalies without a human touching it first.<br><br><strong>3. Firm dashboard</strong> — one view shows all 37 (now 100) schools, audit status, and flagged items.<br><br>Result: 30 hours per school audit → 5–7 hours. The same team now handles nearly 3x the volume.</p>
+        </div>
+        <div class="post-section">
+          <div class="post-section-tag cta">CTA</div>
+          <p>If your firm, practice, or business has a manual process eating 20+ hours a week — that's your audit target.<br><br>DM me "audit" and I'll show you what an AI build could look like for your specific situation. No pitch. Just a real conversation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STORY BANK -->
+<div id="storybank" class="section">
+  <div class="page-title">Story Bank</div>
+  <div class="page-sub">Your real case studies and personal angles. These are your highest-converting content assets. Each one is already a post — just add the Hook → Interest → Value → CTA structure.</div>
+  <div class="story-grid">
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-title">CPA Compliance Platform</div>
+        <div class="story-result">30 hrs → 5–7 hrs per audit</div>
+      </div>
+      <div class="story-hook">"How I turned a 30-hour CPA audit into a 5-hour process — and helped a firm go from 37 schools to 100 without hiring anyone."</div>
+      <div class="story-details"><strong>The problem:</strong> 30 hours per school audit. Manual document review. Couldn't scale.<br><strong>What you built:</strong> School portal, AI document sorter (reads deposits/expenses/GL), firm dashboard, processing agent.<br><strong>The result:</strong> 5–7 hours per audit. 37 → 100 school capacity. Same team.<br><strong>Best pillar:</strong> Case Study (How I). Demo video would be powerful here.</div>
+    </div>
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-title">Outdoor Advertising Proposals</div>
+        <div class="story-result">5 hours → 30 minutes per proposal</div>
+      </div>
+      <div class="story-hook">"A media company was spending 5 hours building every proposal. Now it takes 30 minutes. Here's what we built — and what changed."</div>
+      <div class="story-details"><strong>The problem:</strong> Proposals took 5 hours. Manual: pulling billboard images, maps, pricing, formatting the report.<br><strong>What you built:</strong> Automated proposal generator. Extracted billboard images and maps from spreadsheets. Auto-generated branded reports in their format.<br><strong>The result:</strong> 30 minutes per proposal. 10x faster.<br><strong>Best pillar:</strong> Case Study (How I). Screen recording of the generator in action = powerful demo.</div>
+    </div>
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-title">Stella — AI Leasing Agent (Image Studios)</div>
+        <div class="story-result">24/7 lead qualification + booking</div>
+      </div>
+      <div class="story-hook">"I built an AI agent with a personality. She qualifies leads, books studio tours, and keeps prospects warm — at 2am on a Sunday."</div>
+      <div class="story-details"><strong>The problem:</strong> Franchise studios missing leads after hours. Manual qualification. Inconsistent follow-up.<br><strong>What you built:</strong> Stella — AI leasing agent with a beauty-pro persona. Qualifies leads, books tours, nurtures via GHL. Lives 24/7.<br><strong>The result:</strong> No lead missed. Studio tours booked without a human. Franchisee Michael is live.<br><strong>Best pillar:</strong> Case Study. A demo video of Stella in conversation is the most compelling post you could make.</div>
+    </div>
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-title">The Follow-Up Machine</div>
+        <div class="story-result">Built because no CRM worked right</div>
+      </div>
+      <div class="story-hook">"I built my own CRM. Not because I wanted to. Because every CRM I tried was built for how software thinks people work — not how people actually work."</div>
+      <div class="story-details"><strong>The story:</strong> You tried every CRM. They all felt wrong. So you built one in Base44 + Claude Code. 8 database entities. 7 UI tabs. AI chat assistant. Voice-first card capture. Urgency scoring. GHL + Gmail + Google Calendar + Notion integrations.<br><strong>The hook:</strong> You built the thing you sell. This is proof of concept for your entire practice.<br><strong>Best pillar:</strong> How I / Personal Story hybrid. A walkthrough video of the Follow-Up Machine is one of your best possible posts.</div>
+    </div>
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-title">The CFP Who Learned to Build AI</div>
+        <div class="story-result">30-year career → AI consulting</div>
+      </div>
+      <div class="story-hook">"I spent 30 years as a financial advisor. I sold my practice, learned to build AI systems, and started over at 66. Here's what I know now that I didn't know then."</div>
+      <div class="story-details"><strong>Why it works:</strong> Your story is rare and powerful. Former advisor (credibility) + sold the practice (bold move) + built AI systems (technical) + relocating to Europe (aspirational). That combination makes people stop.<br><strong>Angles to explore:</strong> Why you sold the practice. The article that launched consulting. What 30 years in finance taught you about business systems. The mise en place mindset (former Disney chef → advisor → AI builder).<br><strong>Best pillar:</strong> Personal Story. Post this 1–2x/month in different angles.</div>
+    </div>
+    <div class="story-card">
+      <div class="story-header">
+        <div class="story-title">The UNF AI Talk — #1 Rated</div>
+        <div class="story-result">#1 of 7 speakers</div>
+      </div>
+      <div class="story-hook">"I gave a talk on AI at the University of North Florida. 100 business professionals. 7 speakers. I was rated #1. Here's the one thing I said that landed hardest."</div>
+      <div class="story-details"><strong>The angle:</strong> "The people who showed up early to the Renaissance weren't the smartest — they were the most positioned." That line is your hook. It speaks to every business owner who's heard about AI but hasn't acted yet.<br><strong>Secondary angle:</strong> The Michelangelo Toolkit. 7 tools. What they are. Why you chose them. This could be a carousel or educational post.<br><strong>Best pillar:</strong> Personal Story or How To. A clip from the talk (if you have one) would be viral content.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROMPTS -->
+<div id="prompts" class="section">
+  <div class="page-title">AI Prompts</div>
+  <div class="page-sub">Copy these directly into Claude. Use them to generate hooks, draft posts, and build your content calendar. Customize the brackets with your specifics.</div>
+  <div class="prompt-grid">
+    <div class="prompt-card">
+      <div class="prompt-title">Generate 50 Content Hooks (ICP-Based)</div>
+      <div class="prompt-desc">The core framework prompt from Nick Roco. Generates hooks based on your ICP's dream outcomes. Run this once and you'll have weeks of content ideas.</div>
+      <div class="prompt-box" onclick="copyPrompt(this)">
+        <span class="copy-badge">Copy</span>Here are the top 10 dream outcomes of my ICP (small-to-mid-sized service business owners):
+
+1. Never miss a lead — every inquiry captured and followed up automatically
+2. Phone answered 24/7 — zero lost revenue from unanswered calls
+3. Online reputation grows automatically with more Google reviews
+4. Business operates without constant owner involvement
+5. Close more deals with less manual effort and follow-up
+6. Know which tasks to automate first for maximum ROI
+7. Consistent qualified leads without cold outreach
+8. Scale without proportional headcount increases
+9. Look professional and established to every prospect
+10. Reclaim 10+ hours per week to work ON the business
+
+For each dream outcome, write me 5 LinkedIn post hooks using these templates:
+1. My {value} {action} process in 7 steps (steal this to {desired outcome}):
+2. The top 3 {things} every {ICP} should know (... OBSESS over these):
+3. 99% of {topic} suck (...follow this framework & yours won't):
+4. Please STOP {undesirable action} — you are killing your {result}:
+5. Last month, I {result} for a client using {method}. Here's how:
+6. The ONLY {topic} system you'll ever need (...this is how I {outcome} in {timeframe}):
+7. Too many {ICP} overcomplicate {topic}. {Hyperbole}.
+8. This {topic} checklist helped one of my clients {result} (...steal it):
+9. I made a {X}-word Claude prompt that {does X} in {Y} seconds (...steal it):
+10. How to {action} for free in {timeframe} (...goldmine for {ICP}):
+
+My niche: AI automation and systems for small service businesses.
+My case studies: CPA firm (30hr audits → 5hrs), outdoor advertising (5hr proposals → 30min), AI leasing agent (24/7 lead qualification), custom CRM build.
+My personal story: 30-year financial advisor → sold practice → AI consulting at 66 → relocating to Lisbon.
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-title">Draft a Full LinkedIn Post from a Hook</div>
+      <div class="prompt-desc">Once you've picked a hook, use this to draft the full post in your voice. Edit the output — don't just copy-paste.</div>
+      <div class="prompt-box" onclick="copyPrompt(this)">
+        <span class="copy-badge">Copy</span>Write a LinkedIn post for me using this hook and structure:
+
+HOOK (first line): [PASTE YOUR HOOK HERE]
+
+My background: I'm David Ortiz, founder of Advisor AI Partners. Former 30-year CFP who sold my practice and now builds AI-powered business systems for SMBs as a Fractional AI Officer. I'm 66, based in Jacksonville FL, relocating to Lisbon Portugal. I'm technical but I talk like a businessperson, not an engineer.
+
+Case study to use: [DESCRIBE THE CASE STUDY — client type, problem, what you built, result in numbers]
+
+Post structure:
+1. HOOK: The first line (already written above)
+2. INTEREST (2–3 short paragraphs): Tell the story. Set up the problem. Make the reader nod.
+3. VALUE (numbered list): 3–5 specific things I did / built / steps I took. Include specific numbers and tools.
+4. CTA: One clear, low-friction call to action. Options: DM me "[keyword]" / Comment below with your biggest challenge / I'm doing 3 free AI audits this week — DM me "audit"
+
+Writing style: Conversational. Direct. No buzzwords. No "game-changer" or "paradigm shift." Short sentences. Paragraph breaks after every 2–3 lines. Sounds like a person talking, not a content marketer.
+
+Length: 150–250 words total.
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-title">Write 5 Hook Variations for One Idea</div>
+      <div class="prompt-desc">Have an idea but not a great hook? Use this to generate 5 strong options using different proven formulas.</div>
+      <div class="prompt-box" onclick="copyPrompt(this)">
+        <span class="copy-badge">Copy</span>Write 5 different LinkedIn hook variations for this post idea:
+
+POST IDEA: [DESCRIBE YOUR IDEA IN 1–2 SENTENCES]
+
+Write one hook using each of these formulas:
+1. Intriguing question hook — makes them ask "how?"
+2. Shocking stat or specific result hook
+3. Problem recognition hook — they read it and think "that's me"
+4. Benefit-driven / How To hook
+5. Cliffhanger hook — makes them need to keep reading
+
+Rules:
+- Each hook is 7–15 words maximum
+- Specific numbers are better than vague claims
+- No emojis in the hook line
+- No "game-changer", "revolutionary", or AI buzzwords
+- Should work as the first line of a LinkedIn post (before "see more")
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-title">Build Your Weekly Content Calendar</div>
+      <div class="prompt-desc">Give Claude your case studies and stories available this week — it will assign them to days and write a brief for each post.</div>
+      <div class="prompt-box" onclick="copyPrompt(this)">
+        <span class="copy-badge">Copy</span>I need to create 5 LinkedIn posts for this week. Help me plan them.
+
+WHAT I HAVE AVAILABLE THIS WEEK:
+- Case studies/recent work: [LIST ANYTHING YOU BUILT OR DID RECENTLY]
+- Personal stories/updates: [ANYTHING HAPPENING IN YOUR LIFE OR BUSINESS]
+- Educational topics I know well: [LIST 2–3 THINGS YOU COULD TEACH]
+- Lead magnets available: [FREE AUDIT, TOOLKIT, ETC.]
+
+MY POSTING SCHEDULE:
+- Monday: How To / Educational
+- Tuesday: Personal Story
+- Wednesday: Case Study (demo video preferred)
+- Thursday: How To / Educational
+- Friday: Lead Magnet or extra Case Study
+
+For each day, give me:
+1. The post type and topic
+2. The suggested hook (first line)
+3. A 2–3 sentence brief on what the post covers
+4. The CTA to use
+
+My ICP: Small-to-mid-sized service business owners who want AI automation.
+My goal: Generate inbound DMs and booked discovery calls.
+      </div>
+    </div>
+    <div class="prompt-card">
+      <div class="prompt-title">Financial Advisor LinkedIn Post</div>
+      <div class="prompt-desc">For the LifeBridge LTC wholesaling side. Use this to speak directly to financial advisors who run workshops.</div>
+      <div class="prompt-box" onclick="copyPrompt(this)">
+        <span class="copy-badge">Copy</span>Write a LinkedIn post targeting financial advisors who run educational workshops for their clients.
+
+MY POSITIONING: I'm David Ortiz, a former 30-year CFP now working as a product wholesaler for LifeBridge LTC through Optimus Life Designs. I help advisors add $50K–$65K average cases to their practice by repositioning LTC from an insurance expense into a retirement asset allocation strategy.
+
+THE ANGLE: [CHOOSE ONE]
+- Repositioning LTC from expense to asset (most important shift)
+- How workshop advisors can add a new revenue stream without new clients
+- The math: 15% override on $50K–$65K average case
+- Why most advisors lose the LTC conversation before it starts
+
+Post structure:
+1. HOOK: Problem recognition or shocking stat. Speak to the pain of the LTC conversation.
+2. INTEREST: Tell a brief story or share the common mistake advisors make.
+3. VALUE: The reframe or the 3-step approach that changes the conversation.
+4. CTA: "DM me 'LTC' if you run workshops and want to see how this fits your practice."
+
+Tone: One advisor talking to another. Credible. Not salesy. I've been where they are.
+Length: 150–200 words.
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+const hooks = [
+  // HOW TO — Voice Agent / Never Miss a Call
+  { tag: 'howto', text: 'I set up a 24/7 AI phone agent for a local service business in 48 hours. It answered 47 after-hours calls in week 1. Here\'s exactly how:' },
+  { tag: 'howto', text: 'Please STOP letting your phone go to voicemail after 5 PM — you are handing your leads directly to your competitors:' },
+  { tag: 'howto', text: 'How many calls did your business miss last week? Here\'s how to find out — and fix it in 48 hours:' },
+  { tag: 'howto', text: '99% of small business phone systems are leaking revenue (...this 3-step fix runs 24/7 and costs less than one lost lead):' },
+  { tag: 'howto', text: 'The easiest way to recover lost revenue in any service business? (...most owners don\'t realize how much they\'re losing after 5pm):' },
+
+  // HOW TO — Lead Capture / Follow-Up
+  { tag: 'howto', text: 'How to build a follow-up machine that converts 60-day-old leads into booked appointments (...steal this workflow):' },
+  { tag: 'howto', text: 'I made a 3-step automation that follows up with every new lead within 90 seconds (...steal it):' },
+  { tag: 'howto', text: 'The ONLY lead nurture system a small business owner needs (...this is how I helped a client close 3 deals from "dead" leads in 30 days):' },
+  { tag: 'howto', text: 'Too many service business owners rely on memory for follow-up. That\'s why leads go cold. Here\'s the fix:' },
+  { tag: 'howto', text: 'This lead reactivation checklist helped one of my clients generate new revenue from contacts they\'d given up on (...steal it):' },
+
+  // HOW TO — Google Reviews / Reputation
+  { tag: 'howto', text: 'How to generate 10 Google reviews per month without manually asking a single person:' },
+  { tag: 'howto', text: 'The top 3 AI automations every local service business should install before your competitors do:' },
+  { tag: 'howto', text: 'Your Google review count is your digital word of mouth. Here\'s how to grow it on autopilot:' },
+  { tag: 'howto', text: '99% of local businesses are leaving 5-star reviews on the table (...here\'s the automated ask that gets them):' },
+
+  // HOW TO — AI Audit / Where to Start
+  { tag: 'howto', text: 'How to run a 20-minute AI audit of your business and find your top 3 automation wins:' },
+  { tag: 'howto', text: 'The Automation Priority Matrix: how I score every business task for time saved, revenue impact, and ease of automation:' },
+  { tag: 'howto', text: 'Too many small business owners overcomplicate AI. You don\'t need 10 tools. You need 3 — and in this order:' },
+  { tag: 'howto', text: 'Please STOP chasing every new AI tool — you are burying your team in complexity and getting zero results:' },
+  { tag: 'howto', text: 'How to know which task to automate first (...the scoring system I use with every client):' },
+
+  // HOW TO — Scale / Operations
+  { tag: 'howto', text: 'How to add capacity to your service business without adding headcount (...the exact AI stack I build for clients):' },
+  { tag: 'howto', text: 'The ONLY operations system a solopreneur or small team needs to run like a $1M business:' },
+  { tag: 'howto', text: 'How to get 10 hours per week back — the specific automations that give small business owners their time back:' },
+
+  // CASE STUDY — CPA
+  { tag: 'casestudy', text: 'How I turned a 30-hour school audit into a 5-hour process — and helped a CPA firm go from 37 to 100 school clients without hiring:' },
+  { tag: 'casestudy', text: 'A CPA firm was spending 30 hours per school audit. Now it takes 5–7 hours. Here\'s what we built:' },
+  { tag: 'casestudy', text: 'Last year, this firm could audit 37 schools. This year, they can handle 100. The only thing that changed was one AI system:' },
+  { tag: 'casestudy', text: 'I built an AI compliance platform that reads ledgers, flags issues, and generates audit reports — without a human in the loop. Here\'s how it works:' },
+
+  // CASE STUDY — Outdoor Advertising
+  { tag: 'casestudy', text: 'A media company was spending 5 hours building every proposal. Now it takes 30 minutes. Here\'s exactly what we built:' },
+  { tag: 'casestudy', text: 'How I automated the entire media proposal process — billboard maps, images, pricing, formatting. Before: 5 hours. After: 30 minutes:' },
+  { tag: 'casestudy', text: 'This outdoor advertising company was losing deals because proposals took too long. We fixed it in 2 weeks:' },
+  { tag: 'casestudy', text: 'When you automate proposals, you don\'t just save time — you close more deals. Here\'s the proof:' },
+
+  // CASE STUDY — Stella / AI Leasing Agent
+  { tag: 'casestudy', text: 'I built an AI agent with a personality. She qualifies leads, books studio tours, and follows up — 24/7, including 2am on a Sunday:' },
+  { tag: 'casestudy', text: 'How I created an AI leasing agent that handles an entire sales process without a human in the loop:' },
+  { tag: 'casestudy', text: 'What if your sales process ran itself at 2 AM? Here\'s an AI agent I built for a franchise studio that does exactly that:' },
+  { tag: 'casestudy', text: 'An AI agent with a persona, qualification logic, and booking capability — I built one. Here\'s what it took and what it does:' },
+
+  // CASE STUDY — Follow-Up Machine
+  { tag: 'casestudy', text: 'I built my own CRM because every CRM I tried was built for how software thinks people work — not how people actually work:' },
+  { tag: 'casestudy', text: 'After 30 years of using other people\'s CRMs, I finally built one that works the way I actually think. Here\'s what I built:' },
+
+  // PERSONAL STORY
+  { tag: 'personal', text: 'I spent 30 years as a financial advisor. I sold my practice and went all-in on AI consulting at 66. Here\'s what I know now that I didn\'t then:' },
+  { tag: 'personal', text: 'I\'m 66 and building a business I can run from Lisbon, Portugal by September. Here\'s what that looks like in practice:' },
+  { tag: 'personal', text: 'I used to cook for Disney at EPCOT. I became a CFP. Now I build AI systems. The common thread? Mise en place — everything in its place before service starts:' },
+  { tag: 'personal', text: 'I gave an AI talk at the University of North Florida. 7 speakers. 100 business professionals. I was rated #1. Here\'s the one thing that landed hardest:' },
+  { tag: 'personal', text: 'Everyone told me to retire at 66. Instead, I\'m relocating to Europe and building an AI consulting firm. Here\'s the plan:' },
+  { tag: 'personal', text: 'I wrote one article about AI in financial advisory practices in 2024. It launched my entire consulting career. Here\'s what I said:' },
+  { tag: 'personal', text: 'The people who showed up early to the Renaissance weren\'t the smartest — they were the most positioned. The same is true with AI right now:' },
+
+  // LEAD MAGNET
+  { tag: 'leadmagnet', text: 'I\'m doing 3 free AI audits this week for service business owners. Here\'s what you\'ll walk away with — DM me "audit" to grab one:' },
+  { tag: 'leadmagnet', text: 'Free resource: The Automation Priority Matrix I use with every client. Score your top tasks in 20 minutes. Comment "matrix" and I\'ll send it:' },
+  { tag: 'leadmagnet', text: 'I\'m looking for 3 service business owners who want to see what AI can do for their operations. No pitch. Just proof. DM me "demo":' },
+  { tag: 'leadmagnet', text: 'The Michelangelo Toolkit: the 7 AI tools I teach every business owner to start with. Free walkthrough — comment "toolkit" below:' },
+  { tag: 'leadmagnet', text: 'Free 60-minute consultation: I\'ll map your top 3 automation opportunities and show you exactly what the builds would look like. DM me "ready":' },
+
+  // FINANCIAL ADVISOR
+  { tag: 'advisor', text: 'How financial advisors are adding $50K–$65K average cases to their practice without adding a single new client:' },
+  { tag: 'advisor', text: 'The LTC conversation most advisors avoid is costing them $50,000+ per workshop. Here\'s the reframe that changes everything:' },
+  { tag: 'advisor', text: 'I help financial advisors turn their educational workshops into profit centers. Here\'s the exact playbook:' },
+  { tag: 'advisor', text: '99% of advisors pitch LTC as an expense. The 1% who pitch it as a retirement asset are closing at 3x the rate. Here\'s the difference:' },
+  { tag: 'advisor', text: 'If you run client workshops and you\'re not offering LifeBridge LTC, you\'re leaving $50K cases on the table every quarter:' },
+  { tag: 'advisor', text: 'Please STOP positioning long-term care as insurance — you are killing your conversions before the conversation starts:' },
+  { tag: 'advisor', text: 'I\'m looking for 3 financial advisors who run educational workshops and want to add $150K+ in annual case revenue. DM me "LTC":' },
+];
+
+let currentFilter = 'all';
+
+function renderHooks(filter) {
+  const grid = document.getElementById('hookGrid');
+  const filtered = filter === 'all' ? hooks : hooks.filter(h => h.tag === filter);
+  grid.innerHTML = filtered.map((h, i) => `
+    <div class="hook-item" onclick="copyHook(this, ${hooks.indexOf(h)})">
+      <span class="hook-tag ${h.tag}">${{howto:'📚 How To', casestudy:'📹 Case Study', personal:'🧭 Personal Story', leadmagnet:'🎁 Lead Magnet', advisor:'💼 Financial Advisor'}[h.tag]}</span>
+      <div class="hook-text">${h.text}</div>
+      <span class="hook-copy-hint">click to copy</span>
+    </div>
+  `).join('');
+}
+
+function filterHooks(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHooks(filter);
+}
+
+function copyHook(el, idx) {
+  navigator.clipboard.writeText(hooks[idx].text).then(() => {
+    el.classList.add('copied');
+    el.querySelector('.hook-copy-hint').textContent = '✓ Copied!';
+    showToast('Hook copied to clipboard!');
+    setTimeout(() => {
+      el.classList.remove('copied');
+      el.querySelector('.hook-copy-hint').textContent = 'click to copy';
+    }, 2000);
+  });
+}
+
+function copyPrompt(el) {
+  const text = el.innerText.replace('Copy', '').replace('Copied!', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    el.classList.add('copied');
+    el.querySelector('.copy-badge').textContent = 'Copied!';
+    showToast('Prompt copied to clipboard!');
+    setTimeout(() => {
+      el.classList.remove('copied');
+      el.querySelector('.copy-badge').textContent = 'Copy';
+    }, 2000);
+  });
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+renderHooks('all');
+</script>
+</body>
+</html>

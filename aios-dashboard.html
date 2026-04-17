@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIOS — Advisor AI Partners</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --c1: #EA580C; --c1l: #FFEDD5; /* Context  — orange */
+      --c2: #2563EB; --c2l: #DBEAFE; /* Data     — blue   */
+      --c3: #7C3AED; --c3l: #EDE9FE; /* Intel    — purple */
+      --c4: #D97706; --c4l: #FEF3C7; /* Automate — gold   */
+      --c5: #059669; --c5l: #D1FAE5; /* Build    — green  */
+      --border: #E2E8F0; --bg: #F8FAFC; --text: #0F172A; --muted: #64748B;
+    }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); }
+    .syne { font-family: 'Syne', sans-serif; }
+    .mono { font-family: 'Geist Mono', monospace; }
+
+    /* ── Filter pills ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: 999px; border: 1.5px solid var(--border); background: #fff;
+      font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--muted); letter-spacing: 0.04em; cursor: pointer;
+      transition: all 0.15s; user-select: none; white-space: nowrap;
+    }
+    .pill:hover { border-color: #94A3B8; color: var(--text); }
+    .pill .n { background: #F1F5F9; color: var(--muted); border-radius: 999px; padding: 1px 7px; font-size: 10px; transition: all 0.15s; }
+
+    .pill.on-all { background: var(--text);  border-color: var(--text);  color: #fff; }
+    .pill.on-all .n { background: rgba(255,255,255,.2); color: #fff; }
+    .pill.on-1   { background: var(--c1);   border-color: var(--c1);   color: #fff; }
+    .pill.on-1 .n { background: rgba(255,255,255,.25); color: #fff; }
+    .pill.on-2   { background: var(--c2);   border-color: var(--c2);   color: #fff; }
+    .pill.on-2 .n { background: rgba(255,255,255,.25); color: #fff; }
+    .pill.on-3   { background: var(--c3);   border-color: var(--c3);   color: #fff; }
+    .pill.on-3 .n { background: rgba(255,255,255,.25); color: #fff; }
+    .pill.on-4   { background: var(--c4);   border-color: var(--c4);   color: #fff; }
+    .pill.on-4 .n { background: rgba(255,255,255,.25); color: #fff; }
+    .pill.on-5   { background: var(--c5);   border-color: var(--c5);   color: #fff; }
+    .pill.on-5 .n { background: rgba(255,255,255,.25); color: #fff; }
+
+    /* ── Module card ── */
+    .mod {
+      background: #fff; border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; position: relative; overflow: hidden;
+      transition: transform .15s, box-shadow .15s, border-color .15s;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .mod:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.07); border-color: #CBD5E1; }
+    .mod::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:12px 0 0 12px; }
+    .mod[data-layer="1"]::before { background: var(--c1); }
+    .mod[data-layer="2"]::before { background: var(--c2); }
+    .mod[data-layer="3"]::before { background: var(--c3); }
+    .mod[data-layer="4"]::before { background: var(--c4); }
+    .mod[data-layer="5"]::before { background: var(--c5); }
+    .mod.hidden { display: none; }
+
+    /* Layer badge */
+    .lbadge {
+      font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.13em;
+      padding: 2px 8px; border-radius: 20px; display: inline-block;
+    }
+    .lbadge-1 { background: var(--c1l); color: var(--c1); }
+    .lbadge-2 { background: var(--c2l); color: var(--c2); }
+    .lbadge-3 { background: var(--c3l); color: var(--c3); }
+    .lbadge-4 { background: var(--c4l); color: var(--c4); }
+    .lbadge-5 { background: var(--c5l); color: var(--c5); }
+
+    /* ── Sub-tiles ── */
+    .sub-grid { display: grid; gap: 6px; }
+    .sub-grid-2 { grid-template-columns: 1fr 1fr; }
+    .sub-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    .stile {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 7px;
+      padding: 8px 10px;
+    }
+    .stile-name {
+      font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+      color: var(--text); margin-bottom: 2px;
+    }
+    .stile-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* live badge */
+    .live { font-family:'Geist Mono',monospace; font-size:9px; background:#DCFCE7; color:#15803D; border:1px solid #BBF7D0; padding:2px 8px; border-radius:999px; }
+    .sched { font-family:'Geist Mono',monospace; font-size:9px; background:#EFF6FF; color:#1D4ED8; border:1px solid #BFDBFE; padding:2px 8px; border-radius:999px; }
+
+    .open-btn { display:inline-flex; align-items:center; gap:5px; font-family:'Geist Mono',monospace; font-size:10px; font-weight:500; color:var(--c2); padding:4px 10px; border-radius:6px; background:var(--c2l); border:1px solid #BFDBFE; text-decoration:none; transition:all .15s; }
+    .open-btn:hover { background:var(--c2); color:#fff; border-color:var(--c2); }
+
+    .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; display:inline-block; }
+    .d1{background:var(--c1);} .d2{background:var(--c2);} .d3{background:var(--c3);} .d4{background:var(--c4);} .d5{background:var(--c5);}
+
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="border-b border-[#E2E8F0] bg-white sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-md bg-[#2563EB] flex items-center justify-center">
+          <span class="text-white text-xs font-bold syne">A</span>
+        </div>
+        <span class="syne font-bold text-sm tracking-tight">Advisor AI Partners</span>
+        <span class="text-[#CBD5E1]">·</span>
+        <span class="mono text-xs text-[#64748B]">AIOS Overview</span>
+      </div>
+      <span id="rcount" class="mono text-[10px] text-[#94A3B8] tracking-wide"></span>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- TITLE -->
+    <div class="mb-3">
+      <h1 class="syne text-3xl font-bold mb-2">AI Operating System</h1>
+      <p class="text-[#64748B] text-sm max-w-2xl">Five layers that remove you from operations — one module at a time. Click a layer to filter. Each tile shows exactly what it does.</p>
+    </div>
+
+    <!-- LAYER LEGEND -->
+    <div class="flex flex-wrap gap-x-6 gap-y-1 mb-8 mt-4">
+      <span class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider flex items-center gap-2"><span class="dot d1"></span>Layer 1 — Context</span>
+      <span class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider flex items-center gap-2"><span class="dot d2"></span>Layer 2 — Data</span>
+      <span class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider flex items-center gap-2"><span class="dot d3"></span>Layer 3 — Intelligence</span>
+      <span class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider flex items-center gap-2"><span class="dot d4"></span>Layer 4 — Automate</span>
+      <span class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider flex items-center gap-2"><span class="dot d5"></span>Layer 5 — Build</span>
+    </div>
+
+    <!-- FILTER PILLS -->
+    <div class="flex flex-wrap gap-2 mb-8" id="filters">
+      <button class="pill on-all" data-f="all" onclick="filter('all',this)">All <span class="n" id="n-all">16</span></button>
+      <button class="pill" data-f="1" onclick="filter('1',this)"><span class="dot d1"></span>Context <span class="n" id="n-1">4</span></button>
+      <button class="pill" data-f="2" onclick="filter('2',this)"><span class="dot d2"></span>Data <span class="n" id="n-2">3</span></button>
+      <button class="pill" data-f="3" onclick="filter('3',this)"><span class="dot d3"></span>Intelligence <span class="n" id="n-3">3</span></button>
+      <button class="pill" data-f="4" onclick="filter('4',this)"><span class="dot d4"></span>Automate <span class="n" id="n-4">2</span></button>
+      <button class="pill" data-f="5" onclick="filter('5',this)"><span class="dot d5"></span>Build <span class="n" id="n-5">4</span></button>
+    </div>
+
+    <!-- MODULE GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="grid">
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           LAYER 1 — CONTEXT
+      ═══════════════════════════════════════════════════════════════════════ -->
+
+      <div class="mod" data-layer="1">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-1">Layer 1 · Context</span>
+            <h3 class="syne font-bold text-sm mt-2">CLAUDE.md — Workspace Brain</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">The single source of truth. Loaded at every session start — tells Claude who you are, what you're building, and how everything works.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">Business Summary</div><div class="stile-desc">AIOS mission, three revenue engines, current MRR targets, September Lisbon deadline</div></div>
+          <div class="stile"><div class="stile-name">User Profile</div><div class="stile-desc">Who David is, work style, preferences — voice-first, visual, non-technical but literate</div></div>
+          <div class="stile"><div class="stile-name">Workspace Structure</div><div class="stile-desc">Every folder and file explained — context/, scripts/, apps/, outputs/, diagrams/</div></div>
+          <div class="stile"><div class="stile-name">Session Workflow</div><div class="stile-desc">/prime → work → analyze → install → plan → implement → share → commit</div></div>
+          <div class="stile"><div class="stile-name">AIOS Doctrine</div><div class="stile-desc">5 layers, 3 KPIs, 5 principles (Just Ask, Talk Don't Type, Layers Not Leaps…)</div></div>
+          <div class="stile"><div class="stile-name">Module Docs</div><div class="stile-desc">CommandOS, Daily Brief, GTD, Deal Tracker, IntelOS all documented inline</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="1">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-1">Layer 1 · Context</span>
+            <h3 class="syne font-bold text-sm mt-2">Context Library — Business Knowledge</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Six structured files that give Claude deep knowledge of your business, strategy, metrics, and projects. Loaded fresh at every session via /prime.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">business-info.md</div><div class="stile-desc">Three revenue engines, corporate structure, pricing, target market, services</div></div>
+          <div class="stile"><div class="stile-name">strategy.md</div><div class="stile-desc">Current priorities — GHL MRR growth, Image Studios 360, LifeBridge, Portugal</div></div>
+          <div class="stile"><div class="stile-name">current-data.md</div><div class="stile-desc">Qualitative state snapshot — what's working, what needs attention, right now</div></div>
+          <div class="stile"><div class="stile-name">projects.md</div><div class="stile-desc">16 active projects with goals, sessions, task audit connections, observations</div></div>
+          <div class="stile"><div class="stile-name">task-audit.md</div><div class="stile-desc">73 tasks scored by automation potential — the bandwidth recovery scoreboard</div></div>
+          <div class="stile"><div class="stile-name">key-metrics.md</div><div class="stile-desc">Auto-generated daily from data.db — GHL pipeline, Monarch balances, FX rates</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="1">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-1">Layer 1 · Context</span>
+            <h3 class="syne font-bold text-sm mt-2">Skills Library — Agent Capabilities</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Installed skills that activate automatically when relevant. Each skill is a specialized reference that trains Claude on a specific task or domain.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-3">
+          <div class="stile"><div class="stile-name">d2-diagrams</div><div class="stile-desc">Write, render, and iterate D2 architecture diagrams</div></div>
+          <div class="stile"><div class="stile-name">david-voice</div><div class="stile-desc">Write emails & content in David's authentic voice</div></div>
+          <div class="stile"><div class="stile-name">content-engine</div><div class="stile-desc">Social media captions, carousels, posts for any client</div></div>
+          <div class="stile"><div class="stile-name">call-coaching</div><div class="stile-desc">Process call transcripts into coaching summaries</div></div>
+          <div class="stile"><div class="stile-name">meeting-recap</div><div class="stile-desc">Turn transcripts into polished follow-up emails</div></div>
+          <div class="stile"><div class="stile-name">client-onboard</div><div class="stile-desc">Build brand profile, voice guide, and content system for new clients</div></div>
+          <div class="stile"><div class="stile-name">frontend-design</div><div class="stile-desc">Production-grade HTML dashboards and interfaces</div></div>
+          <div class="stile"><div class="stile-name">canvas-design</div><div class="stile-desc">Visual art in PNG/PDF — design philosophy</div></div>
+          <div class="stile"><div class="stile-name">+ more</div><div class="stile-desc">david-blog, le-brand-voice, pptx, pdf, docx, xlsx…</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="1">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-1">Layer 1 · Context</span>
+            <h3 class="syne font-bold text-sm mt-2">Command System — Slash Commands</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Six built-in commands that run full agentic workflows. Type a slash command and Claude executes a structured, multi-step operation from start to finish.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">/prime</div><div class="stile-desc">Session init — reads all context files, confirms understanding, ready to work</div></div>
+          <div class="stile"><div class="stile-name">/install</div><div class="stile-desc">Guided module install — reads INSTALL.md, configures, tests, updates CLAUDE.md</div></div>
+          <div class="stile"><div class="stile-name">/create-plan</div><div class="stile-desc">Writes a detailed implementation plan to plans/ before any build starts</div></div>
+          <div class="stile"><div class="stile-name">/implement</div><div class="stile-desc">Executes a plan step-by-step, validates each step, updates plan status</div></div>
+          <div class="stile"><div class="stile-name">/commit</div><div class="stile-desc">Saves work, auto-updates CLAUDE.md and HISTORY.md, creates git commit</div></div>
+          <div class="stile"><div class="stile-name">/share</div><div class="stile-desc">Packages any system into a beginner-friendly shareable folder with INSTALL.md</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           LAYER 2 — DATA
+      ═══════════════════════════════════════════════════════════════════════ -->
+
+      <div class="mod" data-layer="2">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-2">Layer 2 · Data</span>
+            <h3 class="syne font-bold text-sm mt-2">DataOS — Collection Pipeline</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Three data collectors that run automatically at 6am via macOS launchd. Pull live business data from your real sources into a local SQLite database.</p>
+          </div>
+          <span class="sched flex-shrink-0">● 6am daily</span>
+        </div>
+        <div class="sub-grid sub-grid-3">
+          <div class="stile"><div class="stile-name">collect_ghl.py</div><div class="stile-desc">GoHighLevel — 1,215 contacts, 274 opps, 8 pipelines, $10,599 pipeline value</div></div>
+          <div class="stile"><div class="stile-name">collect_monarch.py</div><div class="stile-desc">Monarch Money — all bank accounts, credit cards, net worth aggregated</div></div>
+          <div class="stile"><div class="stile-name">collect_fx_rates.py</div><div class="stile-desc">EUR/GBP/CAD live rates — zero auth, for Portugal relocation planning</div></div>
+          <div class="stile"><div class="stile-name">collect.py</div><div class="stile-desc">Master orchestrator — runs all three collectors in sequence, logs results</div></div>
+          <div class="stile"><div class="stile-name">config.py</div><div class="stile-desc">Loads .env credentials securely — API keys never hardcoded</div></div>
+          <div class="stile"><div class="stile-name">db.py</div><div class="stile-desc">SQLite framework — init, connect, schema helpers for all tables</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="2">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-2">Layer 2 · Data</span>
+            <h3 class="syne font-bold text-sm mt-2">data.db — Central Database</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Local SQLite database at data/data.db. All business metrics in one place — Claude can query it directly for analysis, comparisons, and historical trends.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-3">
+          <div class="stile"><div class="stile-name">ghl_contacts</div><div class="stile-desc">1,215 GHL contacts with tags, status, dates, pipeline assignment</div></div>
+          <div class="stile"><div class="stile-name">ghl_opportunities</div><div class="stile-desc">274 open deals — stage, value, contact, pipeline, dates</div></div>
+          <div class="stile"><div class="stile-name">monarch_accounts</div><div class="stile-desc">All bank + credit card accounts — balance snapshots daily</div></div>
+          <div class="stile"><div class="stile-name">fx_rates</div><div class="stile-desc">EUR/USD, GBP/USD, CAD/USD — daily snapshots for Portugal planning</div></div>
+          <div class="stile"><div class="stile-name">meetings</div><div class="stile-desc">Transcripts from Fireflies + Notion — speaker lines, overviews, action items</div></div>
+          <div class="stile"><div class="stile-name">slack_messages + gtd_items + deals</div><div class="stile-desc">Slack intel, GTD task items, Five Pillars deal pipeline</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="2">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-2">Layer 2 · Data</span>
+            <h3 class="syne font-bold text-sm mt-2">Metrics Generator — key-metrics.md</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Turns raw database rows into a readable markdown summary that /prime loads every session. Claude always starts with fresh, accurate numbers — not stale memory.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">generate_metrics.py</div><div class="stile-desc">Queries data.db, formats numbers, writes context/group/key-metrics.md</div></div>
+          <div class="stile"><div class="stile-name">Auto-loaded by /prime</div><div class="stile-desc">Every session starts with fresh GHL pipeline, account balances, FX rates</div></div>
+          <div class="stile"><div class="stile-name">reference/data-access.md</div><div class="stile-desc">Full SQL schema reference — Claude can run any query against data.db</div></div>
+          <div class="stile"><div class="stile-name">On-demand refresh</div><div class="stile-desc">Run: .venv/bin/python scripts/collect.py to refresh mid-session</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           LAYER 3 — INTELLIGENCE
+      ═══════════════════════════════════════════════════════════════════════ -->
+
+      <div class="mod" data-layer="3">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-3">Layer 3 · Intelligence</span>
+            <h3 class="syne font-bold text-sm mt-2">IntelOS — Meeting Intelligence</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Captures and stores all your meeting transcripts. 2,176 historical Fireflies meetings available. Every conversation is searchable, summable, and actionable.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">collect_fireflies.py</div><div class="stile-desc">GraphQL API — 2,176 transcripts available for david@advisoraipartners.com</div></div>
+          <div class="stile"><div class="stile-name">collect_notion_meetings.py</div><div class="stile-desc">Notion API — Google Meet transcripts via Notion's meeting notes feature</div></div>
+          <div class="stile"><div class="stile-name">collect_slack.py</div><div class="stile-desc">Slack bot — collect messages from any channel the bot is invited to</div></div>
+          <div class="stile"><div class="stile-name">intel/db.py</div><div class="stile-desc">Creates meetings, slack_messages, slack_users tables in data.db</div></div>
+          <div class="stile"><div class="stile-name">Meeting Dashboard</div><div class="stile-desc"><a href="./meeting-dashboard.html" target="_blank" class="open-btn">Open →</a></div></div>
+          <div class="stile"><div class="stile-name">On demand + auto</div><div class="stile-desc">Run: .venv/bin/python scripts/intel/collect_all.py</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="3">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-3">Layer 3 · Intelligence</span>
+            <h3 class="syne font-bold text-sm mt-2">Daily Brief — Morning Intelligence</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Every morning at 7am, Claude synthesizes your data and transcripts into an executive intelligence report — delivered to your Telegram before you start the day.</p>
+          </div>
+          <span class="live flex-shrink-0">● 7am daily</span>
+        </div>
+        <div class="sub-grid sub-grid-3">
+          <div class="stile"><div class="stile-name">metrics.py</div><div class="stile-desc">Queries GHL funnel stages — Lead Gen, Outreach, Appointments, Pipeline, Closed</div></div>
+          <div class="stile"><div class="stile-name">prompt.py</div><div class="stile-desc">Solo Operator preset — exec summary, key signals, metrics analysis, action items</div></div>
+          <div class="stile"><div class="stile-name">Gemini 2.5 Flash</div><div class="stile-desc">Synthesizes ~1,500 words. Cost: ~$0.002/brief (~$0.06/month)</div></div>
+          <div class="stile"><div class="stile-name">dashboard.py</div><div class="stile-desc">Matplotlib chart — dark funnel image with stage counts and values</div></div>
+          <div class="stile"><div class="stile-name">deliver.py</div><div class="stile-desc">Sends to "📊 Daily Brief" Telegram topic — image + full text</div></div>
+          <div class="stile"><div class="stile-name">outputs/daily-brief/</div><div class="stile-desc">Every brief archived as markdown — full searchable history</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="3">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-3">Layer 3 · Intelligence</span>
+            <h3 class="syne font-bold text-sm mt-2">Funnel Map — Intelligence Config</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">The configuration layer that tells the intelligence system what to watch. Edit this file to change what metrics appear in your daily brief and session primes.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">context/funnel.md</div><div class="stile-desc">Maps GHL pipeline stage names → funnel position (Lead Gen, Outreach, etc.)</div></div>
+          <div class="stile"><div class="stile-name">Custom metrics</div><div class="stile-desc">Edit to add/remove stages, rename categories, adjust what's tracked</div></div>
+          <div class="stile"><div class="stile-name">Used by</div><div class="stile-desc">metrics.py at 6am, generate_metrics.py, Daily Brief prompt builder</div></div>
+          <div class="stile"><div class="stile-name">Effect</div><div class="stile-desc">Change this file → change every intelligence output immediately</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           LAYER 4 — AUTOMATE
+      ═══════════════════════════════════════════════════════════════════════ -->
+
+      <div class="mod" data-layer="4">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-4">Layer 4 · Automate</span>
+            <h3 class="syne font-bold text-sm mt-2">GTD System — Daily Operating System</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Zero-friction task capture and daily processing ritual. Voice note or text in Telegram → instantly captured. Dashboard to process inbox to zero each morning.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">GTD Dashboard</div><div class="stile-desc"><a href="./gtd-dashboard.html" target="_blank" class="open-btn">Open →</a> Quick capture bar, inbox, context views</div></div>
+          <div class="stile"><div class="stile-name">📥 Inbox Topic (Telegram)</div><div class="stile-desc">Voice notes or text → transcribed → gtd_items table. Zero friction, no AI processing</div></div>
+          <div class="stile"><div class="stile-name">Processing Ritual</div><div class="stile-desc">Daily after 6am Aamish huddle — inbox to zero. Actionable → assign, context, due date</div></div>
+          <div class="stile"><div class="stile-name">Context Views</div><div class="stile-desc">Today, Aamish, Waiting For, Someday — click stat cards to filter. Done tracking.</div></div>
+          <div class="stile"><div class="stile-name">Weekly Review</div><div class="stile-desc">Friday — 8-step guided checklist in dashboard. Clear inbox, review all lists, brain dump.</div></div>
+          <div class="stile"><div class="stile-name">gtd_db.py</div><div class="stile-desc">gtd_items table — capture, status, context, due dates, all in data.db</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="4">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-4">Layer 4 · Automate</span>
+            <h3 class="syne font-bold text-sm mt-2">Task Audit — Automation Scoreboard</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">73 recurring tasks mapped and scored by automation potential. The system that shows you exactly what to automate next to recover the most bandwidth.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">Task Audit Dashboard</div><div class="stile-desc"><a href="./task-audit-dashboard.html" target="_blank" class="open-btn">Open →</a> 73 tasks, scores, bandwidth calculator</div></div>
+          <div class="stile"><div class="stile-name">Current Score</div><div class="stile-desc">8% automated — 6 of 73 tasks. Target: 50%+ before Lisbon move (Sep 2026)</div></div>
+          <div class="stile"><div class="stile-name">Scoring system</div><div class="stile-desc">Each task: automation potential (1-10), time cost, frequency → priority rank</div></div>
+          <div class="stile"><div class="stile-name">context/task-audit.md</div><div class="stile-desc">Source data — all 73 tasks with scores. Edit here to update the dashboard</div></div>
+          <div class="stile"><div class="stile-name">3 KPIs tracked</div><div class="stile-desc">Away-from-desk autonomy · Task Automation % · Revenue per employee</div></div>
+          <div class="stile"><div class="stile-name">Project mapping</div><div class="stile-desc">Each active project maps to 1-4 task audit items it will automate when done</div></div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           LAYER 5 — BUILD
+      ═══════════════════════════════════════════════════════════════════════ -->
+
+      <div class="mod" data-layer="5">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-5">Layer 5 · Build</span>
+            <h3 class="syne font-bold text-sm mt-2">CommandOS — Mobile AI Command Center</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Full Claude agent on your phone via Telegram @aios_david_bot. Text, voice, PDFs, charts. Always on via macOS launchd. 13 Python modules.</p>
+          </div>
+          <span class="live flex-shrink-0">● Live 24/7</span>
+        </div>
+        <div class="sub-grid sub-grid-3">
+          <div class="stile"><div class="stile-name">bot.py + main.py</div><div class="stile-desc">Telegram message handlers — entry point for all text, voice, image, and PDF inputs</div></div>
+          <div class="stile"><div class="stile-name">orchestrator.py</div><div class="stile-desc">Core routing — decides which agent handles each message type</div></div>
+          <div class="stile"><div class="stile-name">worker.py</div><div class="stile-desc">Agent prompts — customized with Advisor AI Partners context and persona</div></div>
+          <div class="stile"><div class="stile-name">agent_sdk.py</div><div class="stile-desc">Claude API integration — agent loop, tool use, streaming responses</div></div>
+          <div class="stile"><div class="stile-name">session_manager.py</div><div class="stile-desc">Persistent sessions per Telegram topic — memory survives bot restarts</div></div>
+          <div class="stile"><div class="stile-name">pdf_generator.py</div><div class="stile-desc">WeasyPrint — generates formatted PDF reports on request</div></div>
+          <div class="stile"><div class="stile-name">chart_style.py</div><div class="stile-desc">Matplotlib charts — styled outputs for data visualizations in chat</div></div>
+          <div class="stile"><div class="stile-name">cost_tracker.py</div><div class="stile-desc">Tracks API spend per session — cost visibility on every conversation</div></div>
+          <div class="stile"><div class="stile-name">/new /compact /reset</div><div class="stile-desc">Slash commands inside Telegram — spawn agents, compress context, clear sessions</div></div>
+        </div>
+        <div class="text-[11px] text-[#94A3B8] mono mt-1">apps/command/ · logs: data/command.stdout.log · data/command.stderr.log</div>
+      </div>
+
+      <div class="mod" data-layer="5">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-5">Layer 5 · Build</span>
+            <h3 class="syne font-bold text-sm mt-2">Deal Tracker — Pipeline Kanban</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Post-proposal deal tracking — local SQLite, no GHL sync needed yet. Visual kanban with revenue rollup and Gmail thread matching per deal.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">Deal Tracker Dashboard</div><div class="stile-desc"><a href="./deal-tracker.html" target="_blank" class="open-btn">Open →</a> Kanban, revenue rollup, side pane</div></div>
+          <div class="stile"><div class="stile-name">6 Pipeline Stages</div><div class="stile-desc">Proposal Sent → Engaged → Following Up → Call Scheduled → Negotiating → Closed</div></div>
+          <div class="stile"><div class="stile-name">Gmail Thread Matching</div><div class="stile-desc">Matches deal contacts to Gmail threads — last sent/received, snippet preview</div></div>
+          <div class="stile"><div class="stile-name">render_deal_dashboard.py</div><div class="stile-desc">Regenerates deal-tracker.html from live DB data — run anytime to refresh</div></div>
+          <div class="stile"><div class="stile-name">Revenue Rollup Bar</div><div class="stile-desc">Open MRR, open setup, closed won MRR, closed won setup, projected total MRR</div></div>
+          <div class="stile"><div class="stile-name">deals + deal_email_threads</div><div class="stile-desc">Two tables in data.db — deals with pricing, email metadata per contact</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="5">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-5">Layer 5 · Build</span>
+            <h3 class="syne font-bold text-sm mt-2">Diagram Engine — Architecture Diagrams</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">Text-to-diagram. Describe what you want in plain English → Claude writes D2 source → renders to PNG → validates visually → iterates. No Figma, no drag-and-drop.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-2">
+          <div class="stile"><div class="stile-name">D2 CLI v0.7.1</div><div class="stile-desc">Open-source renderer — installed via Homebrew. Converts .d2 text files to PNG</div></div>
+          <div class="stile"><div class="stile-name">generate_diagrams.sh</div><div class="stile-desc">Auto-discovers all .d2 files in diagrams/ and renders with ELK layout, theme 0</div></div>
+          <div class="stile"><div class="stile-name">d2-diagrams skill</div><div class="stile-desc">Trains Claude on 5 design patterns, 3 color palettes, D2 syntax, and conventions</div></div>
+          <div class="stile"><div class="stile-name">diagrams/ folder</div><div class="stile-desc">my-system.d2 + .png (rendered) · aios-architecture.d2 (pending render)</div></div>
+          <div class="stile"><div class="stile-name">5 Patterns available</div><div class="stile-desc">Simple Flow · Hub-and-Spoke · Multi-Layer · Before/After · Funnel</div></div>
+          <div class="stile"><div class="stile-name">7 Themes available</div><div class="stile-desc">Neutral (0) · Grey (1) · Terrastruct (3) · Cool (4) · Berry (5) · Grape (6) · Origami (100)</div></div>
+        </div>
+      </div>
+
+      <div class="mod" data-layer="5">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="lbadge lbadge-5">Layer 5 · Build</span>
+            <h3 class="syne font-bold text-sm mt-2">Output Library — Dashboards &amp; Pages</h3>
+            <p class="text-[12px] text-[#64748B] mt-1">All HTML deliverables built for active use — dashboards, landing pages, proposals, emails. Everything in outputs/ is production-ready and linkable.</p>
+          </div>
+        </div>
+        <div class="sub-grid sub-grid-3">
+          <div class="stile"><div class="stile-name">GTD Command Center</div><div class="stile-desc"><a href="./gtd-dashboard.html" target="_blank" class="open-btn">Open →</a></div></div>
+          <div class="stile"><div class="stile-name">Deal Tracker</div><div class="stile-desc"><a href="./deal-tracker.html" target="_blank" class="open-btn">Open →</a></div></div>
+          <div class="stile"><div class="stile-name">Task Audit</div><div class="stile-desc"><a href="./task-audit-dashboard.html" target="_blank" class="open-btn">Open →</a></div></div>
+          <div class="stile"><div class="stile-name">Meeting Intel</div><div class="stile-desc"><a href="./meeting-dashboard.html" target="_blank" class="open-btn">Open →</a></div></div>
+          <div class="stile"><div class="stile-name">AIOS Proposal</div><div class="stile-desc"><a href="./aios-proposal-founders.html" target="_blank" class="open-btn">Open →</a></div></div>
+          <div class="stile"><div class="stile-name">AIOS Landing Page</div><div class="stile-desc"><a href="./pages/aios-landing-page.html" target="_blank" class="open-btn">Open →</a></div></div>
+        </div>
+      </div>
+
+    </div><!-- /grid -->
+
+    <!-- FOOTER -->
+    <div class="border-t border-[#E2E8F0] mt-12 pt-6 pb-4 flex items-center justify-between">
+      <span class="mono text-[10px] text-[#94A3B8]">ADVISOR AI PARTNERS · AI OPERATING SYSTEM · APRIL 2026</span>
+      <span class="mono text-[10px] text-[#94A3B8]">16 modules across 5 layers</span>
+    </div>
+  </div>
+
+  <script>
+    let active = 'all';
+    function filter(f, btn) {
+      active = f;
+      document.querySelectorAll('.pill').forEach(p => p.className = 'pill');
+      btn.classList.add(f === 'all' ? 'on-all' : 'on-' + f);
+      const mods = document.querySelectorAll('.mod');
+      let visible = 0;
+      mods.forEach(m => {
+        const show = f === 'all' || m.dataset.layer === f;
+        m.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      document.getElementById('rcount').textContent = (f === 'all' ? `${visible} MODULES` : `${visible} OF ${mods.length} MODULES`);
+    }
+    const total = document.querySelectorAll('.mod').length;
+    document.getElementById('rcount').textContent = `${total} MODULES`;
+    document.getElementById('n-all').textContent = total;
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AIOS — AI Operating System | Advisor AI Partners</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Page Backgrounds */
+      --bg:          #F5F4F0;
+      --bg-warm:     #FAFAF7;
+      --surface:     #FFFFFF;
+      --footer-bg:   #111318;
+
+      /* Text */
+      --text-dark:   #1C1C1E;
+      --text-mid:    #52525B;
+      --text-light:  #A1A1AA;
+      --text-faint:  #D4D4D8;
+
+      /* Brand Accents */
+      --blue:        #1A3A6B;
+      --blue-soft:   #EBF0FA;
+      --teal:        #0C7A6E;
+      --teal-soft:   #E6F5F2;
+      --gold:        #B8860B;
+      --gold-soft:   #FBF3E0;
+      --indigo:      #3730A3;
+      --indigo-soft: #EEF2FF;
+      --green:       #166534;
+      --green-soft:  #DCFCE7;
+      --amber:       #B85A00;
+      --amber-soft:  #FEF0E0;
+      --slate:       #5B4FCF;
+      --slate-soft:  #F0EEFB;
+
+      /* Borders */
+      --line:        rgba(28,28,30, 0.07);
+      --line-mid:    rgba(28,28,30, 0.12);
+
+      /* Fonts */
+      --heading:     'Plus Jakarta Sans', sans-serif;
+      --body:        'Inter', sans-serif;
+
+      /* Motion */
+      --expo:        cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body {
+      font-family: var(--body);
+      color: var(--text-mid);
+      background: var(--bg);
+      line-height: 1.68;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    /* ── GLOBAL ── */
+    .container { max-width: 1060px; margin: 0 auto; }
+
+    h1, h2, h3 {
+      font-family: var(--heading);
+      color: var(--text-dark);
+      line-height: 1.18;
+    }
+    h1 {
+      font-size: clamp(30px, 5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    h2 {
+      font-size: clamp(22px, 3.5vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 18px;
+    }
+    .eyebrow .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+    .lead {
+      font-size: 16.5px;
+      color: var(--text-mid);
+      max-width: 540px;
+      line-height: 1.78;
+      font-weight: 400;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--text-dark);
+      color: var(--surface);
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-family: var(--body);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: -0.1px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s var(--expo), box-shadow 0.35s var(--expo);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, var(--blue), var(--teal));
+      opacity: 0;
+      transition: opacity 0.35s;
+      border-radius: 100px;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,58,107,0.22); }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-primary .arrow {
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s var(--expo);
+    }
+    .btn-primary:hover .arrow { transform: translateX(4px); }
+    .btn-note {
+      display: block;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* ── SECTION SHELL ── */
+    section {
+      padding: 96px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    section::before,
+    section::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+    }
+    section::before {
+      top: 0;
+      background: linear-gradient(90deg, transparent, var(--line-mid), transparent);
+    }
+    section::after {
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, var(--line-mid), transparent);
+    }
+    .bg-main { background: var(--bg); }
+    .bg-warm { background: var(--bg-warm); }
+
+    /* ── BACKGROUND ORBS ── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(115px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; top: -150px; right: -180px; background: rgba(26,58,107,0.05); animation: float-orb 30s ease-in-out infinite; }
+    .orb-2 { width: 450px; height: 450px; bottom: -120px; left: -160px; background: rgba(12,122,110,0.05); animation: float-orb 26s ease-in-out infinite reverse; }
+    @keyframes float-orb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px, -20px); } }
+
+    section > .container { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 120px 48px 96px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-left h1 {
+      margin-bottom: 22px;
+    }
+    .hero-left h1 .accent {
+      background: linear-gradient(90deg, var(--blue) 55%, var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-left .lead {
+      margin-bottom: 36px;
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 36px;
+      position: relative;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo);
+    }
+    .hero-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+    }
+    .hero-card .card-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    .layer-mini {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .layer-mini:last-child { border-bottom: none; }
+    .layer-mini .lm-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .layer-mini .lm-num {
+      font-family: var(--body);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-faint);
+      letter-spacing: 1px;
+    }
+    .layer-mini .lm-name {
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .layer-mini .lm-desc {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    /* ── PROBLEM ── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      margin-top: 52px;
+    }
+    .problem-left { max-width: 480px; }
+    .problem-left h2 { margin-bottom: 18px; }
+    .problem-left .lead { margin-bottom: 32px; }
+
+    .problem-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .p-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo), border-color 0.45s var(--expo);
+    }
+    .p-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+      border-color: var(--line-mid);
+    }
+    .p-card .p-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 14px;
+      background: var(--amber-soft);
+    }
+    .p-card h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .p-card p {
+      font-size: 13.5px;
+      color: var(--text-mid);
+      line-height: 1.68;
+    }
+
+    .stat-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 52px;
+    }
+    .stat-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .stat-item .stat-num {
+      font-family: var(--heading);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      line-height: 1.18;
+    }
+    .stat-item .stat-label {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* ── SOLUTION / LAYERS ── */
+    .solution-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 52px;
+    }
+    .solution-header-left h2 { margin-bottom: 18px; }
+
+    .layers-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+    .layer-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 22px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo), border-color 0.45s var(--expo);
+    }
+    .layer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.45s var(--expo);
+    }
+    .layer-card:hover::before { transform: scaleX(1); }
+    .layer-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+      border-color: var(--line-mid);
+    }
+    .layer-card:nth-child(1)::before { background: var(--blue); }
+    .layer-card:nth-child(2)::before { background: var(--teal); }
+    .layer-card:nth-child(3)::before { background: var(--gold); }
+    .layer-card:nth-child(4)::before { background: var(--indigo); }
+    .layer-card:nth-child(5)::before { background: var(--green); }
+
+    .layer-card .lc-num {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 14px;
+    }
+    .layer-card .lc-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin: 0 auto 14px;
+    }
+    .layer-card:nth-child(1) .lc-icon { background: var(--blue-soft); }
+    .layer-card:nth-child(2) .lc-icon { background: var(--teal-soft); }
+    .layer-card:nth-child(3) .lc-icon { background: var(--gold-soft); }
+    .layer-card:nth-child(4) .lc-icon { background: var(--indigo-soft); }
+    .layer-card:nth-child(5) .lc-icon { background: var(--green-soft); }
+
+    .layer-card h3 { font-size: 16px; margin-bottom: 8px; }
+    .layer-card p {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    /* ── OUTCOMES ── */
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .outcomes-left h2 { margin-bottom: 18px; }
+    .outcomes-left .lead { margin-bottom: 0; }
+
+    .outcome-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .o-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo), border-color 0.45s var(--expo);
+    }
+    .o-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+      border-color: var(--line-mid);
+    }
+    .o-card .o-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+    }
+    .o-card:nth-child(1) .o-tag { background: var(--blue-soft); color: var(--blue); }
+    .o-card:nth-child(2) .o-tag { background: var(--teal-soft); color: var(--teal); }
+    .o-card:nth-child(3) .o-tag { background: var(--gold-soft); color: var(--gold); }
+
+    .o-card h3 { font-size: 17px; margin-bottom: 10px; }
+    .o-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .o-card ul li {
+      font-size: 13.5px;
+      color: var(--text-mid);
+      padding: 5px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.6;
+    }
+    .o-card ul li::before {
+      content: '✓';
+      color: var(--teal);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── WHO THIS IS FOR ── */
+    .who-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .who-left h2 { margin-bottom: 18px; }
+    .who-left .lead { margin-bottom: 32px; }
+
+    .who-list { list-style: none; padding: 0; }
+    .who-list li {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .who-list li:last-child { border-bottom: none; }
+    .who-list .check {
+      width: 24px;
+      height: 24px;
+      background: var(--blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: white;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .who-list li h4 {
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    .who-list li p {
+      font-size: 13.5px;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    .quote-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--blue);
+      border-radius: 20px;
+      padding: 36px;
+    }
+    .quote-card blockquote {
+      font-size: 16px;
+      font-style: italic;
+      color: var(--text-dark);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+    .quote-attr {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-mid);
+    }
+    .quote-attr span {
+      color: var(--blue);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center;
+    }
+    .cta-section h2 {
+      max-width: 600px;
+      margin: 0 auto 18px;
+    }
+    .cta-section .lead {
+      max-width: 540px;
+      margin: 0 auto 36px;
+    }
+    .cta-trust {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--footer-bg);
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+      padding: 36px 48px;
+      font-size: 13px;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s var(--expo), transform 0.9s var(--expo);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal.d1 { transition-delay: 0.08s; }
+    .reveal.d2 { transition-delay: 0.16s; }
+    .reveal.d3 { transition-delay: 0.26s; }
+    .reveal.d4 { transition-delay: 0.36s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      section { padding: 80px 32px; }
+      .hero { padding: 96px 32px 80px; }
+      .hero-grid,
+      .problem-grid,
+      .solution-header,
+      .outcomes-grid,
+      .who-grid { grid-template-columns: 1fr; gap: 40px; }
+      .layers-grid { grid-template-columns: repeat(3, 1fr); }
+      .stat-bar { grid-template-columns: 1fr 1fr 1fr; }
+      .problem-cards { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 72px 20px; }
+      .hero { padding: 80px 20px 72px; }
+      .layers-grid { grid-template-columns: 1fr 1fr; }
+      .problem-cards { grid-template-columns: 1fr; }
+      .stat-bar { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .orb { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero bg-main">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left reveal">
+        <div class="eyebrow"><span class="dot"></span> AI Operating System</div>
+        <h1>Your Business Needs to <span class="accent">Run Without You.</span></h1>
+        <p class="lead">
+          The AIOS is an intelligent layer built around your entire business —
+          capturing data, synthesizing intelligence, and automating the work that
+          keeps you stuck in operations instead of growth.
+        </p>
+        <a href="https://meetings.advisoraipartners.com" class="btn-primary" target="_blank">
+          <span>Book a Free Strategy Call</span>
+          <span class="arrow">→</span>
+        </a>
+        <span class="btn-note">Free · 60 min · No commitment</span>
+      </div>
+      <div class="hero-card reveal d2">
+        <div class="card-eyebrow">FIVE LAYERS</div>
+        <div class="layer-mini">
+          <div class="lm-icon" style="background: var(--blue-soft);">🧠</div>
+          <div>
+            <div class="lm-num">01</div>
+            <div class="lm-name">Context</div>
+            <div class="lm-desc">AI learns your business</div>
+          </div>
+        </div>
+        <div class="layer-mini">
+          <div class="lm-icon" style="background: var(--teal-soft);">📊</div>
+          <div>
+            <div class="lm-num">02</div>
+            <div class="lm-name">Data</div>
+            <div class="lm-desc">Real-time numbers daily</div>
+          </div>
+        </div>
+        <div class="layer-mini">
+          <div class="lm-icon" style="background: var(--gold-soft);">⚡</div>
+          <div>
+            <div class="lm-num">03</div>
+            <div class="lm-name">Intelligence</div>
+            <div class="lm-desc">Signals synthesized into briefs</div>
+          </div>
+        </div>
+        <div class="layer-mini">
+          <div class="lm-icon" style="background: var(--indigo-soft);">⚙️</div>
+          <div>
+            <div class="lm-num">04</div>
+            <div class="lm-name">Automate</div>
+            <div class="lm-desc">Tasks automated one by one</div>
+          </div>
+        </div>
+        <div class="layer-mini">
+          <div class="lm-icon" style="background: var(--green-soft);">🚀</div>
+          <div>
+            <div class="lm-num">05</div>
+            <div class="lm-name">Build</div>
+            <div class="lm-desc">Bandwidth applied to growth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PROBLEM -->
+<section class="bg-warm">
+  <div class="orb orb-1" style="background: rgba(184,90,0,0.04);"></div>
+  <div class="orb orb-2" style="background: rgba(26,58,107,0.04);"></div>
+  <div class="container">
+    <div class="problem-grid">
+      <div class="problem-left reveal">
+        <div class="eyebrow"><span class="dot" style="background: var(--amber);"></span> The Problem</div>
+        <h2>You Built a Successful Business. Now It Owns You.</h2>
+        <p class="lead">
+          Most business owners spend 80% of their time working <em>in</em> the business —
+          firefighting, managing people, checking dashboards, sitting in meetings just to stay
+          informed. The old model says hire more people. AIOS says the answer is less.
+        </p>
+      </div>
+      <div class="problem-cards">
+        <div class="p-card reveal d1">
+          <div class="p-icon">🔥</div>
+          <h3>Constant Firefighting</h3>
+          <p>Every day starts with whatever went wrong overnight. Strategic work never makes it to the calendar.</p>
+        </div>
+        <div class="p-card reveal d2">
+          <div class="p-icon" style="background: var(--blue-soft);">📋</div>
+          <h3>Drowning in Admin</h3>
+          <p>Follow-ups, reporting, status checks — all eating hours that should go toward growth.</p>
+        </div>
+        <div class="p-card reveal d3">
+          <div class="p-icon" style="background: var(--teal-soft);">📉</div>
+          <h3>No Real Visibility</h3>
+          <p>You don't know what's happening in your pipeline or finances until it's too late to act.</p>
+        </div>
+        <div class="p-card reveal d4">
+          <div class="p-icon" style="background: var(--indigo-soft);">🔒</div>
+          <h3>You're the Bottleneck</h3>
+          <p>Nothing moves without your sign-off. The business can't scale past your bandwidth.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-bar reveal">
+      <div class="stat-item">
+        <div class="stat-num">80%</div>
+        <div class="stat-label">of owner time on operational tasks</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3×</div>
+        <div class="stat-label">faster decisions with real-time data</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-label">extra hires needed with AIOS</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SOLUTION -->
+<section class="bg-main">
+  <div class="orb orb-1" style="background: rgba(12,122,110,0.05);"></div>
+  <div class="orb orb-2" style="background: rgba(55,48,163,0.04);"></div>
+  <div class="container">
+    <div class="solution-header">
+      <div class="solution-header-left reveal">
+        <div class="eyebrow"><span class="dot" style="background: var(--blue);"></span> The Solution</div>
+        <h2>Five Layers. One Operating System. Total Clarity.</h2>
+      </div>
+      <div class="reveal d2">
+        <p class="lead">
+          The AIOS isn't a tool. It's an intelligent layer wrapped around your entire business.
+          Each layer builds on the last — together they give your business a brain that works
+          while you focus on what only you can do.
+        </p>
+      </div>
+    </div>
+
+    <div class="layers-grid">
+      <div class="layer-card reveal d1">
+        <div class="lc-num">Layer 01</div>
+        <div class="lc-icon">🧠</div>
+        <h3>Context</h3>
+        <p>Your AI learns your business — strategy, team, processes, priorities, and history.</p>
+      </div>
+      <div class="layer-card reveal d2">
+        <div class="lc-num">Layer 02</div>
+        <div class="lc-icon">📊</div>
+        <h3>Data</h3>
+        <p>Real-time numbers pulled from your actual systems daily. CRM, financials, pipeline.</p>
+      </div>
+      <div class="layer-card reveal d3">
+        <div class="lc-num">Layer 03</div>
+        <div class="lc-icon">⚡</div>
+        <h3>Intelligence</h3>
+        <p>Meetings, messages, and signals synthesized into a daily brief every morning.</p>
+      </div>
+      <div class="layer-card reveal d4">
+        <div class="lc-num">Layer 04</div>
+        <div class="lc-icon">⚙️</div>
+        <h3>Automate</h3>
+        <p>Every recurring task audited, scored, and automated away. Bandwidth recovered.</p>
+      </div>
+      <div class="layer-card reveal" style="transition-delay: 0.44s;">
+        <div class="lc-num">Layer 05</div>
+        <div class="lc-icon">🚀</div>
+        <h3>Build</h3>
+        <p>Freed bandwidth applied to growth, new revenue, or the life you actually wanted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- OUTCOMES -->
+<section class="bg-warm">
+  <div class="orb orb-1" style="background: rgba(184,134,11,0.04);"></div>
+  <div class="orb orb-2" style="background: rgba(12,122,110,0.04);"></div>
+  <div class="container">
+    <div class="outcomes-grid">
+      <div class="outcomes-left reveal">
+        <div class="eyebrow"><span class="dot" style="background: var(--gold);"></span> What It Brings You</div>
+        <h2>Three Outcomes That Actually Matter</h2>
+        <p class="lead">
+          We measure success three ways — not by tools installed or automations built,
+          but by the real-world changes you feel every week.
+        </p>
+      </div>
+
+      <div class="outcome-cards">
+        <div class="o-card reveal d1">
+          <div class="o-tag">KPI 01</div>
+          <h3>Away-From-Desk Autonomy</h3>
+          <ul>
+            <li>Business keeps moving without your direct involvement</li>
+            <li>Travel, live, relocate — operations follow the system, not you</li>
+            <li>Target: business runs while you sleep</li>
+          </ul>
+        </div>
+        <div class="o-card reveal d2">
+          <div class="o-tag">KPI 02</div>
+          <h3>Task Automation %</h3>
+          <ul>
+            <li>Every recurring task audited and scored for automation potential</li>
+            <li>Each automated task = real hours recovered every week</li>
+            <li>Target: 50%+ automated within 90 days</li>
+          </ul>
+        </div>
+        <div class="o-card reveal d3">
+          <div class="o-tag">KPI 03</div>
+          <h3>Revenue Per Employee</h3>
+          <ul>
+            <li>Add revenue without adding headcount</li>
+            <li>AI handles the work of 2–3 roles at a fraction of the cost</li>
+            <li>Target: same team, significantly higher revenue ceiling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- WHO THIS IS FOR -->
+<section class="bg-main">
+  <div class="orb orb-1" style="background: rgba(26,58,107,0.05);"></div>
+  <div class="orb orb-2" style="background: rgba(22,101,52,0.04);"></div>
+  <div class="container">
+    <div class="who-grid">
+      <div class="who-left reveal">
+        <div class="eyebrow"><span class="dot" style="background: var(--blue);"></span> Who This Is For</div>
+        <h2>Built for the Busy, Successful Operator</h2>
+        <p class="lead">
+          Not for businesses just getting started. For operators who've already won —
+          and now want to scale without working harder.
+        </p>
+
+        <ul class="who-list">
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>You have a working business</h4>
+              <p>Revenue is coming in. The problem isn't sales — it's that you can't get out of the day-to-day.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>You're losing hours to repetitive work</h4>
+              <p>Reports, follow-ups, status updates, meetings that could be memos.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>You want visibility without more dashboards</h4>
+              <p>One daily brief that tells you what happened, what matters, and what to do.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>You're ready to stop being the bottleneck</h4>
+              <p>Your business should scale with systems, not your personal bandwidth.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="quote-card reveal d2">
+        <blockquote>
+          "Most people in this space are either marketers pretending to understand AI,
+          or tech people who don't understand business. I'm a former advisor who built
+          and ran a practice for 30 years. I understand revenue. I build real workflows.
+          And I'm actually implementing this — not consulting from theory."
+        </blockquote>
+        <div class="quote-attr">
+          — David Ortiz, Founder<br/>
+          <span>Advisor AI Partners</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="cta-section bg-warm">
+  <div class="orb orb-1" style="background: rgba(12,122,110,0.05);"></div>
+  <div class="orb orb-2" style="background: rgba(26,58,107,0.04);"></div>
+  <div class="container reveal">
+    <div class="eyebrow" style="justify-content: center;"><span class="dot" style="background: var(--teal);"></span> Get Started</div>
+    <h2>Ready to Build Your AI Operating System?</h2>
+    <p class="lead">
+      One 60-minute call. We'll map your biggest operational bottlenecks,
+      identify what to automate first, and show you exactly what your AIOS
+      could look like — no commitment required.
+    </p>
+    <a href="https://meetings.advisoraipartners.com" class="btn-primary" target="_blank">
+      <span>Book Your Free Strategy Call</span>
+      <span class="arrow">→</span>
+    </a>
+    <p class="cta-trust">Free · 60 min · Honest assessment · No hard sell</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Advisor AI Partners · David Ortiz · Jacksonville, FL → Lisbon, Portugal</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

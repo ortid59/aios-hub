@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Portfolio — Advisor AI Partners</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue:   #2563EB;
+      --blue-light: #DBEAFE;
+      --blue-mid:   #93C5FD;
+      --teal:   #0D9488;
+      --teal-light: #CCFBF1;
+      --gold:   #D97706;
+      --gold-light: #FEF3C7;
+      --purple: #7C3AED;
+      --purple-light: #EDE9FE;
+      --red:    #DC2626;
+      --red-light: #FEE2E2;
+      --bg:     #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text:   #0F172A;
+      --muted:  #64748B;
+      --faint:  #94A3B8;
+    }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); }
+    h1, h2, h3, .syne { font-family: 'Syne', sans-serif; }
+    .mono { font-family: 'Geist Mono', monospace; }
+
+    /* Section header — ux-jonny style */
+    .section-label {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+    }
+    .section-label span {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.18em;
+      white-space: nowrap;
+    }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Priority tile — portfolio map */
+    .ptile {
+      border-radius: 8px; padding: 10px 14px; cursor: default;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      font-size: 12px; font-weight: 500; line-height: 1.35;
+      flex-shrink: 0;
+    }
+    .ptile:hover { transform: translateY(-2px); }
+
+    .ptile-high {
+      background: var(--blue); color: #fff;
+      box-shadow: 3px 3px 0px rgba(37, 99, 235, 0.35);
+    }
+    .ptile-high:hover { box-shadow: 5px 5px 0px rgba(37, 99, 235, 0.45); }
+
+    .ptile-medium {
+      background: var(--teal-light); color: var(--teal);
+      border: 1.5px solid var(--teal);
+      box-shadow: 3px 3px 0px rgba(13, 148, 136, 0.18);
+    }
+    .ptile-medium:hover { box-shadow: 5px 5px 0px rgba(13, 148, 136, 0.28); }
+
+    .ptile-low {
+      background: var(--gold-light); color: var(--gold);
+      border: 1.5px solid rgba(217, 119, 6, 0.4);
+      box-shadow: 3px 3px 0px rgba(217, 119, 6, 0.12);
+    }
+    .ptile-low:hover { box-shadow: 5px 5px 0px rgba(217, 119, 6, 0.22); }
+
+    .ptile-scoping {
+      background: #FAFAFA; color: var(--purple);
+      border: 1.5px dashed var(--purple);
+    }
+    .ptile-scoping:hover { background: var(--purple-light); }
+
+    /* Category row */
+    .cat-row {
+      display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px;
+    }
+    .cat-name {
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px; font-weight: 500; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.12em;
+      width: 90px; flex-shrink: 0; padding-top: 11px;
+      text-align: right;
+    }
+    .cat-tiles {
+      display: flex; flex-wrap: wrap; gap: 8px; flex: 1;
+    }
+
+    /* Detail cards */
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; border-radius: 10px 0 0 10px;
+    }
+    .project-card.high::before  { background: var(--blue); }
+    .project-card.medium::before { background: var(--teal); }
+    .project-card.low::before   { background: var(--gold); }
+    .project-card.scoping::before { background: var(--purple); }
+
+    .project-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      border-color: #CBD5E1;
+    }
+
+    /* Priority badge */
+    .badge {
+      font-family: 'Geist Mono', monospace;
+      font-size: 9px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      padding: 2px 8px; border-radius: 20px;
+      display: inline-block;
+    }
+    .badge-high   { background: var(--blue-light);   color: var(--blue); }
+    .badge-medium { background: var(--teal-light);   color: var(--teal); }
+    .badge-low    { background: var(--gold-light);   color: var(--gold); }
+    .badge-scoping{ background: var(--purple-light); color: var(--purple); }
+
+    /* Stat card */
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    /* Alert */
+    .alert {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border-radius: 8px;
+      font-size: 12.5px; line-height: 1.5;
+    }
+    .alert-warn { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+    .alert-info { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="border-b border-[#E2E8F0] bg-white sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-md bg-[#2563EB] flex items-center justify-center">
+          <span class="text-white text-xs font-bold syne">A</span>
+        </div>
+        <span class="syne font-bold text-sm tracking-tight">Advisor AI Partners</span>
+        <span class="text-[#CBD5E1] text-sm">·</span>
+        <span class="mono text-xs text-[#64748B]">Project Portfolio</span>
+      </div>
+      <div class="mono text-[10px] text-[#94A3B8] tracking-wide">
+        16 ACTIVE PROJECTS · 124 SESSIONS · APRIL 16, 2026
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-10 space-y-12">
+
+    <!-- STATS ROW -->
+    <div class="grid grid-cols-6 gap-3">
+      <div class="stat-card">
+        <div class="syne text-3xl font-bold text-[#0F172A]">16</div>
+        <div class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider mt-1">Active</div>
+      </div>
+      <div class="stat-card border-l-2 border-l-[#2563EB]">
+        <div class="syne text-3xl font-bold text-[#2563EB]">6</div>
+        <div class="mono text-[10px] text-[#2563EB] uppercase tracking-wider mt-1">High</div>
+      </div>
+      <div class="stat-card border-l-2 border-l-[#0D9488]">
+        <div class="syne text-3xl font-bold text-[#0D9488]">5</div>
+        <div class="mono text-[10px] text-[#0D9488] uppercase tracking-wider mt-1">Medium</div>
+      </div>
+      <div class="stat-card border-l-2 border-l-[#D97706]">
+        <div class="syne text-3xl font-bold text-[#D97706]">4</div>
+        <div class="mono text-[10px] text-[#D97706] uppercase tracking-wider mt-1">Low</div>
+      </div>
+      <div class="stat-card border-l-2 border-l-[#7C3AED]">
+        <div class="syne text-3xl font-bold text-[#7C3AED]">1</div>
+        <div class="mono text-[10px] text-[#7C3AED] uppercase tracking-wider mt-1">Scoping</div>
+      </div>
+      <div class="stat-card">
+        <div class="syne text-3xl font-bold text-[#0F172A]">124</div>
+        <div class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider mt-1">Sessions</div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO MAP -->
+    <section>
+      <div class="section-label"><span>Portfolio Map</span></div>
+
+      <div class="bg-white border border-[#E2E8F0] rounded-xl p-6 space-y-5">
+
+        <!-- Legend -->
+        <div class="flex items-center gap-5 pb-4 border-b border-[#F1F5F9]">
+          <span class="mono text-[10px] text-[#94A3B8] uppercase tracking-wider">Priority →</span>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-[#2563EB]"></div><span class="mono text-[10px] text-[#64748B]">High</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-[#CCFBF1] border border-[#0D9488]"></div><span class="mono text-[10px] text-[#64748B]">Medium</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-[#FEF3C7] border border-[#D97706]"></div><span class="mono text-[10px] text-[#64748B]">Low</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-white border border-dashed border-[#7C3AED]"></div><span class="mono text-[10px] text-[#64748B]">Scoping</span></div>
+        </div>
+
+        <!-- Sales Tools -->
+        <div class="cat-row">
+          <div class="cat-name">Sales Tools</div>
+          <div class="cat-tiles">
+            <div class="ptile ptile-high" style="min-width:160px">Sales Command Center v5<br><span class="opacity-70 text-[10px]">2 sessions</span></div>
+            <div class="ptile ptile-high" style="min-width:155px">Follow-Up Machine<br><span class="opacity-70 text-[10px]">2 sessions</span></div>
+            <div class="ptile ptile-medium">GHL Calling App<br><span class="opacity-70 text-[10px]">2 sessions</span></div>
+            <div class="ptile ptile-low">Biz Card Scanner<br><span class="opacity-70 text-[10px]">1 session</span></div>
+            <div class="ptile ptile-low">Opp Kanban<br><span class="opacity-70 text-[10px]">1 session</span></div>
+          </div>
+        </div>
+
+        <!-- Client Work -->
+        <div class="cat-row">
+          <div class="cat-name">Client Work</div>
+          <div class="cat-tiles">
+            <div class="ptile ptile-high" style="min-width:175px">Little Eaters & Talkers<br><span class="opacity-70 text-[10px]">4 sessions · Showcase client</span></div>
+            <div class="ptile ptile-medium">Coastal Maverick<br><span class="opacity-70 text-[10px]">1 session</span></div>
+            <div class="ptile ptile-medium">Hartley Press<br><span class="opacity-70 text-[10px]">1 session</span></div>
+            <div class="ptile ptile-medium">LifeBridge LTC<br><span class="opacity-70 text-[10px]">1 session</span></div>
+            <div class="ptile ptile-low">DuBlasé<br><span class="opacity-70 text-[10px]">1 session</span></div>
+          </div>
+        </div>
+
+        <!-- Infrastructure -->
+        <div class="cat-row">
+          <div class="cat-name">Infrastructure</div>
+          <div class="cat-tiles">
+            <div class="ptile ptile-high" style="min-width:175px">Skills & MCP Development<br><span class="opacity-70 text-[10px]">3 sessions · Foundation</span></div>
+            <div class="ptile ptile-high" style="min-width:165px">Claude Cowork Tracker<br><span class="opacity-70 text-[10px]">1 session · Meta-project</span></div>
+          </div>
+        </div>
+
+        <!-- Other -->
+        <div class="cat-row">
+          <div class="cat-name">Other</div>
+          <div class="cat-tiles">
+            <div class="ptile ptile-high" style="min-width:175px">AI Renaissance Talk<br><span class="opacity-70 text-[10px]">1 session · #1 at UNF</span></div>
+            <div class="ptile ptile-medium">AI Program Pricing<br><span class="opacity-70 text-[10px]">1 session</span></div>
+            <div class="ptile ptile-low">AFES Instructor DB<br><span class="opacity-70 text-[10px]">1 session</span></div>
+            <div class="ptile ptile-scoping">Advisor Niche Lead Engine<br><span class="opacity-70 text-[10px]">0 sessions · New</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OBSERVATIONS -->
+    <section>
+      <div class="section-label"><span>Observations</span></div>
+      <div class="space-y-2">
+        <div class="alert alert-warn">
+          <span>⚠</span>
+          <span><strong>Overlap risk:</strong> SCC v5, Follow-Up Machine, GHL Calling App, and Opportunity Kanban all solve the same problem — sales pipeline management. Consider whether these should converge into one system.</span>
+        </div>
+        <div class="alert alert-warn">
+          <span>⚠</span>
+          <span><strong>Bandwidth risk:</strong> All 16 projects are active with no closed projects. Risk of spreading too thin — prioritize ruthlessly before September.</span>
+        </div>
+        <div class="alert alert-info">
+          <span>📅</span>
+          <span><strong>September 2026 deadline:</strong> Chamber of Commerce (top lead source) goes away at relocation. All revenue systems must run remotely before then. AI Program Pricing is the unlock for clear, sellable packages.</span>
+        </div>
+        <div class="alert alert-info">
+          <span>✓</span>
+          <span><strong>Client work is healthy:</strong> Little Eaters, Hartley Press, Coastal Maverick, DuBlasé show real breadth. Jean (Little Eaters) is the most mature — a strong showcase for content engine capability.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECT DETAIL CARDS -->
+    <section>
+      <div class="section-label"><span>Sales Tools</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div class="project-card high">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-high">High</span>
+            <span class="mono text-[10px] text-[#94A3B8]">2 sessions</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Sales Command Center v5</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Comprehensive sales command center for pipeline, calls, follow-ups, and client tracking.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">GHL pipeline</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Cold calling</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Activity tracking</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Solves 4+ task audit items. Central hub if done right.</p>
+          </div>
+        </div>
+
+        <div class="project-card high">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-high">High</span>
+            <span class="mono text-[10px] text-[#94A3B8]">2 sessions</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Follow-Up Machine</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Follow-up automation for consistent prospect engagement.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Proposal follow-ups</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Prospect engagement</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Dual-purpose — internal tool AND potential product (Tom, Lauren).</p>
+          </div>
+        </div>
+
+        <div class="project-card medium">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-medium">Medium</span>
+            <span class="mono text-[10px] text-[#94A3B8]">2 sessions</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">GHL Calling App</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">GHL-integrated calling app with tag filters for targeted outreach.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Cold calling</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Tag filters</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#D97706] italic">⚠ May converge with SCC — evaluate before building further.</p>
+          </div>
+        </div>
+
+        <div class="project-card low">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-low">Low</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Business Card Scanner & CRM</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Scan business cards at networking events → feed into CRM.</p>
+          <div class="mt-2 pt-2 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Valuable for Chamber events before September 2026.</p>
+          </div>
+        </div>
+
+        <div class="project-card low">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-low">Low</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Technology Opportunity Kanban</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Kanban board for tracking technology opportunities and prospects.</p>
+          <div class="mt-2 pt-2 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#D97706] italic">⚠ May overlap with SCC pipeline view — evaluate first.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label"><span>Client Work</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div class="project-card high">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-high">High</span>
+            <span class="mono text-[10px] text-[#94A3B8]">4 sessions</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Little Eaters & Talkers</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Full content engine — social media, blog, newsletter, podcast, and creative visuals for Jean.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#DBEAFE] text-[#2563EB] rounded-full">Showcase client</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Content engine</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">6 skills deployed</span>
+          </div>
+        </div>
+
+        <div class="project-card medium">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-medium">Medium</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Coastal Maverick Proposal System</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Branded proposal generation for consulting engagements.</p>
+          <div class="mt-2 pt-2 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Pattern could become template for all prospect proposals.</p>
+          </div>
+        </div>
+
+        <div class="project-card medium">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-medium">Medium</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Hartley Press Marketing</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Marketing and AI strategy for Hartley Press.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Active strategy</span>
+          </div>
+        </div>
+
+        <div class="project-card medium">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-medium">Medium</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">LifeBridge LTC Case Study</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Analyze and build case request project for LifeBridge LTC.</p>
+          <div class="mt-2 pt-2 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Supports financial advisor wholesaling revenue engine.</p>
+          </div>
+        </div>
+
+        <div class="project-card low">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-low">Low</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">DuBlasé Proposal</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Branded proposal report.</p>
+          <div class="mt-2 pt-2 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Another use case for the proposal template system.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label"><span>Infrastructure</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div class="project-card high">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-high">High</span>
+            <span class="mono text-[10px] text-[#94A3B8]">3 sessions</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Skills & MCP Development</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Build and refine Claude skills ecosystem — voice, content, creative, MCPs.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#DBEAFE] text-[#2563EB] rounded-full">Foundation of AIOS</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">David voice</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Content engine</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Call coaching</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">All deployed skills: David voice, blog, content engine, creative engine, call coaching, meeting recap, client onboarding.</p>
+          </div>
+        </div>
+
+        <div class="project-card high">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-high">High</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Claude Cowork Tracker</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">HTML dashboard tracking all Claude projects across platforms.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#DBEAFE] text-[#2563EB] rounded-full">Meta-project</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">124 sessions cataloged</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label"><span>Other</span></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div class="project-card high">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-high">High</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">AI Renaissance Talk</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Keynote on AI transformation for business owners. #1 rated of 6-7 speakers at UNF (~100 attendees).</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#DBEAFE] text-[#2563EB] rounded-full">Brand authority</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Pipeline feeder</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Michelangelo Toolkit</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Seek more speaking opps before September. Audience → warm leads.</p>
+          </div>
+        </div>
+
+        <div class="project-card medium">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-medium">Medium</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">AI Program Pricing & Tiers</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Design pricing structure and service tiers for AI consulting.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#FEF3C7] text-[#D97706] rounded-full">Sept. critical</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Rebranding support</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Need clear, sellable packages before Lisbon relocation.</p>
+          </div>
+        </div>
+
+        <div class="project-card low">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-low">Low</span>
+            <span class="mono text-[10px] text-[#94A3B8]">1 session</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">AFES Instructor Database</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Scrape AFES directory for financial advisor contacts.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Scraper built</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">LifeBridge pipeline</span>
+          </div>
+        </div>
+
+        <div class="project-card scoping">
+          <div class="flex items-center justify-between mb-3">
+            <span class="badge badge-scoping">Scoping</span>
+            <span class="mono text-[10px] text-[#94A3B8]">0 sessions · New</span>
+          </div>
+          <h3 class="syne font-bold text-sm mb-1">Advisor Niche Lead Engine</h3>
+          <p class="text-[12px] text-[#64748B] leading-relaxed mb-3">Hyper-specific advisor lead list engine — enriched, email-verified, FINRA/SEC-compliant outreach.</p>
+          <div class="flex flex-wrap gap-1">
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#EDE9FE] text-[#7C3AED] rounded-full">Potential SaaS</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Todd Howland origin</span>
+            <span class="mono text-[9px] px-2 py-0.5 bg-[#F1F5F9] text-[#64748B] rounded-full">Compliance layer</span>
+          </div>
+          <div class="mt-3 pt-3 border-t border-[#F1F5F9]">
+            <p class="text-[11px] text-[#94A3B8] italic">Dual-purpose: internal LifeBridge tool AND advisor client service. Differentiator over Clay/Apollo.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="border-t border-[#E2E8F0] pt-8 pb-4 flex items-center justify-between">
+      <span class="mono text-[10px] text-[#94A3B8]">ADVISOR AI PARTNERS · PROJECT PORTFOLIO · APRIL 2026</span>
+      <span class="mono text-[10px] text-[#94A3B8]">Source: context/projects.md</span>
+    </div>
+
+  </div>
+</body>
+</html>

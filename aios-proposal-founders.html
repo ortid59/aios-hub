@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Operating System for Founders — Advisor AI Partners</title>
+<meta name="description" content="Stop working in your business. Build the AI layer that runs it for you. Five layers. Measurable freedom.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Manrope','sans-serif'],
+        display: ['Space Grotesk','sans-serif'],
+        serif: ['Instrument Serif','serif'],
+      },
+    }
+  }
+}
+</script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+:root {
+  --blue: #1B4F8A;
+  --blue-dark: #143D6B;
+  --blue-mid: rgba(27,79,138,0.12);
+  --blue-soft: rgba(27,79,138,0.06);
+  --teal: #0D9E8E;
+  --teal-soft: rgba(13,158,142,0.1);
+  --gold: #C9A227;
+  --gold-soft: rgba(201,162,39,0.12);
+  --text: #0C1523;
+  --text-dim: #4B5B73;
+  --text-faint: #94A3B8;
+  --border: rgba(27,79,138,0.11);
+  --border-strong: rgba(27,79,138,0.22);
+  --bg: #FFFFFF;
+  --bg-subtle: #F6F9FF;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Manrope', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Noise */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Nav */
+#site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+  padding: 20px 0;
+}
+#site-nav.scrolled {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(27,79,138,0.07);
+  padding: 14px 0;
+}
+
+/* Dot grid bg */
+.dot-grid {
+  background-image: radial-gradient(rgba(27,79,138,0.1) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Line grid */
+.line-grid {
+  background-image:
+    linear-gradient(rgba(27,79,138,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27,79,138,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Grid mask */
+.grid-mask {
+  mask-image: radial-gradient(ellipse at 50% 0%, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 40%, transparent 80%);
+}
+
+/* Mono label */
+.mono-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+/* Section badge */
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: 1px solid rgba(13,158,142,0.25);
+  background: var(--teal-soft);
+}
+
+/* Reveal */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+}
+
+/* Card */
+.glass-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  transition: all 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+.glass-card:hover {
+  border-color: rgba(27,79,138,0.25);
+  box-shadow: 0 20px 60px rgba(27,79,138,0.09), 0 4px 16px rgba(27,79,138,0.05);
+  transform: translateY(-4px);
+}
+
+/* Hairline */
+.hairline {
+  height: 1px;
+  background: var(--border);
+}
+
+/* Glow blob */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+/* Buttons */
+.btn-blue {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 9999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  text-decoration: none;
+}
+.btn-blue:hover {
+  background: var(--blue-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 48px rgba(27,79,138,0.28);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 36px;
+  border: 1.5px solid var(--border-strong);
+  color: var(--text);
+  border-radius: 9999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  text-decoration: none;
+  background: transparent;
+}
+.btn-outline:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+
+/* Operator trap section dark */
+.dark-section {
+  background: #0C1523;
+  color: #E2EBF8;
+}
+
+/* Layer flow */
+.layer-card {
+  position: relative;
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* KPI big number */
+.kpi-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  color: var(--blue);
+  line-height: 1;
+}
+
+/* Pricing card featured */
+.pricing-featured {
+  background: var(--blue);
+  border: 2px solid var(--blue) !important;
+}
+.pricing-featured * { color: white !important; }
+.pricing-featured .check-bg { background: rgba(255,255,255,0.15) !important; }
+.pricing-featured .btn-pricing {
+  background: white;
+  color: var(--blue);
+}
+.pricing-featured .btn-pricing:hover {
+  background: #E8F0FB;
+  transform: translateY(-2px);
+}
+.pricing-featured .tier-label { color: rgba(255,255,255,0.6) !important; }
+
+.btn-pricing {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px 24px;
+  border-radius: 9999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-pricing-outline {
+  background: transparent;
+  border: 1.5px solid var(--border-strong);
+  color: var(--text);
+}
+.btn-pricing-outline:hover {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: var(--blue-soft);
+}
+.btn-pricing-teal {
+  background: var(--teal);
+  color: white;
+}
+.btn-pricing-teal:hover {
+  background: #0A8A7C;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(13,158,142,0.3);
+}
+
+.check-bg {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  background: var(--teal-soft);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+/* Scroll bounce */
+@keyframes scrollBounce {
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(8px)}
+}
+.bounce { animation: scrollBounce 2s ease-in-out infinite; }
+
+/* Pulse */
+@keyframes pulseGlow {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.6;transform:scale(1.4)}
+}
+.pulse-dot { animation: pulseGlow 2.2s ease-in-out infinite; }
+
+/* Marquee */
+@keyframes marqueeL {
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+.marquee-track { animation: marqueeL 28s linear infinite; }
+.marquee-wrap {
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+/* Hero counter */
+.hero-stat-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--blue);
+  line-height: 1;
+}
+
+/* Step connector line */
+.step-connector {
+  position: absolute;
+  top: 28px;
+  left: 100%;
+  width: calc(100% - 56px);
+  height: 2px;
+  background: linear-gradient(to right, var(--teal), rgba(13,158,142,0.15));
+  transform: translateX(-50%);
+  z-index: 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================================================
+  NAVIGATION
+================================================ -->
+<nav id="site-nav">
+  <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+    <a href="#" class="font-display font-bold text-[17px] tracking-tight text-[var(--text)]" style="color:var(--text)">
+      <span style="color:var(--blue)">ADVISOR</span> AI PARTNERS
+    </a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#problem" class="text-sm font-medium text-[var(--text-dim)] hover:text-[var(--blue)] transition-colors">The Problem</a>
+      <a href="#solution" class="text-sm font-medium text-[var(--text-dim)] hover:text-[var(--blue)] transition-colors">AIOS</a>
+      <a href="#layers" class="text-sm font-medium text-[var(--text-dim)] hover:text-[var(--blue)] transition-colors">How It Works</a>
+      <a href="#pricing" class="text-sm font-medium text-[var(--text-dim)] hover:text-[var(--blue)] transition-colors">Investment</a>
+    </div>
+    <a href="#cta" class="btn-blue" style="padding:11px 26px;font-size:13px;">
+      Schedule a Call
+      <iconify-icon icon="solar:arrow-right-linear" width="16"></iconify-icon>
+    </a>
+  </div>
+</nav>
+
+<!-- ================================================
+  HERO
+================================================ -->
+<section id="home" class="relative min-h-screen flex flex-col justify-center overflow-hidden pt-24 pb-16">
+  <!-- Backgrounds -->
+  <div class="dot-grid grid-mask absolute inset-0 pointer-events-none opacity-60"></div>
+  <div class="blob" style="width:600px;height:600px;background:rgba(27,79,138,0.07);top:-100px;right:-150px;"></div>
+  <div class="blob" style="width:500px;height:500px;background:rgba(13,158,142,0.05);bottom:-100px;left:-100px;"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+    <!-- Pre-headline badge -->
+    <div class="mb-8" data-reveal>
+      <span class="section-badge">
+        <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background:var(--teal)"></span>
+        <span class="mono-label" style="color:var(--teal)">For Founders & Business Owners</span>
+      </span>
+    </div>
+
+    <!-- Main headline -->
+    <div class="mb-8" data-reveal>
+      <h1 class="font-display font-bold tracking-tight leading-[0.92]" style="font-size:clamp(3.2rem,8vw,7.5rem);color:var(--text)">
+        You didn't build<br>
+        a business to
+        <span class="font-serif italic font-normal" style="color:var(--blue);font-size:1.05em;line-height:1"> manage</span><br>
+        one.
+      </h1>
+    </div>
+
+    <!-- Subheadline -->
+    <div class="max-w-2xl mb-12" data-reveal>
+      <p class="leading-relaxed" style="font-size:clamp(1rem,2vw,1.2rem);color:var(--text-dim)">
+        Most founders spend 80% of their time on operations — checking dashboards, attending meetings, fighting fires — instead of building. The AI Operating System changes that. One layer at a time.
+      </p>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex flex-wrap gap-4 mb-20" data-reveal>
+      <a href="#cta" class="btn-blue">
+        Schedule a Strategy Call
+        <iconify-icon icon="solar:calendar-bold" width="18"></iconify-icon>
+      </a>
+      <a href="#solution" class="btn-outline">
+        See How It Works
+        <iconify-icon icon="solar:arrow-down-linear" width="16"></iconify-icon>
+      </a>
+    </div>
+
+    <!-- Hero stats bar -->
+    <div class="hairline mb-10" data-reveal></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8" data-reveal>
+      <div>
+        <div class="hero-stat-val" id="stat-hours">0</div>
+        <div class="mono-label mt-2" style="color:var(--text-faint)">Hours/week recovered</div>
+      </div>
+      <div>
+        <div class="hero-stat-val" id="stat-tasks">0%</div>
+        <div class="mono-label mt-2" style="color:var(--text-faint)">Tasks automated</div>
+      </div>
+      <div>
+        <div class="hero-stat-val" id="stat-weeks">0</div>
+        <div class="mono-label mt-2" style="color:var(--text-faint)">Weeks to first results</div>
+      </div>
+      <div>
+        <div class="hero-stat-val">5</div>
+        <div class="mono-label mt-2" style="color:var(--text-faint)">Layers to full autonomy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40 bounce">
+    <iconify-icon icon="solar:alt-arrow-down-linear" width="20" style="color:var(--blue)"></iconify-icon>
+  </div>
+</section>
+
+<!-- ================================================
+  MARQUEE BAND
+================================================ -->
+<div class="py-5 overflow-hidden border-y" style="border-color:var(--border);background:var(--bg-subtle)">
+  <div class="marquee-wrap overflow-hidden">
+    <div class="marquee-track flex gap-10 whitespace-nowrap">
+      <div class="flex gap-10">
+        <span class="mono-label" style="color:var(--text-faint)">Context Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Data Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Intelligence Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Automation Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Build Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Away-From-Desk Autonomy</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Revenue Per Employee</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Task Automation %</span>
+        <span style="color:var(--border-strong)">·</span>
+      </div>
+      <div class="flex gap-10">
+        <span class="mono-label" style="color:var(--text-faint)">Context Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Data Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Intelligence Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Automation Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Build Layer</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Away-From-Desk Autonomy</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Revenue Per Employee</span>
+        <span style="color:var(--border-strong)">·</span>
+        <span class="mono-label" style="color:var(--text-faint)">Task Automation %</span>
+        <span style="color:var(--border-strong)">·</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+  THE PROBLEM — OPERATOR TRAP (dark section)
+================================================ -->
+<section id="problem" class="relative py-28 overflow-hidden dark-section">
+  <!-- Subtle blue glow -->
+  <div class="blob" style="width:700px;height:700px;background:rgba(27,79,138,0.12);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="line-grid absolute inset-0 opacity-20 pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <!-- Section label -->
+    <div class="mb-14" data-reveal>
+      <span class="mono-label mb-4 block" style="color:var(--teal)">01 / The Problem</span>
+      <h2 class="font-display font-bold tracking-tight leading-[0.94]" style="font-size:clamp(2.5rem,6vw,5rem);color:#E2EBF8">
+        The Operator Trap.<br>
+        <span class="font-serif italic font-normal" style="font-size:0.95em;color:rgba(226,235,248,0.55)">And why working harder won't fix it.</span>
+      </h2>
+    </div>
+
+    <!-- Pain point grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20" data-reveal>
+      <div class="rounded-2xl p-7" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+        <div class="font-display font-bold mb-3" style="font-size:clamp(2.5rem,5vw,4rem);color:var(--blue);line-height:1">80%</div>
+        <p class="text-sm leading-relaxed" style="color:rgba(226,235,248,0.65)">of your bandwidth goes to "must-dos" — email, dashboards, check-ins, admin. Not growth. Not strategy. Just survival.</p>
+      </div>
+      <div class="rounded-2xl p-7" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+        <div class="font-display font-bold mb-3" style="font-size:clamp(2.5rem,5vw,4rem);color:var(--teal);line-height:1">1:1</div>
+        <p class="text-sm leading-relaxed" style="color:rgba(226,235,248,0.65)">Every dollar of growth adds a dollar of complexity. More clients, more people, more systems — and somehow, less time than before.</p>
+      </div>
+      <div class="rounded-2xl p-7" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+        <div class="font-display font-bold mb-3" style="font-size:clamp(2.5rem,5vw,4rem);color:var(--gold);line-height:1">$0</div>
+        <p class="text-sm leading-relaxed" style="color:rgba(226,235,248,0.65)">generated by attending your own stand-up. Nothing scales when the founder is the bottleneck — for everything.</p>
+      </div>
+    </div>
+
+    <!-- Narrative break -->
+    <div class="max-w-3xl mb-16" data-reveal>
+      <p class="leading-relaxed font-light" style="font-size:clamp(1.1rem,2.5vw,1.4rem);color:rgba(226,235,248,0.75)">
+        The old answer was <em>hire more people</em>. More payroll, more management overhead, more complexity.
+        A bigger machine that still needs you in the driver's seat.
+      </p>
+      <p class="mt-6 leading-relaxed font-light" style="font-size:clamp(1.1rem,2.5vw,1.4rem);color:rgba(226,235,248,0.75)">
+        The new answer is <em>less</em> — less manual work, fewer people needed, fewer hours trapped in operations.
+        An AI layer that handles the operational weight so you can work on what actually moves the needle.
+      </p>
+    </div>
+
+    <!-- Pain checklist -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" data-reveal>
+      <div class="flex items-start gap-4 py-4 border-t" style="border-color:rgba(255,255,255,0.08)">
+        <iconify-icon icon="solar:close-circle-linear" width="20" style="color:#EF4444;flex-shrink:0;margin-top:2px"></iconify-icon>
+        <p class="text-sm" style="color:rgba(226,235,248,0.65)">You're the only one who knows how things work — so nothing moves without you</p>
+      </div>
+      <div class="flex items-start gap-4 py-4 border-t" style="border-color:rgba(255,255,255,0.08)">
+        <iconify-icon icon="solar:close-circle-linear" width="20" style="color:#EF4444;flex-shrink:0;margin-top:2px"></iconify-icon>
+        <p class="text-sm" style="color:rgba(226,235,248,0.65)">You check the same dashboards manually every day — no one synthesizes it for you</p>
+      </div>
+      <div class="flex items-start gap-4 py-4 border-t" style="border-color:rgba(255,255,255,0.08)">
+        <iconify-icon icon="solar:close-circle-linear" width="20" style="color:#EF4444;flex-shrink:0;margin-top:2px"></iconify-icon>
+        <p class="text-sm" style="color:rgba(226,235,248,0.65)">Follow-up, reporting, scheduling, intake — all in your head or on your plate</p>
+      </div>
+      <div class="flex items-start gap-4 py-4 border-t" style="border-color:rgba(255,255,255,0.08)">
+        <iconify-icon icon="solar:close-circle-linear" width="20" style="color:#EF4444;flex-shrink:0;margin-top:2px"></iconify-icon>
+        <p class="text-sm" style="color:rgba(226,235,248,0.65)">Taking a vacation means the business slows — or you're working from the beach anyway</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+  THE SOLUTION — AIOS OVERVIEW
+================================================ -->
+<section id="solution" class="relative py-28 overflow-hidden" style="background:var(--bg-subtle)">
+  <div class="blob" style="width:500px;height:500px;background:rgba(27,79,138,0.06);top:-100px;right:-100px;"></div>
+  <div class="blob" style="width:400px;height:400px;background:rgba(13,158,142,0.06);bottom:-50px;left:-50px;"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10">
+    <!-- Section label + heading -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-20">
+      <div class="lg:col-span-6" data-reveal>
+        <span class="mono-label mb-6 block" style="color:var(--teal)">02 / The Solution</span>
+        <h2 class="font-display font-bold tracking-tight leading-[0.93]" style="font-size:clamp(2.4rem,5.5vw,4.8rem);color:var(--text)">
+          The AI Operating<br>
+          <span class="font-serif italic font-normal" style="color:var(--blue);font-size:1.05em">System.</span>
+        </h2>
+      </div>
+      <div class="lg:col-span-6 flex flex-col justify-center" data-reveal>
+        <p class="leading-relaxed mb-6" style="font-size:1.1rem;color:var(--text-dim)">
+          Your business gets an AI layer — an autonomous intelligence system that understands your context, watches your data, synthesizes information, and progressively automates the work that's eating your time.
+        </p>
+        <p class="leading-relaxed" style="color:var(--text-dim)">
+          We build it in five layers, each one independently valuable. You feel the ROI after the first layer. By the fifth, your business runs while you sleep.
+        </p>
+      </div>
+    </div>
+
+    <!-- Five layers visual flow -->
+    <div class="relative mb-8" data-reveal>
+      <div class="flex flex-col md:flex-row gap-4 md:gap-2 items-stretch">
+
+        <!-- Layer 1: Context -->
+        <div class="flex-1 relative z-10">
+          <div class="glass-card h-full p-6" style="border-color:rgba(27,79,138,0.15)">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:var(--blue-mid)">
+              <iconify-icon icon="solar:book-bookmark-linear" width="22" style="color:var(--blue)"></iconify-icon>
+            </div>
+            <div class="mono-label mb-2" style="color:var(--text-faint)">Layer 01</div>
+            <div class="font-display font-bold text-lg mb-2" style="color:var(--blue)">Context</div>
+            <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Your AI learns your business — strategy, team, processes, history — so every response is grounded in reality.</p>
+          </div>
+          <!-- Arrow -->
+          <div class="hidden md:flex absolute top-1/2 -right-3 z-20 -translate-y-1/2">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center" style="background:var(--teal);box-shadow:0 0 0 4px rgba(13,158,142,0.15)">
+              <iconify-icon icon="solar:alt-arrow-right-bold" width="12" class="text-white"></iconify-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 2: Data -->
+        <div class="flex-1 relative z-10">
+          <div class="glass-card h-full p-6" style="border-color:rgba(27,79,138,0.15)">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(13,158,142,0.1)">
+              <iconify-icon icon="solar:database-linear" width="22" style="color:var(--teal)"></iconify-icon>
+            </div>
+            <div class="mono-label mb-2" style="color:var(--text-faint)">Layer 02</div>
+            <div class="font-display font-bold text-lg mb-2" style="color:var(--teal)">Data</div>
+            <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Real-time collectors pull from your actual systems daily — CRM, finances, calendar — into a live data warehouse.</p>
+          </div>
+          <div class="hidden md:flex absolute top-1/2 -right-3 z-20 -translate-y-1/2">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center" style="background:var(--teal);box-shadow:0 0 0 4px rgba(13,158,142,0.15)">
+              <iconify-icon icon="solar:alt-arrow-right-bold" width="12" class="text-white"></iconify-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 3: Intelligence -->
+        <div class="flex-1 relative z-10">
+          <div class="glass-card h-full p-6" style="border-color:rgba(27,79,138,0.15)">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(201,162,39,0.1)">
+              <iconify-icon icon="solar:brain-linear" width="22" style="color:var(--gold)"></iconify-icon>
+            </div>
+            <div class="mono-label mb-2" style="color:var(--text-faint)">Layer 03</div>
+            <div class="font-display font-bold text-lg mb-2" style="color:var(--gold)">Intelligence</div>
+            <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Meetings, messages, signals — synthesized every morning into a daily brief. You wake up knowing everything.</p>
+          </div>
+          <div class="hidden md:flex absolute top-1/2 -right-3 z-20 -translate-y-1/2">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center" style="background:var(--teal);box-shadow:0 0 0 4px rgba(13,158,142,0.15)">
+              <iconify-icon icon="solar:alt-arrow-right-bold" width="12" class="text-white"></iconify-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 4: Automate -->
+        <div class="flex-1 relative z-10">
+          <div class="glass-card h-full p-6" style="border-color:rgba(27,79,138,0.15)">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(27,79,138,0.08)">
+              <iconify-icon icon="solar:settings-bold-duotone" width="22" style="color:var(--blue)"></iconify-icon>
+            </div>
+            <div class="mono-label mb-2" style="color:var(--text-faint)">Layer 04</div>
+            <div class="font-display font-bold text-lg mb-2" style="color:var(--blue)">Automate</div>
+            <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Audit every task. Score each one. Automate them away one by one. Each task automated = bandwidth recovered.</p>
+          </div>
+          <div class="hidden md:flex absolute top-1/2 -right-3 z-20 -translate-y-1/2">
+            <div class="w-6 h-6 rounded-full flex items-center justify-center" style="background:var(--teal);box-shadow:0 0 0 4px rgba(13,158,142,0.15)">
+              <iconify-icon icon="solar:alt-arrow-right-bold" width="12" class="text-white"></iconify-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 5: Build -->
+        <div class="flex-1 relative z-10">
+          <div class="glass-card h-full p-6" style="border-color:rgba(13,158,142,0.25);box-shadow:0 0 0 1px rgba(13,158,142,0.1)">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:var(--teal);box-shadow:0 8px 20px rgba(13,158,142,0.3)">
+              <iconify-icon icon="solar:rocket-2-bold" width="22" class="text-white"></iconify-icon>
+            </div>
+            <div class="mono-label mb-2" style="color:var(--teal)">Layer 05</div>
+            <div class="font-display font-bold text-lg mb-2" style="color:var(--teal)">Build</div>
+            <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Freed bandwidth applied to growth. New revenue lines, new markets, new products. Work ON the business.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom tagline -->
+    <div class="text-center pt-6" data-reveal>
+      <p class="font-serif italic text-2xl" style="color:var(--text-dim)">
+        Each layer is independently valuable. Together, they give you your business back.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+  HOW IT WORKS — LAYER DEEP DIVE
+================================================ -->
+<section id="layers" class="relative py-28 overflow-hidden" style="background:#FFFFFF">
+  <div class="dot-grid absolute inset-0 opacity-40 pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <!-- Heading -->
+    <div class="text-center mb-20" data-reveal>
+      <span class="mono-label mb-5 block" style="color:var(--teal)">03 / How It Works</span>
+      <h2 class="font-display font-bold tracking-tight" style="font-size:clamp(2.2rem,5vw,4rem);color:var(--text)">
+        Five layers. One system.
+        <span class="font-serif italic font-normal" style="color:var(--blue)"> Total clarity.</span>
+      </h2>
+      <p class="mt-5 max-w-2xl mx-auto" style="color:var(--text-dim);font-size:1.05rem;line-height:1.7">
+        We install each layer methodically. You see value at each step — no six-month implementation before results.
+      </p>
+    </div>
+
+    <!-- Layer cards — alternating layout -->
+    <div class="space-y-6">
+
+      <!-- L1 Context -->
+      <div class="glass-card p-8 md:p-10" data-reveal>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-1 flex md:flex-col items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:var(--blue-mid)">
+              <iconify-icon icon="solar:book-bookmark-linear" width="26" style="color:var(--blue)"></iconify-icon>
+            </div>
+            <div class="font-display font-bold text-4xl" style="color:var(--border-strong)">01</div>
+          </div>
+          <div class="md:col-span-4">
+            <div class="mono-label mb-2" style="color:var(--teal)">Context Layer</div>
+            <h3 class="font-display font-bold text-2xl mb-3" style="color:var(--blue)">Your AI learns your business</h3>
+            <p style="color:var(--text-dim);line-height:1.7;font-size:0.95rem">Strategy, team, clients, processes, history, competitors, goals — all structured into a living knowledge base your AI accesses in every session.</p>
+          </div>
+          <div class="md:col-span-3 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">What We Build</div>
+              <ul class="space-y-2 text-sm" style="color:var(--text-dim)">
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Business context files</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Strategy & goals documentation</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Session initialization (/prime)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-span-4 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">The Outcome</div>
+              <p class="text-sm leading-relaxed" style="color:var(--text-dim)">No more re-explaining your situation in every conversation. Your AI knows who you are, what you're building, and why — from day one.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L2 Data -->
+      <div class="glass-card p-8 md:p-10" data-reveal>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-1 flex md:flex-col items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,158,142,0.1)">
+              <iconify-icon icon="solar:database-linear" width="26" style="color:var(--teal)"></iconify-icon>
+            </div>
+            <div class="font-display font-bold text-4xl" style="color:var(--border-strong)">02</div>
+          </div>
+          <div class="md:col-span-4">
+            <div class="mono-label mb-2" style="color:var(--teal)">Data Layer</div>
+            <h3 class="font-display font-bold text-2xl mb-3" style="color:var(--teal)">Your AI sees the numbers</h3>
+            <p style="color:var(--text-dim);line-height:1.7;font-size:0.95rem">We connect your real data sources — CRM, bank accounts, calendar, revenue — and run daily collectors that keep a live data warehouse current.</p>
+          </div>
+          <div class="md:col-span-3 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">What We Connect</div>
+              <ul class="space-y-2 text-sm" style="color:var(--text-dim)">
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>CRM / Sales pipeline</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Financial accounts & P&L</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Custom KPI collectors</li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-span-4 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">The Outcome</div>
+              <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Ask "how's pipeline this week?" and get a real answer — with numbers from your actual systems, not your memory.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L3 Intelligence -->
+      <div class="glass-card p-8 md:p-10" data-reveal>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-1 flex md:flex-col items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(201,162,39,0.1)">
+              <iconify-icon icon="solar:brain-linear" width="26" style="color:var(--gold)"></iconify-icon>
+            </div>
+            <div class="font-display font-bold text-4xl" style="color:var(--border-strong)">03</div>
+          </div>
+          <div class="md:col-span-4">
+            <div class="mono-label mb-2" style="color:var(--teal)">Intelligence Layer</div>
+            <h3 class="font-display font-bold text-2xl mb-3" style="color:var(--gold)">Your AI synthesizes everything</h3>
+            <p style="color:var(--text-dim);line-height:1.7;font-size:0.95rem">Meeting transcripts, Slack messages, deal signals, and market data — processed nightly, delivered as your morning briefing every day at 7am.</p>
+          </div>
+          <div class="md:col-span-3 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">What It Watches</div>
+              <ul class="space-y-2 text-sm" style="color:var(--text-dim)">
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Meeting transcripts & notes</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Team Slack / messages</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Daily brief via Telegram</li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-span-4 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">The Outcome</div>
+              <p class="text-sm leading-relaxed" style="color:var(--text-dim)">You stop attending meetings just to stay informed. Your AI attends for you and surfaces what matters — with action items, not transcripts.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L4 Automate -->
+      <div class="glass-card p-8 md:p-10" data-reveal>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-1 flex md:flex-col items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:var(--blue-mid)">
+              <iconify-icon icon="solar:settings-bold-duotone" width="26" style="color:var(--blue)"></iconify-icon>
+            </div>
+            <div class="font-display font-bold text-4xl" style="color:var(--border-strong)">04</div>
+          </div>
+          <div class="md:col-span-4">
+            <div class="mono-label mb-2" style="color:var(--teal)">Automation Layer</div>
+            <h3 class="font-display font-bold text-2xl mb-3" style="color:var(--blue)">Your AI eliminates the busywork</h3>
+            <p style="color:var(--text-dim);line-height:1.7;font-size:0.95rem">We audit every recurring task, score it on automation potential, and systematically build replacements. Each task automated is bandwidth permanently recovered.</p>
+          </div>
+          <div class="md:col-span-3 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">What We Automate</div>
+              <ul class="space-y-2 text-sm" style="color:var(--text-dim)">
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Follow-up sequences</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Reporting & dashboards</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Intake & onboarding flows</li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-span-4 md:border-l" style="border-color:var(--border)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">The Outcome</div>
+              <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Your Task Automation % climbs week over week. The scoreboard is visible. The freed hours are real — not theoretical.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- L5 Build -->
+      <div class="glass-card p-8 md:p-10" style="border-color:rgba(13,158,142,0.25);background:rgba(13,158,142,0.02)" data-reveal>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          <div class="md:col-span-1 flex md:flex-col items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:var(--teal);box-shadow:0 8px 24px rgba(13,158,142,0.3)">
+              <iconify-icon icon="solar:rocket-2-bold" width="26" class="text-white"></iconify-icon>
+            </div>
+            <div class="font-display font-bold text-4xl" style="color:rgba(13,158,142,0.25)">05</div>
+          </div>
+          <div class="md:col-span-4">
+            <div class="mono-label mb-2" style="color:var(--teal)">Build Layer</div>
+            <h3 class="font-display font-bold text-2xl mb-3" style="color:var(--teal)">Your AI becomes a growth engine</h3>
+            <p style="color:var(--text-dim);line-height:1.7;font-size:0.95rem">Freed bandwidth gets redirected to growth. New revenue lines, new markets, new offers. You work ON the business — with AI as your co-founder.</p>
+          </div>
+          <div class="md:col-span-3 md:border-l" style="border-color:rgba(13,158,142,0.2)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">What This Unlocks</div>
+              <ul class="space-y-2 text-sm" style="color:var(--text-dim)">
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>New product development</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Sales & lead gen systems</li>
+                <li class="flex items-center gap-2"><div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>Strategic AI initiatives</li>
+              </ul>
+            </div>
+          </div>
+          <div class="md:col-span-4 md:border-l" style="border-color:rgba(13,158,142,0.2)">
+            <div class="md:pl-8">
+              <div class="mono-label mb-3" style="color:var(--text-faint)">The Outcome</div>
+              <p class="text-sm leading-relaxed" style="color:var(--text-dim)">You step away from the business for a week — and it keeps running. Clients get served. Revenue flows. You didn't have to touch it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+  THREE KPIs
+================================================ -->
+<section id="kpis" class="relative py-28 overflow-hidden dark-section">
+  <div class="blob" style="width:600px;height:600px;background:rgba(13,158,142,0.08);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <!-- Heading -->
+    <div class="mb-20 text-center" data-reveal>
+      <span class="mono-label mb-5 block" style="color:var(--teal)">04 / How We Measure Success</span>
+      <h2 class="font-display font-bold tracking-tight" style="font-size:clamp(2.2rem,5vw,4rem);color:#E2EBF8">
+        Three numbers.<br>
+        <span class="font-serif italic font-normal" style="color:rgba(226,235,248,0.5)">Everything else is noise.</span>
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- KPI 1 -->
+      <div class="text-center" data-reveal>
+        <div class="rounded-2xl p-8 mb-6" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:rgba(27,79,138,0.25)">
+            <iconify-icon icon="solar:watch-square-minimalistic-linear" width="28" style="color:#60A5FA"></iconify-icon>
+          </div>
+          <div class="font-display font-bold mb-2" id="kpi1" style="font-size:clamp(3rem,7vw,5.5rem);color:var(--blue);line-height:1">0h</div>
+          <div class="mono-label mb-4" style="color:rgba(226,235,248,0.4)">Away-From-Desk Autonomy</div>
+          <p class="text-sm leading-relaxed" style="color:rgba(226,235,248,0.55)">Hours per day your business runs without you. Target: it runs while you sleep. Full AIOS clients average 6–8 hours of autonomous operation daily.</p>
+        </div>
+      </div>
+
+      <!-- KPI 2 -->
+      <div class="text-center" data-reveal>
+        <div class="rounded-2xl p-8 mb-6" style="background:rgba(255,255,255,0.04);border:1px solid rgba(13,158,142,0.2)">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:rgba(13,158,142,0.2)">
+            <iconify-icon icon="solar:graph-new-up-bold-duotone" width="28" style="color:var(--teal)"></iconify-icon>
+          </div>
+          <div class="font-display font-bold mb-2" id="kpi2" style="font-size:clamp(3rem,7vw,5.5rem);color:var(--teal);line-height:1">0%</div>
+          <div class="mono-label mb-4" style="color:rgba(226,235,248,0.4)">Task Automation %</div>
+          <p class="text-sm leading-relaxed" style="color:rgba(226,235,248,0.55)">Percentage of your recurring tasks handled by AI. We use a scoreboard of all your tasks and track this publicly. Most clients start at 5–10% and grow to 60%+.</p>
+        </div>
+      </div>
+
+      <!-- KPI 3 -->
+      <div class="text-center" data-reveal>
+        <div class="rounded-2xl p-8 mb-6" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:rgba(201,162,39,0.15)">
+            <iconify-icon icon="solar:dollar-minimalistic-linear" width="28" style="color:var(--gold)"></iconify-icon>
+          </div>
+          <div class="font-display font-bold mb-2" id="kpi3" style="font-size:clamp(3rem,7vw,5.5rem);color:var(--gold);line-height:1">$0</div>
+          <div class="mono-label mb-4" style="color:rgba(226,235,248,0.4)">Revenue Per Employee</div>
+          <p class="text-sm leading-relaxed" style="color:rgba(226,235,248,0.55)">Total revenue ÷ headcount. AIOS clients don't build bigger companies — they build leaner, faster, more profitable ones. The goal: more output, same (or fewer) people.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Philosophy statement -->
+    <div class="mt-16 text-center max-w-3xl mx-auto" data-reveal>
+      <div class="hairline mb-10" style="background:rgba(255,255,255,0.08)"></div>
+      <p class="font-serif italic" style="font-size:clamp(1.1rem,2.5vw,1.5rem);color:rgba(226,235,248,0.6);line-height:1.6">
+        "We're not building bigger companies. We're building leaner, faster, more profitable ones — where AI handles the machine, and you drive the vision."
+      </p>
+      <p class="mt-4 mono-label" style="color:rgba(226,235,248,0.3)">— David Ortiz, Founder, Advisor AI Partners</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+  PRICING
+================================================ -->
+<section id="pricing" class="relative py-28 overflow-hidden" style="background:var(--bg-subtle)">
+  <div class="blob" style="width:500px;height:500px;background:rgba(27,79,138,0.06);top:-100px;right:-100px;"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <!-- Heading -->
+    <div class="text-center mb-16" data-reveal>
+      <span class="mono-label mb-5 block" style="color:var(--teal)">05 / Investment</span>
+      <h2 class="font-display font-bold tracking-tight mb-5" style="font-size:clamp(2.2rem,5vw,4rem);color:var(--text)">
+        Choose your starting point.
+      </h2>
+      <p class="max-w-xl mx-auto" style="color:var(--text-dim);line-height:1.7">
+        Every engagement begins with a Strategy Call. We assess where you are, which layers apply, and build a custom roadmap — before you commit to anything.
+      </p>
+    </div>
+
+    <!-- Pricing cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+
+      <!-- Starter -->
+      <div class="glass-card p-8 flex flex-col" data-reveal>
+        <div class="tier-label mono-label mb-6" style="color:var(--text-faint)">AI Foundation</div>
+        <div class="mb-2">
+          <span class="font-display font-bold" style="font-size:2.8rem;color:var(--text);line-height:1">$2,997</span>
+        </div>
+        <div class="text-sm mb-1" style="color:var(--text-faint)">setup fee</div>
+        <div class="text-sm mb-8" style="color:var(--text-dim)">+ $997/mo retained</div>
+
+        <p class="text-sm leading-relaxed mb-8" style="color:var(--text-dim)">
+          Perfect for founders who want to get off the ground fast. Layers 1 & 2 installed, context built, data flowing, and a Telegram AI assistant in your pocket.
+        </p>
+
+        <div class="space-y-3 mb-8 flex-1">
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Context Layer (full build)</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Data Layer (3 integrations)</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Telegram AI assistant</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">2 sessions/month</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Task audit & scoreboard</span>
+          </div>
+        </div>
+
+        <a href="#cta" class="btn-pricing btn-pricing-outline">Start with Foundation</a>
+      </div>
+
+      <!-- Growth — FEATURED -->
+      <div class="glass-card p-8 flex flex-col pricing-featured relative" style="border-radius:20px;" data-reveal>
+        <!-- Most popular badge -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <span class="px-5 py-2 rounded-full text-[11px] font-display font-bold uppercase tracking-widest" style="background:var(--gold);color:#0C1523">Most Popular</span>
+        </div>
+
+        <div class="tier-label mono-label mb-6 mt-2">AI Acceleration</div>
+        <div class="mb-2">
+          <span class="font-display font-bold" style="font-size:2.8rem;line-height:1">$5,997</span>
+        </div>
+        <div class="text-sm mb-1" style="color:rgba(255,255,255,0.55)">setup fee</div>
+        <div class="text-sm mb-8" style="color:rgba(255,255,255,0.7)">+ $2,497/mo retained</div>
+
+        <p class="text-sm leading-relaxed mb-8" style="color:rgba(255,255,255,0.8)">
+          All five layers. Weekly sessions. The full AI Operating System built and running inside your business — with ongoing optimization every month.
+        </p>
+
+        <div class="space-y-3 mb-8 flex-1">
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" class="text-white"></iconify-icon></div>
+            <span class="text-sm">All 5 AIOS layers installed</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" class="text-white"></iconify-icon></div>
+            <span class="text-sm">Daily intelligence brief (7am)</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" class="text-white"></iconify-icon></div>
+            <span class="text-sm">Unlimited data integrations</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" class="text-white"></iconify-icon></div>
+            <span class="text-sm">4 sessions/month + async</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" class="text-white"></iconify-icon></div>
+            <span class="text-sm">Custom automation builds</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" class="text-white"></iconify-icon></div>
+            <span class="text-sm">Priority response (4hr SLA)</span>
+          </div>
+        </div>
+
+        <a href="#cta" class="btn-pricing">Book Strategy Call</a>
+      </div>
+
+      <!-- Full AIOS -->
+      <div class="glass-card p-8 flex flex-col" data-reveal>
+        <div class="tier-label mono-label mb-6" style="color:var(--text-faint)">AI Partnership</div>
+        <div class="mb-2">
+          <span class="font-display font-bold" style="font-size:2.8rem;color:var(--text);line-height:1">Custom</span>
+        </div>
+        <div class="text-sm mb-1" style="color:var(--text-faint)">enterprise engagement</div>
+        <div class="text-sm mb-8" style="color:var(--text-dim)">Let's scope it together</div>
+
+        <p class="text-sm leading-relaxed mb-8" style="color:var(--text-dim)">
+          For operators who want us embedded — fractional AI Officer role, team training, custom app development, and a roadmap built around your specific business model.
+        </p>
+
+        <div class="space-y-3 mb-8 flex-1">
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Everything in Acceleration</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Fractional AI Officer role</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Custom AI app builds</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Team training & adoption</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="check-bg"><iconify-icon icon="solar:check-read-linear" width="11" style="color:var(--teal)"></iconify-icon></div>
+            <span class="text-sm" style="color:var(--text-dim)">Direct access (no waitlist)</span>
+          </div>
+        </div>
+
+        <a href="#cta" class="btn-pricing btn-pricing-teal">Let's Talk</a>
+      </div>
+    </div>
+
+    <!-- Guarantee strip -->
+    <div class="rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left" style="background:var(--blue-mid);border:1px solid var(--border-strong)" data-reveal>
+      <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:var(--blue);box-shadow:0 8px 24px rgba(27,79,138,0.25)">
+        <iconify-icon icon="solar:shield-check-bold" width="28" class="text-white"></iconify-icon>
+      </div>
+      <div class="flex-1">
+        <div class="font-display font-bold text-lg mb-1" style="color:var(--blue)">Strategy-First Guarantee</div>
+        <p class="text-sm leading-relaxed" style="color:var(--text-dim)">Every engagement starts with a paid Strategy Call ($297). If we determine AIOS isn't the right fit for your business right now, we'll tell you — and the call fee applies toward your first month if you proceed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+  ABOUT DAVID
+================================================ -->
+<section id="about" class="relative py-28 overflow-hidden" style="background:#FFFFFF">
+  <div class="dot-grid absolute inset-0 opacity-30 pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+
+      <!-- Left: Portrait placeholder + credentials -->
+      <div class="lg:col-span-5" data-reveal>
+        <!-- Photo placeholder -->
+        <div class="relative mb-8">
+          <div class="rounded-3xl overflow-hidden aspect-[4/3]" style="background:var(--blue-mid);border:1px solid var(--border)">
+            <div class="w-full h-full flex flex-col items-center justify-center gap-4">
+              <div class="w-24 h-24 rounded-full flex items-center justify-center" style="background:var(--blue)">
+                <iconify-icon icon="solar:user-bold" width="44" class="text-white"></iconify-icon>
+              </div>
+              <div class="text-center">
+                <div class="font-display font-bold text-xl mb-1" style="color:var(--blue)">David Ortiz</div>
+                <div class="mono-label" style="color:var(--text-faint)">Founder, Advisor AI Partners</div>
+              </div>
+            </div>
+          </div>
+          <!-- Credential badges -->
+          <div class="absolute -bottom-4 -right-4 rounded-2xl px-5 py-3 shadow-lg" style="background:white;border:1px solid var(--border)">
+            <div class="mono-label mb-1" style="color:var(--text-faint)">Speaking</div>
+            <div class="font-display font-bold text-sm" style="color:var(--blue)">UNF #1 Rated Talk</div>
+          </div>
+        </div>
+
+        <!-- Credential pills -->
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1.5 rounded-full text-xs font-display font-semibold" style="background:var(--teal-soft);color:var(--teal);border:1px solid rgba(13,158,142,0.2)">Fractional AI Officer</span>
+          <span class="px-3 py-1.5 rounded-full text-xs font-display font-semibold" style="background:var(--blue-mid);color:var(--blue);border:1px solid var(--border)">AI Systems Architect</span>
+          <span class="px-3 py-1.5 rounded-full text-xs font-display font-semibold" style="background:var(--gold-soft);color:var(--gold);border:1px solid rgba(201,162,39,0.2)">Speaker & Educator</span>
+        </div>
+      </div>
+
+      <!-- Right: Bio + credibility -->
+      <div class="lg:col-span-7" data-reveal>
+        <span class="mono-label mb-6 block" style="color:var(--teal)">06 / About</span>
+        <h2 class="font-display font-bold tracking-tight mb-6" style="font-size:clamp(2rem,4.5vw,3.5rem);color:var(--text);line-height:0.95">
+          I built the AIOS<br>
+          <span class="font-serif italic font-normal" style="color:var(--blue)">for my own business first.</span>
+        </h2>
+
+        <div class="space-y-5 mb-10">
+          <p style="color:var(--text-dim);line-height:1.8">
+            I'm a founder running Advisor AI Partners — a Fractional AI Officer practice that helps small businesses capture revenue through AI-powered systems. Before I could sell AIOS, I had to prove it on myself.
+          </p>
+          <p style="color:var(--text-dim);line-height:1.8">
+            Everything in the AIOS — the five layers, the daily brief, the Telegram assistant, the data pipeline, the task audit — I built and run for my own operation. I know exactly how long each piece takes to build, where the friction is, and what order creates the fastest results.
+          </p>
+          <p style="color:var(--text-dim);line-height:1.8">
+            I gave the #1 rated talk at UNF on AI for business. I'm part of the AAA Accelerator community — the #1 AI business program in the country. And I'm relocating to Lisbon in 2026 because my systems run the business whether I'm in Jacksonville or Portugal.
+          </p>
+        </div>
+
+        <!-- Credibility stats -->
+        <div class="grid grid-cols-3 gap-6 pt-8 border-t" style="border-color:var(--border)">
+          <div>
+            <div class="font-display font-bold text-3xl mb-1" style="color:var(--blue)">5</div>
+            <div class="mono-label" style="color:var(--text-faint)">AIOS layers in production</div>
+          </div>
+          <div>
+            <div class="font-display font-bold text-3xl mb-1" style="color:var(--teal)">73</div>
+            <div class="mono-label" style="color:var(--text-faint)">Tasks audited & scored</div>
+          </div>
+          <div>
+            <div class="font-display font-bold text-3xl mb-1" style="color:var(--gold)">7am</div>
+            <div class="mono-label" style="color:var(--text-faint)">Daily brief, every morning</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================
+  CTA — SCHEDULE A CALL
+================================================ -->
+<section id="cta" class="relative py-32 overflow-hidden" style="background:var(--blue)">
+  <div class="blob" style="width:700px;height:700px;background:rgba(255,255,255,0.05);top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="line-grid absolute inset-0 opacity-10 pointer-events-none"></div>
+
+  <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+    <span class="mono-label mb-6 block" style="color:rgba(255,255,255,0.5)">07 / Let's Talk</span>
+
+    <h2 class="font-display font-bold tracking-tight mb-6" style="font-size:clamp(2.5rem,7vw,6rem);color:#FFFFFF;line-height:0.92" data-reveal>
+      Stop managing.<br>
+      <span class="font-serif italic font-normal" style="font-size:0.9em;color:rgba(255,255,255,0.7)">Start building.</span>
+    </h2>
+
+    <p class="max-w-2xl mx-auto mb-10 leading-relaxed" style="color:rgba(255,255,255,0.7);font-size:1.1rem" data-reveal>
+      Book a free 30-minute Strategy Call. We'll map your Operator Trap, identify your highest-leverage automation opportunities, and show you exactly which layers apply to your business — no pitch, no pressure.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12" data-reveal>
+      <a href="mailto:david@advisoraipartners.com?subject=AIOS%20Strategy%20Call%20Request" class="btn-blue" style="background:white;color:var(--blue);font-size:16px;padding:18px 44px">
+        Schedule Strategy Call
+        <iconify-icon icon="solar:calendar-bold" width="20"></iconify-icon>
+      </a>
+      <a href="mailto:david@advisoraipartners.com" class="btn-outline" style="border-color:rgba(255,255,255,0.3);color:white;font-size:16px">
+        Email David Directly
+        <iconify-icon icon="solar:letter-linear" width="18"></iconify-icon>
+      </a>
+    </div>
+
+    <!-- Contact strip -->
+    <div class="hairline mb-8" style="background:rgba(255,255,255,0.15)" data-reveal></div>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-6" data-reveal>
+      <div class="flex items-center gap-3">
+        <iconify-icon icon="solar:letter-linear" width="18" style="color:rgba(255,255,255,0.5)"></iconify-icon>
+        <span class="font-display text-sm" style="color:rgba(255,255,255,0.7)">david@advisoraipartners.com</span>
+      </div>
+      <div class="hidden sm:block w-1 h-1 rounded-full" style="background:rgba(255,255,255,0.3)"></div>
+      <div class="flex items-center gap-3">
+        <iconify-icon icon="solar:globe-linear" width="18" style="color:rgba(255,255,255,0.5)"></iconify-icon>
+        <span class="font-display text-sm" style="color:rgba(255,255,255,0.7)">advisoraipartners.com</span>
+      </div>
+      <div class="hidden sm:block w-1 h-1 rounded-full" style="background:rgba(255,255,255,0.3)"></div>
+      <div class="flex items-center gap-3">
+        <iconify-icon icon="solar:map-point-linear" width="18" style="color:rgba(255,255,255,0.5)"></iconify-icon>
+        <span class="font-display text-sm" style="color:rgba(255,255,255,0.7)">Jacksonville, FL (→ Lisbon 2026)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-8 border-t" style="border-color:var(--border)">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="font-display font-bold text-sm tracking-tight" style="color:var(--blue)">
+      ADVISOR AI PARTNERS
+    </div>
+    <div class="mono-label" style="color:var(--text-faint)">
+      © 2026 · Fractional AI Officer Practice · All rights reserved
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full pulse-dot" style="background:var(--teal)"></span>
+      <span class="mono-label" style="color:var(--teal)">Accepting New Clients</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================================================
+  SCRIPTS
+================================================ -->
+<script>
+// Nav scroll effect
+const nav = document.getElementById('site-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Count-up helper
+function countUp(el, target, duration, suffix = '', prefix = '', decimals = 0) {
+  const start = performance.now();
+  const isFloat = decimals > 0;
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = eased * target;
+    el.textContent = prefix + (isFloat ? value.toFixed(decimals) : Math.round(value).toLocaleString()) + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = prefix + (isFloat ? target.toFixed(decimals) : target.toLocaleString()) + suffix;
+  }
+  requestAnimationFrame(tick);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  gsap.registerPlugin(ScrollTrigger);
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Staggered section reveals
+  document.querySelectorAll('section').forEach(sec => {
+    const targets = sec.querySelectorAll('[data-reveal]');
+    if (!targets.length) return;
+    gsap.fromTo(targets,
+      { opacity: 0, y: 26 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.1,
+        scrollTrigger: { trigger: sec, start: 'top 78%', once: true }
+      }
+    );
+  });
+
+  // Hero stats count-up
+  ScrollTrigger.create({
+    trigger: '#stat-hours',
+    start: 'top 90%',
+    once: true,
+    onEnter: () => {
+      countUp(document.getElementById('stat-hours'), 20, 1800, '+');
+      countUp(document.getElementById('stat-tasks'), 60, 2000, '%');
+      countUp(document.getElementById('stat-weeks'), 4, 1400, '');
+    }
+  });
+
+  // KPI counters
+  ScrollTrigger.create({
+    trigger: '#kpis',
+    start: 'top 70%',
+    once: true,
+    onEnter: () => {
+      countUp(document.getElementById('kpi1'), 8, 2000, 'h');
+      countUp(document.getElementById('kpi2'), 60, 2200, '%');
+      countUp(document.getElementById('kpi3'), 250, 2400, 'K', '$');
+    }
+  });
+
+  // Hero headline blur reveal (initial load)
+  gsap.fromTo('section#home h1',
+    { filter: 'blur(8px)', opacity: 0 },
+    { filter: 'blur(0px)', opacity: 1, duration: 1.4, ease: 'power3.out', delay: 0.1 }
+  );
+
+  gsap.fromTo('section#home .mb-8[data-reveal]',
+    { opacity: 0, y: 20 },
+    { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.05, stagger: 0.12 }
+  );
+
+  // Pricing cards stagger
+  const pricingCards = gsap.utils.toArray('#pricing .glass-card');
+  if (pricingCards.length) {
+    pricingCards.forEach((card, i) => {
+      gsap.fromTo(card,
+        { opacity: 0, y: 50, filter: 'blur(4px)' },
+        {
+          opacity: 1, y: 0, filter: 'blur(0px)',
+          duration: 0.85,
+          ease: 'power3.out',
+          delay: i * 0.14,
+          scrollTrigger: { trigger: card, start: 'top 88%', once: true }
+        }
+      );
+    });
+  }
+
+  // Layer cards stagger
+  const layerCards = gsap.utils.toArray('#layers .glass-card');
+  if (layerCards.length) {
+    layerCards.forEach((card, i) => {
+      gsap.fromTo(card,
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1, x: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          delay: i * 0.08,
+          scrollTrigger: { trigger: card, start: 'top 84%', once: true }
+        }
+      );
+    });
+  }
+});
+</script>
+
+</body>
+</html>

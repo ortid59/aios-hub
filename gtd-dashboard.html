@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTD Command Center — Advisor AI Partners</title>
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #FFFFFF;
+    --surface2: #FAFAF7;
+    --border: rgba(28,28,30,0.07);
+    --border-mid: rgba(28,28,30,0.12);
+    --text: #1C1C1E;
+    --text-mid: #52525B;
+    --text-light: #A1A1AA;
+    --primary: #1A3A6B;
+    --teal: #0C7A6E;
+    --gold: #B8860B;
+    --cobalt: #155eef;
+    --blue-soft: #EBF0FA;
+    --teal-soft: #E6F5F2;
+    --gold-soft: #FBF3E0;
+    --red: #C0392B;
+    --red-bg: #FDEDEB;
+    --gray: #6B7280;
+    --gray-bg: #F3F4F6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(130deg, #1A3A6B 0%, #0C7A6E 50%, #B8860B 100%);
+    padding: 28px 32px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #FFFFFF;
+  }
+  .header-sub {
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .header-btn {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .header-btn:hover { background: rgba(255,255,255,0.25); }
+  .header-btn.active { background: rgba(255,255,255,0.3); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px 24px; }
+
+  /* Quick Capture */
+  .capture-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .capture-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 2px solid var(--border-mid);
+    border-radius: 10px;
+    font-size: 15px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .capture-input:focus { border-color: var(--cobalt); }
+  .capture-input::placeholder { color: var(--text-light); }
+  .capture-btn {
+    padding: 12px 24px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .capture-btn:hover { background: #15305a; }
+
+  /* Stats Row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 768px) {
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .stat-card:hover {
+    border-color: var(--border-mid);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transform: translateY(-1px);
+  }
+  .stat-card.active {
+    border-color: var(--cobalt);
+    box-shadow: 0 0 0 2px rgba(21,94,239,0.15);
+  }
+  .stat-count {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-mid);
+  }
+  .stat-inbox .stat-count { color: var(--cobalt); }
+  .stat-today .stat-count { color: var(--teal); }
+  .stat-aamish .stat-count { color: var(--primary); }
+  .stat-waiting .stat-count { color: var(--gold); }
+  .stat-someday .stat-count { color: var(--gray); }
+  .stat-done .stat-count { color: var(--teal); }
+
+  /* Section Title */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  /* Item Cards */
+  .items-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .item-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: all 0.15s;
+  }
+  .item-card:hover {
+    border-color: var(--border-mid);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .item-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .item-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .badge-source { background: var(--gray-bg); color: var(--gray); }
+  .badge-status-inbox { background: var(--blue-soft); color: var(--cobalt); }
+  .badge-status-next_action { background: var(--teal-soft); color: var(--teal); }
+  .badge-status-waiting_for { background: var(--gold-soft); color: var(--gold); }
+  .badge-status-someday { background: var(--gray-bg); color: var(--gray); }
+  .badge-status-reference { background: var(--gray-bg); color: var(--text-mid); }
+  .badge-status-done { background: var(--teal-soft); color: var(--teal); }
+  .badge-assignee-david { background: var(--blue-soft); color: var(--primary); }
+  .badge-assignee-aamish { background: #F0E6FF; color: #6B21A8; }
+  .badge-context { background: var(--gold-soft); color: var(--gold); }
+  .badge-time { background: var(--gray-bg); color: var(--text-mid); }
+  .badge-energy-high { background: var(--red-bg); color: var(--red); }
+  .badge-energy-medium { background: var(--gold-soft); color: var(--gold); }
+  .badge-energy-low { background: var(--teal-soft); color: var(--teal); }
+  .badge-date { color: var(--text-light); font-weight: 500; background: none; padding-left: 0; }
+
+  /* Process Button */
+  .btn-process {
+    margin-top: 10px;
+    padding: 7px 16px;
+    background: var(--cobalt);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-process:hover { background: #1048c4; }
+
+  .btn-complete {
+    margin-top: 10px;
+    padding: 7px 16px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-complete:hover { background: #096158; }
+
+  .btn-sm {
+    padding: 6px 14px;
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .btn-sm:hover { background: var(--bg); }
+  .btn-sm.danger { color: var(--red); border-color: var(--red); }
+  .btn-sm.danger:hover { background: var(--red-bg); }
+
+  /* Processing Form */
+  .process-form {
+    margin-top: 12px;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border-mid);
+    border-radius: 10px;
+  }
+  .process-form h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--primary);
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .form-group label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-mid);
+  }
+  .form-group input, .form-group select {
+    padding: 8px 10px;
+    border: 1px solid var(--border-mid);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--surface);
+    color: var(--text);
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--cobalt);
+  }
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .form-actions button {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+  .btn-save { background: var(--teal); color: #fff; }
+  .btn-save:hover { background: #096158; }
+  .btn-someday { background: var(--gray-bg); color: var(--gray); border: 1px solid var(--border-mid); }
+  .btn-someday:hover { background: #E5E7EB; }
+  .btn-reference { background: var(--blue-soft); color: var(--primary); border: 1px solid var(--border-mid); }
+  .btn-reference:hover { background: #D6E0F5; }
+  .btn-trash { background: var(--red-bg); color: var(--red); border: 1px solid var(--border-mid); }
+  .btn-trash:hover { background: #F5C6C0; }
+  .btn-cancel { background: var(--surface); color: var(--text-mid); border: 1px solid var(--border-mid); }
+  .btn-cancel:hover { background: var(--bg); }
+
+  .two-min-banner {
+    background: var(--gold-soft);
+    border: 1px solid rgba(184,134,11,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  /* Weekly Review */
+  .review-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .review-panel h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 16px;
+  }
+  .review-checklist {
+    list-style: none;
+    margin-bottom: 20px;
+  }
+  .review-checklist li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .review-checklist li:last-child { border-bottom: none; }
+  .review-checklist input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--teal);
+    cursor: pointer;
+  }
+  .review-checklist li.checked { color: var(--text-light); text-decoration: line-through; }
+
+  .review-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .review-stat {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .review-stat .val {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .review-stat .lbl {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-light);
+    font-size: 15px;
+  }
+  .empty-state .emoji { font-size: 40px; margin-bottom: 12px; display: block; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header { padding: 20px 16px 18px; }
+    .header h1 { font-size: 20px; }
+    .container { padding: 16px; }
+    .header-row { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .capture-bar { flex-direction: column; }
+    .capture-btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <div>
+      <h1>GTD Command Center</h1>
+      <div class="header-sub">Advisor AI Partners &mdash; Daily Operating System</div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" onclick="showView('main')" id="btn-main">Dashboard</button>
+      <button class="header-btn" onclick="showView('review')" id="btn-review">Weekly Review</button>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Quick Capture -->
+  <div class="capture-bar">
+    <input type="text" class="capture-input" id="captureInput" placeholder="Capture something — type and press Enter..." onkeydown="if(event.key==='Enter')captureItem()">
+    <button class="capture-btn" onclick="captureItem()">Capture</button>
+  </div>
+
+  <!-- Main View -->
+  <div id="mainView">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card stat-inbox active" onclick="selectStat('inbox')" id="card-inbox">
+        <div class="stat-count" id="count-inbox">0</div>
+        <div class="stat-label">Inbox</div>
+      </div>
+      <div class="stat-card stat-today" onclick="selectStat('today')" id="card-today">
+        <div class="stat-count" id="count-today">0</div>
+        <div class="stat-label">Today</div>
+      </div>
+      <div class="stat-card stat-aamish" onclick="selectStat('aamish')" id="card-aamish">
+        <div class="stat-count" id="count-aamish">0</div>
+        <div class="stat-label">Aamish</div>
+      </div>
+      <div class="stat-card stat-waiting" onclick="selectStat('waiting_for')" id="card-waiting_for">
+        <div class="stat-count" id="count-waiting_for">0</div>
+        <div class="stat-label">Waiting For</div>
+      </div>
+      <div class="stat-card stat-someday" onclick="selectStat('someday')" id="card-someday">
+        <div class="stat-count" id="count-someday">0</div>
+        <div class="stat-label">Someday</div>
+      </div>
+      <div class="stat-card stat-done" onclick="selectStat('done_week')" id="card-done_week">
+        <div class="stat-count" id="count-done_week">0</div>
+        <div class="stat-label">Done This Week</div>
+      </div>
+    </div>
+
+    <!-- Items List -->
+    <div id="sectionTitle" class="section-title">Inbox</div>
+    <div id="itemsList" class="items-grid"></div>
+  </div>
+
+  <!-- Weekly Review View -->
+  <div id="reviewView" style="display:none;">
+    <div class="review-panel">
+      <h3>Weekly Review Checklist</h3>
+      <ul class="review-checklist" id="reviewChecklist"></ul>
+
+      <h3 style="margin-top:20px;">Review Summary</h3>
+      <div class="review-stats" id="reviewStats"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA LAYER — localStorage backed
+// ============================================================
+const STORAGE_KEY = 'gtd_command_center';
+
+function loadData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    try { return JSON.parse(raw); } catch(e) {}
+  }
+  return { items: [], lastSync: null, weeklyReview: { lastCompleted: null, checklist: [false,false,false,false,false,false,false,false] } };
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let data = loadData();
+let currentView = 'inbox';
+let currentMainView = 'main';
+
+// ============================================================
+// RELATIVE TIME
+// ============================================================
+function relativeTime(isoStr) {
+  if (!isoStr) return '';
+  const now = Date.now();
+  const then = new Date(isoStr).getTime();
+  const diff = now - then;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days === 1) return 'yesterday';
+  if (days < 7) return days + 'd ago';
+  const weeks = Math.floor(days / 7);
+  if (weeks < 4) return weeks + 'w ago';
+  return new Date(isoStr).toLocaleDateString();
+}
+
+// ============================================================
+// ID GENERATOR
+// ============================================================
+function nextId() {
+  const ids = data.items.map(i => i.id);
+  return ids.length ? Math.max(...ids) + 1 : 1;
+}
+
+// ============================================================
+// CAPTURE
+// ============================================================
+function captureItem() {
+  const input = document.getElementById('captureInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  data.items.unshift({
+    id: nextId(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    source: 'manual',
+    raw_text: text,
+    title: null,
+    status: 'inbox',
+    assignee: 'david',
+    project: null,
+    context: null,
+    due_date: null,
+    waiting_on: null,
+    notes: null,
+    energy: null,
+    time_estimate: null
+  });
+  saveData(data);
+  input.value = '';
+  refreshUI();
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function computeStats() {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+  const inbox = data.items.filter(i => i.status === 'inbox').length;
+  const today = data.items.filter(i => i.status === 'next_action' && i.assignee === 'david').length;
+  const aamish = data.items.filter(i => i.assignee === 'aamish' && !['done','trash'].includes(i.status)).length;
+  const waiting = data.items.filter(i => i.status === 'waiting_for').length;
+  const someday = data.items.filter(i => i.status === 'someday').length;
+  const doneWeek = data.items.filter(i => i.status === 'done' && new Date(i.updated_at) >= weekAgo).length;
+  return { inbox, today, aamish, waiting_for: waiting, someday, done_week: doneWeek };
+}
+
+function selectStat(view) {
+  currentView = view;
+  document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('card-' + view);
+  if (card) card.classList.add('active');
+  renderItems();
+}
+
+// ============================================================
+// RENDERING
+// ============================================================
+function refreshUI() {
+  const stats = computeStats();
+  document.getElementById('count-inbox').textContent = stats.inbox;
+  document.getElementById('count-today').textContent = stats.today;
+  document.getElementById('count-aamish').textContent = stats.aamish;
+  document.getElementById('count-waiting_for').textContent = stats.waiting_for;
+  document.getElementById('count-someday').textContent = stats.someday;
+  document.getElementById('count-done_week').textContent = stats.done_week;
+  renderItems();
+}
+
+function getFilteredItems() {
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7*24*60*60*1000);
+  switch(currentView) {
+    case 'inbox': return data.items.filter(i => i.status === 'inbox');
+    case 'today': return data.items.filter(i => i.status === 'next_action' && i.assignee === 'david');
+    case 'aamish': return data.items.filter(i => i.assignee === 'aamish' && !['done','trash'].includes(i.status));
+    case 'waiting_for': return data.items.filter(i => i.status === 'waiting_for');
+    case 'someday': return data.items.filter(i => i.status === 'someday');
+    case 'done_week': return data.items.filter(i => i.status === 'done' && new Date(i.updated_at) >= weekAgo);
+    default: return [];
+  }
+}
+
+const viewTitles = {
+  inbox: 'Inbox',
+  today: "Today's Actions",
+  aamish: "Aamish's Queue",
+  waiting_for: 'Waiting For',
+  someday: 'Someday / Maybe',
+  done_week: 'Done This Week'
+};
+
+function renderItems() {
+  const titleEl = document.getElementById('sectionTitle');
+  const listEl = document.getElementById('itemsList');
+  titleEl.textContent = viewTitles[currentView] || 'Items';
+
+  const items = getFilteredItems();
+
+  if (!items.length) {
+    const msgs = {
+      inbox: '<span class="emoji">&#x1F4ED;</span>Inbox Zero — nice work!',
+      today: '<span class="emoji">&#x2705;</span>No actions queued for today.',
+      aamish: '<span class="emoji">&#x1F44D;</span>Nothing assigned to Aamish.',
+      waiting_for: '<span class="emoji">&#x23F3;</span>Not waiting on anyone.',
+      someday: '<span class="emoji">&#x1F4AD;</span>No someday items yet.',
+      done_week: '<span class="emoji">&#x1F3AF;</span>No completed items this week.'
+    };
+    listEl.innerHTML = '<div class="empty-state">' + (msgs[currentView] || 'No items.') + '</div>';
+    return;
+  }
+
+  listEl.innerHTML = items.map(item => renderItemCard(item)).join('');
+}
+
+function renderItemCard(item) {
+  const title = item.title || (item.raw_text.length > 80 ? item.raw_text.substring(0,80) + '...' : item.raw_text);
+  const sourceLabel = item.source.replace('telegram_','tg:').replace('claude_code','cc');
+  const statusLabel = item.status.replace('_',' ');
+
+  let badges = '';
+  badges += `<span class="badge badge-source">${esc(sourceLabel)}</span>`;
+  badges += `<span class="badge badge-status-${item.status}">${esc(statusLabel)}</span>`;
+  if (item.assignee) badges += `<span class="badge badge-assignee-${item.assignee}">${esc(item.assignee)}</span>`;
+  if (item.context) badges += `<span class="badge badge-context">${esc(item.context)}</span>`;
+  if (item.time_estimate) badges += `<span class="badge badge-time">${esc(item.time_estimate)}</span>`;
+  if (item.energy) badges += `<span class="badge badge-energy-${item.energy}">${esc(item.energy)} energy</span>`;
+  if (item.project) badges += `<span class="badge badge-source">${esc(item.project)}</span>`;
+  if (item.waiting_on) badges += `<span class="badge badge-context">waiting: ${esc(item.waiting_on)}</span>`;
+  badges += `<span class="badge badge-date">${relativeTime(item.created_at)}</span>`;
+
+  let actions = '';
+  if (currentView === 'inbox') {
+    actions = `<button class="btn-process" onclick="toggleProcessForm(${item.id})">Process</button>`;
+  } else if (item.status === 'next_action') {
+    actions = `<button class="btn-complete" onclick="completeItem(${item.id})">Complete</button>`;
+  } else if (item.status === 'waiting_for') {
+    actions = `<button class="btn-complete" onclick="completeItem(${item.id})">Resolved</button>`;
+  }
+
+  return `<div class="item-card" id="item-${item.id}">
+    <div class="item-title">${esc(title)}</div>
+    <div class="item-badges">${badges}</div>
+    ${actions}
+    <div id="form-${item.id}"></div>
+  </div>`;
+}
+
+function esc(str) {
+  if (!str) return '';
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// ============================================================
+// PROCESS FORM
+// ============================================================
+function toggleProcessForm(id) {
+  const formEl = document.getElementById('form-' + id);
+  if (formEl.innerHTML) { formEl.innerHTML = ''; return; }
+
+  const item = data.items.find(i => i.id === id);
+  if (!item) return;
+
+  const projects = [...new Set(data.items.map(i => i.project).filter(Boolean))];
+  const projectOptions = projects.map(p => `<option value="${esc(p)}">`).join('');
+
+  formEl.innerHTML = `<div class="process-form">
+    <h4>Process This Item</h4>
+    <div class="form-row">
+      <div class="form-group" style="flex:3;">
+        <label>Title</label>
+        <input type="text" id="pf-title-${id}" value="${esc(item.title || item.raw_text.substring(0,80))}" placeholder="Short summary...">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Assignee</label>
+        <select id="pf-assignee-${id}">
+          <option value="david" ${item.assignee==='david'?'selected':''}>David</option>
+          <option value="aamish" ${item.assignee==='aamish'?'selected':''}>Aamish</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Context</label>
+        <select id="pf-context-${id}">
+          <option value="">None</option>
+          <option value="@phone">@phone</option>
+          <option value="@computer">@computer</option>
+          <option value="@errands">@errands</option>
+          <option value="@office">@office</option>
+          <option value="@home">@home</option>
+          <option value="@anywhere">@anywhere</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" id="pf-due-${id}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Time Estimate</label>
+        <select id="pf-time-${id}">
+          <option value="">--</option>
+          <option value="2min">2 min</option>
+          <option value="15min">15 min</option>
+          <option value="30min">30 min</option>
+          <option value="1hr">1 hr</option>
+          <option value="2hr+">2 hr+</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Energy</label>
+        <select id="pf-energy-${id}">
+          <option value="">--</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Project</label>
+        <input type="text" id="pf-project-${id}" list="projects-${id}" placeholder="Optional...">
+        <datalist id="projects-${id}">${projectOptions}</datalist>
+      </div>
+    </div>
+    <div id="pf-2min-${id}"></div>
+    <div class="form-actions">
+      <button class="btn-save" onclick="saveAsNextAction(${id})">Save as Next Action</button>
+      <button class="btn-someday" onclick="quickProcess(${id},'someday')">Someday/Maybe</button>
+      <button class="btn-reference" onclick="quickProcess(${id},'reference')">Reference</button>
+      <button class="btn-trash" onclick="quickProcess(${id},'trash')">Trash</button>
+      <button class="btn-cancel" onclick="document.getElementById('form-${id}').innerHTML=''">Cancel</button>
+    </div>
+  </div>`;
+
+  // Watch time estimate for 2-min rule
+  document.getElementById('pf-time-' + id).addEventListener('change', function() {
+    const banner = document.getElementById('pf-2min-' + id);
+    if (this.value === '2min') {
+      banner.innerHTML = '<div class="two-min-banner">Can you do this in 2 minutes? Do it now.</div>';
+    } else {
+      banner.innerHTML = '';
+    }
+  });
+}
+
+function saveAsNextAction(id) {
+  const item = data.items.find(i => i.id === id);
+  if (!item) return;
+  item.title = document.getElementById('pf-title-' + id).value.trim() || item.raw_text.substring(0,80);
+  item.status = 'next_action';
+  item.assignee = document.getElementById('pf-assignee-' + id).value;
+  item.context = document.getElementById('pf-context-' + id).value || null;
+  item.due_date = document.getElementById('pf-due-' + id).value || null;
+  item.time_estimate = document.getElementById('pf-time-' + id).value || null;
+  item.energy = document.getElementById('pf-energy-' + id).value || null;
+  item.project = document.getElementById('pf-project-' + id).value.trim() || null;
+  item.updated_at = new Date().toISOString();
+  saveData(data);
+  refreshUI();
+}
+
+function quickProcess(id, status) {
+  const item = data.items.find(i => i.id === id);
+  if (!item) return;
+  item.status = status;
+  item.updated_at = new Date().toISOString();
+  // Grab title from form if open
+  const titleInput = document.getElementById('pf-title-' + id);
+  if (titleInput && titleInput.value.trim()) {
+    item.title = titleInput.value.trim();
+  }
+  saveData(data);
+  refreshUI();
+}
+
+function completeItem(id) {
+  const item = data.items.find(i => i.id === id);
+  if (!item) return;
+  item.status = 'done';
+  item.updated_at = new Date().toISOString();
+  item.notes = (item.notes ? item.notes + '\n' : '') + 'Completed: ' + new Date().toISOString();
+  saveData(data);
+  refreshUI();
+}
+
+// ============================================================
+// VIEWS
+// ============================================================
+function showView(view) {
+  currentMainView = view;
+  document.getElementById('mainView').style.display = view === 'main' ? 'block' : 'none';
+  document.getElementById('reviewView').style.display = view === 'review' ? 'block' : 'none';
+  document.getElementById('btn-main').classList.toggle('active', view === 'main');
+  document.getElementById('btn-review').classList.toggle('active', view === 'review');
+  if (view === 'review') renderReview();
+}
+
+// ============================================================
+// WEEKLY REVIEW
+// ============================================================
+const REVIEW_STEPS = [
+  'Clear inbox to zero',
+  'Review Next Actions \u2014 still relevant?',
+  'Review Waiting For \u2014 follow up needed?',
+  'Review Projects \u2014 what is the next action for each?',
+  'Review Someday/Maybe \u2014 anything ready to activate?',
+  'Check calendar for next 2 weeks',
+  'Review Task Audit dashboard \u2014 any Quick Wins to tackle?',
+  'Brain dump \u2014 capture anything on your mind'
+];
+
+function renderReview() {
+  const cl = document.getElementById('reviewChecklist');
+  const checklist = data.weeklyReview.checklist || REVIEW_STEPS.map(() => false);
+  // Ensure correct length
+  while (checklist.length < REVIEW_STEPS.length) checklist.push(false);
+
+  cl.innerHTML = REVIEW_STEPS.map((step, i) => {
+    const checked = checklist[i] ? 'checked' : '';
+    const cls = checklist[i] ? 'checked' : '';
+    return `<li class="${cls}">
+      <input type="checkbox" ${checked} onchange="toggleReviewStep(${i}, this.checked)">
+      <span>${step}</span>
+    </li>`;
+  }).join('');
+
+  // Summary stats
+  const stats = computeStats();
+  const now = new Date();
+  const threeDaysAgo = new Date(now.getTime() - 3*24*60*60*1000);
+  const stale = data.items.filter(i => i.status === 'inbox' && new Date(i.created_at) < threeDaysAgo).length;
+  const overdue = data.items.filter(i => i.due_date && new Date(i.due_date) < now && !['done','trash'].includes(i.status)).length;
+  const projects = [...new Set(data.items.filter(i => i.project && !['done','trash'].includes(i.status)).map(i => i.project))];
+
+  const statsEl = document.getElementById('reviewStats');
+  statsEl.innerHTML = `
+    <div class="review-stat"><div class="val">${stats.inbox}</div><div class="lbl">Inbox</div></div>
+    <div class="review-stat"><div class="val" style="color:${overdue?'var(--red)':'var(--teal)'}">${overdue}</div><div class="lbl">Overdue</div></div>
+    <div class="review-stat"><div class="val" style="color:${stale?'var(--gold)':'var(--teal)'}">${stale}</div><div class="lbl">Stale Inbox (3d+)</div></div>
+    <div class="review-stat"><div class="val">${stats.waiting_for}</div><div class="lbl">Waiting For</div></div>
+    <div class="review-stat"><div class="val">${projects.length}</div><div class="lbl">Active Projects</div></div>
+    <div class="review-stat"><div class="val">${stats.done_week}</div><div class="lbl">Done This Week</div></div>
+  `;
+}
+
+function toggleReviewStep(idx, checked) {
+  if (!data.weeklyReview.checklist) data.weeklyReview.checklist = REVIEW_STEPS.map(() => false);
+  while (data.weeklyReview.checklist.length < REVIEW_STEPS.length) data.weeklyReview.checklist.push(false);
+  data.weeklyReview.checklist[idx] = checked;
+  if (data.weeklyReview.checklist.every(Boolean)) {
+    data.weeklyReview.lastCompleted = new Date().toISOString();
+  }
+  saveData(data);
+  renderReview();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+refreshUI();
+</script>
+</body>
+</html>

@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIOS Task Audit — Advisor AI Partners</title>
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #FFFFFF;
+    --surface2: #FAFAF7;
+    --border: rgba(28,28,30,0.07);
+    --border-mid: rgba(28,28,30,0.12);
+    --text: #1C1C1E;
+    --text-mid: #52525B;
+    --text-light: #A1A1AA;
+    --primary: #1A3A6B;
+    --teal: #0C7A6E;
+    --gold: #B8860B;
+    --cobalt: #155eef;
+    --blue-soft: #EBF0FA;
+    --teal-soft: #E6F5F2;
+    --gold-soft: #FBF3E0;
+    --green: #0C7A6E;
+    --green-bg: #E6F5F2;
+    --yellow: #B8860B;
+    --yellow-bg: #FBF3E0;
+    --red: #C0392B;
+    --red-bg: #FDEDEB;
+    --gray: #6B7280;
+    --gray-bg: #F3F4F6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .header {
+    background: linear-gradient(130deg, #1A3A6B 0%, #0C7A6E 50%, #B8860B 100%);
+    padding: 32px 40px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #FFFFFF;
+  }
+
+  .header h1 span { color: #FBF3E0; }
+
+  .header-meta {
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .deadline-badge {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .deadline-badge .countdown {
+    background: rgba(255,255,255,0.2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* Stats Cards */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    padding: 0 40px;
+    margin-top: -20px;
+    position: relative;
+    z-index: 101;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    position: relative;
+  }
+
+  .stat-card::after {
+    content: 'Click to filter';
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    right: 0;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .stat-card:hover::after { opacity: 1; }
+  .stat-card:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(26,58,107,0.1); transform: translateY(-1px); }
+  .stat-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(26,58,107,0.15); }
+
+  .stat-card .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .stat-card .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-mid);
+    margin-top: 4px;
+  }
+
+  .stat-card.total .stat-value { color: var(--primary); }
+  .stat-card.green .stat-value { color: var(--teal); }
+  .stat-card.yellow .stat-value { color: var(--gold); }
+  .stat-card.red .stat-value { color: var(--red); }
+  .stat-card.gray .stat-value { color: var(--gray); }
+  .stat-card.automation .stat-value { color: var(--cobalt); }
+
+  /* Progress Bar */
+  .progress-section {
+    padding: 24px 40px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .progress-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .progress-header .pct {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .progress-bar-bg {
+    width: 100%;
+    height: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--teal));
+    border-radius: 6px;
+    transition: width 0.6s ease;
+    position: relative;
+  }
+
+  .progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* Time Allocation */
+  .time-section {
+    padding: 0 40px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .time-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .time-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 16px;
+  }
+
+  .time-bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+
+  .time-bar-label {
+    font-size: 13px;
+    width: 180px;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+
+  .time-bar-track {
+    flex: 1;
+    height: 24px;
+    background: var(--bg);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .time-bar-value {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #FFFFFF;
+    min-width: 40px;
+  }
+
+  .pain-point {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--red-bg);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--red);
+  }
+
+  .pain-point .num {
+    color: var(--red);
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .pain-point .desc {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  /* Filters */
+  .filters {
+    padding: 0 40px 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filters label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-mid);
+    margin-right: 8px;
+  }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border-mid);
+    color: var(--text-mid);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .filter-btn.active { background: var(--blue-soft); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+
+  /* Task Sections */
+  .main-content {
+    padding: 0 40px 60px;
+  }
+
+  .section {
+    margin-bottom: 32px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-mid);
+  }
+
+  .section-header .icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .section-header .count {
+    background: var(--blue-soft);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .section-header .section-desc {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-left: auto;
+  }
+
+  .quick-wins .section-header .icon { background: var(--teal-soft); }
+  .strategic-wins .section-header .icon { background: var(--blue-soft); }
+  .nice-to-haves .section-header .icon { background: var(--gold-soft); }
+  .backlog .section-header .icon { background: var(--red-bg); }
+  .human-only .section-header .icon { background: var(--gray-bg); }
+  .already-automated .section-header .icon { background: var(--blue-soft); }
+
+  /* Task Cards */
+  .task-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 12px;
+  }
+
+  .task-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 14px;
+    transition: all 0.15s;
+    cursor: default;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  .task-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(26,58,107,0.08);
+  }
+
+  .task-card.completed {
+    opacity: 0.5;
+    border-color: var(--teal);
+    background: var(--teal-soft);
+  }
+
+  .task-card.completed .task-title {
+    text-decoration: line-through;
+    color: var(--text-mid);
+  }
+
+  .task-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border-mid);
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    margin-top: 1px;
+    background: var(--surface);
+  }
+
+  .task-check:hover { border-color: var(--teal); }
+  .task-check.checked { background: var(--teal); border-color: var(--teal); }
+  .task-check.checked::after { content: '\2713'; color: white; font-size: 13px; font-weight: 700; }
+
+  .task-body { flex: 1; min-width: 0; }
+
+  .task-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .task-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .tag-area { background: var(--gray-bg); color: var(--text-mid); }
+  .tag-freq { background: var(--gray-bg); color: var(--text-mid); }
+  .tag-time { background: var(--blue-soft); color: var(--primary); }
+  .tag-green { background: var(--teal-soft); color: var(--teal); }
+  .tag-yellow { background: var(--gold-soft); color: var(--gold); }
+  .tag-red { background: var(--red-bg); color: var(--red); }
+  .tag-gray { background: var(--gray-bg); color: var(--gray); }
+
+  .task-desc {
+    font-size: 12px;
+    color: var(--text-mid);
+    line-height: 1.4;
+    margin-top: 6px;
+  }
+
+  .solved-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border-mid);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .solved-input:focus { border-color: var(--primary); }
+  .solved-input::placeholder { color: var(--text-light); }
+
+  /* Human-Only cards */
+  .human-only .task-card { border-left: 3px solid var(--gray); }
+  .already-automated .task-card { border-left: 3px solid var(--teal); }
+
+  /* Detail Panel (slide-in) */
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 200;
+  }
+
+  .detail-overlay.open { display: block; }
+
+  .detail-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 480px;
+    height: 100vh;
+    background: var(--surface);
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+    z-index: 201;
+    padding: 32px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+  }
+
+  .detail-overlay.open .detail-panel { transform: translateX(0); }
+
+  .detail-panel h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+
+  .detail-panel .detail-subtitle {
+    font-size: 13px;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+  }
+
+  .detail-panel .detail-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .detail-panel .detail-list li {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .detail-panel .detail-list li:hover { background: var(--bg); }
+
+  .detail-panel .detail-list .item-area {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--gray-bg);
+    color: var(--text-mid);
+    flex-shrink: 0;
+  }
+
+  .detail-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--bg);
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--text-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .detail-close:hover { background: var(--border-mid); }
+
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .time-section { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .header, .stats-row, .progress-section, .time-section, .filters, .main-content { padding-left: 20px; padding-right: 20px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .task-grid { grid-template-columns: 1fr; }
+    .header-top { flex-direction: column; gap: 12px; }
+    .detail-panel { width: 100%; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(28,28,30,0.15); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(28,28,30,0.25); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Task <span>Audit</span></h1>
+      <div class="header-meta">Advisor AI Partners — AIOS Layer 4: Automate &nbsp;|&nbsp; Generated April 16, 2026</div>
+    </div>
+    <div class="deadline-badge">
+      LISBON RELOCATION
+      <span class="countdown" id="countdown"></span>
+    </div>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card total" data-stat="total">
+    <div class="stat-value" id="total-count">73</div>
+    <div class="stat-label">Total Tasks</div>
+  </div>
+  <div class="stat-card green" data-stat="green">
+    <div class="stat-value">16</div>
+    <div class="stat-label">Fully Automatable</div>
+  </div>
+  <div class="stat-card yellow" data-stat="yellow">
+    <div class="stat-value">24</div>
+    <div class="stat-label">Partially Automatable</div>
+  </div>
+  <div class="stat-card red" data-stat="red">
+    <div class="stat-value">8</div>
+    <div class="stat-label">Not Yet</div>
+  </div>
+  <div class="stat-card gray" data-stat="human">
+    <div class="stat-value">25</div>
+    <div class="stat-label">Human-Only</div>
+  </div>
+  <div class="stat-card automation" data-stat="automated">
+    <div class="stat-value" id="auto-pct">8%</div>
+    <div class="stat-label">Automated</div>
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-header">
+    <h3>Automation Progress</h3>
+    <span class="pct" id="progress-pct">8%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progress-bar" style="width: 8%"></div>
+  </div>
+</div>
+
+<div class="time-section">
+  <div class="time-card">
+    <h3>Weekly Time Allocation</h3>
+    <div class="time-bar-row">
+      <span class="time-bar-label">Learning & Strategic</span>
+      <div class="time-bar-track">
+        <div class="time-bar-value" style="width: 50%; background: linear-gradient(90deg, #1A3A6B, #2E5C9E);">20-30h</div>
+      </div>
+    </div>
+    <div class="time-bar-row">
+      <span class="time-bar-label">Sales & Prospecting</span>
+      <div class="time-bar-track">
+        <div class="time-bar-value" style="width: 25%; background: linear-gradient(90deg, #0C7A6E, #10A396);">10-15h</div>
+      </div>
+    </div>
+    <div class="time-bar-row">
+      <span class="time-bar-label">Meetings & Networking</span>
+      <div class="time-bar-track">
+        <div class="time-bar-value" style="width: 18%; background: linear-gradient(90deg, #155eef, #4B8BF5);">8-10h</div>
+      </div>
+    </div>
+    <div class="time-bar-row">
+      <span class="time-bar-label">Health & Personal</span>
+      <div class="time-bar-track">
+        <div class="time-bar-value" style="width: 18%; background: linear-gradient(90deg, #B8860B, #D4A017);">8-10h</div>
+      </div>
+    </div>
+    <div class="time-bar-row">
+      <span class="time-bar-label">Operations & Admin</span>
+      <div class="time-bar-track">
+        <div class="time-bar-value" style="width: 13%; background: linear-gradient(90deg, #C0392B, #E74C3C);">5-8h</div>
+      </div>
+    </div>
+    <div class="time-bar-row">
+      <span class="time-bar-label">Client Delivery</span>
+      <div class="time-bar-track">
+        <div class="time-bar-value" style="width: 13%; background: linear-gradient(90deg, #6B7280, #9CA3AF);">5-8h</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="time-card">
+    <h3>Top Pain Points</h3>
+    <div class="pain-point">
+      <span class="num">1</span>
+      <span class="desc"><strong>No cold calling structure</strong> — biggest revenue blocker. Afternoons planned but never happen. No tracking, no accountability.</span>
+    </div>
+    <div class="pain-point">
+      <span class="num">2</span>
+      <span class="desc"><strong>No proposal follow-up tracking</strong> — deals going cold. No system alerts when prospects haven't responded.</span>
+    </div>
+    <div class="pain-point">
+      <span class="num">3</span>
+      <span class="desc"><strong>No standardized onboarding</strong> — can't scale, can't delegate. Every client handoff to Aamish is ad hoc.</span>
+    </div>
+    <div class="pain-point">
+      <span class="num">4</span>
+      <span class="desc"><strong>Communication scattered</strong> — WhatsApp, email, Slack undecided. Things getting lost.</span>
+    </div>
+    <div class="pain-point">
+      <span class="num">5</span>
+      <span class="desc"><strong>Learning vs. selling time</strong> — 20-30 hrs/wk learning crowds out prospecting. Needs boundaries.</span>
+    </div>
+  </div>
+</div>
+
+<div class="filters">
+  <label>Filter:</label>
+  <button class="filter-btn active" data-filter="all">All Tasks</button>
+  <button class="filter-btn" data-filter="quick-wins">Quick Wins</button>
+  <button class="filter-btn" data-filter="strategic-wins">Strategic Wins</button>
+  <button class="filter-btn" data-filter="nice-to-haves">Nice-to-Haves</button>
+  <button class="filter-btn" data-filter="backlog">Backlog</button>
+  <button class="filter-btn" data-filter="human-only">Human-Only</button>
+  <button class="filter-btn" data-filter="already-automated">Already Automated</button>
+  <span style="margin-left: auto; font-size: 12px; color: var(--text-mid);">
+    <label>Area:</label>
+  </span>
+  <select id="area-filter" style="background: var(--surface); border: 1px solid var(--border-mid); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 13px; outline: none;">
+    <option value="all">All Areas</option>
+    <option value="Sales">Sales</option>
+    <option value="Marketing">Marketing</option>
+    <option value="Delivery">Delivery</option>
+    <option value="Ops">Operations</option>
+    <option value="Team">Team</option>
+    <option value="Data">Data</option>
+    <option value="Communication">Communication</option>
+    <option value="Strategic">Strategic</option>
+    <option value="Personal">Personal</option>
+  </select>
+</div>
+
+<div class="main-content" id="task-sections">
+</div>
+
+<!-- Detail Slide Panel -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-panel">
+    <button class="detail-close" id="detail-close">&times;</button>
+    <h2 id="detail-title"></h2>
+    <div class="detail-subtitle" id="detail-subtitle"></div>
+    <ul class="detail-list" id="detail-list"></ul>
+  </div>
+</div>
+
+<script>
+const TASKS = {
+  "quick-wins": {
+    title: "Quick Wins",
+    icon: "\u26A1",
+    desc: "High impact, easy to automate \u2014 start here",
+    checkable: true,
+    items: [
+      { id: "qw1", title: "GHL voicemail summary automation", desc: "Auto-send caller ID + AI transcript summary when a voicemail is received. No more manually listening to messages.", area: "Communication", freq: "Daily", time: "15 min/day", score: "green" },
+      { id: "qw2", title: "Chamber event \u2192 Google Calendar", desc: "Auto-pull Jacksonville Chamber events and add them to your calendar. Eliminate manual scanning.", area: "Sales", freq: "Weekly", time: "30 min/wk", score: "green" },
+      { id: "qw3", title: "Proposal follow-up reminders", desc: "Automated alerts when X days since proposal sent with no response. Never let a deal go cold.", area: "Sales", freq: "Daily", time: "20 min/day", score: "green" },
+      { id: "qw4", title: "Fix Daily Brief Telegram delivery", desc: "Troubleshoot why the morning brief isn't arriving. This is already built \u2014 just needs fixing.", area: "Data", freq: "Daily", time: "\u2014", score: "green" },
+      { id: "qw5", title: "Prospect follow-up tracking", desc: "Automated 'days since last contact' for every active prospect across all pipelines.", area: "Sales", freq: "Daily", time: "15 min/day", score: "green" },
+      { id: "qw6", title: "Email pre-filtering improvements", desc: "Tighten Aamish's workflow so the David Review folder is smaller and more actionable.", area: "Ops", freq: "Daily", time: "30 min/day", score: "yellow" },
+      { id: "qw7", title: "GHL pipeline dashboard", desc: "Visual view of all pipelines and where every prospect stands. One screen, full picture.", area: "Data", freq: "Daily", time: "20 min/day", score: "green" },
+      { id: "qw8", title: "Activity tracking", desc: "Log calls made, meetings held, follow-ups sent. Auto where possible, manual entry where not.", area: "Data", freq: "Daily", time: "10 min/day", score: "yellow" },
+      { id: "qw9", title: "Demo on Demand workflow", desc: "Business photos + phone numbers \u2192 auto-enroll in demo funnel via Unleashed School system.", area: "Sales", freq: "Weekly", time: "1 hr/wk", score: "yellow" },
+      { id: "qw10", title: "Client onboarding checklist template", desc: "Standardized handoff doc for Aamish. Same steps every time, nothing gets missed.", area: "Delivery", freq: "Per deal", time: "2-3 hrs/deal", score: "yellow" },
+      { id: "qw11", title: "Aamish daily task list structure", desc: "Replace ad hoc morning huddles with a structured standing list. Notion or ClickUp.", area: "Team", freq: "Daily", time: "30 min/day", score: "yellow" }
+    ]
+  },
+  "strategic-wins": {
+    title: "Strategic Wins",
+    icon: "\uD83C\uDFAF",
+    desc: "High impact, more effort \u2014 these move the business forward",
+    checkable: true,
+    items: [
+      { id: "sw1", title: "Sales page template system", desc: "Standardized, brandable prospect page that pulls from meeting notes. One template, customized per prospect.", area: "Sales", freq: "Per prospect", time: "2-3 hrs each", score: "yellow" },
+      { id: "sw2", title: "AI audit template integration", desc: "Build AAA Accelerator audit into a structured meeting \u2192 data collection \u2192 presentation workflow.", area: "Sales", freq: "Per prospect", time: "1-2 hrs each", score: "yellow" },
+      { id: "sw3", title: "Meeting data collection structure", desc: "Standardized questions and fields to capture during prospect meetings. Never miss key info.", area: "Sales", freq: "Per meeting", time: "\u2014", score: "yellow" },
+      { id: "sw4", title: "Cold calling accountability system", desc: "Scheduled blocks, auto-generated call lists, tracking, daily accountability. The system that forces the calls to happen.", area: "Sales", freq: "Daily", time: "2 hrs/day target", score: "yellow" },
+      { id: "sw5", title: "Reply-from-AIOS via Telegram", desc: "Respond to voicemails/messages (text or email) directly from Telegram without switching to GHL.", area: "Communication", freq: "Daily", time: "15 min/day", score: "red" },
+      { id: "sw6", title: "Audit notes \u2192 presentation pipeline", desc: "Take prospect audit data and auto-generate branded presentation. From raw notes to polished deck.", area: "Sales", freq: "Per prospect", time: "2-3 hrs each", score: "yellow" },
+      { id: "sw7", title: "Client delivery schedule & accountability", desc: "Timeline, milestones, client obligations. Prevents onboarding drag. Holds clients accountable.", area: "Delivery", freq: "Per client", time: "3-5 hrs/client", score: "yellow" },
+      { id: "sw8", title: "Client support ticketing system", desc: "Replace email-based support with proper ticket tracking. Visible to David and Aamish.", area: "Delivery", freq: "Ongoing", time: "1-2 hrs/wk", score: "yellow" },
+      { id: "sw9", title: "Aamish work assignment system", desc: "Formal task queue with priorities, deadlines, status tracking. Aamish knows what to do without asking.", area: "Team", freq: "Daily", time: "30 min/day", score: "yellow" },
+      { id: "sw10", title: "LinkedIn content calendar", desc: "Formalized posting plan with topics, schedule, and AI-assisted drafting. Aamish executes.", area: "Marketing", freq: "Weekly", time: "2-3 hrs/wk", score: "yellow" },
+      { id: "sw11", title: "Newsletter system", desc: "Template, subscriber management, regular cadence. Build the audience before September.", area: "Marketing", freq: "Biweekly", time: "2-3 hrs/issue", score: "yellow" },
+      { id: "sw12", title: "Email deliverability fix", desc: "Solve spam/trash issue so email marketing actually reaches inboxes. May need domain warmup or new sending infrastructure.", area: "Marketing", freq: "One-time", time: "\u2014", score: "red" },
+      { id: "sw13", title: "Rebrand collateral \u2192 AI Business OS", desc: "Update all materials from Five Pillars to AI-Powered Business Operating System positioning.", area: "Marketing", freq: "One-time", time: "5-10 hrs", score: "yellow" },
+      { id: "sw14", title: "Private business dashboards", desc: "Revenue, pipeline, cash flow, activity metrics. David-only view. Beautiful and at-a-glance.", area: "Data", freq: "Daily", time: "20 min/day", score: "yellow" },
+      { id: "sw15", title: "Learning catalog system", desc: "Organize videos/courses being consumed. Tag ideas, track what's been learned, surface insights.", area: "Strategic", freq: "Daily", time: "~20 hrs/wk learning", score: "yellow" },
+      { id: "sw16", title: "Simplified Follow-Up Machine product", desc: "For networking-heavy clients (Tom, Lauren). Connect to Supabase/HubSpot/GHL. Handoff project for Aamish. Revenue opportunity.", area: "Strategic", freq: "Project", time: "Revenue opp", score: "yellow" },
+      { id: "sw17", title: "September readiness plan", desc: "All systems, referral base, and pipeline must run without Jacksonville physical presence.", area: "Strategic", freq: "Ongoing", time: "Critical", score: "red" }
+    ]
+  },
+  "nice-to-haves": {
+    title: "Nice-to-Haves",
+    icon: "\u2728",
+    desc: "Lower priority \u2014 automate when bandwidth allows",
+    checkable: true,
+    items: [
+      { id: "nth1", title: "Business card \u2192 CRM auto-entry", desc: "Photo of business card auto-creates contact in Follow-Up Machine or GHL.", area: "Sales", freq: "Per event", time: "10 min/card", score: "green" },
+      { id: "nth2", title: "Blog post workflow", desc: "Streamline AI-assisted blog creation with templates and SEO structure.", area: "Marketing", freq: "Weekly", time: "2-3 hrs/post", score: "yellow" },
+      { id: "nth3", title: "Instagram presence", desc: "Establish posting cadence and content pipeline for Instagram.", area: "Marketing", freq: "Weekly", time: "2-3 hrs/wk", score: "yellow" },
+      { id: "nth4", title: "QuickBooks cleanup", desc: "Separate personal/business accounts. Automate Wise reimbursement tracking.", area: "Ops", freq: "Monthly", time: "2-3 hrs/mo", score: "yellow" },
+      { id: "nth5", title: "Meeting auto-booking with prep notes", desc: "Calendly/booking link triggers auto-generated prep notes from CRM data.", area: "Ops", freq: "Per meeting", time: "10 min each", score: "green" },
+      { id: "nth6", title: "Client check-in cadence", desc: "Scheduled touchpoints with templates. Not ad hoc \u2014 systematic and consistent.", area: "Delivery", freq: "Weekly", time: "1 hr/wk", score: "green" },
+      { id: "nth7", title: "Project blueprint per client", desc: "Documented scope, deliverables, status for each active build.", area: "Delivery", freq: "Per project", time: "2-3 hrs setup", score: "yellow" },
+      { id: "nth8", title: "Aamish training system", desc: "Structured learning path for GHL features instead of ad hoc video sharing.", area: "Team", freq: "Weekly", time: "1-2 hrs/wk", score: "yellow" },
+      { id: "nth9", title: "Financial tracking dashboard", desc: "Revenue by engine, expenses, burn rate, runway. Private.", area: "Data", freq: "Weekly", time: "1 hr/wk", score: "yellow" },
+      { id: "nth10", title: "Invoicing optimization", desc: "Explore alternatives to GHL processing fees.", area: "Ops", freq: "Monthly", time: "1 hr/mo", score: "red" }
+    ]
+  },
+  "backlog": {
+    title: "Backlog",
+    icon: "\uD83D\uDCCB",
+    desc: "Lower priority or harder to automate \u2014 revisit later",
+    checkable: true,
+    items: [
+      { id: "bl1", title: "Apollo outbound sequences", desc: "Automated email prospecting at scale. Not started yet.", area: "Sales", freq: "\u2014", time: "Setup project", score: "red" },
+      { id: "bl2", title: "Digital local prospecting system", desc: "Replace door-to-door with fully digital approach.", area: "Sales", freq: "\u2014", time: "\u2014", score: "red" },
+      { id: "bl3", title: "Legal/compliance documentation", desc: "High Techers, DGK structure, insurance licensing docs.", area: "Ops", freq: "Quarterly", time: "2-3 hrs/qtr", score: "red" },
+      { id: "bl4", title: "Slack workspace evaluation", desc: "Decide whether to move Aamish comms to Slack. Cost vs. value.", area: "Team", freq: "One-time", time: "Decision", score: "red" },
+      { id: "bl5", title: "GHL custom interface", desc: "Build custom UI to replace GHL's weak native interface.", area: "Ops", freq: "Ongoing", time: "Project", score: "red" }
+    ]
+  },
+  "human-only": {
+    title: "Human-Only",
+    icon: "\uD83E\uDDE0",
+    desc: "Requires your judgment, relationships, or presence \u2014 keep these",
+    checkable: false,
+    items: [
+      { id: "ho1", title: "Attend Chamber networking events", area: "Sales", freq: "Weekly", time: "3-5 hrs/wk", desc: "Primary lead source. Goes away in September \u2014 maximize now.", score: "human" },
+      { id: "ho2", title: "Run prospect meetings and demos", area: "Sales", freq: "Weekly", time: "3-5 hrs/wk", desc: "Your close rate depends on your presence and personality.", score: "human" },
+      { id: "ho3", title: "Close deals", area: "Sales", freq: "Per deal", time: "1-2 hrs/deal", desc: "Relationship and trust. Can't automate the handshake.", score: "human" },
+      { id: "ho4", title: "Pricing and packaging decisions", area: "Strategic", freq: "Ongoing", time: "2-3 hrs/wk", desc: "Core business judgment calls.", score: "human" },
+      { id: "ho5", title: "Client solution architecture", area: "Strategic", freq: "Per project", time: "Varies", desc: "You design what gets built. This is your superpower.", score: "human" },
+      { id: "ho6", title: "Custom app building (hands-on)", area: "Delivery", freq: "Daily", time: "5-10 hrs/wk", desc: "Building expertise and loving it.", score: "human" },
+      { id: "ho7", title: "Service positioning & rebranding", area: "Strategic", freq: "Ongoing", time: "2-3 hrs/wk", desc: "Core business direction.", score: "human" },
+      { id: "ho8", title: "Coaching and mentoring Aamish", area: "Team", freq: "Daily", time: "30 min/day", desc: "Human leadership.", score: "human" },
+      { id: "ho9", title: "Networking relationship building", area: "Sales", freq: "Weekly", time: "3-5 hrs/wk", desc: "Trust-based, in-person connections.", score: "human" },
+      { id: "ho10", title: "Financial advisor recruiting", area: "Sales", freq: "Weekly", time: "2-3 hrs/wk", desc: "High-value relationship selling.", score: "human" },
+      { id: "ho11", title: "Image Studios corporate relationship", area: "Sales", freq: "Ongoing", time: "As needed", desc: "Daniel \u2192 Jason/Taylor. High-stakes relationship.", score: "human" },
+      { id: "ho12", title: "Daily bank balance check", area: "Personal", freq: "Daily", time: "10 min/day", desc: "Peace of mind. Cash flow is tight.", score: "human" },
+      { id: "ho13", title: "Kettlebell workout", area: "Personal", freq: "Daily", time: "45 min/day", desc: "Health priority. Non-negotiable.", score: "human" },
+      { id: "ho14", title: "Walking with girlfriend", area: "Personal", freq: "3-4x/wk", time: "1-2 hrs", desc: "Relationship + health. 10 mi Sat, 5 mi Sun.", score: "human" },
+      { id: "ho15", title: "Weekend boundaries", area: "Personal", freq: "Weekly", time: "Protected", desc: "Turn off work. Lifestyle goal.", score: "human" },
+      { id: "ho16", title: "ACOA meeting", area: "Personal", freq: "Sat 11 AM", time: "1 hr", desc: "Non-negotiable.", score: "human" },
+      { id: "ho17", title: "Daughter check-ins", area: "Personal", freq: "Every 2-3 days", time: "15-20 min", desc: "Family.", score: "human" },
+      { id: "ho18", title: "Learning & video watching", area: "Strategic", freq: "Daily", time: "~20 hrs/wk", desc: "Competitive advantage. Needs structure, not elimination.", score: "human" },
+      { id: "ho19", title: "Coaching sessions", area: "Strategic", freq: "Weekly", time: "1-2 hrs/wk", desc: "AAA Accelerator, personal development.", score: "human" },
+      { id: "ho20", title: "Mastermind groups", area: "Strategic", freq: "Weekly", time: "1-2 hrs/wk", desc: "Peer learning.", score: "human" },
+      { id: "ho21", title: "Lisbon relocation planning", area: "Personal", freq: "Ongoing", time: "2-3 hrs/wk", desc: "Girlfriend handling most. September target.", score: "human" },
+      { id: "ho22", title: "Keep prospect conversations warm", area: "Sales", freq: "Daily", time: "30 min/day", desc: "Relationship texture AI can't replicate.", score: "human" },
+      { id: "ho23", title: "Return voicemails", area: "Communication", freq: "Daily", time: "15 min/day", desc: "Personal touch matters.", score: "human" },
+      { id: "ho24", title: "Morning huddle with Aamish", area: "Team", freq: "Daily", time: "15-30 min", desc: "Needs structure but stays human.", score: "human" },
+      { id: "ho25", title: "Business direction & creative decisions", area: "Strategic", freq: "Ongoing", time: "Varies", desc: "Your vision drives everything.", score: "human" }
+    ]
+  },
+  "already-automated": {
+    title: "Already Automated",
+    icon: "\uD83E\uDD16",
+    desc: "Partial automation in place through your AIOS",
+    checkable: false,
+    items: [
+      { id: "aa1", title: "Data collection (GHL, Monarch, FX)", area: "Data", freq: "Daily 6 AM", time: "Automated", desc: "Cron job collects to SQLite. Need to verify it's running.", score: "green" },
+      { id: "aa2", title: "Key metrics generation", area: "Data", freq: "On demand", time: "Automated", desc: "Auto-generates key-metrics.md from database. Loaded by /prime.", score: "green" },
+      { id: "aa3", title: "Daily Brief synthesis", area: "Data", freq: "Daily 7 AM", time: "Automated", desc: "Gemini synthesis \u2192 Telegram. Currently not delivering \u2014 needs fix.", score: "yellow" },
+      { id: "aa4", title: "Telegram command center", area: "Communication", freq: "Always on", time: "Automated", desc: "CommandOS bot running 24/7. Limited to basic agent interactions.", score: "yellow" },
+      { id: "aa5", title: "Meeting transcript collection", area: "Data", freq: "On demand", time: "Automated", desc: "Notion \u2192 database via IntelOS. Slack collector needs channel invites.", score: "yellow" },
+      { id: "aa6", title: "Email pre-filtering (Aamish)", area: "Ops", freq: "Daily", time: "Semi-auto", desc: "Aamish filters inbox \u2192 David Review folder. Still spending too much time.", score: "yellow" }
+    ]
+  }
+};
+
+// State management
+const STATE_KEY = 'aios-task-audit-state';
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem(STATE_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveState(s) {
+  localStorage.setItem(STATE_KEY, JSON.stringify(s));
+}
+
+let state = loadState();
+
+// Countdown
+function updateCountdown() {
+  const target = new Date('2026-09-01');
+  const now = new Date();
+  const diff = target - now;
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  document.getElementById('countdown').textContent = days + ' days';
+}
+updateCountdown();
+
+// Detail panel for stat card clicks
+function getAllItems() {
+  const all = [];
+  for (const key of Object.keys(TASKS)) {
+    for (const item of TASKS[key].items) {
+      all.push({ ...item, section: key });
+    }
+  }
+  return all;
+}
+
+function openDetail(title, subtitle, items) {
+  document.getElementById('detail-title').textContent = title;
+  document.getElementById('detail-subtitle').textContent = subtitle;
+  const list = document.getElementById('detail-list');
+  list.innerHTML = items.map(i =>
+    '<li><span>' + i.title + '</span><span class="item-area">' + i.area + '</span></li>'
+  ).join('');
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+document.getElementById('detail-close').addEventListener('click', closeDetail);
+document.getElementById('detail-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeDetail();
+});
+
+// Stat card click handlers
+document.querySelectorAll('.stat-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const stat = this.dataset.stat;
+    const all = getAllItems();
+
+    // Clear active state
+    document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+
+    if (stat === 'total') {
+      openDetail('All Tasks', '73 tasks mapped across your business', all);
+    } else if (stat === 'green') {
+      const items = all.filter(i => i.score === 'green');
+      openDetail('Fully Automatable', items.length + ' tasks AI/scripts can handle end-to-end', items);
+    } else if (stat === 'yellow') {
+      const items = all.filter(i => i.score === 'yellow');
+      openDetail('Partially Automatable', items.length + ' tasks AI can mostly handle with human review', items);
+    } else if (stat === 'red') {
+      const items = all.filter(i => i.score === 'red');
+      openDetail('Not Yet Automatable', items.length + ' tasks current AI can\'t handle reliably', items);
+    } else if (stat === 'human') {
+      const items = all.filter(i => i.score === 'human');
+      openDetail('Human-Only', items.length + ' tasks requiring your judgment, relationships, or presence', items);
+    } else if (stat === 'automated') {
+      const items = all.filter(i => i.section === 'already-automated');
+      openDetail('Already Automated', items.length + ' tasks with automation in place', items);
+    }
+  });
+});
+
+// Render sections
+function renderSections(sectionFilter, areaFilter) {
+  sectionFilter = sectionFilter || 'all';
+  areaFilter = areaFilter || 'all';
+  const container = document.getElementById('task-sections');
+  container.innerHTML = '';
+
+  const sectionOrder = ['quick-wins', 'strategic-wins', 'nice-to-haves', 'backlog', 'human-only', 'already-automated'];
+
+  for (const key of sectionOrder) {
+    if (sectionFilter !== 'all' && sectionFilter !== key) continue;
+    const section = TASKS[key];
+    const filteredItems = areaFilter === 'all' ? section.items : section.items.filter(function(i) { return i.area === areaFilter; });
+    if (filteredItems.length === 0) continue;
+
+    const sectionEl = document.createElement('div');
+    sectionEl.className = 'section ' + key;
+    sectionEl.innerHTML = '<div class="section-header">' +
+      '<div class="icon">' + section.icon + '</div>' +
+      '<h2>' + section.title + '</h2>' +
+      '<span class="count">' + filteredItems.length + '</span>' +
+      '<span class="section-desc">' + section.desc + '</span>' +
+      '</div>' +
+      '<div class="task-grid">' +
+      filteredItems.map(function(item) { return renderTask(item, section.checkable); }).join('') +
+      '</div>';
+    container.appendChild(sectionEl);
+  }
+
+  // Re-attach event listeners
+  document.querySelectorAll('.task-check').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var id = this.dataset.id;
+      state[id] = state[id] ? { done: !state[id].done, solvedBy: state[id].solvedBy || '' } : { done: true, solvedBy: '' };
+      saveState(state);
+      this.classList.toggle('checked');
+      this.closest('.task-card').classList.toggle('completed');
+      updateProgress();
+    });
+  });
+
+  document.querySelectorAll('.solved-input').forEach(function(el) {
+    el.addEventListener('change', function() {
+      var id = this.dataset.id;
+      state[id] = state[id] || { done: false };
+      state[id].solvedBy = this.value;
+      saveState(state);
+    });
+  });
+}
+
+function renderTask(item, checkable) {
+  var isDone = state[item.id] && state[item.id].done;
+  var solvedBy = (state[item.id] && state[item.id].solvedBy) || '';
+  var scoreLabels = { green: '\uD83D\uDFE2 Full', yellow: '\uD83D\uDFE1 Partial', red: '\uD83D\uDD34 Not Yet', human: '\u26AA Human' };
+  var scoreTag = item.score && scoreLabels[item.score] ? '<span class="tag tag-' + item.score + '">' + scoreLabels[item.score] + '</span>' : '';
+
+  return '<div class="task-card ' + (isDone ? 'completed' : '') + '">' +
+    (checkable ? '<div class="task-check ' + (isDone ? 'checked' : '') + '" data-id="' + item.id + '"></div>' : '') +
+    '<div class="task-body">' +
+    '<div class="task-title">' + item.title + '</div>' +
+    '<div class="task-meta">' +
+    '<span class="tag tag-area">' + item.area + '</span>' +
+    '<span class="tag tag-freq">' + item.freq + '</span>' +
+    (item.time ? '<span class="tag tag-time">' + item.time + '</span>' : '') +
+    scoreTag +
+    '</div>' +
+    (item.desc ? '<div class="task-desc">' + item.desc + '</div>' : '') +
+    (checkable ? '<input type="text" class="solved-input" data-id="' + item.id + '" placeholder="Solved by..." value="' + solvedBy.replace(/"/g, '&quot;') + '">' : '') +
+    '</div></div>';
+}
+
+function updateProgress() {
+  var checkableSections = ['quick-wins', 'strategic-wins', 'nice-to-haves', 'backlog'];
+  var done = 0;
+  var alreadyAutomated = 6;
+
+  for (var k = 0; k < checkableSections.length; k++) {
+    var items = TASKS[checkableSections[k]].items;
+    for (var i = 0; i < items.length; i++) {
+      if (state[items[i].id] && state[items[i].id].done) done++;
+    }
+  }
+
+  done += alreadyAutomated;
+  var pct = Math.round((done / 73) * 100);
+  document.getElementById('auto-pct').textContent = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    var areaFilter = document.getElementById('area-filter').value;
+    renderSections(this.dataset.filter, areaFilter);
+  });
+});
+
+document.getElementById('area-filter').addEventListener('change', function() {
+  var activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+  renderSections(activeFilter, this.value);
+});
+
+// Init
+renderSections();
+updateProgress();
+</script>
+
+</body>
+</html>

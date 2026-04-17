@@ -1,0 +1,94 @@
+/* ============================================
+   Meeting Intelligence — Design Tokens
+   Extracted from: outputs/meeting-dashboard.html
+   Brand: Advisor AI Partners (blue / teal / gold)
+   ============================================ */
+
+/* -- Colors -- */
+:root {
+  --base:         #F0F4F8;   /* Page background */
+  --surface:      #FFFFFF;   /* Card / panel background */
+  --surface-alt:  #F8FAFC;   /* Secondary surface */
+  --ink:          #0F172A;   /* Primary text */
+  --ink-dim:      #64748B;   /* Secondary text */
+  --ink-faint:    #94A3B8;   /* Labels, timestamps */
+  --border:       rgba(15, 23, 42, 0.08);   /* Default border */
+  --border-hover: rgba(15, 23, 42, 0.18);   /* Hover / focus border */
+
+  /* Brand accent — blue */
+  --blue:         #1D4ED8;
+  --blue-light:   #EFF6FF;
+  --blue-mid:     #BFDBFE;
+
+  /* Brand accent — teal */
+  --teal:         #0D9488;
+  --teal-light:   #F0FDFA;
+  --teal-mid:     #99F6E4;
+
+  /* Brand accent — gold */
+  --gold:         #B45309;
+  --gold-light:   #FFFBEB;
+  --gold-mid:     #FDE68A;
+}
+
+/* -- Typography -- */
+:root {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+
+  --text-2xs:  9px;
+  --text-xs:   10px;
+  --text-sm:   11px;
+  --text-base: 12px;
+  --text-md:   13px;
+  --text-lg:   14px;
+  --text-xl:   16px;
+  --text-2xl:  20px;
+  --text-3xl:  36px;
+
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  --tracking-tight:   -0.03em;
+  --tracking-snug:    -0.02em;
+  --tracking-normal:   0;
+  --tracking-wide:     0.1em;
+  --tracking-wider:    0.12em;
+  --tracking-widest:   0.16em;
+  --tracking-label:    0.18em;
+}
+
+/* -- Spacing Scale -- */
+:root {
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;  --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;  --sp-10: 40px;
+  --sp-12: 48px;
+}
+
+/* -- Radii -- */
+:root {
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-full: 100px;
+}
+
+/* -- Shadows -- */
+:root {
+  --shadow-card:   0 8px 32px rgba(15, 23, 42, 0.08);
+  --shadow-row:    0 4px 16px rgba(15, 23, 42, 0.07);
+  --shadow-pane:  -8px 0 40px rgba(15, 23, 42, 0.08);
+  --shadow-ring:   0 0 0 3px rgba(29, 78, 216, 0.08);
+}
+
+/* -- Transitions -- */
+:root {
+  --ease-default: 0.2s ease;
+  --ease-fast:    0.15s ease;
+  --ease-spring:  0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-reveal:  0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}

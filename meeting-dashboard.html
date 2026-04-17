@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meeting Intelligence — Advisor AI Partners</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --base:         #F0F4F8;
+      --surface:      #FFFFFF;
+      --surface-alt:  #F8FAFC;
+      --ink:          #0F172A;
+      --ink-dim:      #64748B;
+      --ink-faint:    #94A3B8;
+      --border:       rgba(15, 23, 42, 0.08);
+      --border-hover: rgba(15, 23, 42, 0.18);
+
+      --blue:         #1D4ED8;
+      --blue-light:   #EFF6FF;
+      --blue-mid:     #BFDBFE;
+      --teal:         #0D9488;
+      --teal-light:   #F0FDFA;
+      --teal-mid:     #99F6E4;
+      --gold:         #B45309;
+      --gold-light:   #FFFBEB;
+      --gold-mid:     #FDE68A;
+
+      --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+      --font-mono: 'Geist Mono', monospace;
+
+      --ease-spring: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--base);
+      color: var(--ink);
+      margin: 0;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .font-mono { font-family: var(--font-mono) !important; }
+
+    /* Section header — ux-jonny signature */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-header span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      white-space: nowrap;
+    }
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Hairline divider — sunplanet */
+    .hairline {
+      width: 100%;
+      height: 1px;
+      background: var(--ink);
+      opacity: 0.07;
+    }
+
+    /* Stats card */
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      transition: box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .stat-card:hover {
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+      border-color: var(--border-hover);
+    }
+
+    /* Meeting row */
+    .meeting-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .meeting-row:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.07);
+      transform: translateY(-1px);
+    }
+    .meeting-row.active {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.08), 0 4px 16px rgba(15, 23, 42, 0.07);
+    }
+    .meeting-row .active-bar {
+      position: absolute;
+      left: 0; top: 12px; bottom: 12px;
+      width: 3px;
+      background: var(--blue);
+      border-radius: 0 2px 2px 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .meeting-row.active .active-bar { opacity: 1; }
+
+    /* Source badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .badge-fireflies { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
+    .badge-notion    { background: var(--teal-light); color: var(--teal); border: 1px solid var(--teal-mid); }
+    .badge-manual    { background: var(--gold-light); color: var(--gold); border: 1px solid var(--gold-mid); }
+
+    /* Detail pane */
+    #detail-pane {
+      position: fixed;
+      right: 0; top: 0; bottom: 0;
+      width: 440px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: transform var(--ease-spring);
+      z-index: 50;
+      overflow-y: auto;
+      box-shadow: -8px 0 40px rgba(15, 23, 42, 0.08);
+    }
+    #detail-pane.open {
+      transform: translateX(0);
+    }
+
+    /* Filter pill */
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink-dim);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-pill:hover { border-color: var(--border-hover); color: var(--ink); }
+    .filter-pill.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+    /* Search */
+    .search-input {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px 7px 32px;
+      color: var(--ink);
+      outline: none;
+      width: 220px;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--blue); }
+    .search-input::placeholder { color: var(--ink-faint); }
+
+    /* Staggered reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* Action item */
+    .action-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+    }
+    .action-item + .action-item { border-top: 1px solid var(--border); }
+    .action-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    /* Duration bar */
+    .duration-bar {
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 2px;
+    }
+
+    /* Owner group header in detail */
+    .owner-group {
+      margin-bottom: 16px;
+    }
+    .owner-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      padding: 2px 8px;
+      border-radius: 100px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+    @keyframes ping { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.8);opacity:0} }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav style="background: var(--surface); border-bottom: 1px solid var(--border);" class="sticky top-0 z-40 px-8 py-4 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div style="width:28px;height:28px;background:var(--blue);border-radius:6px;" class="flex items-center justify-center">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:600;letter-spacing:-0.01em;">Advisor AI Partners</div>
+      <div class="font-mono" style="font-size:9px;color:var(--ink-faint);letter-spacing:0.12em;text-transform:uppercase;">Meeting Intelligence</div>
+    </div>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="font-mono" style="font-size:10px;color:var(--ink-faint);" id="current-date"></div>
+    <div class="flex items-center gap-2">
+      <span class="relative flex" style="width:8px;height:8px;">
+        <span style="position:absolute;inset:0;border-radius:50%;background:var(--teal);opacity:0.6;animation:ping 1.5s ease-in-out infinite;"></span>
+        <span style="position:relative;border-radius:50%;width:8px;height:8px;background:var(--teal);display:block;"></span>
+      </span>
+      <span class="font-mono" style="font-size:9px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;">IntelOS Live</span>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="px-8 py-8 max-w-6xl mx-auto" id="main-content">
+
+  <!-- STATS -->
+  <div class="section-header mb-5 reveal"><span>Overview</span></div>
+  <div class="grid gap-4 mb-8 reveal" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="stat-card">
+      <div class="font-mono" style="font-size:9px;color:var(--ink-faint);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;">Total Meetings</div>
+      <div style="font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1;" id="stat-total">—</div>
+      <div class="font-mono" style="font-size:10px;color:var(--ink-faint);margin-top:6px;">all sources</div>
+    </div>
+    <div class="stat-card">
+      <div class="font-mono" style="font-size:9px;color:var(--ink-faint);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;">This Month</div>
+      <div style="font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1;" id="stat-week">—</div>
+      <div class="font-mono" style="font-size:10px;color:var(--ink-faint);margin-top:6px;" id="stat-month-label">Apr 2026</div>
+    </div>
+    <div class="stat-card">
+      <div class="font-mono" style="font-size:9px;color:var(--ink-faint);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;">Avg Duration</div>
+      <div style="font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1;" id="stat-duration">—</div>
+      <div class="font-mono" style="font-size:10px;color:var(--ink-faint);margin-top:6px;">minutes</div>
+    </div>
+    <div class="stat-card">
+      <div class="font-mono" style="font-size:9px;color:var(--ink-faint);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:10px;">Action Items</div>
+      <div style="font-size:36px;font-weight:700;letter-spacing:-0.03em;line-height:1;" id="stat-actions">—</div>
+      <div class="font-mono" style="font-size:10px;color:var(--teal);margin-top:6px;">across all meetings</div>
+    </div>
+  </div>
+
+  <div class="hairline mb-8"></div>
+
+  <!-- FILTERS + SEARCH -->
+  <div class="flex items-center justify-between mb-5 reveal">
+    <div class="section-header" style="flex:1;margin-right:24px;"><span>Meetings</span></div>
+    <div class="flex items-center gap-2">
+      <div style="position:relative;">
+        <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;" width="12" height="12" fill="none" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8" stroke="#94A3B8" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input class="search-input" type="text" placeholder="Search meetings..." id="search-input" />
+      </div>
+      <button class="filter-pill active" data-filter="all">All</button>
+      <button class="filter-pill" data-filter="fireflies">Fireflies</button>
+      <button class="filter-pill" data-filter="notion">Notion</button>
+    </div>
+  </div>
+
+  <!-- MEETING LIST -->
+  <div id="meeting-list" class="flex flex-col gap-3"></div>
+
+</main>
+
+<!-- DETAIL PANE -->
+<div id="detail-pane">
+  <div style="padding:24px 28px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:10;" class="flex items-center justify-between">
+    <div class="font-mono" style="font-size:9px;color:var(--ink-faint);letter-spacing:0.16em;text-transform:uppercase;">Meeting Detail</div>
+    <button id="close-pane" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;" onmouseenter="this.style.background='var(--base)'" onmouseleave="this.style.background='none'">
+      <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div id="detail-content" style="padding:28px;"></div>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay" style="position:fixed;inset:0;background:rgba(15,23,42,0.15);z-index:45;opacity:0;pointer-events:none;transition:opacity 0.3s ease;backdrop-filter:blur(2px);"></div>
+
+<script>
+// ─── REAL DATA — Generated from data/data.db ──────────────────────────────────
+// Run: .venv/bin/python scripts/render_meeting_dashboard.py to regenerate
+const MEETINGS = [
+  {
+    "id": 1,
+    "meeting_id": "fireflies_01KPBV88YW9MRZGNJR7KGJKHZ5",
+    "source": "fireflies",
+    "title": "David Ortiz and Todd Howland",
+    "date": "2026-04-16",
+    "duration_minutes": 59,
+    "summary": "Career Transition: Moved from culinary arts to tech and financial advising after leaving Venezuela, taught programming himself. AI-Driven Marketing Solutions: Developed systems for advisors, automating content creation and compliance for effective outreach and engagement. Lead Generation Challenges: Existing leads have high bounce rates; proposed targeted AI methods for non-professional business owners.",
+    "action_items": [
+      {"owner": "David", "text": "Continue developing and refining the AI-driven digital marketing and lead generation platform specifically tailored for financial advisors"},
+      {"owner": "David", "text": "Pursue clean data sources and verify quality of leads to improve targeted lead lists for LTC products and business owner segments"},
+      {"owner": "David", "text": "Implement conversational AI bots to automate lead qualification and client interactions within case management workflows"},
+      {"owner": "David", "text": "Explore multi-channel advertising strategies (Facebook, Instagram, LinkedIn) for client acquisition and lead nurturing using AI-generated content"},
+      {"owner": "David", "text": "Formalize performance-based revenue sharing model for advisor clients to incentivize adoption and scalability of the AI marketing platform"},
+      {"owner": "David", "text": "Engage advisors via direct outreach (email, phone, LinkedIn) to introduce AI platform and gain early users for pilot testing and feedback"}
+    ]
+  },
+  {
+    "id": 2,
+    "meeting_id": "fireflies_01KP88VEEMNBA9VZ2HQ67V8YWT",
+    "source": "fireflies",
+    "title": "David Ortiz and Richard Igbinoba",
+    "date": "2026-04-15",
+    "duration_minutes": 40,
+    "summary": "Remote Collaboration Setup: Mac Mini acts as a 24/7 server for seamless access and collaboration on AI OS projects. Concurrent Access: Multiple users can log in simultaneously, enabling independent workspaces while sharing the same hardware. Client Onboarding Timelines: Deployments typically take 1–5 days, focusing on audits, installations, and knowledge transfer.",
+    "action_items": [
+      {"owner": "David Ortiz", "text": "Set up Mac Mini as always-on server and synchronize project directories via iCloud to work seamlessly across devices"},
+      {"owner": "David Ortiz", "text": "Create separate user account on Mac Mini for assistant to enable simultaneous and isolated remote work sessions"},
+      {"owner": "David Ortiz", "text": "Explore and establish remote desktop access on Mac Mini for assistant using Jump Desktop or Chrome Remote Desktop"},
+      {"owner": "David Ortiz", "text": "Continue app development using CLAUDE code interface for client deliverables, leveraging CLI capabilities where necessary"},
+      {"owner": "David Ortiz", "text": "Plan AI OS client setup workflow with considerations for remote auditing, installation timeline, and knowledge transfer sessions"},
+      {"owner": "Richard I", "text": "Confirm specific steps to install multiple isolated CLAUDE code instances per user on Mac Mini and provide guidance to David"},
+      {"owner": "Richard I", "text": "Investigate detailed setup and configuration for Mac Mini multi-user server environment and share best practices"},
+      {"owner": "Richard I", "text": "Advise on appropriate remote connection tools (Jump Desktop, TailScale) tailored to mixed Mac/Windows user environments"},
+      {"owner": "Richard I", "text": "Clarify usage limitations and subscription plan recommendations for CLAUDE to ensure David and assistant have adequate access"},
+      {"owner": "Richard I", "text": "Keep David updated about the development status of the forthcoming SaaS tool for AI OS skill sharing and community collaboration"}
+    ]
+  },
+  {
+    "id": 3,
+    "meeting_id": "fireflies_01KP5XJQ48GH5VR38QMW0MB1AV",
+    "source": "fireflies",
+    "title": "David Ortiz and Mara Crisan",
+    "date": "2026-04-15",
+    "duration_minutes": 34,
+    "summary": "Revenue Growth Goal: Aim to reach $50,000 in monthly recurring revenue by scaling AI automation and Go High Level services. Current Revenue Status: Currently at $5,000 MRR, targeting to 10x through AI automation projects. Pricing Challenges: Seeking a scalable $5,000 deliverable amidst diverse project pricing ranging from $1,000 to $15,000. Client Targeting: Focus on home service businesses and subcontractors.",
+    "action_items": [
+      {"owner": "David Ortiz", "text": "Book a strategy call with Guy to validate current pricing, offer structure, and Ideal Customer Profile targeting"},
+      {"owner": "David Ortiz", "text": "Book calls with Richard and Valera for technical clarifications on AI Operating System setup"},
+      {"owner": "David Ortiz", "text": "Complete the 'Start Here' module and review community channels (Wins, Share Your Builds, Hiring, Partnerships)"},
+      {"owner": "David Ortiz", "text": "Build and expand the warm contacts list using outbound systems course content and notify Mara when sufficiently large"},
+      {"owner": "David Ortiz", "text": "Work through LinkedIn Launchpad and optimize profile for content outreach; book LinkedIn coaching with Shreya"},
+      {"owner": "David Ortiz", "text": "Conduct market research and AI audits with existing business contacts to validate pricing and product-market fit"},
+      {"owner": "David Ortiz", "text": "Schedule and attend follow-up call with Mara approximately two weeks after completing initial tasks"},
+      {"owner": "David Ortiz", "text": "Confirm action items list from Fireflies transcript and request missing details from Mara if needed"},
+      {"owner": "Mara Crisan", "text": "Provide David with calendar link and pin it in the community for easy scheduling"},
+      {"owner": "Mara Crisan", "text": "Send AI audit guide template to help David with client conversations and pricing structuring"},
+      {"owner": "Mara Crisan", "text": "Share links to community resources including events calendar, workshop recordings, and Morningside Updates"},
+      {"owner": "Mara Crisan", "text": "Notify David when the AI auditing SaaS tool and supporting consultancy course are released"},
+      {"owner": "Mara Crisan", "text": "Assist in recruiting talent through community recommendations as David expands his team"},
+      {"owner": "Mara Crisan", "text": "Maintain communication via community DM for accountability and provide timely guidance on project progress"},
+      {"owner": "Mara Crisan", "text": "Monitor task completion and coordinate follow-up meeting schedule with David based on progress"},
+      {"owner": "Mara Crisan", "text": "Verify Fireflies transcript accuracy and send a clean action items list if any information is missing"}
+    ]
+  },
+  {
+    "id": 4,
+    "meeting_id": "fireflies_01KP4J2D6A2E4NSAX6FTKTMQ2N",
+    "source": "fireflies",
+    "title": "David Ortiz and Kevin Taheryan",
+    "date": "2026-04-14",
+    "duration_minutes": 64,
+    "summary": "Current Revenue: AI business generates about $6,000 monthly; $15,000 and $5,000 contracts show initial traction. Business Challenges: Needs a repeatable, scalable offer; inconsistent income hampers predictable growth. Revenue Goals: Aims for $50,000 monthly revenue in six months, replacing project work with steady recurring income. Program Benefits: Access to expert coaches and resources in the AAA Accelerator.",
+    "action_items": [
+      {"owner": "David Ortiz", "text": "Review and sign the professional agreement document sent by Kevin"},
+      {"owner": "David Ortiz", "text": "Book and attend onboarding call with dedicated client success manager Amara, including assistant participation"},
+      {"owner": "David Ortiz", "text": "Respond to Kevin's text message for contact confirmation post-call"},
+      {"owner": "David Ortiz", "text": "Engage actively with AAA Accelerator platform, access AIOS course and community for offer and system development"},
+      {"owner": "Kevin Taheryan", "text": "Send professional agreement and ensure David receives onboarding invitation to the Circle platform"},
+      {"owner": "Kevin Taheryan", "text": "Assist David with platform navigation, expert bookings, and course introductions, especially AIOS program"},
+      {"owner": "Kevin Taheryan", "text": "Support David in offer creation and scaling strategies via coaching experts like Andrew and Otto"},
+      {"owner": "Kevin Taheryan", "text": "Maintain ongoing communication with David with periodic check-ins after enrollment to track progress"},
+      {"owner": "Kevin Taheryan", "text": "Provide access to unlimited one-on-one calls with experts and oversee group calls scheduling"}
+    ]
+  },
+  {
+    "id": 5,
+    "meeting_id": "notion_33b03758-d6de-804c-9385-ee0531915991",
+    "source": "notion",
+    "title": "Daniel Pail's Availability (Tours)",
+    "date": "2026-04-07",
+    "duration_minutes": 30,
+    "summary": "",
+    "action_items": []
+  }
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+let activeId = null;
+let searchQuery = '';
+
+// ─── DOM REFS ─────────────────────────────────────────────────────────────────
+const list = document.getElementById('meeting-list');
+const detailPane = document.getElementById('detail-pane');
+const detailContent = document.getElementById('detail-content');
+const overlay = document.getElementById('overlay');
+const closeBtn = document.getElementById('close-pane');
+const searchInput = document.getElementById('search-input');
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function daysAgo(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const today = new Date();
+  const diff = Math.round((today - d) / 86400000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  if (diff < 7) return `${diff}d ago`;
+  if (diff < 30) return `${Math.round(diff/7)}w ago`;
+  return `${Math.round(diff/30)}mo ago`;
+}
+function sourceBadge(source) {
+  const map = {
+    fireflies: ['badge-fireflies', 'Fireflies'],
+    notion:    ['badge-notion', 'Notion'],
+    manual:    ['badge-manual', 'Manual'],
+  };
+  const [cls, label] = map[source] || map.manual;
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function durationLabel(min) {
+  if (!min) return '—';
+  if (min < 60) return `${min}m`;
+  return `${Math.floor(min/60)}h ${min%60}m`;
+}
+function isMe(owner) {
+  return owner.toLowerCase().includes('david');
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+function renderStats() {
+  const total = MEETINGS.length;
+  const now = new Date();
+  const thisMonth = MEETINGS.filter(m => {
+    const d = new Date(m.date + 'T12:00:00');
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  }).length;
+  const durations = MEETINGS.filter(m => m.duration_minutes).map(m => m.duration_minutes);
+  const avgDur = durations.length ? Math.round(durations.reduce((a,b)=>a+b,0)/durations.length) : 0;
+  const totalActions = MEETINGS.reduce((sum, m) => sum + (m.action_items?.length || 0), 0);
+
+  animateCount('stat-total', total);
+  animateCount('stat-week', thisMonth);
+  animateCount('stat-duration', avgDur);
+  animateCount('stat-actions', totalActions);
+
+  document.getElementById('stat-month-label').textContent =
+    now.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+function animateCount(id, target) {
+  const el = document.getElementById(id);
+  let start = 0;
+  const step = () => {
+    start += Math.ceil((target - start) / 6);
+    el.textContent = start;
+    if (start < target) requestAnimationFrame(step);
+    else el.textContent = target;
+  };
+  setTimeout(step, 300);
+}
+
+// ─── LIST ─────────────────────────────────────────────────────────────────────
+function getFiltered() {
+  return MEETINGS.filter(m => {
+    const matchSource = activeFilter === 'all' || m.source === activeFilter;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || m.title.toLowerCase().includes(q) || (m.summary||'').toLowerCase().includes(q);
+    return matchSource && matchSearch;
+  });
+}
+
+function renderList() {
+  const filtered = getFiltered();
+  list.innerHTML = '';
+
+  if (!filtered.length) {
+    list.innerHTML = `<div style="text-align:center;padding:48px;color:var(--ink-faint);">
+      <div class="font-mono" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">No meetings match your filter</div>
+    </div>`;
+    return;
+  }
+
+  const maxDur = Math.max(...MEETINGS.map(x => x.duration_minutes || 0));
+
+  filtered.forEach((m, i) => {
+    const el = document.createElement('div');
+    el.className = `meeting-row reveal ${m.id === activeId ? 'active' : ''}`;
+    el.style.transitionDelay = `${i * 40}ms`;
+    el.dataset.id = m.id;
+
+    const barWidth = m.duration_minutes ? Math.round((m.duration_minutes / maxDur) * 100) : 0;
+    const actionCount = m.action_items?.length || 0;
+    const myActions = m.action_items?.filter(a => isMe(a.owner)).length || 0;
+
+    el.innerHTML = `
+      <div class="active-bar"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            ${sourceBadge(m.source)}
+            <span class="font-mono" style="font-size:9px;color:var(--ink-faint);">${daysAgo(m.date)} · ${formatDate(m.date)}</span>
+          </div>
+          <div style="font-size:14px;font-weight:500;letter-spacing:-0.01em;line-height:1.35;margin-bottom:8px;color:var(--ink);">${m.title}</div>
+          ${m.summary ? `<div style="font-size:12px;color:var(--ink-dim);line-height:1.5;font-family:var(--font-mono);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${m.summary}</div>` : '<div class="font-mono" style="font-size:11px;color:var(--ink-faint);font-style:italic;">No summary available</div>'}
+        </div>
+        <div style="flex-shrink:0;text-align:right;">
+          <div style="font-size:16px;font-weight:600;letter-spacing:-0.02em;color:var(--ink);">${durationLabel(m.duration_minutes)}</div>
+          ${actionCount ? `
+          <div class="font-mono" style="font-size:9px;color:var(--ink-faint);margin-top:2px;">${actionCount} actions</div>
+          ${myActions ? `<div class="font-mono" style="font-size:9px;color:var(--blue);margin-top:1px;">${myActions} mine</div>` : ''}
+          ` : '<div class="font-mono" style="font-size:9px;color:var(--ink-faint);margin-top:2px;">no actions</div>'}
+        </div>
+      </div>
+      ${m.duration_minutes ? `
+      <div style="margin-top:12px;">
+        <div style="width:${barWidth}%;max-width:100%;" class="duration-bar"></div>
+      </div>` : ''}
+    `;
+
+    el.addEventListener('click', () => openDetail(m.id));
+    list.appendChild(el);
+
+    requestAnimationFrame(() => {
+      setTimeout(() => el.classList.add('in'), i * 40);
+    });
+  });
+}
+
+// ─── DETAIL PANE ──────────────────────────────────────────────────────────────
+function openDetail(id) {
+  const m = MEETINGS.find(x => x.id === id);
+  if (!m) return;
+  activeId = id;
+
+  document.querySelectorAll('.meeting-row').forEach(r => {
+    r.classList.toggle('active', parseInt(r.dataset.id) === id);
+  });
+
+  // Group action items by owner
+  const owners = {};
+  (m.action_items || []).forEach(a => {
+    if (!owners[a.owner]) owners[a.owner] = [];
+    owners[a.owner].push(a.text);
+  });
+
+  const actionHTML = Object.entries(owners).map(([owner, items]) => {
+    const mine = isMe(owner);
+    const color = mine ? 'var(--blue)' : 'var(--teal)';
+    const bg = mine ? 'var(--blue-light)' : 'var(--teal-light)';
+    return `
+      <div class="owner-group">
+        <span class="owner-label" style="color:${color};background:${bg};">${owner}</span>
+        ${items.map(text => `
+          <div class="action-item">
+            <div class="action-dot" style="background:${color};"></div>
+            <div class="font-mono" style="font-size:11px;color:var(--ink-dim);line-height:1.6;">${text}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+
+  detailContent.innerHTML = `
+    <div style="margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+        ${sourceBadge(m.source)}
+        <span class="font-mono" style="font-size:9px;color:var(--ink-faint);">${formatDate(m.date)}</span>
+      </div>
+      <h2 style="font-size:16px;font-weight:600;letter-spacing:-0.02em;line-height:1.3;margin-bottom:16px;">${m.title}</h2>
+      <div style="display:flex;gap:12px;">
+        <div style="background:var(--base);border-radius:8px;padding:10px 14px;flex:1;">
+          <div class="font-mono" style="font-size:9px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Duration</div>
+          <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;">${durationLabel(m.duration_minutes)}</div>
+        </div>
+        <div style="background:var(--base);border-radius:8px;padding:10px 14px;flex:1;">
+          <div class="font-mono" style="font-size:9px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Actions</div>
+          <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;">${m.action_items?.length || 0}</div>
+        </div>
+        <div style="background:var(--blue-light);border-radius:8px;padding:10px 14px;flex:1;">
+          <div class="font-mono" style="font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Mine</div>
+          <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;color:var(--blue);">${m.action_items?.filter(a => isMe(a.owner)).length || 0}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hairline" style="margin-bottom:20px;"></div>
+
+    ${m.summary ? `
+    <div style="margin-bottom:24px;">
+      <div class="section-header" style="margin-bottom:12px;"><span>Summary</span></div>
+      <p class="font-mono" style="font-size:11px;line-height:1.75;color:var(--ink-dim);">${m.summary}</p>
+    </div>
+    ` : ''}
+
+    ${m.action_items?.length ? `
+    <div>
+      <div class="section-header" style="margin-bottom:16px;"><span>Action Items</span></div>
+      ${actionHTML}
+    </div>
+    ` : `
+    <div style="text-align:center;padding:32px 0;">
+      <div class="font-mono" style="font-size:10px;color:var(--ink-faint);letter-spacing:0.1em;text-transform:uppercase;">No action items recorded</div>
+    </div>
+    `}
+  `;
+
+  detailPane.classList.add('open');
+  overlay.style.opacity = '1';
+  overlay.style.pointerEvents = 'auto';
+}
+
+function closeDetail() {
+  detailPane.classList.remove('open');
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+  activeId = null;
+  document.querySelectorAll('.meeting-row').forEach(r => r.classList.remove('active'));
+}
+
+// ─── EVENTS ───────────────────────────────────────────────────────────────────
+closeBtn.addEventListener('click', closeDetail);
+overlay.addEventListener('click', closeDetail);
+
+document.querySelectorAll('.filter-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  });
+});
+
+searchInput.addEventListener('input', e => {
+  searchQuery = e.target.value;
+  renderList();
+});
+
+// ─── DATE ─────────────────────────────────────────────────────────────────────
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+  weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+requestAnimationFrame(() => {
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('in'), 80 + i * 80);
+  });
+});
+
+renderStats();
+renderList();
+</script>
+</body>
+</html>

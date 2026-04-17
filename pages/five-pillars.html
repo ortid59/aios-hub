@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All-in-One AI-Powered Growth System | Advisor AI Partners</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Page Backgrounds */
+      --bg:          #F5F4F0;
+      --bg-warm:     #FAFAF7;
+      --surface:     #FFFFFF;
+      --footer-bg:   #111318;
+
+      /* Text */
+      --text-dark:   #1C1C1E;
+      --text-mid:    #52525B;
+      --text-light:  #A1A1AA;
+      --text-faint:  #D4D4D8;
+
+      /* Brand Accents */
+      --blue:        #1A3A6B;
+      --blue-soft:   #EBF0FA;
+      --teal:        #0C7A6E;
+      --teal-soft:   #E6F5F2;
+      --gold:        #B8860B;
+      --gold-soft:   #FBF3E0;
+      --indigo:      #3730A3;
+      --indigo-soft: #EEF2FF;
+      --green:       #166534;
+      --green-soft:  #DCFCE7;
+      --amber:       #B85A00;
+      --amber-soft:  #FEF0E0;
+      --slate:       #5B4FCF;
+      --slate-soft:  #F0EEFB;
+
+      /* Borders */
+      --line:        rgba(28,28,30, 0.07);
+      --line-mid:    rgba(28,28,30, 0.12);
+
+      /* Fonts */
+      --heading:     'Plus Jakarta Sans', sans-serif;
+      --body:        'Inter', sans-serif;
+
+      /* Motion */
+      --expo:        cubic-bezier(0.22, 1, 0.36, 1);
+
+      /* Pillar accent colours */
+      --c1: #1A3A6B; /* Capture    */
+      --c2: #0C7A6E; /* Nurture    */
+      --c3: #166534; /* Close      */
+      --c4: #B85A00; /* Evangelize */
+      --c5: #3730A3; /* Reactivate */
+      --c1-soft: #EBF0FA;
+      --c2-soft: #E6F5F2;
+      --c3-soft: #DCFCE7;
+      --c4-soft: #FEF0E0;
+      --c5-soft: #EEF2FF;
+    }
+
+    body {
+      font-family: var(--body);
+      color: var(--text-mid);
+      background: var(--bg);
+      line-height: 1.68;
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    /* ── GLOBAL ── */
+    .container { max-width: 1060px; margin: 0 auto; }
+
+    h1, h2, h3 {
+      font-family: var(--heading);
+      color: var(--text-dark);
+      line-height: 1.18;
+    }
+    h1 {
+      font-size: clamp(30px, 5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+    h2 {
+      font-size: clamp(22px, 3.5vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.28;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 18px;
+    }
+    .eyebrow .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+    .lead {
+      font-size: 16.5px;
+      color: var(--text-mid);
+      max-width: 540px;
+      line-height: 1.78;
+      font-weight: 400;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--text-dark);
+      color: var(--surface);
+      padding: 14px 32px;
+      border-radius: 100px;
+      font-family: var(--body);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: -0.1px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.35s var(--expo), box-shadow 0.35s var(--expo);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(130deg, var(--blue), var(--teal));
+      opacity: 0;
+      transition: opacity 0.35s;
+      border-radius: 100px;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,58,107,0.22); }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-primary .arrow {
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s var(--expo);
+    }
+    .btn-primary:hover .arrow { transform: translateX(4px); }
+    .btn-note {
+      display: block;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* ── SECTION SHELL ── */
+    section {
+      padding: 96px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    section::before,
+    section::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+    }
+    section::before {
+      top: 0;
+      background: linear-gradient(90deg, transparent, var(--line-mid), transparent);
+    }
+    section::after {
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, var(--line-mid), transparent);
+    }
+    .bg-main { background: var(--bg); }
+    .bg-warm { background: var(--bg-warm); }
+
+    /* ── BACKGROUND ORBS ── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(115px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; top: -150px; right: -180px; background: rgba(26,58,107,0.05); animation: float-orb 30s ease-in-out infinite; }
+    .orb-2 { width: 450px; height: 450px; bottom: -120px; left: -160px; background: rgba(12,122,110,0.05); animation: float-orb 26s ease-in-out infinite reverse; }
+    @keyframes float-orb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px, -20px); } }
+
+    section > .container { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 120px 48px 96px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-left h1 {
+      margin-bottom: 22px;
+    }
+    .hero-left h1 .accent {
+      background: linear-gradient(90deg, var(--blue) 55%, var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-left .lead {
+      margin-bottom: 36px;
+    }
+
+    /* Hero Pillar Preview Card */
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 32px;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo);
+    }
+    .hero-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+    }
+    .hero-card .card-eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+    .pillar-mini {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .pillar-mini:last-child { border-bottom: none; }
+    .pillar-mini .pm-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .pillar-mini .pm-name {
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    .pillar-mini .pm-desc {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    /* ── PILLAR TABS ── */
+    .pillars-section { padding: 96px 48px; }
+    .pillars-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 52px;
+    }
+    .pillars-header-left h2 { margin-bottom: 18px; }
+
+    .pillar-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-bottom: none;
+      background: var(--surface);
+    }
+    .pillar-tab {
+      flex: 1;
+      padding: 20px 14px;
+      border: none;
+      background: var(--surface);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s var(--expo);
+      border-right: 1px solid var(--line);
+      position: relative;
+      font-family: var(--body);
+    }
+    .pillar-tab:last-child { border-right: none; }
+    .pillar-tab .tab-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: transform 0.4s var(--expo);
+    }
+    .pillar-tab:hover .tab-icon { transform: scale(1.08) rotate(-5deg); }
+    .pillar-tab .tab-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.3s var(--expo);
+    }
+    .pillar-tab .tab-desc {
+      font-size: 11px;
+      color: var(--text-faint);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .pillar-tab:hover { background: var(--bg); }
+    .pillar-tab.active { background: var(--text-dark); }
+    .pillar-tab.active .tab-label { color: var(--surface); }
+    .pillar-tab.active .tab-desc { color: rgba(255,255,255,0.45); }
+    .pillar-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    /* Per-tab accent colours */
+    .pillar-tab[data-tab="capture"] .tab-icon    { background: var(--c1-soft); }
+    .pillar-tab[data-tab="nurture"] .tab-icon    { background: var(--c2-soft); }
+    .pillar-tab[data-tab="close"] .tab-icon      { background: var(--c3-soft); }
+    .pillar-tab[data-tab="evangelize"] .tab-icon { background: var(--c4-soft); }
+    .pillar-tab[data-tab="reactivate"] .tab-icon { background: var(--c5-soft); }
+    .pillar-tab.active[data-tab="capture"]::after     { background: var(--c1); }
+    .pillar-tab.active[data-tab="nurture"]::after     { background: var(--c2); }
+    .pillar-tab.active[data-tab="close"]::after       { background: var(--c3); }
+    .pillar-tab.active[data-tab="evangelize"]::after   { background: var(--c4); }
+    .pillar-tab.active[data-tab="reactivate"]::after   { background: var(--c5); }
+
+    /* Tab Panels */
+    .pillar-panels {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 0 0 20px 20px;
+      overflow: hidden;
+    }
+    .pillar-panel { display: none; }
+    .pillar-panel.active { display: block; }
+
+    .panel-inner {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: 460px;
+    }
+    .panel-left {
+      padding: 44px 36px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .panel-left::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 10%;
+      height: 80%;
+      width: 1px;
+      background: var(--line);
+    }
+    .panel-accent {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 18px;
+    }
+    .panel-left h3 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+    .panel-goal {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 10px;
+    }
+    .panel-left p {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.72;
+    }
+
+    .panel-right {
+      padding: 40px 36px;
+    }
+    .panel-right h4 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 22px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .feature-chip {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-dark);
+      transition: border-color 0.3s var(--expo), background 0.3s var(--expo), transform 0.45s var(--expo);
+    }
+    .feature-chip:hover {
+      background: var(--surface);
+      transform: translateY(-1px);
+    }
+    .feature-chip .chip-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* Panel colour theming */
+    #panel-capture  .panel-goal   { color: var(--c1); }
+    #panel-nurture  .panel-goal   { color: var(--c2); }
+    #panel-close    .panel-goal   { color: var(--c3); }
+    #panel-evangelize .panel-goal { color: var(--c4); }
+    #panel-reactivate .panel-goal { color: var(--c5); }
+
+    #panel-capture  .panel-accent   { background: var(--c1-soft); }
+    #panel-nurture  .panel-accent   { background: var(--c2-soft); }
+    #panel-close    .panel-accent   { background: var(--c3-soft); }
+    #panel-evangelize .panel-accent { background: var(--c4-soft); }
+    #panel-reactivate .panel-accent { background: var(--c5-soft); }
+
+    #panel-capture    .feature-chip:hover { border-color: rgba(26,58,107,0.2); }
+    #panel-nurture    .feature-chip:hover { border-color: rgba(12,122,110,0.2); }
+    #panel-close      .feature-chip:hover { border-color: rgba(22,101,52,0.2); }
+    #panel-evangelize .feature-chip:hover { border-color: rgba(184,90,0,0.2); }
+    #panel-reactivate .feature-chip:hover { border-color: rgba(55,48,163,0.2); }
+
+    /* ── VISUAL FLOW ── */
+    .flow-section { }
+    .flow-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 52px;
+    }
+    .flow-header-left h2 { margin-bottom: 18px; }
+
+    .flow-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .flow-step {
+      flex: 1;
+      padding: 32px 22px;
+      text-align: center;
+      position: relative;
+      transition: background 0.3s var(--expo);
+    }
+    .flow-step:hover { background: var(--bg); }
+    .flow-step + .flow-step { border-left: 1px solid var(--line); }
+    .flow-step .f-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      transition: transform 0.4s var(--expo);
+    }
+    .flow-step:hover .f-icon { transform: scale(1.08) rotate(-5deg); }
+    .flow-step:nth-child(1) .f-icon { background: var(--c1-soft); }
+    .flow-step:nth-child(2) .f-icon { background: var(--c2-soft); }
+    .flow-step:nth-child(3) .f-icon { background: var(--c3-soft); }
+    .flow-step:nth-child(4) .f-icon { background: var(--c4-soft); }
+    .flow-step:nth-child(5) .f-icon { background: var(--c5-soft); }
+    .flow-step h4 {
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+    .flow-step p {
+      font-size: 12.5px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+    .flow-num {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 10px;
+    }
+    .flow-arrow {
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      font-size: 14px;
+      z-index: 2;
+    }
+
+    /* ── INCLUDED SECTION ── */
+    .included-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 52px;
+    }
+    .included-header-left h2 { margin-bottom: 18px; }
+
+    .included-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .inc-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo), border-color 0.45s var(--expo);
+    }
+    .inc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      transform: scaleX(0);
+      transform-origin: left;
+      background: var(--teal);
+      transition: transform 0.45s var(--expo);
+    }
+    .inc-card:hover::before { transform: scaleX(1); }
+    .inc-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+      border-color: var(--line-mid);
+    }
+    .inc-card .ic-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      background: var(--teal-soft);
+      transition: transform 0.4s var(--expo);
+    }
+    .inc-card:hover .ic-icon { transform: scale(1.08) rotate(-5deg); }
+    .inc-card h4 {
+      font-family: var(--heading);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .inc-card p {
+      font-size: 13.5px;
+      color: var(--text-mid);
+      line-height: 1.68;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center;
+    }
+    .cta-section h2 {
+      max-width: 600px;
+      margin: 0 auto 18px;
+    }
+    .cta-section .lead {
+      max-width: 540px;
+      margin: 0 auto 36px;
+    }
+    .cta-trust {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--footer-bg);
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+      padding: 36px 48px;
+      font-size: 13px;
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.9s var(--expo), transform 0.9s var(--expo);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal.d1 { transition-delay: 0.08s; }
+    .reveal.d2 { transition-delay: 0.16s; }
+    .reveal.d3 { transition-delay: 0.26s; }
+    .reveal.d4 { transition-delay: 0.36s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      section { padding: 80px 32px; }
+      .hero { padding: 96px 32px 80px; }
+      .hero-grid,
+      .pillars-header,
+      .flow-header,
+      .included-header { grid-template-columns: 1fr; gap: 32px; }
+      .panel-inner { grid-template-columns: 1fr; }
+      .panel-left::after { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .pillar-tabs { flex-wrap: wrap; border-radius: 20px; border-bottom: 1px solid var(--line); }
+      .pillar-tab { flex: 1 1 33%; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .included-grid { grid-template-columns: 1fr 1fr; }
+      .flow-row { flex-direction: column; }
+      .flow-step + .flow-step { border-left: none; border-top: 1px solid var(--line); }
+      .flow-arrow { display: none; }
+    }
+    @media (max-width: 600px) {
+      section, .pillars-section { padding: 72px 20px; }
+      .hero { padding: 80px 20px 72px; }
+      .included-grid { grid-template-columns: 1fr; }
+      .pillar-tab { flex: 1 1 50%; }
+      .pillar-tab .tab-desc { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .orb { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero bg-main">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left reveal">
+        <div class="eyebrow"><span class="dot"></span> All-in-One Growth System</div>
+        <h1>Every Tool Your Business Needs <span class="accent">In One Place.</span></h1>
+        <p class="lead">
+          Five pillars. One unified platform. Capture more leads, nurture every
+          relationship, close faster, build raving fans, and reactivate your
+          entire database — all powered by AI, all running in the background.
+        </p>
+        <a href="https://meetings.advisoraipartners.com" class="btn-primary" target="_blank">
+          <span>Get Started — Book a Free Call</span>
+          <span class="arrow">→</span>
+        </a>
+        <span class="btn-note">Free · 60 min · No commitment</span>
+      </div>
+      <div class="hero-card reveal d2">
+        <div class="card-eyebrow">THE FIVE PILLARS</div>
+        <div class="pillar-mini">
+          <div class="pm-icon" style="background: var(--c1-soft);">🎯</div>
+          <div>
+            <div class="pm-name">Capture</div>
+            <div class="pm-desc">Get more leads in the door</div>
+          </div>
+        </div>
+        <div class="pillar-mini">
+          <div class="pm-icon" style="background: var(--c2-soft);">💬</div>
+          <div>
+            <div class="pm-name">Nurture</div>
+            <div class="pm-desc">Build relationships that convert</div>
+          </div>
+        </div>
+        <div class="pillar-mini">
+          <div class="pm-icon" style="background: var(--c3-soft);">🤝</div>
+          <div>
+            <div class="pm-name">Close</div>
+            <div class="pm-desc">Convert conversations into revenue</div>
+          </div>
+        </div>
+        <div class="pillar-mini">
+          <div class="pm-icon" style="background: var(--c4-soft);">⭐</div>
+          <div>
+            <div class="pm-name">Evangelize</div>
+            <div class="pm-desc">Create fans, not just customers</div>
+          </div>
+        </div>
+        <div class="pillar-mini">
+          <div class="pm-icon" style="background: var(--c5-soft);">🔄</div>
+          <div>
+            <div class="pm-name">Reactivate</div>
+            <div class="pm-desc">Get back on their radar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PILLAR TABS -->
+<section class="pillars-section bg-warm">
+  <div class="orb orb-1" style="background: rgba(12,122,110,0.04);"></div>
+  <div class="orb orb-2" style="background: rgba(26,58,107,0.04);"></div>
+  <div class="container">
+    <div class="pillars-header reveal">
+      <div class="pillars-header-left">
+        <div class="eyebrow"><span class="dot" style="background: var(--blue);"></span> The Five Pillars</div>
+        <h2>Your Complete Business Growth Engine</h2>
+      </div>
+      <p class="lead">
+        Most businesses use 6–12 different tools that don't talk to each other.
+        This system collapses them into one — fully connected, AI-powered, and built
+        to grow your business on autopilot.
+      </p>
+    </div>
+
+    <!-- Tab Buttons -->
+    <div class="pillar-tabs reveal d1" role="tablist">
+      <button class="pillar-tab active" data-tab="capture" role="tab" aria-selected="true" onclick="switchTab('capture')">
+        <div class="tab-icon">🎯</div>
+        <div class="tab-label">Capture</div>
+        <div class="tab-desc">Get more leads</div>
+      </button>
+      <button class="pillar-tab" data-tab="nurture" role="tab" aria-selected="false" onclick="switchTab('nurture')">
+        <div class="tab-icon">💬</div>
+        <div class="tab-label">Nurture</div>
+        <div class="tab-desc">Build relationships</div>
+      </button>
+      <button class="pillar-tab" data-tab="close" role="tab" aria-selected="false" onclick="switchTab('close')">
+        <div class="tab-icon">🤝</div>
+        <div class="tab-label">Close</div>
+        <div class="tab-desc">Convert to revenue</div>
+      </button>
+      <button class="pillar-tab" data-tab="evangelize" role="tab" aria-selected="false" onclick="switchTab('evangelize')">
+        <div class="tab-icon">⭐</div>
+        <div class="tab-label">Evangelize</div>
+        <div class="tab-desc">Create fans</div>
+      </button>
+      <button class="pillar-tab" data-tab="reactivate" role="tab" aria-selected="false" onclick="switchTab('reactivate')">
+        <div class="tab-icon">🔄</div>
+        <div class="tab-label">Reactivate</div>
+        <div class="tab-desc">Re-engage leads</div>
+      </button>
+    </div>
+
+    <!-- Tab Panels -->
+    <div class="pillar-panels reveal d2">
+
+      <!-- CAPTURE -->
+      <div class="pillar-panel active" id="panel-capture">
+        <div class="panel-inner">
+          <div class="panel-left">
+            <div class="panel-accent">🎯</div>
+            <div class="panel-goal">Pillar 01 — Capture</div>
+            <h3>Get More Leads In The Door</h3>
+            <p>Turn strangers into prospects with AI-powered lead generation across every channel. Your website, ads, social, phone — all working together to fill your pipeline automatically.</p>
+          </div>
+          <div class="panel-right">
+            <h4>What's included</h4>
+            <div class="features-grid">
+              <div class="feature-chip"><span class="chip-icon">🗂️</span> CRM &amp; Contact Management</div>
+              <div class="feature-chip"><span class="chip-icon">🤖</span> Voice AI Receptionist</div>
+              <div class="feature-chip"><span class="chip-icon">📋</span> Forms, Surveys &amp; Quizzes</div>
+              <div class="feature-chip"><span class="chip-icon">🌐</span> Websites &amp; Sales Funnels</div>
+              <div class="feature-chip"><span class="chip-icon">💬</span> Chat Widget + Conversation AI</div>
+              <div class="feature-chip"><span class="chip-icon">📞</span> Call Tracking &amp; Recording</div>
+              <div class="feature-chip"><span class="chip-icon">📱</span> SMS &amp; Social DM Capture</div>
+              <div class="feature-chip"><span class="chip-icon">📅</span> Social Media Planner</div>
+              <div class="feature-chip"><span class="chip-icon">☎️</span> Missed Call Text-Back</div>
+              <div class="feature-chip"><span class="chip-icon">🪪</span> AI Business Card Scanner</div>
+              <div class="feature-chip"><span class="chip-icon">📲</span> QR Code Generator</div>
+              <div class="feature-chip"><span class="chip-icon">🔍</span> Prospecting Tools</div>
+              <div class="feature-chip"><span class="chip-icon">🎯</span> Google &amp; Facebook Ad Manager</div>
+              <div class="feature-chip"><span class="chip-icon">🧪</span> Webinar &amp; Event Funnels</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NURTURE -->
+      <div class="pillar-panel" id="panel-nurture">
+        <div class="panel-inner">
+          <div class="panel-left">
+            <div class="panel-accent">💬</div>
+            <div class="panel-goal">Pillar 02 — Nurture</div>
+            <h3>Build Relationships That Convert</h3>
+            <p>Keep every lead warm with multi-channel follow-up that feels personal but runs on autopilot. No lead slips through the cracks — ever.</p>
+          </div>
+          <div class="panel-right">
+            <h4>What's included</h4>
+            <div class="features-grid">
+              <div class="feature-chip"><span class="chip-icon">🤖</span> Conversation AI (24/7 auto-reply)</div>
+              <div class="feature-chip"><span class="chip-icon">💬</span> Unified Inbox (SMS, Email, DM)</div>
+              <div class="feature-chip"><span class="chip-icon">📲</span> WhatsApp &amp; Messenger Integration</div>
+              <div class="feature-chip"><span class="chip-icon">📸</span> Instagram DM Automation</div>
+              <div class="feature-chip"><span class="chip-icon">💼</span> Sales Pipeline Management</div>
+              <div class="feature-chip"><span class="chip-icon">⚙️</span> Workflows &amp; Automations</div>
+              <div class="feature-chip"><span class="chip-icon">📅</span> Calendar &amp; Booking System</div>
+              <div class="feature-chip"><span class="chip-icon">📝</span> Text Snippets &amp; Templates</div>
+              <div class="feature-chip"><span class="chip-icon">⏰</span> Appointment Reminders</div>
+              <div class="feature-chip"><span class="chip-icon">📣</span> Ringless Voicemail Drops</div>
+              <div class="feature-chip"><span class="chip-icon">📱</span> Mobile App with Video Messaging</div>
+              <div class="feature-chip"><span class="chip-icon">📞</span> Automated Outbound Call Connect</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLOSE -->
+      <div class="pillar-panel" id="panel-close">
+        <div class="panel-inner">
+          <div class="panel-left">
+            <div class="panel-accent">🤝</div>
+            <div class="panel-goal">Pillar 03 — Close</div>
+            <h3>Convert Conversations Into Revenue</h3>
+            <p>Streamline every step from proposal to payment. Fewer back-and-forths, faster decisions, and more signed deals — all inside one platform.</p>
+          </div>
+          <div class="panel-right">
+            <h4>What's included</h4>
+            <div class="features-grid">
+              <div class="feature-chip"><span class="chip-icon">📊</span> AI Lead Scoring</div>
+              <div class="feature-chip"><span class="chip-icon">📄</span> Estimates &amp; Proposals</div>
+              <div class="feature-chip"><span class="chip-icon">🧾</span> Invoicing &amp; Contracts</div>
+              <div class="feature-chip"><span class="chip-icon">💳</span> Payment Integrations</div>
+              <div class="feature-chip"><span class="chip-icon">📅</span> Paid Calendars &amp; Booking</div>
+              <div class="feature-chip"><span class="chip-icon">🛒</span> Order Forms with Upsells</div>
+              <div class="feature-chip"><span class="chip-icon">🎓</span> Memberships &amp; Online Courses</div>
+              <div class="feature-chip"><span class="chip-icon">🚀</span> One-Click Upsell Funnels</div>
+              <div class="feature-chip"><span class="chip-icon">💬</span> Text-to-Pay</div>
+              <div class="feature-chip"><span class="chip-icon">📲</span> Tap-to-Pay (Mobile)</div>
+              <div class="feature-chip"><span class="chip-icon">🎁</span> Gift Cards</div>
+              <div class="feature-chip"><span class="chip-icon">🏆</span> Loyalty Programs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVANGELIZE -->
+      <div class="pillar-panel" id="panel-evangelize">
+        <div class="panel-inner">
+          <div class="panel-left">
+            <div class="panel-accent">⭐</div>
+            <div class="panel-goal">Pillar 04 — Evangelize</div>
+            <h3>Create Fans, Not Just Customers</h3>
+            <p>Happy customers are your best salespeople. Systematically turn satisfied clients into vocal advocates who bring new business through the door — automatically.</p>
+          </div>
+          <div class="panel-right">
+            <h4>What's included</h4>
+            <div class="features-grid">
+              <div class="feature-chip"><span class="chip-icon">⭐</span> Reputation Management</div>
+              <div class="feature-chip"><span class="chip-icon">📧</span> Automated Review Requests</div>
+              <div class="feature-chip"><span class="chip-icon">🤝</span> Affiliate &amp; Referral Manager</div>
+              <div class="feature-chip"><span class="chip-icon">🔗</span> Website Review Widgets</div>
+              <div class="feature-chip"><span class="chip-icon">🎥</span> Video Review Capture</div>
+              <div class="feature-chip"><span class="chip-icon">🤖</span> AI Review Reply</div>
+              <div class="feature-chip"><span class="chip-icon">📱</span> Social Auto-Post Reviews</div>
+              <div class="feature-chip"><span class="chip-icon">👥</span> Client Communities</div>
+              <div class="feature-chip"><span class="chip-icon">⚙️</span> Workflow Automations</div>
+              <div class="feature-chip"><span class="chip-icon">🏆</span> Loyalty &amp; Rewards Programs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REACTIVATE -->
+      <div class="pillar-panel" id="panel-reactivate">
+        <div class="panel-inner">
+          <div class="panel-left">
+            <div class="panel-accent">🔄</div>
+            <div class="panel-goal">Pillar 05 — Reactivate</div>
+            <h3>Get Back On Their Radar</h3>
+            <p>Your existing database is a goldmine. Re-engage cold leads and past customers with targeted campaigns that bring them back — before your competitors do.</p>
+          </div>
+          <div class="panel-right">
+            <h4>What's included</h4>
+            <div class="features-grid">
+              <div class="feature-chip"><span class="chip-icon">📢</span> Broadcast Campaigns (Email/SMS)</div>
+              <div class="feature-chip"><span class="chip-icon">💬</span> WhatsApp &amp; Messenger Blasts</div>
+              <div class="feature-chip"><span class="chip-icon">🎯</span> Smart Lists &amp; Segmentation</div>
+              <div class="feature-chip"><span class="chip-icon">🎂</span> Birthday &amp; Anniversary Campaigns</div>
+              <div class="feature-chip"><span class="chip-icon">🗓️</span> Seasonal Campaign Templates</div>
+              <div class="feature-chip"><span class="chip-icon">🔥</span> Database Reactivation Sequences</div>
+              <div class="feature-chip"><span class="chip-icon">📰</span> Newsletter Automation</div>
+              <div class="feature-chip"><span class="chip-icon">🤖</span> AI Content Generator</div>
+              <div class="feature-chip"><span class="chip-icon">🏆</span> Loyalty Reactivation Flows</div>
+              <div class="feature-chip"><span class="chip-icon">📊</span> Campaign Analytics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /pillar-panels -->
+  </div>
+</section>
+
+
+<!-- VISUAL FLOW -->
+<section class="flow-section bg-main">
+  <div class="orb orb-1" style="background: rgba(184,134,11,0.04);"></div>
+  <div class="orb orb-2" style="background: rgba(55,48,163,0.04);"></div>
+  <div class="container">
+    <div class="flow-header">
+      <div class="flow-header-left reveal">
+        <div class="eyebrow"><span class="dot" style="background: var(--gold);"></span> How It Works Together</div>
+        <h2>One Continuous Growth Loop</h2>
+      </div>
+      <p class="lead reveal d1">
+        Each pillar feeds the next. A lead captured becomes a relationship nurtured becomes a deal closed
+        becomes a fan evangelizing becomes a customer reactivated. The loop never stops.
+      </p>
+    </div>
+    <div class="flow-row reveal d2">
+      <div class="flow-step">
+        <div class="flow-num">Step 01</div>
+        <div class="f-icon">🎯</div>
+        <h4>Capture</h4>
+        <p>Attract and convert strangers into leads</p>
+        <span class="flow-arrow">→</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">Step 02</div>
+        <div class="f-icon">💬</div>
+        <h4>Nurture</h4>
+        <p>Build trust through consistent follow-up</p>
+        <span class="flow-arrow">→</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">Step 03</div>
+        <div class="f-icon">🤝</div>
+        <h4>Close</h4>
+        <p>Convert conversations into paying customers</p>
+        <span class="flow-arrow">→</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">Step 04</div>
+        <div class="f-icon">⭐</div>
+        <h4>Evangelize</h4>
+        <p>Turn customers into referral machines</p>
+        <span class="flow-arrow">→</span>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">Step 05</div>
+        <div class="f-icon">🔄</div>
+        <h4>Reactivate</h4>
+        <p>Bring cold leads &amp; past clients back</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- WHAT'S INCLUDED -->
+<section class="bg-warm">
+  <div class="orb orb-1" style="background: rgba(12,122,110,0.05);"></div>
+  <div class="orb orb-2" style="background: rgba(26,58,107,0.04);"></div>
+  <div class="container">
+    <div class="included-header">
+      <div class="included-header-left reveal">
+        <div class="eyebrow"><span class="dot" style="background: var(--teal);"></span> Everything Included</div>
+        <h2>One Platform. No More Tool Chaos.</h2>
+      </div>
+      <p class="lead reveal d1">
+        Stop paying for 10 different tools that don't talk to each other.
+        This replaces all of them — and adds AI on top.
+      </p>
+    </div>
+    <div class="included-grid">
+      <div class="inc-card reveal d1">
+        <div class="ic-icon">🌐</div>
+        <h4>Website &amp; Funnel Builder</h4>
+        <p>Professional websites and high-converting funnels built and managed for you. No developer needed.</p>
+      </div>
+      <div class="inc-card reveal d2">
+        <div class="ic-icon" style="background: var(--blue-soft);">🤖</div>
+        <h4>AI Employees</h4>
+        <p>Voice AI that answers calls, Conversation AI that handles chats, Content AI that writes for you. 24/7, no salary.</p>
+      </div>
+      <div class="inc-card reveal d3">
+        <div class="ic-icon" style="background: var(--gold-soft);">📊</div>
+        <h4>CRM &amp; Pipeline</h4>
+        <p>See every lead, every deal, every dollar — in real time. Never lose track of where a prospect stands.</p>
+      </div>
+      <div class="inc-card reveal d1">
+        <div class="ic-icon" style="background: var(--indigo-soft);">📱</div>
+        <h4>Unified Messaging</h4>
+        <p>SMS, email, WhatsApp, Instagram DM, Messenger — all in one inbox. One conversation, every channel.</p>
+      </div>
+      <div class="inc-card reveal d2">
+        <div class="ic-icon" style="background: var(--amber-soft);">⚙️</div>
+        <h4>Workflow Automation</h4>
+        <p>Automations that follow up, book appointments, send reminders, and nurture leads — without you lifting a finger.</p>
+      </div>
+      <div class="inc-card reveal d3">
+        <div class="ic-icon" style="background: var(--green-soft);">⭐</div>
+        <h4>Reputation Engine</h4>
+        <p>Automatically request, respond to, and showcase reviews. Your online reputation managed on autopilot.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="cta-section bg-main">
+  <div class="orb orb-1" style="background: rgba(12,122,110,0.05);"></div>
+  <div class="orb orb-2" style="background: rgba(184,134,11,0.04);"></div>
+  <div class="container reveal">
+    <div class="eyebrow" style="justify-content: center;"><span class="dot" style="background: var(--teal);"></span> Get Started</div>
+    <h2>Ready to See All Five Pillars Working in Your Business?</h2>
+    <p class="lead">
+      Book a free 60-minute strategy call. We'll show you exactly how this
+      system fits your business, what to prioritize first, and what results
+      you can expect in the first 90 days.
+    </p>
+    <a href="https://meetings.advisoraipartners.com" class="btn-primary" target="_blank">
+      <span>Book Your Free Strategy Call</span>
+      <span class="arrow">→</span>
+    </a>
+    <p class="cta-trust">Free · 60 min · No commitment · Honest assessment</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Advisor AI Partners · David Ortiz · Jacksonville, FL → Lisbon, Portugal</p>
+</footer>
+
+<script>
+  function switchTab(tab) {
+    document.querySelectorAll('.pillar-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.pillar-panel').forEach(p => {
+      p.classList.remove('active');
+    });
+    const btn = document.querySelector(`.pillar-tab[data-tab="${tab}"]`);
+    const panel = document.getElementById(`panel-${tab}`);
+    if (btn) { btn.classList.add('active'); btn.setAttribute('aria-selected', 'true'); }
+    if (panel) { panel.classList.add('active'); }
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
