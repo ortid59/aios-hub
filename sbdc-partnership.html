@@ -119,7 +119,19 @@
 
   /* ── DEBBIE ── */
   #debbie { background: var(--gray-50); }
-  .debbie-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .debbie-grid { display: grid; grid-template-columns: 280px 1fr 1fr; gap: 40px; align-items: start; }
+  .debbie-photo-col { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .debbie-photo {
+    width: 220px; height: 260px; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 8px 32px rgba(27,79,216,0.15); border: 3px solid var(--white);
+    outline: 1px solid var(--gray-200);
+  }
+  .debbie-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .debbie-photo-label {
+    text-align: center;
+  }
+  .debbie-photo-label .name { font-size: 14px; font-weight: 700; color: var(--gray-800); }
+  .debbie-photo-label .org { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
   .quote-card {
     background: var(--blue); border-radius: 16px; padding: 40px;
     position: relative; overflow: hidden;
