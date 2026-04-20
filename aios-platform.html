@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIOS Platform — Advisor AI Partners</title>
+<style>
+  :root {
+    --blue: #1A3A6B;
+    --blue-mid: #2A5298;
+    --blue-light: #EEF3FF;
+    --teal: #0C7A6E;
+    --teal-light: #E6F6F5;
+    --gold: #B8860B;
+    --gold-light: #FDF8EC;
+    --purple: #4A3A9A;
+    --purple-light: #F0F0FF;
+    --gray-50: #F5F4F0;
+    --gray-100: #EFF1F5;
+    --gray-200: #E2E8F0;
+    --gray-400: #9AA3B5;
+    --gray-600: #5A6478;
+    --gray-800: #1E2535;
+    --danger: #C84A1A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    z-index: 1000;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .nav-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .nav-brand-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 2;
+    justify-content: center;
+  }
+
+  .nav-tab {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+  .nav-tab.active { background: rgba(255,255,255,0.15); color: white; }
+
+  .nav-cta {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-gold {
+    display: inline-block;
+    padding: 10px 22px;
+    background: var(--gold);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+  .btn-gold:hover { background: #9a700a; transform: translateY(-1px); }
+
+  /* ── PAGES ── */
+  .page { display: none; padding-top: 62px; }
+  .page.active { display: block; }
+
+  /* ── SHARED SECTION STYLES ── */
+  .section { padding: 80px 32px; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+  .section-white { background: white; }
+  .section-gray { background: var(--gray-50); }
+  .section-dark { background: var(--blue); }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 { font-size: 52px; font-weight: 800; line-height: 1.1; }
+  h2 { font-size: 36px; font-weight: 800; line-height: 1.2; }
+  h3 { font-size: 20px; font-weight: 700; }
+
+  em { font-style: normal; color: var(--gold); }
+
+  .lead {
+    font-size: 18px;
+    color: var(--gray-600);
+    line-height: 1.7;
+    max-width: 700px;
+  }
+
+  /* ── HERO STAT STRIP ── */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 56px;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 32px;
+    background: linear-gradient(135deg, var(--blue) 0%, #0D2548 100%);
+  }
+
+  .hero-inner { max-width: 1200px; margin: 0 auto; }
+
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    background: rgba(184,134,11,0.15);
+    border: 1px solid rgba(184,134,11,0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  .hero h1 { color: white; margin-bottom: 20px; }
+  .hero .sub {
+    font-size: 19px;
+    color: rgba(255,255,255,0.75);
+    max-width: 660px;
+    line-height: 1.65;
+  }
+
+  /* ── 3-COL GRID ── */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 48px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+
+  /* ── FEATURE CARD ── */
+  .feature-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid var(--gray-200);
+  }
+  .feature-card h3 { margin-bottom: 10px; }
+  .feature-card p { font-size: 15px; color: var(--gray-600); }
+
+  /* ── LAYER ROWS ── */
+  .layers { margin-top: 48px; display: flex; flex-direction: column; gap: 16px; }
+
+  .layer-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid var(--gray-200);
+    transition: box-shadow 0.2s;
+  }
+  .layer-row:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+  .layer-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .layer-content h3 { font-size: 18px; margin-bottom: 6px; }
+  .layer-content p { font-size: 15px; color: var(--gray-600); line-height: 1.6; }
+
+  /* ── MODULE CARDS ── */
+  .module-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid var(--gray-200);
+    border-top: 4px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .module-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  .module-card h3 { font-size: 17px; margin-bottom: 8px; }
+  .module-card p { font-size: 14px; color: var(--gray-600); }
+
+  /* ── MODULE LIBRARY ── */
+  .lib-group {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    border: 1px solid var(--gray-200);
+  }
+  .lib-group-title { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 14px; }
+  .lib-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .lib-tag {
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--gray-200);
+  }
+
+  /* ── CTA SECTION (dark) ── */
+  .cta-section {
+    padding: 80px 32px;
+    background: var(--blue);
+    text-align: center;
+  }
+  .cta-section p {
+    font-size: 18px;
+    color: rgba(255,255,255,0.8);
+    max-width: 760px;
+    margin: 0 auto 36px;
+    line-height: 1.7;
+  }
+  .btn-white {
+    display: inline-block;
+    padding: 14px 32px;
+    background: white;
+    color: var(--blue);
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-white:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+
+  /* ── SYSTEMS GRID ── */
+  .systems-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 48px; align-items: start; }
+  .systems-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 20px; }
+
+  .system-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-800);
+  }
+
+  .chip-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── API TABLE ── */
+  .api-table { width: 100%; border-collapse: collapse; }
+  .api-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    padding: 0 0 12px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .api-table td {
+    padding: 12px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  .api-table td:first-child { font-weight: 600; color: var(--gray-800); padding-right: 16px; }
+  .api-table td:last-child { color: var(--gray-600); font-size: 13px; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .badge-full { background: #E6F6F5; color: var(--teal); }
+  .badge-partial { background: var(--gold-light); color: var(--gold); }
+
+  /* ── DASHBOARD SECTION ── */
+  .dashboard-section { background: var(--gray-50); padding: 80px 32px; }
+  .dash-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 32px; }
+
+  .metric-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-bottom: 32px; }
+
+  .metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--gray-200);
+    border-top: 4px solid;
+  }
+  .metric-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 8px; }
+  .metric-value { font-size: 32px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+  .metric-sub { font-size: 13px; color: var(--gray-600); }
+
+  .chart-area { display: grid; grid-template-columns: 60% 40%; gap: 24px; margin-bottom: 32px; }
+  .chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--gray-200);
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: var(--gray-600); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ── DONUT DONUTS ── */
+  .donut-row { display: flex; gap: 16px; align-items: flex-start; }
+  .donut-item { flex: 1; text-align: center; }
+  .donut-name { font-size: 12px; font-weight: 600; color: var(--gray-600); margin-top: 8px; }
+  .donut-pct { font-size: 11px; color: var(--gray-400); }
+
+  /* ── AR AGING ── */
+  .ar-aging { background: white; border-radius: 12px; padding: 24px; border: 1px solid var(--gray-200); }
+  .ar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .ar-label { font-size: 13px; font-weight: 600; color: var(--gray-800); width: 90px; flex-shrink: 0; }
+  .ar-bar-track { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+  .ar-bar-fill { height: 100%; border-radius: 5px; }
+  .ar-amount { font-size: 13px; font-weight: 700; color: var(--gray-800); width: 70px; text-align: right; flex-shrink: 0; }
+
+  /* ── TERMINAL ── */
+  .terminal {
+    background: #0D1117;
+    border-radius: 12px;
+    padding: 32px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .term-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .term-dot-r { background: #FF5F57; }
+  .term-dot-y { background: #FFBD2E; }
+  .term-dot-g { background: #28CA41; }
+
+  .t-green { color: #3DD68C; }
+  .t-orange { color: #FFA066; }
+  .t-red { color: #FF6B6B; }
+  .t-blue { color: #79B8FF; }
+  .t-dim { color: #6E7681; }
+  .t-white { color: #E6EDF3; }
+  .t-gold { color: #E3B341; }
+
+  /* ── AUTOMATION TABLE ── */
+  .auto-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+  .auto-table thead th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    padding: 0 16px 14px 0;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  .auto-table tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+    transition: background 0.15s;
+  }
+  .auto-table tbody tr:hover { background: var(--gray-50); }
+  .auto-table td {
+    padding: 14px 16px 14px 0;
+    font-size: 14px;
+    color: var(--gray-800);
+  }
+  .auto-table td:first-child { font-weight: 500; }
+  .auto-table td:nth-child(2), .auto-table td:nth-child(3) { color: var(--gray-600); }
+
+  .status-auto {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #E6F6F5;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+  .status-semi {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--gold-light);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── MODULE SECTION ── */
+  .module-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 40px; }
+  .mod-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid var(--gray-200);
+    border-left: 5px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .mod-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+  .mod-card h3 { font-size: 16px; margin-bottom: 6px; }
+  .mod-card p { font-size: 13px; color: var(--gray-600); line-height: 1.55; }
+
+  /* ── AR CLIENT BARS ── */
+  .client-bars { margin-top: 24px; }
+  .client-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .client-name { font-size: 13px; font-weight: 600; color: var(--gray-800); width: 150px; flex-shrink: 0; }
+  .client-track { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+  .client-fill { height: 100%; border-radius: 5px; }
+  .client-amount { font-size: 13px; font-weight: 700; color: var(--gray-800); width: 60px; text-align: right; flex-shrink: 0; }
+
+  /* ── STAFF BARS ── */
+  .staff-bars { display: flex; flex-direction: column; gap: 16px; }
+  .staff-row { }
+  .staff-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .staff-name { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+  .staff-pct { font-size: 14px; font-weight: 700; }
+  .staff-track { width: 100%; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+  .staff-fill { height: 100%; border-radius: 5px; }
+  .staff-note { font-size: 11px; color: var(--danger); margin-top: 4px; }
+
+  /* ── AT RISK LIST ── */
+  .risk-list { margin-top: 24px; }
+  .risk-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-name { flex: 1; font-size: 14px; font-weight: 500; color: var(--gray-800); }
+  .risk-note { font-size: 13px; color: var(--gray-600); }
+  .risk-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .risk-red { background: #FEE2E2; color: #C84A1A; }
+  .risk-yellow { background: #FEF3C7; color: #92400E; }
+  .risk-green { background: #D1FAE5; color: #065F46; }
+
+  /* ── DONUT LEGEND ── */
+  .donut-legend { display: flex; gap: 20px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--gray-600); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── TEAL HERO ── */
+  .hero-teal {
+    padding: 80px 32px;
+    background: linear-gradient(135deg, #0C7A6E 0%, #0A5A50 100%);
+  }
+
+  /* ── GOLD HERO ── */
+  .hero-gold-dark {
+    padding: 80px 32px;
+    background: linear-gradient(135deg, #1A3A6B 0%, #0D2548 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-gold-dark::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(184,134,11,0.08);
+    pointer-events: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    h1 { font-size: 36px; }
+    h2 { font-size: 28px; }
+    .stat-strip { grid-template-columns: repeat(2,1fr); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .metric-cards { grid-template-columns: repeat(2,1fr); }
+    .chart-area { grid-template-columns: 1fr; }
+    .systems-cols { grid-template-columns: 1fr; }
+    .module-grid { grid-template-columns: repeat(2,1fr); }
+    .grid-6 { grid-template-columns: repeat(2,1fr); }
+    .nav-tabs { gap: 2px; }
+    .nav-tab { padding: 8px 12px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     NAV
+════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    <span class="nav-brand-text">AIOS Platform</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('overview', this)">Overview</button>
+    <button class="nav-tab" onclick="showPage('home-services', this)">Home Services</button>
+    <button class="nav-tab" onclick="showPage('attorney', this)">Attorney</button>
+    <button class="nav-tab" onclick="showPage('cpa', this)">CPA</button>
+  </div>
+  <div class="nav-cta">
+    <a href="https://meetings.advisoraipartners.com" target="_blank" class="btn-gold">Book a Demo</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE: OVERVIEW
+════════════════════════════════════════════════════════ -->
+<div class="page active" id="page-overview">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">AI OPERATING SYSTEM · ADVISOR AI PARTNERS</div>
+      <h1>Your Business, Running at a<br><em>Different Level</em></h1>
+      <p class="sub" style="margin-top:16px;">Five layers of AI intelligence — built on the world's leading framework, deployed around your specific business. Not a tool. An operating system.</p>
+      <div class="stat-strip">
+        <div class="stat-card">
+          <div class="stat-value">5</div>
+          <div class="stat-label">Layers of Intelligence</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">30–50%</div>
+          <div class="stat-label">Tasks Automated in Year One</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3 KPIs</div>
+          <div class="stat-label">That Prove It's Working</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">1 Session</div>
+          <div class="stat-label">To Get the Core Running</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- What Is an AI Operating System -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="eyebrow">THE CORE IDEA</div>
+      <h2>Claude is brilliant.<br>Until you close the tab.</h2>
+      <p class="lead" style="margin-top:20px;">Every time you open Claude, you rebuild context from scratch. It doesn't know your business, your pipeline, your clients, or your numbers. The AIOS changes that — permanently.</p>
+      <div class="grid-3">
+        <div class="feature-card" style="border-top: 4px solid var(--blue);">
+          <h3 style="color:var(--blue);">Memory</h3>
+          <p style="margin-top:10px;">Claude learns your business once. Stays loaded. No rebuilding.</p>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid var(--teal);">
+          <h3 style="color:var(--teal);">Data</h3>
+          <p style="margin-top:10px;">Your actual numbers, pulled daily from your real systems. Claude reads them.</p>
+        </div>
+        <div class="feature-card" style="border-top: 4px solid var(--gold);">
+          <h3 style="color:var(--gold);">Action</h3>
+          <p style="margin-top:10px;">Tasks automated. Sequences triggered. Outputs generated. Without you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Five Layers -->
+  <div class="section section-gray">
+    <div class="section-inner">
+      <div class="eyebrow">THE ARCHITECTURE</div>
+      <h2>Built in layers. <em>Each one valuable on its own.</em></h2>
+      <div class="layers">
+        <div class="layer-row">
+          <div class="layer-badge" style="background:var(--blue);">1</div>
+          <div class="layer-content">
+            <h3>Context</h3>
+            <p>ContextOS loads everything Claude needs to know about your business — once. Your background, your team, your priorities, your clients. From that point forward, every session starts informed.</p>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge" style="background:var(--teal);">2</div>
+          <div class="layer-content">
+            <h3>Data</h3>
+            <p>DataOS connects your live systems — CRM, accounting, scheduling, inventory — and pulls a daily snapshot Claude can see and reason with. Your numbers, visible.</p>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge" style="background:var(--gold);">3</div>
+          <div class="layer-content">
+            <h3>Intelligence</h3>
+            <p>The Daily Brief synthesizes everything: what happened yesterday, what's due today, what needs a decision. Delivered every morning before you open your laptop.</p>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge" style="background:var(--purple);">4</div>
+          <div class="layer-content">
+            <h3>Automate</h3>
+            <p>Every recurring task gets scored: how often, how long, how painful, how automatable. We start eliminating them. Each one automated is time back — permanently.</p>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-badge" style="background:var(--teal);">5</div>
+          <div class="layer-content">
+            <h3>Build</h3>
+            <p>With the first four running, you stop managing the business and start building it. The freed time goes toward what actually moves the needle.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Modules -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="eyebrow">WHAT GETS INSTALLED</div>
+      <h2>Four modules. First session. Everything else follows.</h2>
+      <div style="display:grid; grid-template-columns: repeat(2,1fr); gap:24px; margin-top:48px;">
+        <div class="module-card" style="border-top-color:var(--blue);">
+          <h3 style="color:var(--blue);">ContextOS</h3>
+          <p style="margin-top:8px;">Loads your business context permanently. The foundation.</p>
+        </div>
+        <div class="module-card" style="border-top-color:var(--teal);">
+          <h3 style="color:var(--teal);">DataOS</h3>
+          <p style="margin-top:8px;">Connects your data sources. Daily snapshot, always fresh.</p>
+        </div>
+        <div class="module-card" style="border-top-color:var(--gold);">
+          <h3 style="color:var(--gold);">Daily Brief</h3>
+          <p style="margin-top:8px;">Your morning intelligence summary. Auto-generated.</p>
+        </div>
+        <div class="module-card" style="border-top-color:var(--purple);">
+          <h3 style="color:var(--purple);">CommandOS</h3>
+          <p style="margin-top:8px;">Slash commands for recurring work. One word, finished output.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Module Library -->
+  <div class="section section-gray">
+    <div class="section-inner">
+      <div class="eyebrow">EXPAND FROM HERE</div>
+      <h2>Every module is a <em>capability added</em>, not a tool purchased.</h2>
+      <div class="grid-3" style="margin-top:40px;">
+        <div class="lib-group">
+          <div class="lib-group-title">Content &amp; Creation</div>
+          <div class="lib-tags">
+            <span class="lib-tag">Email Writer</span>
+            <span class="lib-tag">Social Media OS</span>
+            <span class="lib-tag">Proposal Builder</span>
+          </div>
+        </div>
+        <div class="lib-group">
+          <div class="lib-group-title">Intelligence &amp; Research</div>
+          <div class="lib-tags">
+            <span class="lib-tag">Competitor Watch</span>
+            <span class="lib-tag">Meeting Intelligence</span>
+            <span class="lib-tag">Market Research OS</span>
+          </div>
+        </div>
+        <div class="lib-group">
+          <div class="lib-group-title">Build &amp; Expand</div>
+          <div class="lib-tags">
+            <span class="lib-tag">AI Bot Builder</span>
+            <span class="lib-tag">Workflow Automation</span>
+            <span class="lib-tag">SOPs &amp; Training OS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <p>The AIOS Ecosystem was developed by the world's leading AI business incubator and refined across hundreds of businesses. We're a certified deployment partner. The architecture, modules, and installation process have all been built and tested before they land in your business.</p>
+    <button class="btn-white" onclick="showPage('home-services', document.querySelectorAll('.nav-tab')[1])">See What This Looks Like for Your Business</button>
+  </div>
+
+</div><!-- /page-overview -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE: HOME SERVICES
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-home-services">
+
+  <!-- Hero -->
+  <div class="hero-teal">
+    <div class="hero-inner">
+      <div class="hero-badge" style="color:#B8860B; background:rgba(184,134,11,0.18); border-color:rgba(184,134,11,0.35);">HOME SERVICES · HVAC · PLUMBING · ELECTRICAL · CLEANING</div>
+      <h1 style="color:white;">Built for the Business<br>That Never Stops Moving</h1>
+      <p class="sub" style="margin-top:16px;">Jobs on the board, techs in the field, quotes aging, reviews waiting. The AIOS watches it all so you don't have to.</p>
+      <div class="stat-strip">
+        <div class="stat-card">
+          <div class="stat-value">$385</div>
+          <div class="stat-label">Avg Ticket Tracked Daily</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">4.8 ★</div>
+          <div class="stat-label">Google Score Monitored</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">91%</div>
+          <div class="stat-label">First-Call Completion Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">82%</div>
+          <div class="stat-label">Avg Tech Utilization</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Systems + APIs -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="systems-cols">
+        <div>
+          <div class="systems-title">Systems They Run</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#22C55E;"></div>ServiceTitan / Jobber / Housecall Pro <span style="font-size:12px;color:var(--gray-400);margin-left:6px;">field service</span></div>
+          <div class="system-chip"><div class="chip-dot" style="background:#3B82F6;"></div>QuickBooks <span style="font-size:12px;color:var(--gray-400);margin-left:6px;">accounting</span></div>
+          <div class="system-chip"><div class="chip-dot" style="background:#EAB308;"></div>Google My Business <span style="font-size:12px;color:var(--gray-400);margin-left:6px;">reviews + leads</span></div>
+          <div class="system-chip"><div class="chip-dot" style="background:#F97316;"></div>Angi / Thumbtack / GLSA <span style="font-size:12px;color:var(--gray-400);margin-left:6px;">lead gen</span></div>
+          <div class="system-chip"><div class="chip-dot" style="background:#A855F7;"></div>Stripe / Square <span style="font-size:12px;color:var(--gray-400);margin-left:6px;">payments</span></div>
+        </div>
+        <div>
+          <div class="systems-title">API Connections</div>
+          <table class="api-table">
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>Status</th>
+                <th>Data Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>ServiceTitan API</td><td><span class="badge badge-full">FULL</span></td><td>Jobs, dispatch, invoices, tech tracking, revenue</td></tr>
+              <tr><td>Jobber API</td><td><span class="badge badge-full">FULL</span></td><td>Quotes, jobs, clients, scheduling, invoices</td></tr>
+              <tr><td>QuickBooks API</td><td><span class="badge badge-full">FULL</span></td><td>P&amp;L, AR aging, cash flow, invoices</td></tr>
+              <tr><td>Google My Business</td><td><span class="badge badge-partial">PARTIAL</span></td><td>Review data, search impressions</td></tr>
+              <tr><td>Stripe API</td><td><span class="badge badge-full">FULL</span></td><td>Payments, payouts, refunds</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sample Dashboard -->
+  <div class="dashboard-section">
+    <div class="section-inner">
+      <div class="dash-title">WHAT YOUR AIOS DASHBOARD SHOWS — PEAK COMFORT HVAC</div>
+
+      <!-- Metric Cards -->
+      <div class="metric-cards">
+        <div class="metric-card" style="border-top-color:var(--teal);">
+          <div class="metric-label">Revenue This Week</div>
+          <div class="metric-value" style="color:var(--teal);">$28,450</div>
+          <div class="metric-sub">↑ 14% vs last week</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--blue);">
+          <div class="metric-label">Jobs Today</div>
+          <div class="metric-value" style="color:var(--blue);">8</div>
+          <div class="metric-sub">3 techs dispatched</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--gold);">
+          <div class="metric-label">Open Quotes</div>
+          <div class="metric-value" style="color:var(--gold);">14</div>
+          <div class="metric-sub">$47,200 value</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--danger);">
+          <div class="metric-label">AR Outstanding</div>
+          <div class="metric-value" style="color:var(--danger);">$16,700</div>
+          <div class="metric-sub">$3,200 over 30 days</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="chart-area">
+        <!-- Bar Chart -->
+        <div class="chart-card">
+          <div class="chart-title">Weekly Revenue</div>
+          <svg viewBox="0 0 480 180" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid lines -->
+            <line x1="55" y1="39" x2="450" y2="39" stroke="#E2E8F0" stroke-width="1"/>
+            <line x1="55" y1="76" x2="450" y2="76" stroke="#E2E8F0" stroke-width="1"/>
+            <line x1="55" y1="113" x2="450" y2="113" stroke="#E2E8F0" stroke-width="1"/>
+            <line x1="55" y1="150" x2="450" y2="150" stroke="#E2E8F0" stroke-width="1.5"/>
+            <!-- Y-axis labels -->
+            <text x="50" y="42" text-anchor="end" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">$6k</text>
+            <text x="50" y="79" text-anchor="end" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">$4k</text>
+            <text x="50" y="116" text-anchor="end" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">$2k</text>
+            <!-- Bars -->
+            <rect x="60" y="90" width="38" height="60" rx="4" fill="#1A3A6B"/>
+            <rect x="114" y="74" width="38" height="76" rx="4" fill="#1A3A6B"/>
+            <rect x="168" y="46" width="38" height="104" rx="4" fill="#1A3A6B"/>
+            <rect x="222" y="61" width="38" height="89" rx="4" fill="#0C7A6E"/>
+            <rect x="276" y="31" width="38" height="119" rx="4" fill="#1A3A6B"/>
+            <rect x="330" y="92" width="38" height="58" rx="4" fill="#1A3A6B"/>
+            <rect x="384" y="127" width="38" height="23" rx="4" fill="#CBD2E0"/>
+            <!-- Value labels -->
+            <text x="79" y="84" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">$3.2k</text>
+            <text x="133" y="67" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">$4.1k</text>
+            <text x="187" y="39" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">$5.6k</text>
+            <text x="241" y="54" text-anchor="middle" fill="#0C7A6E" font-size="10" font-family="-apple-system,sans-serif" font-weight="700">$4.8k</text>
+            <text x="295" y="24" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">$6.4k</text>
+            <text x="349" y="85" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">$3.1k</text>
+            <text x="403" y="120" text-anchor="middle" fill="#9AA3B5" font-size="10" font-family="-apple-system,sans-serif">$1.3k</text>
+            <!-- X-axis labels -->
+            <text x="79" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Mon</text>
+            <text x="133" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Tue</text>
+            <text x="187" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Wed</text>
+            <text x="241" y="166" text-anchor="middle" fill="#0C7A6E" font-size="11" font-family="-apple-system,sans-serif" font-weight="700">Thu</text>
+            <text x="295" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Fri</text>
+            <text x="349" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Sat</text>
+            <text x="403" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Sun</text>
+          </svg>
+        </div>
+
+        <!-- Right: Donuts + AR -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div class="chart-card">
+            <div class="chart-title">Tech Utilization</div>
+            <div class="donut-row">
+              <!-- Marcus 94% -->
+              <div class="donut-item">
+                <svg viewBox="0 0 100 100" style="width:90px;height:90px;" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#0C7A6E" stroke-width="10" stroke-linecap="round" stroke-dasharray="236.2 251.3" transform="rotate(-90 50 50)"/>
+                  <text x="50" y="54" text-anchor="middle" font-size="18" font-weight="800" fill="#1E2535" font-family="-apple-system,sans-serif">94%</text>
+                </svg>
+                <div class="donut-name">Marcus</div>
+              </div>
+              <!-- Tyler 78% -->
+              <div class="donut-item">
+                <svg viewBox="0 0 100 100" style="width:90px;height:90px;" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#1A3A6B" stroke-width="10" stroke-linecap="round" stroke-dasharray="196.0 251.3" transform="rotate(-90 50 50)"/>
+                  <text x="50" y="54" text-anchor="middle" font-size="18" font-weight="800" fill="#1E2535" font-family="-apple-system,sans-serif">78%</text>
+                </svg>
+                <div class="donut-name">Tyler</div>
+              </div>
+              <!-- Jordan 82% -->
+              <div class="donut-item">
+                <svg viewBox="0 0 100 100" style="width:90px;height:90px;" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="#B8860B" stroke-width="10" stroke-linecap="round" stroke-dasharray="206.1 251.3" transform="rotate(-90 50 50)"/>
+                  <text x="50" y="54" text-anchor="middle" font-size="18" font-weight="800" fill="#1E2535" font-family="-apple-system,sans-serif">82%</text>
+                </svg>
+                <div class="donut-name">Jordan</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AR Aging -->
+          <div class="ar-aging">
+            <div class="chart-title" style="margin-bottom:16px;">AR AGING</div>
+            <div class="ar-row">
+              <div class="ar-label">Current</div>
+              <div class="ar-bar-track"><div class="ar-bar-fill" style="width:74.3%;background:var(--blue);"></div></div>
+              <div class="ar-amount">$12,400</div>
+            </div>
+            <div class="ar-row">
+              <div class="ar-label">30-Day</div>
+              <div class="ar-bar-track"><div class="ar-bar-fill" style="width:19.2%;background:var(--teal);"></div></div>
+              <div class="ar-amount">$3,200</div>
+            </div>
+            <div class="ar-row">
+              <div class="ar-label">60-Day</div>
+              <div class="ar-bar-track"><div class="ar-bar-fill" style="width:6.6%;background:var(--gold);"></div></div>
+              <div class="ar-amount">$1,100</div>
+            </div>
+            <div class="ar-row" style="margin-bottom:0;">
+              <div class="ar-label">90+</div>
+              <div class="ar-bar-track"><div class="ar-bar-fill" style="width:2.4%;background:var(--danger);"></div></div>
+              <div class="ar-amount">$400</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Brief Terminal -->
+  <div class="section" style="background:#161B22; padding:80px 32px;">
+    <div class="section-inner">
+      <div class="eyebrow" style="color:#6E7681;">DAILY INTELLIGENCE</div>
+      <h2 style="color:white; margin-bottom:32px;">Your Morning Brief — <em>Before You Open Your Laptop</em></h2>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="term-dot term-dot-r"></div>
+          <div class="term-dot term-dot-y"></div>
+          <div class="term-dot term-dot-g"></div>
+          <span style="margin-left:12px; color:#6E7681; font-size:12px;">aios-brief.sh</span>
+        </div>
+<span class="t-green">AIOS DAILY BRIEF — Thursday, April 17</span><span class="t-dim">                    06:02 AM</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">TODAY'S BOARD</span>
+<span class="t-white">→ </span><span class="t-blue">8 jobs scheduled</span><span class="t-dim">  |  </span><span class="t-blue">3 techs dispatched</span><span class="t-dim">  |  First call: 7:30am</span>
+<span class="t-white">→ Marcus (3):</span><span class="t-dim"> Meadowbrook HVAC, Riverside install, Sunrise Estates service</span>
+<span class="t-white">→ Tyler (2):</span><span class="t-dim"> Downtown commercial, Hartley residence tune-up</span>
+<span class="t-white">→ Jordan (3):</span><span class="t-dim"> Northside AC, Peninsula service, </span><span class="t-orange">Oakhurst CALLBACK [!]</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">YESTERDAY'S NUMBERS</span>
+<span class="t-white">→ Revenue: </span><span class="t-blue">$4,100</span><span class="t-dim">  ↑ 12% vs last Thursday</span>
+<span class="t-white">→ </span><span class="t-blue">7 of 8</span><span class="t-dim"> jobs completed  |  Avg ticket: </span><span class="t-blue">$385</span><span class="t-dim">  |  First-call rate: </span><span class="t-blue">86%</span>
+<span class="t-white">→ 2 new Google reviews</span><span class="t-dim"> — response drafted and ready</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-orange">⚠  NEEDS ATTENTION</span>
+<span class="t-white">→ </span><span class="t-blue">3 open quotes</span><span class="t-dim"> aging &gt;7 days (</span><span class="t-blue">$8,400 combined</span><span class="t-dim">) — follow-up queued</span>
+<span class="t-white">→ </span><span class="t-orange">Invoice #1047</span><span class="t-dim"> — Adams Residence — </span><span class="t-blue">$2,200</span><span class="t-dim"> — 45 days outstanding</span>
+<span class="t-white">→ Jordan: callback from Monday at Oakhurst</span><span class="t-dim"> — parts ordered, confirm ETA</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">OPPORTUNITY</span>
+<span class="t-white">→ Spring AC tune-up: </span><span class="t-blue">847 eligible past customers</span><span class="t-dim"> not yet contacted</span>
+<span class="t-white">→ </span><span class="t-blue">14 total open quotes</span><span class="t-dim"> = </span><span class="t-blue">$47,200 in pipeline</span><span class="t-dim"> — close rate tracker ready</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Automation Table -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="eyebrow">WHAT AI AUTOMATES</div>
+      <h2>Recurring work, <em>handled without you.</em></h2>
+      <table class="auto-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>How Often</th>
+            <th>Time Saved/Month</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Quote follow-up sequence (3-touch)</td><td>Daily</td><td>4.5 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Review request after job close</td><td>Per job</td><td>2 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Appointment reminder (morning-of)</td><td>Daily</td><td>1 hr</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Seasonal campaign emails</td><td>Quarterly</td><td>6 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Invoice reminder sequence (30/60/90)</td><td>Weekly</td><td>3 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Customer re-engagement (12mo inactive)</td><td>Monthly</td><td>5 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>New technician onboarding checklist</td><td>As needed</td><td>8 hrs</td><td><span class="status-semi">SEMI</span></td></tr>
+          <tr><td>AR aging report + follow-up draft</td><td>Weekly</td><td>2 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <div class="section section-gray">
+    <div class="section-inner">
+      <div class="eyebrow">MOST RELEVANT MODULES</div>
+      <h2>Capabilities built for <em>your industry.</em></h2>
+      <div class="module-grid">
+        <div class="mod-card" style="border-left-color:var(--teal);">
+          <h3 style="color:var(--teal);">DataOS</h3>
+          <p>ServiceTitan/Jobber daily revenue + job metrics</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--gold);">
+          <h3 style="color:var(--gold);">Daily Brief</h3>
+          <p>Board today, revenue yesterday, follow-up queue</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue);">AI Bot Builder</h3>
+          <p>Customer intake bot: job type, photos, scheduling</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--purple);">
+          <h3 style="color:var(--purple);">Workflow Automation</h3>
+          <p>Review requests, follow-ups, re-engagement</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--teal);">
+          <h3 style="color:var(--teal);">Email Writer</h3>
+          <p>Seasonal campaigns, re-engagement copy</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue);">SOPs &amp; Training OS</h3>
+          <p>Tech training, dispatch protocols, onboarding</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-home-services -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE: ATTORNEY
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-attorney">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">LEGAL PRACTICE · FAMILY LAW · PI · ESTATE PLANNING · CORPORATE</div>
+      <h1 style="color:white;">Where Every Billable<br>Hour Counts</h1>
+      <p class="sub" style="margin-top:16px;">Deadlines tracked. Time logged. Invoices sent. Clients updated. The AIOS handles the operational layer so you can practice law.</p>
+      <div class="stat-strip">
+        <div class="stat-card">
+          <div class="stat-value">87%</div>
+          <div class="stat-label">Realization Rate Tracked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">38.5h</div>
+          <div class="stat-label">Billable Hours This Week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">94%</div>
+          <div class="stat-label">Collection Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">12</div>
+          <div class="stat-label">Active Matters Monitored</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Systems + APIs -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="systems-cols">
+        <div>
+          <div class="systems-title">Systems They Run</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#1A3A6B;"></div>Clio</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#0C7A6E;"></div>MyCase</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#4A3A9A;"></div>LexisNexis</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#EAB308;"></div>DocuSign</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#F97316;"></div>iManage / NetDocuments</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#6B7280;"></div>PACER</div>
+        </div>
+        <div>
+          <div class="systems-title">API Connections</div>
+          <table class="api-table">
+            <thead>
+              <tr><th>System</th><th>Status</th><th>Data Available</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Clio API</td><td><span class="badge badge-full">FULL</span></td><td>Matters, contacts, time entries, billing, calendar, tasks</td></tr>
+              <tr><td>MyCase API</td><td><span class="badge badge-full">FULL</span></td><td>Matters, contacts, billing, portal</td></tr>
+              <tr><td>LexisNexis API</td><td><span class="badge badge-partial">PARTIAL</span></td><td>Case law, legal research retrieval</td></tr>
+              <tr><td>DocuSign API</td><td><span class="badge badge-full">FULL</span></td><td>Signature status, document tracking, templates</td></tr>
+              <tr><td>PACER</td><td><span class="badge badge-partial">PARTIAL</span></td><td>Federal court dockets, case status</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sample Dashboard -->
+  <div class="dashboard-section">
+    <div class="section-inner">
+      <div class="dash-title">WHAT YOUR AIOS DASHBOARD SHOWS — MERIDIAN LAW GROUP</div>
+
+      <div class="metric-cards">
+        <div class="metric-card" style="border-top-color:var(--blue);">
+          <div class="metric-label">Billable Hours</div>
+          <div class="metric-value" style="color:var(--blue);">38.5h</div>
+          <div class="metric-sub">3h to weekly goal</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--gold);">
+          <div class="metric-label">Unbilled Time</div>
+          <div class="metric-value" style="color:var(--gold);">$8,400</div>
+          <div class="metric-sub">Ready to invoice</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--danger);">
+          <div class="metric-label">AR Outstanding</div>
+          <div class="metric-value" style="color:var(--danger);">$24,800</div>
+          <div class="metric-sub">$7,200 over 60 days</div>
+        </div>
+        <div class="metric-card" style="border-top-color:#F97316;">
+          <div class="metric-label">Deadlines Today</div>
+          <div class="metric-value" style="color:#F97316;">2</div>
+          <div class="metric-sub">Thompson filing 5pm</div>
+        </div>
+      </div>
+
+      <div class="chart-area">
+        <!-- Bar Chart: Billable Hours -->
+        <div class="chart-card">
+          <div class="chart-title">Billable Hours This Week</div>
+          <svg viewBox="0 0 380 180" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
+            <!-- Grid lines -->
+            <line x1="45" y1="20" x2="380" y2="20" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="6 4"/>
+            <line x1="45" y1="63" x2="380" y2="63" stroke="#E2E8F0" stroke-width="1"/>
+            <line x1="45" y1="97" x2="380" y2="97" stroke="#E2E8F0" stroke-width="1"/>
+            <line x1="45" y1="150" x2="380" y2="150" stroke="#E2E8F0" stroke-width="1.5"/>
+            <!-- Target line label -->
+            <text x="375" y="17" text-anchor="end" fill="#B8860B" font-size="10" font-family="-apple-system,sans-serif" font-weight="600">10h target</text>
+            <!-- Y labels -->
+            <text x="40" y="66" text-anchor="end" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">7.5h</text>
+            <text x="40" y="100" text-anchor="end" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">5h</text>
+            <!-- Bars -->
+            <!-- Mon 6.5h: max 10h = 130px, 6.5h = 84.5px -->
+            <rect x="50" y="65" width="50" height="85" rx="4" fill="#1A3A6B"/>
+            <!-- Tue 8.2h: 106.6px -->
+            <rect x="120" y="43" width="50" height="107" rx="4" fill="#1A3A6B"/>
+            <!-- Wed 7.8h: 101.4px -->
+            <rect x="190" y="49" width="50" height="101" rx="4" fill="#1A3A6B"/>
+            <!-- Thu 9.1h: 118.3px (teal) -->
+            <rect x="260" y="32" width="50" height="118" rx="4" fill="#0C7A6E"/>
+            <!-- Fri 6.9h: 89.7px (dimmed) -->
+            <rect x="330" y="60" width="50" height="90" rx="4" fill="#CBD2E0"/>
+            <!-- Value labels -->
+            <text x="75" y="58" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">6.5h</text>
+            <text x="145" y="36" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">8.2h</text>
+            <text x="215" y="42" text-anchor="middle" fill="#5A6478" font-size="10" font-family="-apple-system,sans-serif">7.8h</text>
+            <text x="285" y="25" text-anchor="middle" fill="#0C7A6E" font-size="10" font-family="-apple-system,sans-serif" font-weight="700">9.1h</text>
+            <text x="355" y="53" text-anchor="middle" fill="#9AA3B5" font-size="10" font-family="-apple-system,sans-serif">6.9h</text>
+            <!-- X labels -->
+            <text x="75" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Mon</text>
+            <text x="145" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Tue</text>
+            <text x="215" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Wed</text>
+            <text x="285" y="166" text-anchor="middle" fill="#0C7A6E" font-size="11" font-family="-apple-system,sans-serif" font-weight="700">Thu</text>
+            <text x="355" y="166" text-anchor="middle" fill="#9AA3B5" font-size="11" font-family="-apple-system,sans-serif">Fri</text>
+          </svg>
+        </div>
+
+        <!-- Right: Matter Donut + AR -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- Matter Status Donut -->
+          <div class="chart-card" style="text-align:center;">
+            <div class="chart-title">Matter Status</div>
+            <svg viewBox="0 0 160 160" style="width:160px;height:160px;margin:0 auto;display:block;" xmlns="http://www.w3.org/2000/svg">
+              <!-- Active 67% -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#1A3A6B" stroke-width="18" stroke-dasharray="227.3 339.3" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+              <!-- Closing 25% -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#0C7A6E" stroke-width="18" stroke-dasharray="84.8 339.3" stroke-dashoffset="-227.3" transform="rotate(-90 80 80)"/>
+              <!-- New 8% -->
+              <circle cx="80" cy="80" r="54" fill="none" stroke="#B8860B" stroke-width="18" stroke-dasharray="27.1 339.3" stroke-dashoffset="-312.1" transform="rotate(-90 80 80)"/>
+              <text x="80" y="74" text-anchor="middle" font-size="28" font-weight="800" fill="#1A3A6B" font-family="-apple-system,sans-serif">12</text>
+              <text x="80" y="90" text-anchor="middle" font-size="11" fill="#9AA3B5" font-family="-apple-system,sans-serif">Matters</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--blue);"></div>Active 8</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--teal);"></div>Closing 3</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>New 1</div>
+            </div>
+          </div>
+
+          <!-- AR by Client -->
+          <div class="chart-card">
+            <div class="chart-title">AR by Client (Top 5)</div>
+            <div class="client-bars">
+              <div class="client-row">
+                <div class="client-name">Anderson Estate</div>
+                <div class="client-track"><div class="client-fill" style="width:54.4%;background:var(--blue);"></div></div>
+                <div class="client-amount">$6,800</div>
+              </div>
+              <div class="client-row">
+                <div class="client-name">Martinez Corp</div>
+                <div class="client-track"><div class="client-fill" style="width:57.6%;background:var(--danger);"></div></div>
+                <div class="client-amount" style="color:var(--danger);">$7,200</div>
+              </div>
+              <div class="client-row">
+                <div class="client-name">Thornton Family</div>
+                <div class="client-track"><div class="client-fill" style="width:35.2%;background:var(--gold);"></div></div>
+                <div class="client-amount">$4,400</div>
+              </div>
+              <div class="client-row">
+                <div class="client-name">Chen LLC</div>
+                <div class="client-track"><div class="client-fill" style="width:30.4%;background:var(--teal);"></div></div>
+                <div class="client-amount">$3,800</div>
+              </div>
+              <div class="client-row" style="margin-bottom:0;">
+                <div class="client-name">Park &amp; Associates</div>
+                <div class="client-track"><div class="client-fill" style="width:20.8%;background:var(--gray-400);"></div></div>
+                <div class="client-amount">$2,600</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Brief Terminal -->
+  <div class="section" style="background:#161B22; padding:80px 32px;">
+    <div class="section-inner">
+      <div class="eyebrow" style="color:#6E7681;">DAILY INTELLIGENCE</div>
+      <h2 style="color:white; margin-bottom:32px;">Your Morning Brief — <em>Before Court</em></h2>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="term-dot term-dot-r"></div>
+          <div class="term-dot term-dot-y"></div>
+          <div class="term-dot term-dot-g"></div>
+          <span style="margin-left:12px; color:#6E7681; font-size:12px;">aios-brief.sh</span>
+        </div>
+<span class="t-green">AIOS DAILY BRIEF — Thursday, April 17</span><span class="t-dim">                    07:15 AM</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">TODAY</span>
+<span class="t-white">→ 09:00am</span><span class="t-dim"> — Deposition: Hargrove v. Meridian Industrial (Courtroom 4B)</span>
+<span class="t-white">→ 11:30am</span><span class="t-dim"> — Client call: Sarah Chen — estate plan review</span>
+<span class="t-white">→ 02:00pm</span><span class="t-dim"> — Thompson Estate filing </span><span class="t-red">DUE 5:00pm (EST hard stop) [!!!]</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">THIS WEEK'S NUMBERS</span>
+<span class="t-white">→ Billable hours: </span><span class="t-blue">38.5 of 40 target</span><span class="t-dim">  |  Realization: </span><span class="t-blue">87%</span><span class="t-dim">  |  Collection: </span><span class="t-blue">94%</span>
+<span class="t-white">→ Unbilled time this week: </span><span class="t-blue">$8,400</span><span class="t-dim"> — invoice generation ready on your command</span>
+<span class="t-white">→ New matters opened: </span><span class="t-blue">1</span><span class="t-dim"> (Park &amp; Associates — corporate formation)</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-orange">⚠  NEEDS ATTENTION</span>
+<span class="t-white">→ </span><span class="t-red">Thompson Estate documents</span><span class="t-dim"> — still in drafting — </span><span class="t-red">9.5 hours until deadline</span>
+<span class="t-white">→ </span><span class="t-orange">Martinez Corp</span><span class="t-dim"> — </span><span class="t-blue">$7,200</span><span class="t-dim"> outstanding 62 days — follow-up draft ready</span>
+<span class="t-white">→ Holt matter</span><span class="t-dim"> — no activity in 18 days — status check recommended</span>
+<span class="t-white">→ 2 engagement letters unsigned</span><span class="t-dim"> (Rodriguez, Park) — client portal reminder sent</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">PIPELINE</span>
+<span class="t-white">→ </span><span class="t-blue">3 consultations</span><span class="t-dim"> booked next week</span>
+<span class="t-white">→ Westfield referral inquiry received</span><span class="t-dim"> — conflict check cleared — ready to contact</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Automation Table -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="eyebrow">WHAT AI AUTOMATES</div>
+      <h2>Administrative work, <em>off your plate.</em></h2>
+      <table class="auto-table">
+        <thead>
+          <tr><th>Task</th><th>How Often</th><th>Time Saved/Month</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Client intake + conflict check capture</td><td>Per intake</td><td>5 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Engagement letter generation</td><td>Per matter</td><td>3 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>End-of-day time entry reminder</td><td>Daily</td><td>2 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Invoice generation at matter milestones</td><td>Per trigger</td><td>3 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Invoice follow-up sequence (30/60/90)</td><td>Weekly</td><td>2.5 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Client status update email</td><td>Weekly per matter</td><td>6 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Court deadline calendaring</td><td>Per filing</td><td>2 hrs</td><td><span class="status-semi">SEMI</span></td></tr>
+          <tr><td>Post-matter review request</td><td>Per close</td><td>1 hr</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Document assembly (wills, NDAs, OAs)</td><td>Per request</td><td>8 hrs</td><td><span class="status-semi">SEMI</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <div class="section section-gray">
+    <div class="section-inner">
+      <div class="eyebrow">MOST RELEVANT MODULES</div>
+      <h2>Capabilities built for <em>legal practice.</em></h2>
+      <div class="module-grid">
+        <div class="mod-card" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue);">ContextOS</h3>
+          <p>Each active matter loaded as a Claude-accessible context</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--teal);">
+          <h3 style="color:var(--teal);">DataOS</h3>
+          <p>Clio billing, AR aging, utilization dashboard daily</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--gold);">
+          <h3 style="color:var(--gold);">Daily Brief</h3>
+          <p>Deadlines today, unbilled time, stale matter alerts</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--purple);">
+          <h3 style="color:var(--purple);">CommandOS</h3>
+          <p>/status-update, /engagement-letter, /time-entry-summary</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--teal);">
+          <h3 style="color:var(--teal);">Meeting Intelligence</h3>
+          <p>Client calls → matter notes → auto-filed</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue);">Workflow Automation</h3>
+          <p>Intake, billing reminders, client update cadence</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-attorney -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE: CPA
+════════════════════════════════════════════════════════ -->
+<div class="page" id="page-cpa">
+
+  <!-- Hero -->
+  <div class="hero-gold-dark">
+    <div class="hero-inner">
+      <div class="hero-badge">ACCOUNTING · TAX PREPARATION · BOOKKEEPING · ADVISORY</div>
+      <h1 style="color:white;">Tax Season Was Never<br>Built for <em>One Person</em></h1>
+      <p class="sub" style="margin-top:16px;">Returns tracked. Docs chased. Staff monitored. Deadlines flagged. The AIOS is the partner that never sleeps during busy season.</p>
+      <div class="stat-strip">
+        <div class="stat-card">
+          <div class="stat-value">127</div>
+          <div class="stat-label">Returns Filed &amp; Tracked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">91%</div>
+          <div class="stat-label">Staff Utilization Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">8</div>
+          <div class="stat-label">Returns At Risk Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">$84.2k</div>
+          <div class="stat-label">Revenue MTD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Systems + APIs -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="systems-cols">
+        <div>
+          <div class="systems-title">Systems They Run</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#1A3A6B;"></div>ProConnect / Drake Tax</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#22C55E;"></div>QuickBooks Online Accountant</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#0C7A6E;"></div>TaxDome</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#4A3A9A;"></div>Karbon</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#F97316;"></div>Gusto</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#EAB308;"></div>DocuSign</div>
+          <div class="system-chip"><div class="chip-dot" style="background:#6B7280;"></div>ShareFile</div>
+        </div>
+        <div>
+          <div class="systems-title">API Connections</div>
+          <table class="api-table">
+            <thead>
+              <tr><th>System</th><th>Status</th><th>Data Available</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>QuickBooks API</td><td><span class="badge badge-full">FULL</span></td><td>P&amp;L, balance sheet, transactions, AR/AP, payroll</td></tr>
+              <tr><td>Xero API</td><td><span class="badge badge-full">FULL</span></td><td>Same depth as QBO, client financials</td></tr>
+              <tr><td>TaxDome API</td><td><span class="badge badge-partial">PARTIAL</span></td><td>Client workflow status, portal activity, returns tracker</td></tr>
+              <tr><td>Karbon API</td><td><span class="badge badge-partial">PARTIAL</span></td><td>Workflow tasks, due dates, staff assignments</td></tr>
+              <tr><td>Gusto API</td><td><span class="badge badge-full">FULL</span></td><td>Payroll runs, employee data, quarterly filings</td></tr>
+              <tr><td>DocuSign API</td><td><span class="badge badge-full">FULL</span></td><td>Signature status, engagement letter tracking</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sample Dashboard -->
+  <div class="dashboard-section">
+    <div class="section-inner">
+      <div class="dash-title">WHAT YOUR AIOS DASHBOARD SHOWS — SUMMIT ACCOUNTING PARTNERS</div>
+
+      <div class="metric-cards">
+        <div class="metric-card" style="border-top-color:var(--teal);">
+          <div class="metric-label">Returns Filed</div>
+          <div class="metric-value" style="color:var(--teal);">127</div>
+          <div class="metric-sub">of 188 total</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--gold);">
+          <div class="metric-label">In Progress</div>
+          <div class="metric-value" style="color:var(--gold);">43</div>
+          <div class="metric-sub">8 at risk</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--danger);">
+          <div class="metric-label">Docs Outstanding</div>
+          <div class="metric-value" style="color:var(--danger);">23</div>
+          <div class="metric-sub">clients not responded &gt;7 days</div>
+        </div>
+        <div class="metric-card" style="border-top-color:var(--blue);">
+          <div class="metric-label">Revenue MTD</div>
+          <div class="metric-value" style="color:var(--blue);">$84,200</div>
+          <div class="metric-sub">on track for $105k</div>
+        </div>
+      </div>
+
+      <div class="chart-area">
+        <!-- Return Status Donut -->
+        <div class="chart-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div class="chart-title" style="text-align:center;width:100%;">Return Status</div>
+          <svg viewBox="0 0 160 160" style="width:180px;height:180px;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+            <!-- Filed 68% -->
+            <circle cx="80" cy="80" r="54" fill="none" stroke="#0C7A6E" stroke-width="18" stroke-dasharray="230.7 339.3" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+            <!-- In Progress 23% -->
+            <circle cx="80" cy="80" r="54" fill="none" stroke="#1A3A6B" stroke-width="18" stroke-dasharray="78.0 339.3" stroke-dashoffset="-230.7" transform="rotate(-90 80 80)"/>
+            <!-- Not Started 9% -->
+            <circle cx="80" cy="80" r="54" fill="none" stroke="#B8860B" stroke-width="18" stroke-dasharray="30.5 339.3" stroke-dashoffset="-308.7" transform="rotate(-90 80 80)"/>
+            <text x="80" y="74" text-anchor="middle" font-size="26" font-weight="800" fill="#1A3A6B" font-family="-apple-system,sans-serif">188</text>
+            <text x="80" y="90" text-anchor="middle" font-size="11" fill="#9AA3B5" font-family="-apple-system,sans-serif">Returns</text>
+          </svg>
+          <div class="donut-legend" style="margin-top:12px;">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--teal);"></div>Filed 127</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--blue);"></div>In Progress 43</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>Not Started 18</div>
+          </div>
+        </div>
+
+        <!-- Right: Staff Utilization + At Risk -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <!-- Staff Utilization -->
+          <div class="chart-card">
+            <div class="chart-title">Staff Utilization</div>
+            <div class="staff-bars">
+              <div class="staff-row">
+                <div class="staff-top">
+                  <div class="staff-name">Sarah Chen</div>
+                  <div class="staff-pct" style="color:var(--teal);">96%</div>
+                </div>
+                <div class="staff-track"><div class="staff-fill" style="width:96%;background:var(--teal);"></div></div>
+                <div class="staff-note">⚠ near capacity</div>
+              </div>
+              <div class="staff-row">
+                <div class="staff-top">
+                  <div class="staff-name">Miguel Rodriguez</div>
+                  <div class="staff-pct" style="color:var(--blue);">88%</div>
+                </div>
+                <div class="staff-track"><div class="staff-fill" style="width:88%;background:var(--blue);"></div></div>
+              </div>
+              <div class="staff-row">
+                <div class="staff-top">
+                  <div class="staff-name">Jennifer Kim</div>
+                  <div class="staff-pct" style="color:var(--gold);">91%</div>
+                </div>
+                <div class="staff-track"><div class="staff-fill" style="width:91%;background:var(--gold);"></div></div>
+              </div>
+              <div class="staff-row">
+                <div class="staff-top">
+                  <div class="staff-name">Raj Patel</div>
+                  <div class="staff-pct" style="color:var(--purple);">87%</div>
+                </div>
+                <div class="staff-track"><div class="staff-fill" style="width:87%;background:var(--purple);"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Returns At Risk -->
+          <div class="chart-card">
+            <div class="chart-title">Returns At Risk</div>
+            <div class="risk-list">
+              <div class="risk-row">
+                <div class="risk-name">Greenfield Family Trust</div>
+                <div class="risk-note" style="font-size:12px;color:var(--gray-400);">awaiting K-1s</div>
+                <span class="risk-badge risk-red">1 DAY</span>
+              </div>
+              <div class="risk-row">
+                <div class="risk-name">Patel &amp; Associates LLC</div>
+                <div class="risk-note" style="font-size:12px;color:var(--gray-400);">reconciliation open</div>
+                <span class="risk-badge risk-red">1 DAY</span>
+              </div>
+              <div class="risk-row">
+                <div class="risk-name">Morrison IRA</div>
+                <div class="risk-note" style="font-size:12px;color:var(--gray-400);">docs in, unassigned</div>
+                <span class="risk-badge risk-yellow">5 DAYS</span>
+              </div>
+              <div class="risk-row">
+                <div class="risk-name">Westwood Holdings</div>
+                <div class="risk-note" style="font-size:12px;color:var(--gray-400);">review not started</div>
+                <span class="risk-badge risk-yellow">6 DAYS</span>
+              </div>
+              <div class="risk-row">
+                <div class="risk-name">Callahan Trust</div>
+                <div class="risk-note" style="font-size:12px;color:var(--gray-400);">in progress</div>
+                <span class="risk-badge risk-green">8 DAYS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Brief Terminal -->
+  <div class="section" style="background:#161B22; padding:80px 32px;">
+    <div class="section-inner">
+      <div class="eyebrow" style="color:#6E7681;">DAILY INTELLIGENCE</div>
+      <h2 style="color:white; margin-bottom:32px;">Your Morning Brief — <em>Busy Season, Handled</em></h2>
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="term-dot term-dot-r"></div>
+          <div class="term-dot term-dot-y"></div>
+          <div class="term-dot term-dot-g"></div>
+          <span style="margin-left:12px; color:#6E7681; font-size:12px;">aios-brief.sh</span>
+        </div>
+<span class="t-green">AIOS DAILY BRIEF — Thursday, April 17</span><span class="t-dim">                    07:00 AM</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">TAX SEASON STATUS</span>
+<span class="t-white">→ Returns filed: </span><span class="t-blue">127 of 188</span><span class="t-dim">  |  In progress: </span><span class="t-blue">43</span><span class="t-dim">  |  Not started: </span><span class="t-blue">18</span>
+<span class="t-white">→ Extensions filed: </span><span class="t-blue">31</span><span class="t-dim">  |  Oct 15 deadline: </span><span class="t-blue">181 days away</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-red">⚠  AT RISK — ACTION NEEDED TODAY</span>
+<span class="t-white">→ </span><span class="t-red">Greenfield Family Trust</span><span class="t-dim"> — DUE TOMORROW Apr 18 — K-1s not received [!!!]</span>
+<span class="t-white">→ </span><span class="t-red">Patel &amp; Associates LLC</span><span class="t-dim"> — DUE TOMORROW Apr 18 — balance sheet open [!!!]</span>
+<span class="t-white">→ </span><span class="t-orange">Morrison IRA</span><span class="t-dim"> — due Apr 22 — docs in, not yet assigned to staff</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">STAFF STATUS</span>
+<span class="t-white">→ Chen: </span><span class="t-blue">96%</span><span class="t-dim">  Rodriguez: </span><span class="t-blue">88%</span><span class="t-dim">  Kim: </span><span class="t-blue">91%</span><span class="t-dim">  Patel: </span><span class="t-blue">87%</span>
+<span class="t-white">→ </span><span class="t-orange">Alert: Chen near capacity</span><span class="t-dim"> — 2 returns recommended for redistribution</span>
+<span class="t-white">→ Total capacity used: </span><span class="t-blue">1,482 hrs of 1,640 available</span><span class="t-dim"> this month (90.4%)</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">OUTSTANDING</span>
+<span class="t-white">→ </span><span class="t-blue">23 clients</span><span class="t-dim"> have not responded to document requests (7+ days)</span>
+<span class="t-white">→ Reminder sequence #2 sent to </span><span class="t-blue">18 clients</span><span class="t-dim"> this morning</span>
+<span class="t-white">→ </span><span class="t-orange">4 engagement letters unsigned</span><span class="t-dim"> — billing blocked on these clients</span>
+
+<span class="t-dim">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-green">REVENUE</span>
+<span class="t-white">→ MTD: </span><span class="t-blue">$84,200</span><span class="t-dim">  |  Target: </span><span class="t-blue">$105,000</span><span class="t-dim">  |  On track: </span><span class="t-green">YES</span><span class="t-dim"> (80% of month used, 80% to target)</span>
+<span class="t-white">→ Ready to invoice: </span><span class="t-blue">14 completed returns</span><span class="t-dim"> = </span><span class="t-blue">$22,400 billable</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Automation Table -->
+  <div class="section section-white">
+    <div class="section-inner">
+      <div class="eyebrow">WHAT AI AUTOMATES</div>
+      <h2>Busy season overhead, <em>automated away.</em></h2>
+      <table class="auto-table">
+        <thead>
+          <tr><th>Task</th><th>How Often</th><th>Time Saved/Month</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tax organizer distribution (Jan)</td><td>Annual</td><td>12 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Document request lists per client</td><td>Per engagement</td><td>6 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Document reminder sequence (7/14/21 day)</td><td>Per client</td><td>8 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Client status updates (received/in progress/filed)</td><td>Per status change</td><td>10 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Engagement letter generation + e-signature</td><td>Per client</td><td>5 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Extension filing reminders</td><td>Quarterly</td><td>3 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Estimated payment reminders to SE clients</td><td>Quarterly</td><td>4 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>1099 reminder campaign to business clients</td><td>Annual</td><td>3 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Post-filing survey + review request</td><td>Per filing</td><td>2 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+          <tr><td>Quarterly advisory meeting scheduling</td><td>Quarterly</td><td>3 hrs</td><td><span class="status-auto">AUTO</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modules -->
+  <div class="section section-gray">
+    <div class="section-inner">
+      <div class="eyebrow">MOST RELEVANT MODULES</div>
+      <h2>Capabilities built for <em>accounting firms.</em></h2>
+      <div class="module-grid">
+        <div class="mod-card" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue);">ContextOS</h3>
+          <p>Each client as a Claude-accessible profile: entity, filing req, history</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--teal);">
+          <h3 style="color:var(--teal);">DataOS</h3>
+          <p>QBO client financials + TaxDome/Karbon workflow status daily</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--gold);">
+          <h3 style="color:var(--gold);">Daily Brief</h3>
+          <p>Returns at risk, staff utilization, docs outstanding, revenue tracker</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--purple);">
+          <h3 style="color:var(--purple);">CommandOS</h3>
+          <p>/prep [client], /status [client], /engagement [client]</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--teal);">
+          <h3 style="color:var(--teal);">Workflow Automation</h3>
+          <p>Document requests, reminders, billing triggers</p>
+        </div>
+        <div class="mod-card" style="border-left-color:var(--blue);">
+          <h3 style="color:var(--blue);">Meeting Intelligence</h3>
+          <p>Advisory calls → client notes → auto-filed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-cpa -->
+
+
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════ -->
+<script>
+  function showPage(pageId, tabEl) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    // Show target page
+    var target = document.getElementById('page-' + pageId);
+    if (target) target.classList.add('active');
+
+    // Update nav tabs
+    document.querySelectorAll('.nav-tab').forEach(function(t) {
+      t.classList.remove('active');
+    });
+    if (tabEl) tabEl.classList.add('active');
+
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+</script>
+
+</body>
+</html>
