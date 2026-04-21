@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supporting Strategies — Running on AI | Advisor AI Partners</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #F5F4F0;
+      --bg-warm:     #FAFAF7;
+      --surface:     #FFFFFF;
+      --footer-bg:   #111318;
+      --text-dark:   #1C1C1E;
+      --text-mid:    #52525B;
+      --text-light:  #A1A1AA;
+      --text-faint:  #D4D4D8;
+      --blue:        #1A3A6B;
+      --blue-soft:   #EBF0FA;
+      --teal:        #0C7A6E;
+      --teal-soft:   #E6F5F2;
+      --gold:        #B8860B;
+      --gold-soft:   #FBF3E0;
+      --indigo:      #3730A3;
+      --indigo-soft: #EEF2FF;
+      --green:       #166534;
+      --green-soft:  #DCFCE7;
+      --amber:       #B85A00;
+      --amber-soft:  #FEF0E0;
+      --line:        rgba(28,28,30,0.07);
+      --line-mid:    rgba(28,28,30,0.12);
+      --heading:     'Plus Jakarta Sans', sans-serif;
+      --body:        'Inter', sans-serif;
+      --expo:        cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body { font-family: var(--body); color: var(--text-mid); background: var(--bg); line-height: 1.68; font-size: 15px; }
+    .container { max-width: 1060px; margin: 0 auto; padding: 0 32px; }
+
+    h1, h2, h3 { font-family: var(--heading); color: var(--text-dark); line-height: 1.18; }
+    h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 800; letter-spacing: -0.5px; }
+    h2 { font-size: clamp(22px, 3.5vw, 40px); font-weight: 800; letter-spacing: -0.3px; }
+    h3 { font-size: 18px; font-weight: 700; line-height: 1.28; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--body); font-size: 11px; font-weight: 500;
+      letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-light); margin-bottom: 18px;
+    }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+
+    section { padding: 96px 0; position: relative; overflow: hidden; }
+    .bg-warm { background: var(--bg-warm); }
+    .bg-blue { background: var(--blue); }
+    .bg-surface { background: var(--surface); }
+
+    section::before, section::after {
+      content: ''; position: absolute; left: 0; right: 0; height: 1px;
+    }
+    section::before { top: 0; background: linear-gradient(90deg, transparent, var(--line-mid), transparent); }
+    section::after { bottom: 0; background: linear-gradient(90deg, transparent, var(--line-mid), transparent); }
+
+    .orb { position: absolute; border-radius: 50%; filter: blur(115px); pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; top: -150px; right: -180px; background: rgba(26,58,107,0.05); animation: float-orb 30s ease-in-out infinite; }
+    .orb-2 { width: 450px; height: 450px; bottom: -120px; left: -160px; background: rgba(12,122,110,0.05); animation: float-orb 26s ease-in-out infinite reverse; }
+    @keyframes float-orb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-20px); } }
+    section > .container { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--line); padding: 18px 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: var(--heading); font-size: 15px; font-weight: 700; color: var(--blue); text-decoration: none; }
+    .nav-pill { background: var(--teal-soft); color: var(--teal); font-family: var(--body); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 5px 12px; border-radius: 100px; }
+
+    /* ── HERO ── */
+    .hero { padding: 100px 0 80px; }
+    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .hero h1 { margin-bottom: 22px; }
+    .hero h1 .accent { background: linear-gradient(90deg, var(--blue) 55%, var(--teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero .lead { font-size: 16.5px; color: var(--text-mid); line-height: 1.78; margin-bottom: 36px; max-width: 520px; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--text-dark); color: var(--surface);
+      padding: 14px 32px; border-radius: 100px;
+      font-family: var(--body); font-weight: 600; font-size: 14px;
+      text-decoration: none; position: relative; overflow: hidden;
+      transition: transform 0.35s var(--expo), box-shadow 0.35s var(--expo);
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(130deg, var(--blue), var(--teal));
+      opacity: 0; transition: opacity 0.35s; border-radius: 100px;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26,58,107,0.22); }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    /* Hero card */
+    .hero-card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 32px; }
+    .hero-card-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-light); margin-bottom: 20px; }
+    .tool-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .tool-row:last-child { border-bottom: none; }
+    .tool-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .tool-name { font-family: var(--heading); font-size: 14px; font-weight: 700; color: var(--text-dark); }
+    .tool-desc { font-size: 12px; color: var(--text-light); }
+    .tool-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+    .badge-connected { background: var(--green-soft); color: var(--green); }
+    .badge-new { background: var(--teal-soft); color: var(--teal); }
+
+    /* ── PROBLEM ── */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; margin-top: 52px; }
+    .problem-left h2 { margin-bottom: 18px; }
+    .problem-left .lead { margin-bottom: 32px; font-size: 16px; line-height: 1.75; }
+    .problem-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .p-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 24px;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo);
+    }
+    .p-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.07); }
+    .p-icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .p-card h3 { font-size: 14px; color: var(--text-dark); margin-bottom: 6px; }
+    .p-card p { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+    .p-stat { font-size: 22px; font-weight: 800; font-family: var(--heading); color: var(--blue); margin-bottom: 4px; }
+
+    /* ── FRANCHISE NOTE ── */
+    .franchise-note {
+      background: var(--gold-soft); border: 1px solid rgba(184,134,11,0.2); border-left: 4px solid var(--gold);
+      border-radius: 0 12px 12px 0; padding: 20px 24px; margin-top: 48px;
+    }
+    .franchise-note .fn-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gold); margin-bottom: 8px; }
+    .franchise-note p { font-size: 14px; color: var(--text-dark); line-height: 1.65; }
+
+    /* ── SOLUTION / LAYERS ── */
+    .layers-intro { text-align: center; max-width: 640px; margin: 0 auto 60px; }
+    .layers-intro h2 { margin-bottom: 16px; }
+    .layers-intro .lead { font-size: 16px; line-height: 1.75; }
+    .layers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .layer-card {
+      border-radius: 18px; padding: 24px 20px;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo);
+    }
+    .layer-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.09); }
+    .layer-num { font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 14px; opacity: 0.7; }
+    .layer-card h3 { font-size: 15px; margin-bottom: 10px; }
+    .layer-card p { font-size: 13px; line-height: 1.6; }
+
+    .layer-1 { background: var(--blue-soft); }
+    .layer-1 .layer-num, .layer-1 h3 { color: var(--blue); }
+    .layer-2 { background: var(--teal-soft); }
+    .layer-2 .layer-num, .layer-2 h3 { color: var(--teal); }
+    .layer-3 { background: var(--gold-soft); }
+    .layer-3 .layer-num, .layer-3 h3 { color: var(--gold); }
+    .layer-4 { background: var(--indigo-soft); }
+    .layer-4 .layer-num, .layer-4 h3 { color: var(--indigo); }
+    .layer-5 { background: var(--green-soft); }
+    .layer-5 .layer-num, .layer-5 h3 { color: var(--green); }
+
+    /* ── DASHBOARDS ── */
+    .dash-tabs { display: flex; gap: 8px; margin-bottom: 32px; flex-wrap: wrap; }
+    .dash-tab {
+      padding: 10px 20px; border-radius: 100px; font-family: var(--body);
+      font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid var(--line);
+      background: var(--surface); color: var(--text-mid); transition: all 0.25s;
+    }
+    .dash-tab:hover { border-color: var(--blue); color: var(--blue); }
+    .dash-tab.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .dash-panels > .dash-panel { display: none; }
+    .dash-panels > .dash-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+    .dash-left h3 { font-size: 22px; margin-bottom: 10px; }
+    .dash-left .dash-role { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 16px; }
+    .dash-left p { font-size: 15px; line-height: 1.75; margin-bottom: 20px; }
+    .dash-feature { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .dash-feature:last-child { border-bottom: none; }
+    .df-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .df-text h4 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+    .df-text p { font-size: 13px; color: var(--text-mid); line-height: 1.5; }
+    .dash-right { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
+    .dash-preview-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-light); margin-bottom: 20px; }
+    .mock-widget { background: var(--bg); border-radius: 12px; padding: 16px 18px; margin-bottom: 10px; }
+    .mock-widget:last-child { margin-bottom: 0; }
+    .mw-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
+    .mw-value { font-size: 20px; font-weight: 800; font-family: var(--heading); color: var(--text-dark); margin-bottom: 4px; }
+    .mw-sub { font-size: 12px; color: var(--text-mid); }
+    .mw-bar { height: 6px; border-radius: 100px; background: var(--line); margin-top: 10px; overflow: hidden; }
+    .mw-fill { height: 100%; border-radius: 100px; }
+    .mw-list-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--text-mid); }
+    .mw-list-item:last-child { border-bottom: none; }
+    .mw-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── ROI ── */
+    .roi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 52px; }
+    .roi-card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 32px 28px;
+      transition: transform 0.45s var(--expo), box-shadow 0.45s var(--expo);
+    }
+    .roi-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.07); }
+    .roi-num { font-size: 42px; font-weight: 800; font-family: var(--heading); line-height: 1; margin-bottom: 8px; }
+    .roi-label { font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 10px; }
+    .roi-desc { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+    .roi-callout {
+      background: linear-gradient(135deg, var(--blue) 0%, #0f4f8a 100%);
+      border-radius: 20px; padding: 48px 52px; margin-top: 32px;
+      display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center;
+    }
+    .roi-callout h3 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 12px; line-height: 1.25; }
+    .roi-callout p { font-size: 15px; color: rgba(255,255,255,0.78); line-height: 1.7; }
+    .roi-math { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 28px 32px; min-width: 240px; }
+    .rm-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 14px; color: rgba(255,255,255,0.85); }
+    .rm-row:last-child { border-bottom: none; }
+    .rm-row .rm-val { font-weight: 700; color: #fff; }
+    .rm-total { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 4px; border-top: 2px solid rgba(255,255,255,0.3); }
+    .rm-total .rm-tl { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.5px; }
+    .rm-total .rm-tv { font-size: 22px; font-weight: 800; font-family: var(--heading); color: #fff; }
+
+    /* ── OFFER ── */
+    .offer-inner {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 28px;
+      padding: 60px; max-width: 800px; margin: 48px auto 0;
+    }
+    .offer-inner .offer-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
+    .offer-inner h2 { font-size: clamp(24px, 3.5vw, 36px); margin-bottom: 16px; }
+    .offer-inner .offer-lead { font-size: 16px; color: var(--text-mid); line-height: 1.75; margin-bottom: 36px; }
+    .offer-items { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 36px; }
+    .offer-item { display: flex; align-items: flex-start; gap: 14px; }
+    .oi-check { width: 26px; height: 26px; border-radius: 50%; background: var(--teal-soft); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .oi-text h4 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 3px; }
+    .oi-text p { font-size: 13px; color: var(--text-mid); line-height: 1.55; }
+    .offer-price-block {
+      background: linear-gradient(135deg, var(--teal-soft), var(--blue-soft));
+      border: 1px solid rgba(12,122,110,0.15); border-radius: 16px; padding: 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      margin-bottom: 28px;
+    }
+    .opb-left .opb-was { font-size: 13px; color: var(--text-light); text-decoration: line-through; margin-bottom: 6px; }
+    .opb-left .opb-price { font-size: 48px; font-weight: 800; font-family: var(--heading); color: var(--blue); line-height: 1; margin-bottom: 6px; }
+    .opb-left .opb-detail { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+    .opb-right { background: var(--teal); color: #fff; border-radius: 12px; padding: 20px 24px; text-align: center; min-width: 180px; }
+    .opb-right .opbr-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.75; margin-bottom: 8px; }
+    .opb-right .opbr-val { font-size: 15px; font-weight: 700; line-height: 1.4; }
+    .offer-friendship {
+      background: var(--gold-soft); border: 1px solid rgba(184,134,11,0.2); border-radius: 12px; padding: 20px 24px; margin-bottom: 36px; font-size: 14px; color: var(--text-dark); line-height: 1.65;
+    }
+    .offer-friendship strong { color: var(--gold); }
+    .offer-cta-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .btn-offer {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--teal); color: #fff;
+      padding: 18px 48px; border-radius: 100px;
+      font-family: var(--body); font-weight: 700; font-size: 16px;
+      text-decoration: none; transition: transform 0.35s var(--expo), box-shadow 0.35s var(--expo);
+    }
+    .btn-offer:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(12,122,110,0.3); }
+    .offer-note { font-size: 13px; color: var(--text-light); }
+
+    /* ── FOOTER ── */
+    .footer { background: var(--footer-bg); padding: 52px 0; }
+    .footer .container { display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+    .footer-logo { font-family: var(--heading); font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { font-size: 14px; color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.25); }
+
+    @media (max-width: 860px) {
+      .hero-inner, .problem-grid, .layers-grid, .roi-grid,
+      .dash-panels > .dash-panel.active { grid-template-columns: 1fr; }
+      .problem-cards { grid-template-columns: 1fr; }
+      .roi-callout { grid-template-columns: 1fr; }
+      .offer-items { grid-template-columns: 1fr; }
+      .offer-price-block { flex-direction: column; }
+      .layers-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="container">
+    <a href="https://advisoraipartners.com" class="nav-logo">Advisor AI Partners</a>
+    <span class="nav-pill">For Supporting Strategies</span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero bg-warm">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="eyebrow"><span class="dot"></span> Built specifically for Supporting Strategies</div>
+        <h1>What if your business ran itself<br>while your team focused on<br><span class="accent">growing it?</span></h1>
+        <p class="lead">Supporting Strategies has spent 20 years building a system that works. The tools are there — HubSpot, Fathom, Google Workspace. The data exists. The AI Operating System connects it all, automates the labor, and gives every person on your team exactly what they need to see the moment they need it.</p>
+        <a href="https://meetings.advisoraipartners.com" class="btn-primary">
+          <span>Schedule a conversation with Pete →</span>
+        </a>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-card-label">Your existing stack — unified</div>
+          <div class="tool-row">
+            <div class="tool-icon" style="background:#EEF7FF;">📊</div>
+            <div>
+              <div class="tool-name">HubSpot CRM</div>
+              <div class="tool-desc">Pipeline, evangelists, client activity</div>
+            </div>
+            <span class="tool-badge badge-connected">Connected</span>
+          </div>
+          <div class="tool-row">
+            <div class="tool-icon" style="background:#E6F5F2;">💹</div>
+            <div>
+              <div class="tool-name">Fathom</div>
+              <div class="tool-desc">Financial dashboards &amp; forecasting</div>
+            </div>
+            <span class="tool-badge badge-connected">Connected</span>
+          </div>
+          <div class="tool-row">
+            <div class="tool-icon" style="background:#FBF3E0;">📁</div>
+            <div>
+              <div class="tool-name">Google Workspace</div>
+              <div class="tool-desc">Email, calendar, transcripts, docs</div>
+            </div>
+            <span class="tool-badge badge-connected">Connected</span>
+          </div>
+          <div class="tool-row">
+            <div class="tool-icon" style="background:#EEF2FF;">🤖</div>
+            <div>
+              <div class="tool-name">AI Operating System</div>
+              <div class="tool-desc">Claude Code — built on top of what you have</div>
+            </div>
+            <span class="tool-badge badge-new">New Layer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     PROBLEM
+══════════════════════════════════════════ -->
+<section class="bg-surface">
+  <div class="container">
+    <div class="problem-grid">
+      <div class="problem-left">
+        <div class="eyebrow"><span class="dot"></span> Where the time is going</div>
+        <h2>The work that should<br>take minutes is taking hours.</h2>
+        <p class="lead">You know what needs to happen. More time with evangelists. More meetings. More LinkedIn outreach. More client calls. The problem is that the infrastructure to support your sales team is eating the time you need to build that pipeline.</p>
+        <div class="franchise-note">
+          <div class="fn-label">On the franchise platform</div>
+          <p>This doesn't touch what your franchisor manages. The AIOS works alongside your Google Workspace and the tools you own directly — HubSpot, Fathom, your email. No conflicts, no approvals. You're adding a layer on top of what you already have, not replacing anything.</p>
+        </div>
+      </div>
+      <div class="problem-cards">
+        <div class="p-card">
+          <div class="p-stat">12+</div>
+          <h3>Hours lost to proposals every week</h3>
+          <p>4 salespeople × 3 leads/week × 1 hour each. Time that could be in one-to-ones building your next 300 evangelists.</p>
+        </div>
+        <div class="p-card">
+          <div class="p-stat">2 hrs</div>
+          <h3>Training an assistant to sort email</h3>
+          <p>Hours spent teaching a human to categorize what AI can handle in seconds — automatically, every morning.</p>
+        </div>
+        <div class="p-card">
+          <div class="p-stat">0</div>
+          <h3>On-demand client intelligence</h3>
+          <p>Before a client call, your data lives in three different places. No quick brief. No context at your fingertips when you need it most.</p>
+        </div>
+        <div class="p-card">
+          <div class="p-stat">300</div>
+          <h3>Evangelists to build and nurture</h3>
+          <p>The system requires it. But manually entering business cards and following up on a spreadsheet is why it doesn't happen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SOLUTION — 5 LAYERS
+══════════════════════════════════════════ -->
+<section class="bg-warm">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="container">
+    <div class="layers-intro">
+      <div class="eyebrow"><span class="dot"></span> The AI Operating System</div>
+      <h2>Five layers. Built in sequence.<br>Each one valuable on its own.</h2>
+      <p class="lead">This isn't a chatbot. It's an operating system for your business — one that knows Supporting Strategies, learns your processes, and grows with you. By the time all five layers are running, the way your team operates looks completely different.</p>
+    </div>
+    <div class="layers-grid">
+      <div class="layer-card layer-1">
+        <div class="layer-num">LAYER 01</div>
+        <h3>Context</h3>
+        <p>Claude knows Supporting Strategies — your clients, your pricing structure, your team, your goals. Every interaction starts fully informed.</p>
+      </div>
+      <div class="layer-card layer-2">
+        <div class="layer-num">LAYER 02</div>
+        <h3>Data</h3>
+        <p>HubSpot, Fathom, and Google Workspace feed into one daily snapshot. Every number that matters, in one place, every morning.</p>
+      </div>
+      <div class="layer-card layer-3">
+        <div class="layer-num">LAYER 03</div>
+        <h3>Intelligence</h3>
+        <p>Daily briefs for each role. Client dossiers on demand. Every call prep handled before you pick up the phone.</p>
+      </div>
+      <div class="layer-card layer-4">
+        <div class="layer-num">LAYER 04</div>
+        <h3>Automate</h3>
+        <p>Proposals. Follow-ups. Email triage. Business card entry. LinkedIn content. The tasks eating your team's time — automated, one by one.</p>
+      </div>
+      <div class="layer-card layer-5">
+        <div class="layer-num">LAYER 05</div>
+        <h3>Build</h3>
+        <p>Your team learns to build what they want on top of the foundation. Drop-down proposal templates. Client intake flows. Anything repeatable, automated.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     DASHBOARDS — ROLE BY ROLE
+══════════════════════════════════════════ -->
+<section class="bg-surface">
+  <div class="container">
+    <div style="text-align:center; max-width:640px; margin:0 auto 48px;">
+      <div class="eyebrow"><span class="dot"></span> Role-by-role</div>
+      <h2>Everyone gets exactly<br>the view they need.</h2>
+      <p style="font-size:16px; line-height:1.75; color:var(--text-mid);">One AIOS installation. Four completely different dashboards — each person sees only what's relevant to their job. Operations sees operations. BD sees pipeline. Admin sees communications. Nothing extra. Nothing missing.</p>
+    </div>
+
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="showDash('ops')">Operations Lead</button>
+      <button class="dash-tab" onclick="showDash('bd')">Business Development</button>
+      <button class="dash-tab" onclick="showDash('ops-dir')">Operations Directors</button>
+      <button class="dash-tab" onclick="showDash('admin')">Admin</button>
+    </div>
+
+    <div class="dash-panels">
+
+      <!-- OPS LEAD (Pete) -->
+      <div class="dash-panel active" id="panel-ops">
+        <div class="dash-left">
+          <div class="dash-role" style="color:var(--blue);">Operations Lead</div>
+          <h3>The full picture,<br>at a glance. On any device.</h3>
+          <p>Every client, every number, every open opportunity — pulled from HubSpot and Fathom and ready the moment you need it. Stop chasing data across three platforms. Start every morning already knowing where things stand.</p>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--blue-soft);">📋</div>
+            <div class="df-text">
+              <h4>Morning Business Brief</h4>
+              <p>Revenue, pipeline, and top client activity — generated automatically, every day before you start.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--teal-soft);">📱</div>
+            <div class="df-text">
+              <h4>On-Demand Client Intelligence</h4>
+              <p>Ask "What do I need to know before calling [client]?" and get a full dossier — from your phone, instantly.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--gold-soft);">✉️</div>
+            <div class="df-text">
+              <h4>Automated Email Triage</h4>
+              <p>AI filters, categorizes, and drafts responses to your inbox. No assistant training required.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--indigo-soft);">⬆️</div>
+            <div class="df-text">
+              <h4>Upsell Opportunity Alerts</h4>
+              <p>Surfaces clients who haven't been contacted, have open service gaps, or are candidates for expanded scope.</p>
+            </div>
+          </div>
+        </div>
+        <div class="dash-right">
+          <div class="dash-preview-label">Morning Brief — Pete's View</div>
+          <div class="mock-widget">
+            <div class="mw-label">Active Client Revenue</div>
+            <div class="mw-value">$1.24M</div>
+            <div class="mw-sub">↑ 3 new clients this quarter · 12 up for renewal</div>
+            <div class="mw-bar"><div class="mw-fill" style="width:72%;background:var(--teal);"></div></div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Pipeline This Week</div>
+            <div class="mw-value">7 proposals</div>
+            <div class="mw-sub">3 in presentation stage · 2 awaiting follow-up</div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Clients To Touch Today</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--amber);"></div> Hartmann Group — no contact in 47 days</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--teal);"></div> Rivera CPA — renewal coming up in 30 days</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--blue);"></div> Teal Bay Services — upgrade opportunity flagged</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BD TEAM (Diane + team) -->
+      <div class="dash-panel" id="panel-bd">
+        <div class="dash-left">
+          <div class="dash-role" style="color:var(--teal);">Business Development</div>
+          <h3>From first card scan to<br>signed proposal — automated.</h3>
+          <p>Your BD team's job is to be in front of people. The AIOS handles everything before and after those conversations — so an hour per proposal becomes five minutes, and business card entry stops being a task at all.</p>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--teal-soft);">📇</div>
+            <div class="df-text">
+              <h4>Business Card Scanner</h4>
+              <p>Scan front and back, dictate how you met — contact goes straight into HubSpot with notes attached. No manual entry.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--blue-soft);">📄</div>
+            <div class="df-text">
+              <h4>Proposal Automation</h4>
+              <p>Google Meet transcript → client template → auto-populated pricing → presentation-ready proposal. One hour becomes five minutes.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--indigo-soft);">💼</div>
+            <div class="df-text">
+              <h4>LinkedIn Content Engine</h4>
+              <p>Weekly posts in your voice, automatically generated. Comment engagement routed to DM sequences that book meetings.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--gold-soft);">⭐</div>
+            <div class="df-text">
+              <h4>Evangelist Tracker</h4>
+              <p>Your 300 evangelists, scored A/B/C, with next touch points, referral history, and calendar cross-reference. Always current.</p>
+            </div>
+          </div>
+        </div>
+        <div class="dash-right">
+          <div class="dash-preview-label">BD Dashboard — Daily View</div>
+          <div class="mock-widget">
+            <div class="mw-label">Proposals This Week</div>
+            <div class="mw-value">3 drafts ready</div>
+            <div class="mw-sub">Auto-generated from meeting transcripts · avg 6 min</div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Evangelist Touchpoints Due</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--gold);"></div> Carol Linden (A) — meeting today at 2pm</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--blue);"></div> Marcus Webb (A) — no contact in 21 days</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--text-faint);"></div> Beth Nguyen (B) — LinkedIn engaged yesterday</div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">LinkedIn — This Week</div>
+            <div class="mw-value">4 posts scheduled</div>
+            <div class="mw-sub">2 engagement replies drafted · 1 DM sequence active</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPS DIRECTORS -->
+      <div class="dash-panel" id="panel-ops-dir">
+        <div class="dash-left">
+          <div class="dash-role" style="color:var(--indigo);">Operations Directors</div>
+          <h3>Every client, every task,<br>every deadline — visible.</h3>
+          <p>Operations directors carry the work once BD hands it off. The AIOS keeps everything they need visible — client health, team utilization, deliverables, and recurring workflows that run automatically without anyone manually tracking them.</p>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--indigo-soft);">📊</div>
+            <div class="df-text">
+              <h4>Client Health Dashboard</h4>
+              <p>At-a-glance view of every client's status — transaction volume, open items, satisfaction flags, and contract stage.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--teal-soft);">👥</div>
+            <div class="df-text">
+              <h4>Team Utilization Tracker</h4>
+              <p>Capacity, workload distribution, and deadlines across your bookkeeping team — no spreadsheet required.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--blue-soft);">🔄</div>
+            <div class="df-text">
+              <h4>Recurring Workflow Automation</h4>
+              <p>Month-end closes, client check-ins, statement reviews — scheduled, tracked, and flagged when anything falls behind.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--gold-soft);">📥</div>
+            <div class="df-text">
+              <h4>Client Handoff from BD</h4>
+              <p>When a proposal is signed, the AIOS auto-builds the client onboarding file from the BD transcript. Ops starts fully informed.</p>
+            </div>
+          </div>
+        </div>
+        <div class="dash-right">
+          <div class="dash-preview-label">Operations Director View</div>
+          <div class="mock-widget">
+            <div class="mw-label">Team Capacity</div>
+            <div class="mw-value">84%</div>
+            <div class="mw-sub">3 bookkeepers at capacity · 1 available for new client</div>
+            <div class="mw-bar"><div class="mw-fill" style="width:84%;background:var(--indigo);"></div></div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Client Items Overdue</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--amber);"></div> Apex Holdings — bank statement pending 8 days</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--amber);"></div> Kellner Group — Q1 review not scheduled</div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Month-End Status</div>
+            <div class="mw-value">11 of 14 closed</div>
+            <div class="mw-sub">3 awaiting client documents · auto-reminder sent</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN -->
+      <div class="dash-panel" id="panel-admin">
+        <div class="dash-left">
+          <div class="dash-role" style="color:var(--green);">Admin</div>
+          <h3>Communications and scheduling<br>without the manual work.</h3>
+          <p>Admin time is too valuable to spend on repetitive tasks that AI can handle better. The AIOS takes over the recurring communication, scheduling, and intake workflows so your admin focuses on the things that actually need a human touch.</p>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--green-soft);">📅</div>
+            <div class="df-text">
+              <h4>Smart Scheduling</h4>
+              <p>Meeting requests routed, calendar blocks managed, and reminders sent — automatically, based on priority rules you set once.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--blue-soft);">💬</div>
+            <div class="df-text">
+              <h4>Communication Templates</h4>
+              <p>Client follow-ups, appointment reminders, document requests — drafted in Supporting Strategies voice, ready to review and send.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--teal-soft);">📬</div>
+            <div class="df-text">
+              <h4>Inbox Triage</h4>
+              <p>Email filtered and prioritized before anyone opens it. Routine inquiries handled. Urgent items surfaced immediately.</p>
+            </div>
+          </div>
+          <div class="dash-feature">
+            <div class="df-icon" style="background:var(--gold-soft);">📝</div>
+            <div class="df-text">
+              <h4>Intake Automation</h4>
+              <p>New client requests captured, categorized, and routed to the right person — with all relevant context attached.</p>
+            </div>
+          </div>
+        </div>
+        <div class="dash-right">
+          <div class="dash-preview-label">Admin — Daily Queue</div>
+          <div class="mock-widget">
+            <div class="mw-label">Emails Handled Automatically Today</div>
+            <div class="mw-value">14 of 19</div>
+            <div class="mw-sub">5 flagged for your review · 0 routine items waiting</div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Scheduled This Week</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--teal);"></div> 3 client onboarding calls booked</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--blue);"></div> 2 proposal review meetings confirmed</div>
+            <div class="mw-list-item"><div class="mw-dot" style="background:var(--green);"></div> Monthly team sync — calendar invite sent</div>
+          </div>
+          <div class="mock-widget">
+            <div class="mw-label">Documents Pending from Clients</div>
+            <div class="mw-value">4 reminders sent</div>
+            <div class="mw-sub">Automatic · no manual follow-up needed</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ROI
+══════════════════════════════════════════ -->
+<section class="bg-warm">
+  <div class="container">
+    <div style="text-align:center; max-width:600px; margin:0 auto 0;">
+      <div class="eyebrow"><span class="dot"></span> The numbers</div>
+      <h2>The investment pays for itself<br>before the bootcamp ends.</h2>
+      <p style="font-size:16px; line-height:1.75; color:var(--text-mid);">You said it yourself in our conversation: "One client coming in would probably pay for it." Here's the math on what this actually returns.</p>
+    </div>
+    <div class="roi-grid">
+      <div class="roi-card">
+        <div class="roi-num" style="color:var(--blue);">55+</div>
+        <div class="roi-label">Hours reclaimed per month</div>
+        <div class="roi-desc">Proposal automation alone saves 12+ hours/week across your BD team. That's meeting time, referral time, and pipeline-building time given back permanently.</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num" style="color:var(--teal);">$250K+</div>
+        <div class="roi-label">Lifetime value of one added client</div>
+        <div class="roi-desc">20% of your clients are worth $50K+/year. At a 5-year retention average, one incremental client delivers $250K–$1M in lifetime revenue. The AIOS costs $10K.</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-num" style="color:var(--gold);">Day 1</div>
+        <div class="roi-label">When value starts</div>
+        <div class="roi-desc">Not at the end of the project — from the first session. The first automation running, the first proposal built in minutes, the first client brief ready before a call.</div>
+      </div>
+    </div>
+    <div class="roi-callout">
+      <div>
+        <h3>One extra client per year more than triples the return on this investment.</h3>
+        <p>Your team currently closes 3 leads per week per salesperson. Each proposal takes an hour. Recapture that time and put it back into one-to-ones — the math follows quickly.</p>
+      </div>
+      <div class="roi-math">
+        <div class="rm-row"><span>1 extra client/year</span><span class="rm-val">$50K–$350K</span></div>
+        <div class="rm-row"><span>Avg client retention</span><span class="rm-val">5–7 years</span></div>
+        <div class="rm-row"><span>Hours saved on proposals</span><span class="rm-val">55+/month</span></div>
+        <div class="rm-row"><span>Investment</span><span class="rm-val">$10,000</span></div>
+        <div class="rm-total">
+          <span class="rm-tl">Return potential</span>
+          <span class="rm-tv">30x+</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     OFFER
+══════════════════════════════════════════ -->
+<section class="bg-surface">
+  <div class="container">
+    <div style="text-align:center; max-width:560px; margin:0 auto 0;">
+      <div class="eyebrow"><span class="dot"></span> The offer</div>
+      <h2>Everyone. Three months.<br>$10,000. Let's build it.</h2>
+    </div>
+    <div class="offer-inner">
+      <div class="offer-eyebrow">What's included</div>
+      <h2>The full AIOS bootcamp,<br>built for Supporting Strategies.</h2>
+      <p class="offer-lead">This isn't a software subscription. It's three months of working together — installing the foundation, connecting your tools, building out your automations, and training every person on your team to operate inside it. By month three, your team isn't dependent on me. They're building what they want, on their own.</p>
+      <div class="offer-items">
+        <div class="offer-item">
+          <div class="oi-check">✓</div>
+          <div class="oi-text">
+            <h4>Full AIOS installation</h4>
+            <p>All 5 layers configured for Supporting Strategies — your data, your tools, your workflows.</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="oi-check">✓</div>
+          <div class="oi-text">
+            <h4>Role-specific dashboards</h4>
+            <p>Operations, BD, directors, and admin — each person gets their view, built and loaded.</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="oi-check">✓</div>
+          <div class="oi-text">
+            <h4>Proposal automation</h4>
+            <p>Your pricing model built in. Transcript → populated template → presentation-ready proposal.</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="oi-check">✓</div>
+          <div class="oi-text">
+            <h4>LinkedIn content engine</h4>
+            <p>Weekly content in each BD rep's voice, with DM sequences for the leads who engage.</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="oi-check">✓</div>
+          <div class="oi-text">
+            <h4>3 months of live support</h4>
+            <p>I'm in the build with you — not handing off a system. We iterate and expand together.</p>
+          </div>
+        </div>
+        <div class="offer-item">
+          <div class="oi-check">✓</div>
+          <div class="oi-text">
+            <h4>Everyone on your team</h4>
+            <p>Every seat, every role — all set up and trained. No per-seat limits. Your whole office.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="offer-price-block">
+        <div class="opb-left">
+          <div class="opb-was">Standard rate: $10,000 for up to 5 people</div>
+          <div class="opb-price">$10,000</div>
+          <div class="opb-detail">Every person in your office.<br>All roles. All dashboards. Full 3-month bootcamp.</div>
+        </div>
+        <div class="opb-right">
+          <div class="opbr-label">Your rate</div>
+          <div class="opbr-val">Everyone included.<br>No seat limit.<br>Same investment.</div>
+        </div>
+      </div>
+
+      <div class="offer-friendship">
+        <strong>Why the same price for everyone?</strong> Supporting Strategies has opened doors in Jacksonville for me that most people spend years trying to get through. The introductions you've made, and the trust behind them, are worth more than a per-seat fee. I want to do this right for your whole team — and I want you to feel good about it.
+      </div>
+
+      <div class="offer-cta-group">
+        <a href="https://meetings.advisoraipartners.com" class="btn-offer">Schedule a conversation with Pete →</a>
+        <span class="offer-note">No obligation. One meeting. We'll show you exactly what this looks like for your business.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-logo">Advisor AI Partners</div>
+    <div class="footer-links">
+      <a href="mailto:david@advisoraipartners.com">david@advisoraipartners.com</a>
+      <a href="tel:3052544455">(305) 254-4455</a>
+      <a href="https://advisoraipartners.com">advisoraipartners.com</a>
+    </div>
+    <div class="footer-copy">© 2026 Advisor AI Partners · Built for Supporting Strategies</div>
+  </div>
+</footer>
+
+<script>
+  function showDash(id) {
+    document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector('[onclick="showDash(\'' + id + '\')"]').classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+</script>
+
+</body>
+</html>
