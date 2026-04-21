@@ -5,3 +5,8 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=3600"
+
+[[redirects]]
+  from = "/:path"
+  to = "/:path.html"
+  status = 200
