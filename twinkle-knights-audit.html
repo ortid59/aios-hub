@@ -1290,18 +1290,18 @@ For each item note: what was done, the date if known, current status, and what i
 </textarea>
 
 <script>
-// ── Status cycling ──────────────────────────────────────────────
-const statusCycle = ['badge-done', 'badge-progress', 'badge-pending', 'badge-blocked'];
-const statusLabels = { 'badge-done': 'DONE', 'badge-progress': 'IN PROGRESS', 'badge-pending': 'PENDING', 'badge-blocked': 'BLOCKED' };
+const statusCycle  = ['badge-done','badge-progress','badge-pending','badge-blocked'];
+const statusLabels = {'badge-done':'DONE','badge-progress':'IN PROGRESS','badge-pending':'PENDING','badge-blocked':'BLOCKED'};
+const CIRC = 2 * Math.PI * 48; // SVG donut circumference
 
+// ── Status cycling ──────────────────────────────────────────────
 function cycleStatus(el) {
-  const current = statusCycle.find(s => el.classList.contains(s));
-  const next = statusCycle[(statusCycle.indexOf(current) + 1) % statusCycle.length];
+  const cur  = statusCycle.find(s => el.classList.contains(s));
+  const next = statusCycle[(statusCycle.indexOf(cur) + 1) % statusCycle.length];
   el.classList.remove(...statusCycle);
   el.classList.add(next);
-  el.querySelector('.badge-dot').style.cssText = '';
   el.childNodes[1].textContent = statusLabels[next];
-  updateProgressCounts();
+  updateAll();
   autoSave();
 }
 
@@ -1318,45 +1318,111 @@ function toggleEditMode() {
   }
 }
 
-// ── Progress counts ─────────────────────────────────────────────
-function updateProgressCounts() {
-  const badges = document.querySelectorAll('.badge');
-  let done = 0, progress = 0, pending = 0, blocked = 0, total = 0;
-  badges.forEach(b => {
-    if (!b.closest('#progressCards')) {
-      if (b.classList.contains('badge-done'))     { done++; total++; }
-      if (b.classList.contains('badge-progress')) { progress++; total++; }
-      if (b.classList.contains('badge-pending'))  { pending++; total++; }
-      if (b.classList.contains('badge-blocked'))  { blocked++; total++; }
-    }
+// ── View toggle (Proposed / Delivered / Both) ───────────────────
+function setView(mode, btn) {
+  document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('vt-active'));
+  btn.classList.add('vt-active');
+  document.body.classList.remove('view-proposed','view-delivered');
+  if (mode === 'proposed')  document.body.classList.add('view-proposed');
+  if (mode === 'delivered') document.body.classList.add('view-delivered');
+}
+
+// ── Count badges (scope items only — exclude above-scope rows) ──
+function getScopeCounts() {
+  let done=0, progress=0, pending=0, blocked=0;
+  document.querySelectorAll('.deliverable-row .badge[onclick]').forEach(b => {
+    if (b.classList.contains('badge-done'))     done++;
+    else if (b.classList.contains('badge-progress')) progress++;
+    else if (b.classList.contains('badge-pending'))  pending++;
+    else if (b.classList.contains('badge-blocked'))  blocked++;
   });
-  document.getElementById('doneCount').textContent = done;
-  document.getElementById('progressCount').textContent = progress;
+  return { done, progress, pending, blocked, total: done+progress+pending+blocked };
+}
+
+// ── Update stacked bar + donut + stat cards ─────────────────────
+function updateScopeProgress() {
+  const {done, progress, pending, blocked, total} = getScopeCounts();
+  if (!total) return;
+
+  const pct = n => Math.round(n/total*100);
+  const dP = pct(done), prP = pct(progress), peP = pct(pending), blP = pct(blocked);
+
+  // pct labels
+  document.getElementById('scopeTotalLabel').textContent = total;
+  document.getElementById('scopeDonePct').textContent    = dP + '%';
+  document.getElementById('scopeProgressPct').textContent= prP + '%';
+  document.getElementById('scopePendingPct').textContent = peP + '%';
+  document.getElementById('scopeBlockedPct').textContent = blP + '%';
+
+  // stacked bar
+  document.getElementById('bar-done').style.cssText     = `left:0%;width:${dP}%;background:var(--green);border-radius:${dP>0?'999px 0 0 999px':'0'};`;
+  document.getElementById('bar-progress').style.cssText = `left:${dP}%;width:${prP}%;background:var(--gold);border-radius:0;`;
+  document.getElementById('bar-pending').style.cssText  = `left:${dP+prP}%;width:${peP}%;background:var(--orange);border-radius:0;`;
+  document.getElementById('bar-blocked').style.cssText  = `left:${dP+prP+peP}%;width:${blP}%;background:var(--red);border-radius:0 999px 999px 0;`;
+
+  // stat cards
+  document.getElementById('statDone').textContent     = done;
+  document.getElementById('statProgress').textContent = progress;
+  document.getElementById('statPending').textContent  = pending;
+  document.getElementById('statBlocked').textContent  = blocked;
+
+  // donut (done arc only shown as primary, progress as secondary)
+  document.getElementById('donutPct').textContent = dP + '%';
+  setArc('arc-done',     0,          dP/100);
+  setArc('arc-progress', dP/100,     prP/100);
+  setArc('arc-pending',  (dP+prP)/100, peP/100);
+}
+
+function setArc(id, offsetFraction, fillFraction) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const dash   = fillFraction * CIRC;
+  const gap    = CIRC - dash;
+  const rotate = -90 + (offsetFraction * 360);
+  el.setAttribute('stroke-dasharray', `${dash} ${gap}`);
+  el.setAttribute('transform', `rotate(${rotate} 60 60)`);
+}
+
+// ── Above-scope totals ──────────────────────────────────────────
+function updateAboveScope() {
+  const rows = document.querySelectorAll('.above-scope-row[data-value]');
+  let count = rows.length;
+  let total = 0;
+  rows.forEach(r => { total += parseInt(r.dataset.value || 0, 10); });
+  document.getElementById('aboveCount').textContent = count;
+  document.getElementById('aboveValue').textContent = '$' + total.toLocaleString();
+  document.getElementById('aboveTotalValue').textContent = '$' + total.toLocaleString();
+}
+
+// ── Legacy top-bar counts (kept for compatibility) ──────────────
+function updateTopCounts() {
+  const {done, progress, pending, blocked, total} = getScopeCounts();
+  const pct = n => total ? Math.round(n/total*100)+'%' : '0%';
+  document.getElementById('doneCount').textContent    = done;
+  document.getElementById('progressCount').textContent= progress;
   document.getElementById('pendingCount').textContent = pending;
   document.getElementById('blockedCount').textContent = blocked;
-  const pct = (n) => total ? Math.round(n/total*100)+'%' : '0%';
-  document.getElementById('doneBar').style.width = pct(done);
-  document.getElementById('progressBar').style.width = pct(progress);
+  document.getElementById('doneBar').style.width    = pct(done);
+  document.getElementById('progressBar').style.width= pct(progress);
   document.getElementById('pendingBar').style.width = pct(pending);
   document.getElementById('blockedBar').style.width = pct(blocked);
+}
+
+function updateAll() {
+  updateScopeProgress();
+  updateTopCounts();
+  updateAboveScope();
 }
 
 // ── Persist to localStorage ─────────────────────────────────────
 function saveData() {
   const data = {};
-  // Save all textarea values
-  document.querySelectorAll('[data-field]').forEach(el => {
-    data[el.dataset.field] = el.value;
-  });
-  // Save all badge statuses
+  document.querySelectorAll('[data-field]').forEach(el => { data[el.dataset.field] = el.value; });
   document.querySelectorAll('.badge[onclick]').forEach(el => {
     const row = el.closest('[data-id]');
-    if (row) {
-      const status = statusCycle.find(s => el.classList.contains(s));
-      data['status-' + row.dataset.id] = status;
-    }
+    if (row) data['status-' + row.dataset.id] = statusCycle.find(s => el.classList.contains(s));
   });
-  const now = new Date().toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
+  const now = new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
   data['_lastSaved'] = now;
   localStorage.setItem('twinkle-audit', JSON.stringify(data));
   document.getElementById('lastSavedTime').textContent = now;
@@ -1405,14 +1471,11 @@ function copyPrompt() {
   });
 }
 
-// ── Auto-save on textarea input ─────────────────────────────────
-document.addEventListener('input', (e) => {
-  if (e.target.matches('[data-field]')) autoSave();
-});
+document.addEventListener('input', e => { if (e.target.matches('[data-field]')) autoSave(); });
 
 // ── Init ────────────────────────────────────────────────────────
 loadData();
-updateProgressCounts();
+updateAll();
 </script>
 </body>
 </html>
