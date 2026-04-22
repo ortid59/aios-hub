@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>AIOS Pulse — David's Productivity Index</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --blue:#1E40AF;--blue-m:#2563EB;--blue-l:#DBEAFE;--blue-xl:#EFF6FF;
+      --teal:#0F766E;--teal-m:#0D9488;--teal-l:#CCFBF1;
+      --gold:#B45309;--gold-m:#D97706;--gold-l:#FEF3C7;--gold-xl:#FFFBEB;
+      --red:#DC2626;--red-l:#FEE2E2;
+      --purple:#6D28D9;--purple-l:#EDE9FE;
+      --green:#059669;--green-l:#D1FAE5;
+      --ink:#0F172A;--ink-2:#1E293B;--ink-3:#334155;
+      --muted:#64748B;--muted-l:#94A3B8;
+      --border:#E2E8F0;--border-2:#CBD5E1;
+      --bg:#F8FAFC;--surface:#FFFFFF;--surface-2:#F1F5F9;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:14px;-webkit-font-smoothing:antialiased}
+    body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+    .syne{font-family:'Syne',sans-serif}
+    .mono{font-family:'Geist Mono',monospace}
+
+    /* ── Nav ── */
+    .nav{
+      background:var(--surface);border-bottom:1px solid var(--border);
+      padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;z-index:100;
+    }
+    .nav-brand{display:flex;align-items:center;gap:10px}
+    .nav-logo{
+      width:32px;height:32px;border-radius:8px;
+      background:linear-gradient(135deg,var(--blue-m),var(--gold-m));
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;
+    }
+    .nav-title{font-family:'Syne',sans-serif;font-weight:700;font-size:16px}
+    .nav-sub{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.08em}
+    .nav-badge{
+      font-family:'Geist Mono',monospace;font-size:9px;font-weight:600;
+      padding:3px 10px;border-radius:999px;background:var(--gold-l);color:var(--gold);
+      border:1px solid #FDE68A;letter-spacing:.06em;
+    }
+    .nav-link{
+      font-family:'Geist Mono',monospace;font-size:10px;color:var(--blue-m);
+      text-decoration:none;padding:4px 10px;border-radius:6px;
+      background:var(--blue-xl);border:1px solid var(--blue-l);
+    }
+
+    /* ── Hero ── */
+    .hero{
+      background:linear-gradient(135deg,var(--blue-xl) 0%,var(--gold-xl) 100%);
+      border-bottom:1px solid var(--border);
+      padding:28px 28px 24px;
+    }
+    .hero-inner{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;max-width:1100px}
+    .hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--ink);line-height:1.1}
+    .hero-sub{font-size:13px;color:var(--muted);margin-top:4px}
+    .hero-stats{display:flex;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface)}
+    .hstat{padding:12px 20px;text-align:center;border-right:1px solid var(--border)}
+    .hstat:last-child{border-right:none}
+    .hstat-val{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--ink);display:block}
+    .hstat-lbl{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+    /* ── Layout ── */
+    .main{display:grid;grid-template-columns:1fr 300px;gap:20px;padding:20px 28px 60px;max-width:1100px;margin:0 auto}
+
+    /* ── Calendar ── */
+    .section-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .section-title .stag{font-family:'Geist Mono',monospace;font-size:9px;font-weight:500;padding:2px 8px;border-radius:4px;background:var(--surface-2);color:var(--muted)}
+
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+    .cal-hdr{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted);text-align:center;padding:4px 0;letter-spacing:.06em}
+    .cal-cell{
+      border-radius:8px;border:1px solid transparent;padding:6px 5px 5px;
+      cursor:pointer;transition:all .15s;min-height:62px;
+      display:flex;flex-direction:column;align-items:center;gap:2px;
+      position:relative;
+    }
+    .cal-cell.empty{background:transparent;border:1px dashed var(--border);cursor:default}
+    .cal-cell:not(.empty):hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.08);}
+    .cal-cell.today{box-shadow:0 0 0 2px var(--blue-m)!important}
+    .cal-cell.selected{box-shadow:0 0 0 2px var(--gold-m)!important}
+    .cal-day-num{font-family:'Geist Mono',monospace;font-size:10px;font-weight:500}
+    .cal-score{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;line-height:1}
+    .cal-icon{font-size:11px}
+
+    /* ── Day detail panel ── */
+    .day-detail{
+      background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:20px;margin-top:16px;display:none;
+    }
+    .day-detail.active{display:block}
+    .dd-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .dd-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px}
+    .dd-badge{
+      font-family:'Geist Mono',monospace;font-size:10px;font-weight:500;
+      padding:3px 10px;border-radius:999px;
+    }
+    .dd-score-big{font-family:'Syne',sans-serif;font-weight:800;font-size:36px;text-align:center;margin:8px 0}
+
+    .dims-grid{display:grid;gap:10px;margin-top:12px}
+    .dim-row{display:grid;grid-template-columns:80px 1fr 30px;align-items:center;gap:8px}
+    .dim-name{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .dim-bar-wrap{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+    .dim-bar{height:100%;border-radius:4px;transition:width .4s ease}
+    .dim-val{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;text-align:right}
+
+    .dd-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+    .dd-stat{background:var(--surface-2);border-radius:7px;padding:8px 10px;text-align:center}
+    .dd-stat-val{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--ink);display:block}
+    .dd-stat-lbl{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted)}
+    .dd-link{
+      display:block;margin-top:12px;text-align:center;
+      font-family:'Geist Mono',monospace;font-size:10px;
+      padding:7px;border-radius:7px;background:var(--blue-xl);
+      color:var(--blue-m);text-decoration:none;border:1px solid var(--blue-l);
+      transition:all .15s;
+    }
+    .dd-link:hover{background:var(--blue-m);color:#fff;border-color:var(--blue-m)}
+
+    /* ── Right sidebar ── */
+    .sidebar{display:flex;flex-direction:column;gap:16px}
+
+    /* ── Leaderboard ── */
+    .lb-row{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;
+      border-radius:8px;cursor:pointer;transition:all .15s;
+      margin-bottom:6px;border-left:3px solid transparent;
+    }
+    .lb-row:hover{transform:translateX(2px)}
+    .lb-rank{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;width:24px;flex-shrink:0}
+    .lb-info{flex:1}
+    .lb-date{display:block;font-weight:600;font-size:12px;color:var(--ink)}
+    .lb-type{font-size:11px;color:var(--muted)}
+    .lb-score{font-family:'Syne',sans-serif;font-weight:800;font-size:20px}
+
+    /* ── Weekly bars ── */
+    .week-row{
+      padding:10px 12px;border-radius:8px;border:1px solid var(--border);
+      margin-bottom:8px;cursor:pointer;transition:all .15s;
+    }
+    .week-row:hover{background:var(--surface-2)}
+    .week-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .week-lbl{font-family:'Syne',sans-serif;font-weight:700;font-size:12px}
+    .week-range{font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted)}
+    .week-bar-wrap{height:12px;background:var(--surface-2);border-radius:6px;overflow:hidden;position:relative;margin-bottom:4px}
+    .week-bar{height:100%;border-radius:6px;transition:width .6s ease}
+    .week-best{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted)}
+    .week-avg{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
+    .week-empty{font-size:11px;color:var(--muted-l);font-style:italic;line-height:12px}
+
+    /* ── Streak ── */
+    .streak-card{
+      background:linear-gradient(135deg,var(--gold-xl),var(--gold-l));
+      border:1px solid #FDE68A;border-radius:12px;padding:16px;text-align:center;
+    }
+    .streak-num{font-family:'Syne',sans-serif;font-weight:800;font-size:48px;color:var(--gold);line-height:1}
+    .streak-lbl{font-family:'Geist Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase}
+    .streak-sub{font-size:11px;color:var(--gold);margin-top:4px;opacity:.8}
+
+    /* ── Legend ── */
+    .legend{display:flex;flex-wrap:wrap;gap:6px}
+    .leg-item{display:flex;align-items:center;gap:4px;font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted)}
+    .leg-dot{width:10px;height:10px;border-radius:3px}
+
+    /* ── Month totals ── */
+    .totals-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .tot-item{background:var(--surface-2);border-radius:8px;padding:10px;text-align:center}
+    .tot-val{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--ink);display:block}
+    .tot-lbl{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted)}
+
+    /* ── Tab bar ── */
+    .tab-bar{
+      background:var(--surface);border-bottom:1px solid var(--border);
+      padding:0 28px;display:flex;align-items:center;gap:0;
+      position:sticky;top:56px;z-index:99;
+    }
+    .tab-btn{
+      font-family:'Syne',sans-serif;font-weight:700;font-size:13px;
+      padding:13px 22px;border:none;background:transparent;cursor:pointer;
+      color:var(--muted);border-bottom:2px solid transparent;
+      transition:all .15s;display:flex;align-items:center;gap:7px;
+      letter-spacing:.01em;
+    }
+    .tab-btn:hover{color:var(--ink)}
+    .tab-btn.active{color:var(--blue-m);border-bottom-color:var(--blue-m)}
+    .tab-btn .tab-icon{font-size:15px}
+    .tab-pane{display:none}
+    .tab-pane.active{display:block}
+
+    /* ── Brief tab ── */
+    .brief-bar{
+      background:var(--surface);border-bottom:1px solid var(--border);
+      padding:10px 28px;display:flex;align-items:center;gap:12px;
+    }
+    .brief-nav-btn{
+      font-family:'Geist Mono',monospace;font-size:11px;font-weight:500;
+      padding:5px 14px;border-radius:7px;border:1px solid var(--border);
+      background:var(--surface);color:var(--muted);cursor:pointer;
+      transition:all .15s;
+    }
+    .brief-nav-btn:hover{background:var(--surface-2);color:var(--ink)}
+    .brief-nav-btn:disabled{opacity:.35;cursor:default}
+    .brief-date-label{
+      font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--ink);
+      flex:1;text-align:center;
+    }
+    .brief-today-btn{
+      font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;
+      padding:5px 14px;border-radius:7px;border:1px solid var(--blue-l);
+      background:var(--blue-xl);color:var(--blue-m);cursor:pointer;
+      transition:all .15s;
+    }
+    .brief-today-btn:hover{background:var(--blue-m);color:#fff;border-color:var(--blue-m)}
+    /* ── David's Day inline content ── */
+    .brief-body{max-width:1100px;margin:0 auto;padding:20px 28px 60px;display:grid;grid-template-columns:1fr 340px;gap:20px}
+    .brief-hero{
+      grid-column:1/-1;background:linear-gradient(135deg,var(--blue-xl),var(--gold-xl));
+      border:1px solid var(--border);border-radius:12px;padding:20px 24px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .bh-left{}
+    .bh-date{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--ink)}
+    .bh-badge{
+      display:inline-flex;align-items:center;gap:6px;margin-top:6px;
+      font-family:'Geist Mono',monospace;font-size:11px;font-weight:600;
+      padding:4px 12px;border-radius:999px;
+    }
+    .bh-right{text-align:right}
+    .bh-score{font-family:'Syne',sans-serif;font-weight:800;font-size:48px;line-height:1}
+    .bh-score-lbl{font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em}
+    .bh-dims{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .bh-dim-chip{
+      font-family:'Geist Mono',monospace;font-size:9px;font-weight:500;
+      padding:3px 9px;border-radius:6px;border:1px solid transparent;
+    }
+    /* no-data state */
+    .brief-empty{
+      grid-column:1/-1;text-align:center;padding:80px 20px;
+      font-family:'Space Grotesk',sans-serif;color:var(--muted);
+    }
+    .brief-empty h2{font-family:'Syne',sans-serif;font-size:20px;margin-bottom:8px;color:var(--ink-3)}
+
+    /* sections */
+    .b-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+    .b-card+.b-card{margin-top:14px}
+    .b-section-title{
+      font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--ink);
+      margin-bottom:12px;display:flex;align-items:center;gap:7px;
+    }
+    .b-count-badge{
+      font-family:'Geist Mono',monospace;font-size:9px;font-weight:600;
+      padding:1px 7px;border-radius:4px;background:var(--surface-2);color:var(--muted);
+    }
+    /* calendar events */
+    .cal-event{
+      display:grid;grid-template-columns:68px 1fr;gap:8px;align-items:start;
+      padding:8px 0;border-bottom:1px solid var(--border);
+    }
+    .cal-event:last-child{border-bottom:none}
+    .ce-time{font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted);padding-top:2px}
+    .ce-title{font-weight:600;font-size:12px;color:var(--ink)}
+    .ce-meta{font-size:11px;color:var(--muted);margin-top:2px}
+    .ce-loc{
+      display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;
+      padding:1px 7px;border-radius:4px;background:var(--teal-l);color:var(--teal);
+      margin-top:3px;
+    }
+    /* email items */
+    .email-item{padding:8px 0;border-bottom:1px solid var(--border)}
+    .email-item:last-child{border-bottom:none}
+    .ei-header{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+    .ei-to{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted)}
+    .ei-name{font-weight:600;font-size:12px;color:var(--ink);flex:1}
+    .ei-subj{font-size:11px;color:var(--ink-3);font-weight:500;margin-bottom:2px}
+    .ei-snippet{font-size:11px;color:var(--muted);line-height:1.4;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    /* slack */
+    .slack-item{padding:7px 0;border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr auto;gap:8px}
+    .slack-item:last-child{border-bottom:none}
+    .si-channel{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted)}
+    .si-text{font-size:11px;color:var(--ink);line-height:1.4;margin-top:2px;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .si-ts{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted-l);white-space:nowrap}
+    /* files */
+    .file-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+    .file-item:last-child{border-bottom:none}
+    .file-ext{
+      font-family:'Geist Mono',monospace;font-size:9px;font-weight:600;
+      padding:2px 7px;border-radius:4px;background:var(--blue-xl);color:var(--blue-m);
+      flex-shrink:0;
+    }
+    .file-name{font-size:11px;font-weight:600;color:var(--ink);flex:1}
+    .file-size{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted-l)}
+    /* claude work */
+    .cw-item{padding:8px 0;border-bottom:1px solid var(--border)}
+    .cw-item:last-child{border-bottom:none}
+    .cw-summary{font-size:12px;color:var(--ink);line-height:1.5;margin-bottom:6px}
+    .cw-output{
+      font-family:'Geist Mono',monospace;font-size:9px;color:var(--teal);
+      background:var(--teal-l);padding:2px 8px;border-radius:4px;
+      display:inline-block;margin:2px 2px 0 0;
+    }
+    /* meeting transcript */
+    .mt-item{padding:10px 0;border-bottom:1px solid var(--border)}
+    .mt-item:last-child{border-bottom:none}
+    .mt-title{font-weight:600;font-size:12px;color:var(--ink);margin-bottom:4px}
+    .mt-summary{font-size:11px;color:var(--ink-3);line-height:1.5;margin-bottom:6px}
+    .mt-action{
+      font-size:10px;color:var(--ink-3);padding:3px 0 3px 10px;
+      border-left:2px solid var(--blue-l);margin-bottom:2px;
+    }
+    .mt-keyword{
+      display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;
+      padding:1px 6px;border-radius:4px;background:var(--surface-2);color:var(--muted);
+      margin:2px 2px 0 0;
+    }
+    /* pulse context sidebar */
+    .pulse-context{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+    .pc-title{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--ink);margin-bottom:12px}
+    .pc-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+    .pc-row:last-child{border-bottom:none}
+    .pc-lbl{font-family:'Geist Mono',monospace;font-size:10px;color:var(--muted)}
+    .pc-val{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--ink)}
+
+    /* ── Footer ── */
+    .footer{
+      background:var(--surface);border-top:1px solid var(--border);
+      padding:12px 28px;display:flex;align-items:center;justify-content:space-between;
+    }
+    .footer-brand{font-family:'Syne',sans-serif;font-weight:600;font-size:11px;color:var(--muted)}
+    .footer-gen{font-family:'Geist Mono',monospace;font-size:9px;color:var(--muted-l)}
+
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">⚡</div>
+    <div>
+      <div class="nav-title syne">AIOS Pulse</div>
+      <div class="nav-sub mono">PRODUCTIVITY & CREATIVITY INDEX · APRIL 2026</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="nav-badge mono">v1.0</span>
+  </div>
+</nav>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="pulse" onclick="switchTab('pulse')">
+    <span class="tab-icon">⚡</span> AIOS Pulse
+  </button>
+  <button class="tab-btn" data-tab="brief" onclick="switchTab('brief')">
+    <span class="tab-icon">📅</span> David's Day
+  </button>
+</div>
+
+<!-- ╔════════════════════════════════════╗ -->
+<!-- ║  TAB: AIOS PULSE                   ║ -->
+<!-- ╚════════════════════════════════════╝ -->
+<div id="tab-pulse" class="tab-pane active">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-title syne">April 2026 <span style="color:var(--gold-m)">Productivity Score</span></div>
+      <div class="hero-sub">5 dimensions · 22 days tracked · Click any day to drill in</div>
+      <div class="legend" style="margin-top:12px">
+        <div class="leg-item"><div class="leg-dot" style="background:#FEF3C7;border:1px solid #B45309"></div>⚡ Velocity (85+)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#DBEAFE;border:1px solid #2563EB"></div>🔥 Builder (70–84)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#D1FAE5;border:1px solid #059669"></div>🎯 Hustle (55–69)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#EDE9FE;border:1px solid #7C3AED"></div>💡 Strategy (40–54)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#F1F5F9;border:1px solid #94A3B8"></div>🌱 Seed (20–39)</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat">
+        <span class="hstat-val syne">31</span>
+        <span class="hstat-lbl mono">Avg Score</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-val syne">92</span>
+        <span class="hstat-lbl mono">Peak Day</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-val syne">18</span>
+        <span class="hstat-lbl mono">Active Days</span>
+      </div>
+      <div class="hstat">
+        <span class="hstat-val syne" style="color:var(--gold-m)">3</span>
+        <span class="hstat-lbl mono">Day Streak</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main grid -->
+<div class="main">
+
+  <!-- Left column -->
+  <div>
+
+    <!-- Calendar heatmap -->
+    <div class="section-card">
+      <div class="section-title syne">
+        📅 April 2026 Heatmap
+        <span class="stag mono">Click any day</span>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-hdr">Mon</div><div class="cal-hdr">Tue</div><div class="cal-hdr">Wed</div><div class="cal-hdr">Thu</div><div class="cal-hdr">Fri</div><div class="cal-hdr">Sat</div><div class="cal-hdr">Sun</div>
+        <div class="cal-cell empty"></div><div class="cal-cell empty"></div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 01 — 😴 Recovery: 8/100"
+             onclick="showDay('2026-04-01')"
+             data-score="8"
+             data-date="2026-04-01">
+          <span class="cal-day-num" style="color:#CBD5E1">1</span>
+          <span class="cal-score" style="color:#CBD5E1">8</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 02 — 😴 Recovery: 13/100"
+             onclick="showDay('2026-04-02')"
+             data-score="13"
+             data-date="2026-04-02">
+          <span class="cal-day-num" style="color:#CBD5E1">2</span>
+          <span class="cal-score" style="color:#CBD5E1">13</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 03 — 😴 Recovery: 10/100"
+             onclick="showDay('2026-04-03')"
+             data-score="10"
+             data-date="2026-04-03">
+          <span class="cal-day-num" style="color:#CBD5E1">3</span>
+          <span class="cal-score" style="color:#CBD5E1">10</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 04 — 😴 Recovery: 2/100"
+             onclick="showDay('2026-04-04')"
+             data-score="2"
+             data-date="2026-04-04">
+          <span class="cal-day-num" style="color:#CBD5E1">4</span>
+          <span class="cal-score" style="color:#CBD5E1">2</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell empty" title="Apr 05"><span class="cal-day-num">5</span></div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 06 — 😴 Recovery: 8/100"
+             onclick="showDay('2026-04-06')"
+             data-score="8"
+             data-date="2026-04-06">
+          <span class="cal-day-num" style="color:#CBD5E1">6</span>
+          <span class="cal-score" style="color:#CBD5E1">8</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 07 — 😴 Recovery: 19/100"
+             onclick="showDay('2026-04-07')"
+             data-score="19"
+             data-date="2026-04-07">
+          <span class="cal-day-num" style="color:#CBD5E1">7</span>
+          <span class="cal-score" style="color:#CBD5E1">19</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 08 — 😴 Recovery: 11/100"
+             onclick="showDay('2026-04-08')"
+             data-score="11"
+             data-date="2026-04-08">
+          <span class="cal-day-num" style="color:#CBD5E1">8</span>
+          <span class="cal-score" style="color:#CBD5E1">11</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#F1F5F9;border-color:#47556920;"
+             title="Apr 09 — 😴 Recovery: 20/100"
+             onclick="showDay('2026-04-09')"
+             data-score="20"
+             data-date="2026-04-09">
+          <span class="cal-day-num" style="color:#475569">9</span>
+          <span class="cal-score" style="color:#475569">20</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 10 — 😴 Recovery: 7/100"
+             onclick="showDay('2026-04-10')"
+             data-score="7"
+             data-date="2026-04-10">
+          <span class="cal-day-num" style="color:#CBD5E1">10</span>
+          <span class="cal-score" style="color:#CBD5E1">7</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell empty" title="Apr 11"><span class="cal-day-num">11</span></div><div class="cal-cell empty" title="Apr 12"><span class="cal-day-num">12</span></div><div class="cal-cell"
+             style="background:#F1F5F9;border-color:#47556920;"
+             title="Apr 13 — 🌱 Seed: 32/100"
+             onclick="showDay('2026-04-13')"
+             data-score="32"
+             data-date="2026-04-13">
+          <span class="cal-day-num" style="color:#475569">13</span>
+          <span class="cal-score" style="color:#475569">32</span>
+          <span class="cal-icon">🌱</span>
+        </div><div class="cal-cell"
+             style="background:#D1FAE5;border-color:#065F4620;"
+             title="Apr 14 — 🎯 Hustle: 55/100"
+             onclick="showDay('2026-04-14')"
+             data-score="55"
+             data-date="2026-04-14">
+          <span class="cal-day-num" style="color:#065F46">14</span>
+          <span class="cal-score" style="color:#065F46">55</span>
+          <span class="cal-icon">🎯</span>
+        </div><div class="cal-cell"
+             style="background:#F1F5F9;border-color:#47556920;"
+             title="Apr 15 — 🌱 Seed: 33/100"
+             onclick="showDay('2026-04-15')"
+             data-score="33"
+             data-date="2026-04-15">
+          <span class="cal-day-num" style="color:#475569">15</span>
+          <span class="cal-score" style="color:#475569">33</span>
+          <span class="cal-icon">🌱</span>
+        </div><div class="cal-cell"
+             style="background:#F1F5F9;border-color:#47556920;"
+             title="Apr 16 — 🌱 Seed: 36/100"
+             onclick="showDay('2026-04-16')"
+             data-score="36"
+             data-date="2026-04-16">
+          <span class="cal-day-num" style="color:#475569">16</span>
+          <span class="cal-score" style="color:#475569">36</span>
+          <span class="cal-icon">🌱</span>
+        </div><div class="cal-cell"
+             style="background:#DBEAFE;border-color:#1D4ED820;"
+             title="Apr 17 — 🔥 Builder: 78/100"
+             onclick="showDay('2026-04-17')"
+             data-score="78"
+             data-date="2026-04-17">
+          <span class="cal-day-num" style="color:#1D4ED8">17</span>
+          <span class="cal-score" style="color:#1D4ED8">78</span>
+          <span class="cal-icon">🔥</span>
+        </div><div class="cal-cell"
+             style="background:#FAFAFA;border-color:#CBD5E120;"
+             title="Apr 18 — 😴 Recovery: 1/100"
+             onclick="showDay('2026-04-18')"
+             data-score="1"
+             data-date="2026-04-18">
+          <span class="cal-day-num" style="color:#CBD5E1">18</span>
+          <span class="cal-score" style="color:#CBD5E1">1</span>
+          <span class="cal-icon">😴</span>
+        </div><div class="cal-cell empty" title="Apr 19"><span class="cal-day-num">19</span></div><div class="cal-cell"
+             style="background:#EDE9FE;border-color:#5B21B620;"
+             title="Apr 20 — 💡 Strategy: 42/100"
+             onclick="showDay('2026-04-20')"
+             data-score="42"
+             data-date="2026-04-20">
+          <span class="cal-day-num" style="color:#5B21B6">20</span>
+          <span class="cal-score" style="color:#5B21B6">42</span>
+          <span class="cal-icon">💡</span>
+        </div><div class="cal-cell"
+             style="background:#FEF3C7;border-color:#B4530920;"
+             title="Apr 21 — ⚡ Velocity: 85/100"
+             onclick="showDay('2026-04-21')"
+             data-score="85"
+             data-date="2026-04-21">
+          <span class="cal-day-num" style="color:#B45309">21</span>
+          <span class="cal-score" style="color:#B45309">85</span>
+          <span class="cal-icon">⚡</span>
+        </div><div class="cal-cell today"
+             style="background:#FEF3C7;border-color:#B4530920;"
+             title="Apr 22 — ⚡ Velocity: 92/100"
+             onclick="showDay('2026-04-22')"
+             data-score="92"
+             data-date="2026-04-22">
+          <span class="cal-day-num" style="color:#B45309">22</span>
+          <span class="cal-score" style="color:#B45309">92</span>
+          <span class="cal-icon">⚡</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day detail panel -->
+    <div class="day-detail" id="day-detail">
+      <div class="dd-header">
+        <div class="dd-title syne" id="dd-title">Select a day</div>
+        <span class="dd-badge mono" id="dd-badge"></span>
+      </div>
+      <div class="dd-score-big syne" id="dd-score-big"></div>
+      <div class="dims-grid" id="dims-grid"></div>
+      <div class="dd-meta" id="dd-meta"></div>
+      <a class="dd-link mono" id="dd-link">→ Open David's Day brief</a>
+    </div>
+
+    <!-- Weekly breakdown -->
+    <div class="section-card" style="margin-top:16px">
+      <div class="section-title syne">📊 Weekly Breakdown</div>
+      <div class="week-row"><span class="week-lbl">Week 1</span><span class="week-range">Apr 1–5</span><div class="week-bar-wrap"><span class="week-empty">No data</span></div><span class="week-avg">—</span></div>
+      <div class="week-row" onclick="filterWeek('2026-04-06')">
+          <div class="week-meta"><span class="week-lbl">Week 2</span><span class="week-range">Apr 6–12</span></div>
+          <div class="week-bar-wrap">
+            <div class="week-bar" style="width:13%;background:#CBD5E1"></div>
+            <span class="week-best">😴 Best: Apr 09 (20)</span>
+          </div>
+          <span class="week-avg" style="color:#CBD5E1">13</span>
+        </div>
+      <div class="week-row" onclick="filterWeek('2026-04-13')">
+          <div class="week-meta"><span class="week-lbl">Week 3</span><span class="week-range">Apr 13–19</span></div>
+          <div class="week-bar-wrap">
+            <div class="week-bar" style="width:39%;background:#475569"></div>
+            <span class="week-best">🔥 Best: Apr 17 (78)</span>
+          </div>
+          <span class="week-avg" style="color:#475569">39</span>
+        </div>
+      <div class="week-row" onclick="filterWeek('2026-04-20')">
+          <div class="week-meta"><span class="week-lbl">Week 4</span><span class="week-range">Apr 20–22</span></div>
+          <div class="week-bar-wrap">
+            <div class="week-bar" style="width:73%;background:#1D4ED8"></div>
+            <span class="week-best">⚡ Best: Apr 22 (92)</span>
+          </div>
+          <span class="week-avg" style="color:#1D4ED8">73</span>
+        </div>
+    </div>
+
+  </div>
+
+  <!-- Right sidebar -->
+  <div class="sidebar">
+
+    <!-- Streak -->
+    <div class="streak-card">
+      <div class="streak-num">3</div>
+      <div class="streak-lbl mono">Day Streak 🔥</div>
+      <div class="streak-sub">Consecutive active days</div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="section-card">
+      <div class="section-title syne">🏆 Top Days</div>
+      
+        <div class="lb-row" onclick="showDay('2026-04-22')" style="background:#FEF3C710;border-left:3px solid #B45309">
+          <span class="lb-rank" style="color:#D97706">#1</span>
+          <div class="lb-info">
+            <span class="lb-date">Apr 22 — Wed</span>
+            <span class="lb-type">⚡ Velocity</span>
+          </div>
+          <span class="lb-score" style="color:#B45309">92</span>
+        </div>
+        <div class="lb-row" onclick="showDay('2026-04-21')" style="background:#FEF3C710;border-left:3px solid #B45309">
+          <span class="lb-rank" style="color:#94A3B8">#2</span>
+          <div class="lb-info">
+            <span class="lb-date">Apr 21 — Tue</span>
+            <span class="lb-type">⚡ Velocity</span>
+          </div>
+          <span class="lb-score" style="color:#B45309">85</span>
+        </div>
+        <div class="lb-row" onclick="showDay('2026-04-17')" style="background:#DBEAFE10;border-left:3px solid #1D4ED8">
+          <span class="lb-rank" style="color:#B45309">#3</span>
+          <div class="lb-info">
+            <span class="lb-date">Apr 17 — Fri</span>
+            <span class="lb-type">🔥 Builder</span>
+          </div>
+          <span class="lb-score" style="color:#1D4ED8">78</span>
+        </div>
+        <div class="lb-row" onclick="showDay('2026-04-14')" style="background:#D1FAE510;border-left:3px solid #065F46">
+          <span class="lb-rank" style="color:#64748B">#4</span>
+          <div class="lb-info">
+            <span class="lb-date">Apr 14 — Tue</span>
+            <span class="lb-type">🎯 Hustle</span>
+          </div>
+          <span class="lb-score" style="color:#065F46">55</span>
+        </div>
+        <div class="lb-row" onclick="showDay('2026-04-20')" style="background:#EDE9FE10;border-left:3px solid #5B21B6">
+          <span class="lb-rank" style="color:#64748B">#5</span>
+          <div class="lb-info">
+            <span class="lb-date">Apr 20 — Mon</span>
+            <span class="lb-type">💡 Strategy</span>
+          </div>
+          <span class="lb-score" style="color:#5B21B6">42</span>
+        </div>
+    </div>
+
+    <!-- Month totals -->
+    <div class="section-card">
+      <div class="section-title syne">📈 April Totals</div>
+      <div class="totals-grid">
+        <div class="tot-item"><span class="tot-val syne">66</span><span class="tot-lbl mono">Meetings</span></div>
+        <div class="tot-item"><span class="tot-val syne">46</span><span class="tot-lbl mono">Emails Sent</span></div>
+        <div class="tot-item"><span class="tot-val syne">46</span><span class="tot-lbl mono">Files Built</span></div>
+        <div class="tot-item"><span class="tot-val syne">27</span><span class="tot-lbl mono">Slack Msgs</span></div>
+      </div>
+    </div>
+
+    <!-- Score guide -->
+    <div class="section-card">
+      <div class="section-title syne">📐 Score Dimensions</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="dim-row"><span class="dim-name mono">Output</span><div class="dim-bar-wrap" style="flex:1"><div class="dim-bar" style="width:100%;background:#2563EB"></div></div><span class="dim-val syne" style="color:#2563EB">20</span></div>
+        <div class="dim-row"><span class="dim-name mono">Pipeline</span><div class="dim-bar-wrap" style="flex:1"><div class="dim-bar" style="width:100%;background:#0D9488"></div></div><span class="dim-val syne" style="color:#0D9488">20</span></div>
+        <div class="dim-row"><span class="dim-name mono">Meetings</span><div class="dim-bar-wrap" style="flex:1"><div class="dim-bar" style="width:100%;background:#7C3AED"></div></div><span class="dim-val syne" style="color:#7C3AED">25</span></div>
+        <div class="dim-row"><span class="dim-name mono">Collab</span><div class="dim-bar-wrap" style="flex:1"><div class="dim-bar" style="width:100%;background:#D97706"></div></div><span class="dim-val syne" style="color:#D97706">15</span></div>
+        <div class="dim-row"><span class="dim-name mono">Innovation</span><div class="dim-bar-wrap" style="flex:1"><div class="dim-bar" style="width:100%;background:#DC2626"></div></div><span class="dim-val syne" style="color:#DC2626">20</span></div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.5">Total: 100 pts max. Scores calculated from emails, meetings, files, Slack, and AI work each day.</div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">
+  <span class="footer-brand syne">Advisor AI Partners · AIOS Pulse v1.0</span>
+  <span class="footer-gen mono">Generated April 2026 · David Ortiz</span>
+</footer>
+
+</div><!-- /tab-pulse -->
+
+<!-- ╔════════════════════════════════════╗ -->
+<!-- ║  TAB: DAVID'S DAY                  ║ -->
+<!-- ╚════════════════════════════════════╝ -->
+<div id="tab-brief" class="tab-pane">
+  <div class="brief-bar">
+    <button class="brief-nav-btn" id="brief-prev" onclick="prevBriefDay()">← Prev</button>
+    <span class="brief-date-label" id="brief-date-label">—</span>
+    <button class="brief-today-btn" onclick="loadBrief(todayStr)">Today</button>
+    <button class="brief-nav-btn" id="brief-next" onclick="nextBriefDay()">Next →</button>
+  </div>
+  <div id="brief-body"></div>
+</div>
+
+<script>
+const ALL_DATA = [{"date": "2026-04-01", "weekday": "Wednesday", "friendly": "Apr 01", "score": 8, "dims": {"output": 0, "pipeline": 0, "meetings": 8, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 3, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "PWC Lunch", "start": "11:00 AM", "end": "12:00 PM", "location": "", "attendees": []}, {"title": "Tim Conway", "start": "4:00 PM", "end": "5:00 PM", "location": "", "attendees": ["Tim Conway"]}, {"title": "David Ortiz re:AI", "start": "4:00 PM", "end": "5:00 PM", "location": "", "attendees": []}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-02", "weekday": "Thursday", "friendly": "Apr 02", "score": 13, "dims": {"output": 0, "pipeline": 0, "meetings": 13, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 3, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Coffee and Commerce - Morning Coffee", "start": "8:00 AM", "end": "9:00 AM", "location": "", "attendees": []}, {"title": "Jean Hawney - Meeting with Advisor AI Partners", "start": "11:00 AM", "end": "12:00 PM", "location": "Google Meet", "attendees": ["info@thelittleeaters.com"]}, {"title": "Erik Schneider - Meeting with Advisor AI Partners", "start": "3:00 PM", "end": "4:00 PM", "location": "Google Meet", "attendees": ["Erik Schneider"]}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-03", "weekday": "Friday", "friendly": "Apr 03", "score": 10, "dims": {"output": 0, "pipeline": 0, "meetings": 10, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 3, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Downtown Council Breakfast", "start": "7:00 AM", "end": "8:30 AM", "location": "", "attendees": []}, {"title": "Darrin Eakins <> David", "start": "10:00 AM", "end": "11:00 AM", "location": "Google Meet", "attendees": ["Darrin Eakins"]}, {"title": "Patty Brantley <> David Ortiz", "start": "12:00 PM", "end": "1:00 PM", "location": "Google Meet", "attendees": ["Patty Brantley"]}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-04", "weekday": "Saturday", "friendly": "Apr 04", "score": 2, "dims": {"output": 0, "pipeline": 0, "meetings": 2, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 1, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "ACA Telephone Meeting", "start": "11:00 AM", "end": "12:00 PM", "location": "712-432-3900", "attendees": []}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-05", "weekday": "Sunday", "friendly": "Apr 05", "score": 0, "dims": {"output": 0, "pipeline": 0, "meetings": 0, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": false, "meetings_count": 0, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-06", "weekday": "Monday", "friendly": "Apr 06", "score": 8, "dims": {"output": 0, "pipeline": 0, "meetings": 8, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 2, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Michael <> David (Image Studios)", "start": "9:00 AM", "end": "10:00 AM", "location": "Google Meet", "attendees": ["Michael Zmijewski"]}, {"title": "The Louie and David Show", "start": "4:30 PM", "end": "5:30 PM", "location": "", "attendees": ["Louie Hillman"]}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-07", "weekday": "Tuesday", "friendly": "Apr 07", "score": 19, "dims": {"output": 0, "pipeline": 0, "meetings": 19, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 5, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "The Power Hour: Mike & Fer", "start": "9:30 AM", "end": "10:30 AM", "location": "", "attendees": []}, {"title": "Twinkle Nights AI Check In Meeting", "start": "10:30 AM", "end": "11:30 AM", "location": "Google Meet", "attendees": ["tom@twinklenights.com"]}, {"title": "Daniel Pales \u2014 Image Studios Tours Availability", "start": "12:00 PM", "end": "1:00 PM", "location": "", "attendees": ["Daniel Pales"]}, {"title": "David Ortiz <> Thomas Lee (Lee & Cates Glass)", "start": "2:00 PM", "end": "3:00 PM", "location": "Google Meet", "attendees": ["thomas@leeandcatesglass.com"]}, {"title": "Darrin Eakins <> David Ortiz", "start": "4:00 PM", "end": "5:00 PM", "location": "Google Meet", "attendees": ["Darrin Eakins"]}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-08", "weekday": "Wednesday", "friendly": "Apr 08", "score": 11, "dims": {"output": 0, "pipeline": 0, "meetings": 11, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 3, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Sharon DiTrani <> David Ortiz", "start": "10:00 AM", "end": "11:00 AM", "location": "Google Meet", "attendees": ["Sharon DiTrani"]}, {"title": "David Ortiz at Pamela's office \u2014 CPA firm portal work", "start": "12:00 PM", "end": "2:00 PM", "location": "In Person", "attendees": ["Pamela"]}, {"title": "Heather Waisanen - Meeting with Advisor AI Partners", "start": "2:00 PM", "end": "3:00 PM", "location": "Google Meet", "attendees": ["heather@coastalmaverick.com"]}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-09", "weekday": "Thursday", "friendly": "Apr 09", "score": 20, "dims": {"output": 0, "pipeline": 0, "meetings": 14, "collab": 0, "innovation": 6}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 3, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Three Rivers Council", "start": "8:00 AM", "end": "9:30 AM", "location": "", "attendees": []}, {"title": "JBP Event (AI Conference)", "start": "10:00 AM", "end": "4:00 PM", "location": "Jacksonville", "attendees": []}, {"title": "Avant Construction Group Chamber Ribbon Cutting", "start": "4:00 PM", "end": "5:30 PM", "location": "", "attendees": []}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [{"summary": "JBP AI Conference \u2014 presented on AI and the Renaissance, 'Michelangelo Toolkit' talk. #1 rated talk at UNF. Connected with Tucker (NLP Logix), Lauren (Jim Moran Institute), Erica, Alyssa (Rock Solid Law), Debbie Magyar.", "outputs": ["AI Renaissance presentation", "Multiple follow-up email templates"]}], "files": [], "db_meetings": []}}, {"date": "2026-04-10", "weekday": "Friday", "friendly": "Apr 10", "score": 7, "dims": {"output": 0, "pipeline": 0, "meetings": 7, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 2, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Dentist", "start": "8:15 AM", "end": "9:30 AM", "location": "", "attendees": []}, {"title": "Alyvia Marcinek - Meeting with Advisor AI Partners (Image Studios)", "start": "3:00 PM", "end": "4:00 PM", "location": "Google Meet", "attendees": ["alyvia.marcinek@imagestudios360.com"]}], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-11", "weekday": "Saturday", "friendly": "Apr 11", "score": 0, "dims": {"output": 0, "pipeline": 0, "meetings": 0, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": false, "meetings_count": 0, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-12", "weekday": "Sunday", "friendly": "Apr 12", "score": 0, "dims": {"output": 0, "pipeline": 0, "meetings": 0, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": false, "meetings_count": 0, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-13", "weekday": "Monday", "friendly": "Apr 13", "score": 32, "dims": {"output": 14, "pipeline": 9, "meetings": 2, "collab": 1, "innovation": 6}, "type_icon": "\ud83c\udf31", "type_label": "Seed", "type_color": "#059669", "has_data": true, "meetings_count": 1, "emails_sent_count": 7, "emails_recv_count": 3, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Paul McMullen", "start": "1:00 PM", "end": "2:00 PM", "location": "", "attendees": ["Paul McMullen"]}], "emails_sent": [{"to": "Tom Snogles / Naveen", "subject": "Re: Can you add this script? \u2014 Widget positioning fix (bottom right)", "snippet": "Updated widget code for Sun Power and Twinkle Nights to show in bottom right position."}, {"to": "Alyssa (Rock Solid Law)", "subject": "Fwd: Follow-up \u2014 mentioned connecting with John at JBP AI conference", "snippet": "I spent some time with John on Thursday as a presenter at JBP. Can we set up a follow-up meeting?"}, {"to": "Lauren Little (Jim Moran Institute)", "subject": "Great meeting you at the JBP conference", "snippet": "It was a pleasure briefly connecting. I've known about the Jim Moran Institute for years from my time in South Florida."}, {"to": "Tucker Stachitas (NLP Logix)", "subject": "Sitting nearby at JBP last week", "snippet": "Good being on that panel with you. Things moved so fast we didn't get a real chance to catch up. I'd love to connect."}, {"to": "Erica (The All Goods)", "subject": "Good meeting you at JBP", "snippet": "It was great meeting you. I really enjoyed our conversation about AI and I'd love to show you specific ways I'm using it."}, {"to": "Dick Flah (Flahco)", "subject": "Re: Case Manager Portal \u2014 A New Approach", "snippet": "It's been a couple of weeks. I'm trying to keep this going and figure out what direction you want to take."}, {"to": "Debbie Magyar (UNF SBDC)", "subject": "Re: JBP Event Photo \u2014 great to meet you, looking forward to working together", "snippet": "It was such a pleasure to meet you. I am really looking forward to working with you."}], "emails_recv": [{"from": "Tom Snogles <tom@twinklenights.com>", "subject": "Re: Can you add this script? \u2014 Can David help with widget issue?", "snippet": "Can David help with this? The chat widget is showing in the middle of the page."}, {"from": "Debbie Magyar (UNF SBDC)", "subject": "JBP Event Photo \u2014 great meeting you, looking forward to speaking Friday", "snippet": "It was very nice meeting you at the event last week. I'm looking forward to speaking on Friday."}, {"from": "Kevin (Inner Circle)", "subject": "Re: Aloha David \u2014 understand you're busy, will reach out to Michael", "snippet": "Totally understand you are busy. Thanks for letting me know. Will reach out to Mike on our call tomorrow."}], "slack_msgs": [], "claude_work": [{"summary": "Post-JBP follow-up blitz \u2014 reached out to everyone met at the conference. Also continued Twinkle Nights chat widget work.", "outputs": ["JBP follow-up emails (6 contacts)", "Re: Case Manager Portal follow-up"]}], "files": [], "db_meetings": []}}, {"date": "2026-04-14", "weekday": "Tuesday", "friendly": "Apr 14", "score": 55, "dims": {"output": 13, "pipeline": 12, "meetings": 18, "collab": 4, "innovation": 8}, "type_icon": "\ud83c\udfaf", "type_label": "Hustle", "type_color": "#2563EB", "has_data": true, "meetings_count": 6, "emails_sent_count": 4, "emails_recv_count": 4, "slack_count": 0, "files_count": 0, "db_meetings_count": 2, "detail": {"cal_events": [{"title": "David Ortiz and Kevin Taheryan (AAA Accelerator)", "start": "7:00 AM", "end": "8:00 AM", "location": "Google Meet", "attendees": ["kevin@aaaaccelerator.com"]}, {"title": "The Power Hour: Mike & Fer", "start": "9:30 AM", "end": "10:30 AM", "location": "", "attendees": []}, {"title": "Twinkle Nights AI Check In Meeting", "start": "10:30 AM", "end": "11:30 AM", "location": "Google Meet", "attendees": ["tom@twinklenights.com"]}, {"title": "Monthly Rotary Meeting", "start": "5:30 PM", "end": "7:00 PM", "location": "", "attendees": []}], "emails_sent": [{"to": "Heather Waisanen <heather@coastalmaverick.com>", "subject": "Invoice #INV-CM-001 \u2014 AI-Powered Proposal Automation System", "snippet": "Advisor AI Partners invoice for AI-powered proposal automation system. Due upon receipt."}, {"to": "Todd Howland (Savvy Wealth)", "subject": "Re: Introduction to Todd Howland \u2014 feel free to call", "snippet": "Hi Todd, nice to meet you. Feel free to give me a call at 305-254-4455."}, {"to": "Daniel Pales (Image Studios)", "subject": "Following up \u2014 would love to set up another meeting", "snippet": "I am following up on my previous email and wanted to see if we could set up another meeting."}, {"to": "CRM Pros (GHL install scheduling)", "subject": "Re: Scheduling my install \u2014 need Aamish on the call before 11 AM EDT", "snippet": "I have canceled because we asked to have my assistant on the line. It needed to be done prior to 11 AM Eastern."}], "emails_recv": [{"from": "Louie Hillman <Louie@optimuslifedesigns.com>", "subject": "Introduction to Todd Howland \u2014 financial advisor from CA, now in FL", "snippet": "Todd Howland is an advisor I've worked with for many years. He just relocated from northern CA to Florida."}, {"from": "Todd Howland (Savvy Wealth)", "subject": "RE: Introduction to Todd Howland \u2014 nice to meet you", "snippet": "Thanks, Louie. Hello David. Nice to meet you."}, {"from": "CRM Pros <kparyani@crmpros.ai>", "subject": "Re: Scheduling my install \u2014 Wednesday next week?", "snippet": "Thank you for reaching out. We are happy to assist. Can you confirm whether you or your VA will be on the call?"}, {"from": "Naveen Verma <upworknaveen1@gmail.com>", "subject": "Re: Can you add this script? \u2014 Widgets updated on both websites", "snippet": "Widgets code updated on both websites. Please have a look and let me know if you have any issues."}], "slack_msgs": [], "claude_work": [{"summary": "Built Invoice #INV-CM-001 for Coastal Maverick (Heather). Sent first GHL snapshot install attempt with CRM Pros. Kevin Taheryan coaching call (AAA Accelerator).", "outputs": ["Invoice #INV-CM-001 \u2014 AI Proposal Automation System", "GHL snapshot install coordination"]}], "files": [], "db_meetings": [{"title": "David Ortiz and Kevin Taheryan", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "David Ortiz is focused on transitioning his AI business into a scalable model, targeting $50,000 in monthly revenue to support his lifestyle and personal goals, including relocating to Lisbon. Currently generating about $6,000 monthly, David is shifting from one-off projects to a stable recurring revenue model. He has committed to the AAA accelerator program, which offers extensive support, includ", "action_items": [], "keywords": ["Fractional AI Officer", "AI Operating System", "Go High Level", "Scalable Offers", "Client Success Manager", "Circle Community"]}, {"title": "David Ortiz and Kevin Taheryan", "duration": "", "participants": ["kevin@aaaaccelerator.com", "david@advisoraipartners.com"], "summary": "David Ortiz discussed the status of his AI business, currently generating about $6,000 monthly through Go High Level fees and various consulting contracts. He has acquired projects such as a $15,000 CPA firm initiative and a $5,000 audit for a glass company, although his income remains inconsistent. David aims to replace one-time projects with a predictable revenue stream, targeting $50,000 monthl", "action_items": [], "keywords": ["Fractional AI Officer", "Go High Level", "AI Operating System", "Scalable Business Model", "Coaching Program", "Recurring Revenue"]}]}}, {"date": "2026-04-15", "weekday": "Wednesday", "friendly": "Apr 15", "score": 33, "dims": {"output": 4, "pipeline": 4, "meetings": 16, "collab": 3, "innovation": 6}, "type_icon": "\ud83c\udf31", "type_label": "Seed", "type_color": "#059669", "has_data": true, "meetings_count": 6, "emails_sent_count": 2, "emails_recv_count": 3, "slack_count": 0, "files_count": 0, "db_meetings_count": 2, "detail": {"cal_events": [{"title": "David Ortiz and Mara Crisan (AAA Accelerator)", "start": "9:00 AM", "end": "10:00 AM", "location": "Google Meet", "attendees": ["mara@aaaaccelerator.com"]}, {"title": "DoD Installation (GHL Snapshot)", "start": "10:00 AM", "end": "11:00 AM", "location": "Google Meet", "attendees": []}, {"title": "Professional Women's Council Luncheon \u2014 Darren Dailey", "start": "11:00 AM", "end": "1:00 PM", "location": "In Person", "attendees": []}, {"title": "David Ortiz and Richard Igbinoba (AAA Accelerator)", "start": "7:15 PM", "end": "8:00 PM", "location": "Google Meet", "attendees": ["richard.i@aaaaccelerator.com"]}], "emails_sent": [{"to": "Tom Snogles <tom@twinklenights.com>", "subject": "Chat Widget Updates \u2014 Twinkle Nights + Sun Power", "snippet": "Three message variations for both Twinkle Nights and Sun Power. All three ready for review."}, {"to": "GHL Support", "subject": "Re: User Permission Query (#5267622) \u2014 issue is resolved", "snippet": "Issue is resolved now. Thanks."}], "emails_recv": [{"from": "Alyssa (Rock Solid Law)", "subject": "Re: Follow-up \u2014 meeting with John Friday, will get times for next week", "snippet": "That is so great to hear! Absolutely \u2014 I meet with him Friday and will get some times from him."}, {"from": "Tom Snogles <tom@twinklenights.com>", "subject": "Auto Text - Can We Test Friday?", "snippet": "Can we test the auto text Friday? Looking forward to it."}, {"from": "GHL Support", "subject": "User Permission Query (#5267622) \u2014 Waiting on your response", "snippet": "It's been a couple of days since we last spoke. Can you please review our last response?"}], "slack_msgs": [], "claude_work": [{"summary": "Chat widget variations built for Twinkle Nights and Sun Power Lawn Care. Professional Women's Council luncheon. Evening coaching call with Richard Igbinoba.", "outputs": ["Chat Widget Updates \u2014 3 variations each brand", "Twinkle Nights + SPLC copy"]}], "files": [], "db_meetings": [{"title": "David Ortiz and Richard Igbinoba", "duration": "", "participants": ["richard.i@aaaaccelerator.com", "david@advisoraipartners.com"], "summary": "The team discussed utilizing a Mac Mini as a 24/7 server for AI OS projects, enabling remote access and seamless collaboration. Richard emphasized continuous operation and scheduled jobs, while David plans to sync project directories with iCloud for device interoperability. Concurrent access is facilitated through separate user accounts on the Mac Mini, allowing multiple users to work simultaneous", "action_items": [], "keywords": ["AI OS", "Mac Mini server", "remote desktop", "CLAUDE AI", "synchronization", "Jump Desktop"]}, {"title": "David Ortiz.  and Mara Crisan", "duration": "", "participants": ["mara@aaaaccelerator.com", "david@advisoraipartners.com"], "summary": "The discussion aimed at increasing monthly recurring revenue from $5,000 to $50,000 through the scaling of AI automation and Go High Level services. David Ortiz highlighted pricing challenges, seeking a scalable $5,000 deliverable while presenting various project pricing options. The client base primarily consists of home service businesses from the Jacksonville Chamber of Commerce, with a target ", "action_items": [], "keywords": ["AI Operating System", "Go High Level", "AI auditing tool", "market research", "offer validation", "coaching community"]}]}}, {"date": "2026-04-16", "weekday": "Thursday", "friendly": "Apr 16", "score": 36, "dims": {"output": 8, "pipeline": 12, "meetings": 8, "collab": 2, "innovation": 6}, "type_icon": "\ud83c\udf31", "type_label": "Seed", "type_color": "#059669", "has_data": true, "meetings_count": 3, "emails_sent_count": 4, "emails_recv_count": 2, "slack_count": 0, "files_count": 0, "db_meetings_count": 1, "detail": {"cal_events": [{"title": "Dr. Anika Goel \u2014 Neurologist", "start": "10:00 AM", "end": "11:00 AM", "location": "904-448-4180", "attendees": []}, {"title": "AIOS for Voice AI Session", "start": "2:00 PM", "end": "3:00 PM", "location": "Google Meet", "attendees": []}], "emails_sent": [{"to": "Tiffani Bibb <connect@tiffanibibb.com>", "subject": "Great seeing you this morning \u2014 enjoy Madrid!", "snippet": "I hope you have an incredible time in Madrid and get to enjoy some of those spots we talked about."}, {"to": "Thomas Lee <thomas@leeandcatesglass.com>", "subject": "Putting some numbers to what we talked about \u2014 Lee & Cates AI Audit", "snippet": "I realized I probably didn't leave you with a clear sense of what this costs or what it delivers."}, {"to": "Tom Bailey <tbailey@borlandgroover.com>", "subject": "Good meeting you at the Chamber", "snippet": "We met at a Chamber event a while back. I've followed up a few times since then."}, {"to": "Louie Hillman <louie@optimuslifedesigns.com>", "subject": "The LifeBridge system is taking shape \u2014 update for Louie & Bryan", "snippet": "I've been heads-down on the LifeBridge Case Design system and wanted to share where things are."}], "emails_recv": [{"from": "Debbie Magyar (UNF SBDC)", "subject": "Re: JBP Event Photo \u2014 schedule conflict, can we meet virtually on Teams?", "snippet": "I have a schedule conflict for our meeting tomorrow. Are you available virtually on Teams rather than in person?"}, {"from": "Tom Snogles <tom@twinklenights.com>", "subject": "Re: Auto Text - Can We Test Friday? \u2014 will test numbers and forward within 2 hours", "snippet": "I'll test the numbers, see how that works, and then forward them within the next two hours."}], "slack_msgs": [], "claude_work": [{"summary": "LifeBridge Case Design system update sent to Louie & Bryan. Lee & Cates Glass follow-up with ROI numbers. Chamber outreach. Doctor appointment.", "outputs": ["LifeBridge system is taking shape \u2014 email", "Lee & Cates ROI email"]}], "files": [], "db_meetings": [{"title": "Apr 16, 03:10 PM", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "The speaker detailed his journey from culinary arts to the tech and financial advising sectors, prompted by market changes and personal choices. He began by self-teaching programming to address restaurant theft, eventually working at a software company. His financial advising career started with Equitable Life Insurance, leveraging technology for marketing and client engagement. Recently, he embra", "action_items": [], "keywords": ["AI lead generation", "financial advisors", "marketing automation", "conversational AI", "data quality", "revenue sharing"]}]}}, {"date": "2026-04-17", "weekday": "Friday", "friendly": "Apr 17", "score": 78, "dims": {"output": 20, "pipeline": 13, "meetings": 18, "collab": 9, "innovation": 18}, "type_icon": "\ud83d\udd25", "type_label": "Builder", "type_color": "#DC2626", "has_data": true, "meetings_count": 6, "emails_sent_count": 11, "emails_recv_count": 5, "slack_count": 4, "files_count": 16, "db_meetings_count": 3, "detail": {"cal_events": [{"title": "David Ortiz and Nik Volynkin (AAA Accelerator)", "start": "6:00 AM", "end": "7:00 AM", "location": "Google Meet", "attendees": ["nik@aaaaccelerator.com"]}, {"title": "Jason Pratt - Meeting with Advisor AI Partners", "start": "9:00 AM", "end": "10:00 AM", "location": "Google Meet", "attendees": ["jason@prattify.com"]}, {"title": "Debbie Magyar \u2014 SBDC Connect / UNF", "start": "10:00 AM", "end": "11:00 AM", "location": "Google Meet", "attendees": ["d.magyar@unf.edu"]}], "emails_sent": [{"to": "Debbie Magyar <d.magyar@unf.edu>", "subject": "Great talking this morning, Debbie \u2014 follow-up + what I'm setting up", "snippet": "What a conversation. Time flew. You said you had been counting the days for us to talk."}, {"to": "Debbie Magyar <d.magyar@unf.edu>", "subject": "Everything we talked about today \u2014 what I'm setting up for you (AIOS Ecosystem)", "snippet": "The AIOS Ecosystem \u2014 what it looks like in practice and what we discussed today, documented."}, {"to": "Debbie Magyar <d.magyar@unf.edu>", "subject": "Great talking today, Debbie \u2014 here's the full picture", "snippet": "For Debbie Magyar \u00b7 AIOS Ecosystem. This changes the way you run everything."}, {"to": "Aamish@advisoraipartners.com", "subject": "hub.advisoraipartners.com \u2014 DNS setup in Squarespace", "snippet": "Need you to point hub.advisoraipartners.com at our Netlify site. Two steps: Netlify domain + Squarespace CNAME."}, {"to": "Aamish@advisoraipartners.com", "subject": "Setting up your deploy \u2014 shared hub (GitHub collaborator invite)", "snippet": "Sending you a GitHub collaborator invite today to the aios-hub repo. Here's what we're building."}, {"to": "Aamish@advisoraipartners.com", "subject": "Your End-of-Day Reporter \u2014 Setup Instructions + Files", "snippet": "I wanted a simple way to stay looped in on your work every day without bugging you."}, {"to": "Jay Coulter <jay@jaycoulter.com>", "subject": "The system the #1 AI incubator built \u2014 we're deploying it for clients now", "snippet": "AIOS Ecosystem \u00b7 You're already using Claude. Here's what the next level looks like."}, {"to": "German <german@certaplanning.com>", "subject": "The system the #1 AI incubator built \u2014 we're deploying it for clients now", "snippet": "AIOS Ecosystem \u00b7 You're already using Claude. Here's what the next level looks like."}, {"to": "Thomas Lee <thomas@leeandcatesglass.com>", "subject": "The system behind the audit \u2014 where this goes next", "snippet": "You've been building the pieces. Here's what the full architecture looks like."}, {"to": "Olga (Inaki Law)", "subject": "Irish Row Investment Update \u2014 What I Found and What It Means for You", "snippet": "I hear you. I know this has been weighing on you. Here's what I found and what it means."}, {"to": "Bob Doran", "subject": "Re: Thank you David \u2014 let's help each other and keep each other motivated", "snippet": "It was my pleasure, Bob. Let's help each other and keep each other motivated."}], "emails_recv": [{"from": "Louie Hillman (Optimus Life Designs)", "subject": "Re: LifeBridge system \u2014 I love it! Bryan is skeptical but a digital portal will open his mind", "snippet": "I love it! Bryan is skeptical (not of you \u2014 but of any AI working). If we can show him a working portal, it will open his mind."}, {"from": "Bob Doran", "subject": "Thank you David \u2014 you really inspired me more than you will ever know!", "snippet": "Just wanted to thank you for calling today. You really inspired me more than you will ever know! Cheers!"}, {"from": "Bob Doran", "subject": "Re: AIOS Ecosystem \u2014 Is this really $5,000? Is there a monthly fee?", "snippet": "I would think this would be something a hell of a lot of business owners would want. Is there a monthly fee?"}, {"from": "Olga (Inaki Law)", "subject": "Re: Irish Row Investment Update \u2014 thank you, will read carefully", "snippet": "Thank you for all of the information just sent. I will read it carefully and keep an eye on the progress with Irish Row."}, {"from": "Debbie Magyar (UNF SBDC)", "subject": "Re: JBP Event \u2014 accepted Google Meet invite, looking forward to speaking", "snippet": "I've accepted the Google Meet invite. Looking forward to speaking."}], "slack_msgs": [{"channel": "#DM \u2014 Aamish", "text": "Hey Aamish \u2014 need you to set up hub.advisoraipartners.com to point at our Netlify site. Two steps: Netlify domain management + Squarespace CNAME record.", "timestamp": "11:04 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Could you go into Fireflies and clean up the meetings by deleting them? Debbie won't be able to see the transcript until we do that.", "timestamp": "11:35 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Sure, I understand. Delete before the reactivation. We just need to make enough room so she can get the meeting transcript.", "timestamp": "11:38 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Okay, don't worry about the Netlify for now. Put in a support ticket with Fireflies and ask them to delete meetings from other people's accounts.", "timestamp": "12:06 PM"}], "claude_work": [{"summary": "Epic day \u2014 Debbie Magyar call (UNF SBDC) was a breakthrough. Sent massive AIOS email blast. Jason Pratt discovery call. Irish Row update for Olga. Set up Aamish on GitHub + Netlify hub. EOD reporter system.", "outputs": ["AIOS Ecosystem email blast (6 recipients)", "Great talking this morning, Debbie \u2014 full picture email", "hub DNS + GitHub setup for Aamish", "EOD reporter system"]}], "files": [{"name": "aios-proposal-founders.html", "path": "hub/aios-proposal-founders.html", "ext": "HTML", "size_kb": 68.1, "modified": "07:05 AM"}, {"name": "task-audit-dashboard.html", "path": "hub/task-audit-dashboard.html", "ext": "HTML", "size_kb": 43.0, "modified": "07:05 AM"}, {"name": "hub.html", "path": "hub/hub.html", "ext": "HTML", "size_kb": 16.0, "modified": "07:05 AM"}, {"name": "meeting-dashboard.html", "path": "hub/meeting-dashboard.html", "ext": "HTML", "size_kb": 34.0, "modified": "07:05 AM"}, {"name": "deal-tracker.html", "path": "hub/deal-tracker.html", "ext": "HTML", "size_kb": 12.9, "modified": "07:05 AM"}, {"name": "linkedin-content-system.html", "path": "hub/linkedin-content-system.html", "ext": "HTML", "size_kb": 68.9, "modified": "07:05 AM"}, {"name": "email-thomas-close.html", "path": "hub/email-thomas-close.html", "ext": "HTML", "size_kb": 16.0, "modified": "07:05 AM"}, {"name": "aios-dashboard.html", "path": "hub/aios-dashboard.html", "ext": "HTML", "size_kb": 39.2, "modified": "07:05 AM"}, {"name": "deliverables-dashboard.html", "path": "hub/deliverables-dashboard.html", "ext": "HTML", "size_kb": 37.7, "modified": "07:05 AM"}, {"name": "project-dashboard.html", "path": "hub/project-dashboard.html", "ext": "HTML", "size_kb": 27.9, "modified": "07:05 AM"}, {"name": "gtd-dashboard.html", "path": "hub/gtd-dashboard.html", "ext": "HTML", "size_kb": 30.4, "modified": "07:05 AM"}, {"name": "five-pillars.html", "path": "hub/pages/five-pillars.html", "ext": "HTML", "size_kb": 39.7, "modified": "07:05 AM"}, {"name": "aios-landing-page.html", "path": "hub/pages/aios-landing-page.html", "ext": "HTML", "size_kb": 29.1, "modified": "07:05 AM"}, {"name": "advisor-niche-lead-engine-scope.md", "path": "hub/advisor-niche-lead-engine-scope.md", "ext": "MD", "size_kb": 7.9, "modified": "07:05 AM"}, {"name": "DESIGN.md", "path": "hub/meeting-dashboard/design-system/DESIGN.md", "ext": "MD", "size_kb": 5.5, "modified": "07:05 AM"}, {"name": "2026-04-13.md", "path": "hub/daily-brief/2026-04-13.md", "ext": "MD", "size_kb": 9.4, "modified": "07:05 AM"}], "db_meetings": [{"title": "david@advisoraipartners.com - Fri, 17 Apr 2026 10:01:26 EDT - Untitled", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "The discussion focused on empowering small businesses through AI adoption. David Ortiz presented his automation agency's strategy, emphasizing the use of the Go High Level platform to train business owners in managing AI tools independently. Debbie Magyar highlighted the challenges faced by clients integrating AI in a regulated environment, noting the need for accessible turnkey platforms. Both pa", "action_items": [], "keywords": ["AI Operating System", "Go High Level", "Small Business", "AI Consulting", "Digital Marketing", "Part-Time Consulting"]}, {"title": "David Ortiz  and Nik Volynkin", "duration": "", "participants": ["nik@aaaaccelerator.com", "david@advisoraipartners.com"], "summary": "The discussion covered the deployment and configuration of AIOS, highlighting the ease of running it locally compared to on a VPS, with technical insights from Nik on setups and file transfers. Multiple AIOS instances can share data through cloud databases, but synchronization requires proper configuration. Custom packaging for client installs was addressed, noting that AIOS files are standardized", "action_items": [], "keywords": ["AIOS", "Telegram integration", "Mac Mini setup", "Claude app", "GTD inbox", "remote session control"]}, {"title": "Tech support meeting.", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "The discussion revolved around the deployment options for AIOS, highlighting the trade-offs between local and VPS setups. Nik explained the ease of local deployment versus the practicality of VPS, which requires SSH access and a file transfer app. Managing multiple AIOS instances through a cloud database for communication was also covered, along with client packaging processes for easy installatio", "action_items": [], "keywords": ["AIOS", "Telegram integration", "VPS setup", "Claude app", "GTD inbox", "remote terminal control"]}]}}, {"date": "2026-04-18", "weekday": "Saturday", "friendly": "Apr 18", "score": 1, "dims": {"output": 0, "pipeline": 0, "meetings": 0, "collab": 1, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": true, "meetings_count": 0, "emails_sent_count": 0, "emails_recv_count": 3, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [], "emails_sent": [], "emails_recv": [{"from": "Jean Hawney <info@thelittleeaters.com>", "subject": "Lindy \u2014 AI tool recommendation + friend who is doctor/developer", "snippet": "This weekend I was with friends and one is a doctor who has gotten deep into AI as a developer. Check out synapticai."}, {"from": "Jean Hawney <info@thelittleeaters.com>", "subject": "Re: Lindy \u2014 also check this out: MIA Plastic Surgery on Base44", "snippet": "Check this out: MIA Plastic Surgery mia-aesthetic-art.base44.app. Also, on the podcast, the voice is still off."}, {"from": "Bob Doran", "subject": "Thank you David \u2014 really inspired me!", "snippet": "Just wanted to thank you for calling today. You really inspired me more than you will ever know!"}], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-19", "weekday": "Sunday", "friendly": "Apr 19", "score": 0, "dims": {"output": 0, "pipeline": 0, "meetings": 0, "collab": 0, "innovation": 0}, "type_icon": "\ud83d\ude34", "type_label": "Recovery", "type_color": "#94A3B8", "has_data": false, "meetings_count": 0, "emails_sent_count": 0, "emails_recv_count": 0, "slack_count": 0, "files_count": 0, "db_meetings_count": 0, "detail": {"cal_events": [], "emails_sent": [], "emails_recv": [], "slack_msgs": [], "claude_work": [], "files": [], "db_meetings": []}}, {"date": "2026-04-20", "weekday": "Monday", "friendly": "Apr 20", "score": 42, "dims": {"output": 4, "pipeline": 2, "meetings": 15, "collab": 13, "innovation": 8}, "type_icon": "\ud83d\udca1", "type_label": "Strategy", "type_color": "#7C3AED", "has_data": true, "meetings_count": 6, "emails_sent_count": 2, "emails_recv_count": 4, "slack_count": 8, "files_count": 0, "db_meetings_count": 4, "detail": {"cal_events": [{"title": "David Ortiz and Guy Last (AAA Accelerator)", "start": "6:00 AM", "end": "7:00 AM", "location": "Google Meet", "attendees": ["guy@aaaaccelerator.com"]}, {"title": "Jay Coulter <> David Ortiz", "start": "11:00 AM", "end": "12:00 PM", "location": "Google Meet", "attendees": ["jcoulter@tamgmt.com"]}], "emails_sent": [{"to": "Michael Zmijewski & Alyvia Marcinek <imagestudios360.com>", "subject": "Stella triggered by email \u2014 ready to test?", "snippet": "We are able to trigger Stella by email. I'm wondering if we're ready to test it on our end."}, {"to": "Jean Hawney <info@thelittleeaters.com>", "subject": "Re: Lindy \u2014 yes, I'm an early adopter; great place to start", "snippet": "I am actually an early adopter of Lindy and find their new agent functionality to be excellent."}], "emails_recv": [{"from": "Jean Hawney <info@thelittleeaters.com>", "subject": "Re: Lindy \u2014 I knew you would know it all! Let's meet soon + Aamish please add payment for summer camp", "snippet": "I knew you would know it all!! I will look at your calendar. We are due for a meeting soon anyway."}, {"from": "Michael Zmijewski (Image Studios)", "subject": "Re: Stella triggered by email \u2014 I defer to Alyvia, I support moving to Stella", "snippet": "David, I refer the question to Alyvia. However, I support moving to Stella, provided Alyvia is in agreement."}, {"from": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "Accepted: Diane Denholm <> David Ortiz @ Tue Apr 21 10:30am", "snippet": "Diane Denholm has accepted this invitation. Starbucks, 4474 Town Center Pkwy."}, {"from": "Jay Coulter <jcoulter@tamgmt.com>", "subject": "David Ortiz <> Jay Coulter \u2014 Microsoft Teams meeting link", "snippet": "Microsoft Teams meeting join link for David Ortiz and Jay Coulter."}], "slack_msgs": [{"channel": "#DM \u2014 Aamish", "text": "Good morning. I'm about to meet with the Accelerator on marketing. Would you please look at this video and see how to set up the MCP from NotebookLM to Claude Code?", "timestamp": "5:47 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Good morning. I'm ready to meet", "timestamp": "6:40 AM"}, {"channel": "#DM \u2014 Aamish", "text": "I'm ready to connect again. I'll go on the same meeting", "timestamp": "8:08 AM"}, {"channel": "#DM \u2014 Aamish", "text": "I wanted also to update you on Image Studio 360 Stella bot triggering. There is a new GHL feature \u2014 trigger automation off of an email. Can you look for that and turn it on for Michael?", "timestamp": "9:04 AM"}, {"channel": "#DM \u2014 Aamish", "text": "How are things going?", "timestamp": "12:09 PM"}, {"channel": "#DM \u2014 Aamish", "text": "I have created a Lovable app as the deliverable for AI OS instead of using Notion. Still at the beginning stages.", "timestamp": "1:05 PM"}, {"channel": "#DM \u2014 Aamish", "text": "Someone in the accelerator has created a NotebookLM MCP \u2014 this has application for our work.", "timestamp": "1:06 PM"}, {"channel": "#DM \u2014 Aamish", "text": "Someone else has created a deliverable page \u2014 check out ai-os-orchestrator.lovable.app/#pricing for reference.", "timestamp": "1:07 PM"}], "claude_work": [{"summary": "Jay Coulter call \u2014 strong AIOS pitch. Stella email trigger enabled for Image Studios 360. Lovable deliverable app prototype. AAA Accelerator morning session with Guy Last.", "outputs": ["Lovable deliverable app (wizardly-ai.lovable.app)", "Stella email trigger GHL setup"]}], "files": [], "db_meetings": [{"title": "Jay Coulter", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "David Ortiz introduced a custom AI operating system (AIOS), designed as an autonomous intelligence layer to enhance business operations through automation and real-time insights. This system consists of five layers that include context loading, live data integration, and the automation of repetitive tasks, targeting small to medium-sized businesses like plumbers and consultants. Ortiz emphasized n", "action_items": [], "keywords": ["AI Operating System", "Claude AI", "CRM Development", "Small Business Automation", "AI Sales Opportunity", "Pinger System"]}, {"title": "Aamish", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "The meeting discussed the launch strategy for the AIOS product package, aimed at business owners and priced between $5,000 and $10,000. A two-pronged sales approach was proposed, where direct sales of AIOS installation would build trust before upselling integration with Go High Level for marketing automation. David Ortiz emphasized the need for remote installation to reduce friction and establish ", "action_items": [], "keywords": ["AIOS", "Fractional AI Officer", "Remote Installation", "Business Automation", "LinkedIn Branding", "Go High Level"]}, {"title": "Meeting with Guy Last", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "David Ortiz is establishing his role as a fractional AI officer, generating recurring revenue through AI operating systems (AIOS) while currently earning around $6,000 per month. He aims to engage small businesses and financial advisors, pricing AIOS engagements between $5,000 and $10,000 per month. His strategy includes providing educational materials for clients and utilizing local networks for ", "action_items": [], "keywords": ["Fractional AI Officer", "AI Operating Systems", "Go High Level", "AI Adoption", "Financial Advisors", "Small Business AI Consulting"]}, {"title": "David Ortiz  and Guy Last", "duration": "", "participants": ["david@advisoraipartners.com", "guy@aaaaccelerator.com"], "summary": "David Ortiz is establishing himself as a fractional AI officer, targeting financial advisors and entrepreneurs with AIOS implementations to create scalable revenue streams. He plans to charge between $5,000 and $10,000 per month for AIOS setups, promoting ongoing client engagement through hands-on support and education. Ortiz has secured $200,000 annually from AI consulting and is expanding into c", "action_items": [], "keywords": ["Fractional AI Officer", "AI Operating System", "Go High Level", "AI Adoption", "Small Business Consulting", "Workflow Automation"]}]}}, {"date": "2026-04-21", "weekday": "Tuesday", "friendly": "Apr 21", "score": 85, "dims": {"output": 20, "pipeline": 11, "meetings": 24, "collab": 14, "innovation": 16}, "type_icon": "\u26a1", "type_label": "Velocity", "type_color": "#D97706", "has_data": true, "meetings_count": 8, "emails_sent_count": 6, "emails_recv_count": 8, "slack_count": 7, "files_count": 3, "db_meetings_count": 3, "detail": {"cal_events": [{"title": "David Ortiz and Nik Volynkin (AAA Accelerator)", "start": "7:00 AM", "end": "7:45 AM", "location": "Google Meet", "attendees": ["nik@aaaaccelerator.com"]}, {"title": "The Power Hour: Mike & Fer", "start": "9:30 AM", "end": "10:30 AM", "location": "", "attendees": []}, {"title": "Twinkle Nights AI Check In Meeting", "start": "10:30 AM", "end": "11:30 AM", "location": "Google Meet", "attendees": ["tom@twinklenights.com"]}, {"title": "Diane Denholm <> David Ortiz (Supporting Strategies \u2014 Starbucks)", "start": "10:30 AM", "end": "11:30 AM", "location": "Starbucks, 4474 Town Center Pkwy", "attendees": ["ddenholm@supportingstrategies.com"]}, {"title": "Token Optimisation for AIOS (AAA Accelerator)", "start": "12:00 PM", "end": "1:00 PM", "location": "Live stream", "attendees": []}], "emails_sent": [{"to": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "Good sitting down with you today, Diane \u2014 here's the full picture", "snippet": "For Diane Denholm \u00b7 Supporting Strategies. This is what Supporting Strategies looks like running on AI."}, {"to": "Pamela (Step Up / CPA)", "subject": "Sample document status email update for schools \u2014 auto-generated", "snippet": "Step Up AUP \u2014 Document Status Update. Cook's Good Academy \u00b7 April 21, 2026."}, {"to": "Brianna Gonzalez <support@twinklenights.com>", "subject": "Checking In \u2014 Twinkle Nights GHL Social Media Tools", "snippet": "We got you set up with access to the social media tools in GHL last week and just wanted to check in."}, {"to": "Tom Snogles <tom@twinklenights.com>", "subject": "Voice Agent Intro Message \u2014 Options for Review", "snippet": "Here are the top intro message options for the voice agent. Let me know which feels right."}, {"to": "Jean Hawney <info@thelittleeaters.com>", "subject": "April 2026 Newsletter \u2014 Your Kid Might Need an OT", "snippet": "\ud83c\udf4f April is Occupational Therapy Month. What OT really covers and how it connects to feeding."}, {"to": "Naveen <upworknaveen1@gmail.com>", "subject": "Twinkle Nights Updated Widget Code \u2014 Ready to Deploy (voice agent enabled)", "snippet": "He's ready for us to deploy the widget with voice agent functionality on the website."}], "emails_recv": [{"from": "Tom Snogles <tom@twinklenights.com>", "subject": "Need More Integration \u2014 meeting went great, but need more drive and guidance", "snippet": "The meeting went great today, but we need more integration, guidance, and drive. I want to be asked questions like: Are you guys ready to set up X?"}, {"from": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "Introduction \u2014 colleague Jim St. Clair (AI Officer, Mississippi Coding Academies)", "snippet": "As always, I really enjoyed our discussion today. Afterwards, I was speaking with a former colleague. He was very interested in learning more."}, {"from": "Jim St. Clair (Mississippi Coding Academies)", "subject": "Re: Introduction \u2014 welcome a discussion", "snippet": "Thank you Diane, and hello David! I would welcome a discussion."}, {"from": "Netlify", "subject": "[Netlify] You've upgraded Advisor AI Partners to a Personal plan", "snippet": "You've upgraded your team, Advisor AI Partners, to a Personal plan. Powerful features to kickstart your web projects."}, {"from": "Netlify", "subject": "[Netlify] Good news! Your projects have been re-enabled", "snippet": "All projects on your team have been re-enabled and are now serving traffic normally."}, {"from": "Gemini Notes", "subject": "Notes: Twinkle Nights AI Check In Meeting Apr 21, 2026", "snippet": "Auto-generated notes from your Twinkle Nights AI Check In Meeting have been sent to invited guests."}, {"from": "Tom Snogles <tom@twinklenights.com>", "subject": "Re: Chat Widget Updates \u2014 picked message options for Twinkle & SPLC", "snippet": "For Twinkle: Effortless. Elegant. Iconic. From lights to rentals, we've got every detail covered."}, {"from": "Michael Zmijewski (Image Studios)", "subject": "Re: Stella triggered by email \u2014 Alyvia and I are both on board!", "snippet": "Alyvia and I connected. We are both on board with Stella reaching out to new Leads. Please proceed."}], "slack_msgs": [{"channel": "#DM \u2014 Aamish", "text": "Good morning. I hope you're doing well. Are you able to meet now before my meeting?", "timestamp": "8:26 AM"}, {"channel": "#DM \u2014 Aamish", "text": "My conversation with Tom last week was that he wants to speed up the process. Don't be such a nice guy \u2014 tell them we can move as quickly as they'd like, but they need to push.", "timestamp": "9:50 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Did you see the email that Tom sent? ('Need More Integration')", "timestamp": "1:00 PM"}, {"channel": "#DM \u2014 Aamish", "text": "I would like to discuss that email and give them a schedule to speed things up. They're trying to put the speed on us; however, they are not doing their part.", "timestamp": "1:03 PM"}, {"channel": "#DM \u2014 Aamish", "text": "Okay, let's leave the map out for right now, and we'll add that in as the very last portion. Get everything else working, and then we'll work on that.", "timestamp": "3:34 PM"}, {"channel": "#DM \u2014 Aamish", "text": "Let's create a deliverable dashboard with what is still outstanding, and then we'll target dates. Let's talk about that tomorrow in our meeting.", "timestamp": "3:37 PM"}, {"channel": "#DM \u2014 Aamish", "text": "Look how cool this is! (sharing new feature or build)", "timestamp": "6:34 PM"}], "claude_work": [{"summary": "Power morning \u2014 Nik coaching + Twinkle Nights check-in + Diane Denholm at Starbucks. Sent Diane her full AIOS picture email. Dealt with Tom's 'Need More Integration' email. Twinkle Nights widget voice agent deployed. Netlify upgrade completed. Token Optimization session.", "outputs": ["Good sitting down with you today, Diane \u2014 email", "Twinkle Nights Updated Widget Code", "Voice Agent Intro Message options", "Little Eaters April newsletter", "Netlify Personal plan upgrade"]}], "files": [{"name": "collect_fireflies.py", "path": "scripts/collect_fireflies.py", "ext": "PY", "size_kb": 7.3, "modified": "01:33 PM"}, {"name": "aios-email-diane-denholm.html", "path": "hub/aios-email-diane-denholm.html", "ext": "HTML", "size_kb": 17.3, "modified": "04:54 PM"}, {"name": "supporting-strategies.html", "path": "hub/supporting-strategies.html", "ext": "HTML", "size_kb": 46.8, "modified": "04:54 PM"}], "db_meetings": [{"title": "Apr 21, 10:49 AM", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "The discussion highlighted a strong push for automating business operations using AI platforms like Claude Code, which offers customizable dashboards for streamlined data access. Security concerns were raised regarding franchise-controlled platform management, limiting local AI adoption. Although there is a lack of deeper AI integration due to reluctance in investing with unclear ROI, the potentia", "action_items": [], "keywords": ["AI operating system", "business automation", "Claude Code", "sales process automation", "client dashboards", "LinkedIn marketing"]}, {"title": "Tech meeting.", "duration": "", "participants": ["david@advisoraipartners.com"], "summary": "The discussion revolved around improving the AIOS installation method, with Nik Volynkin suggesting parallel installations in separate folders for better troubleshooting and clarity in client onboarding. Instructional content was reviewed, leading to the conclusion that written guides suffice for most modules, while videos could enhance understanding of complex sections like Telegram. Technical as", "action_items": [], "keywords": ["AIOS setup", "Telegram integration", "client onboarding", "pricing tiers", "system audits", "voice AI agent"]}, {"title": "David Ortiz  and Nik Volynkin", "duration": "", "participants": ["nik@aaaaccelerator.com", "david@advisoraipartners.com"], "summary": "The discussion focused on the setup and technical implementation of the AI Operating System (AIOS), highlighting challenges such as installation complexity and the importance of modular flexibility. An iterative installation approach was recommended, with David Ortiz deciding to reinstall AIOS to resolve Telegram integration issues, while Nik Volynkin suggested using multiple instances for safer t", "action_items": [], "keywords": ["AIOS setup", "Telegram integration", "Lovable app", "API connectors", "tiered service packages", "voice AI integration"]}]}}, {"date": "2026-04-22", "weekday": "Wednesday", "friendly": "Apr 22", "score": 92, "dims": {"output": 20, "pipeline": 20, "meetings": 23, "collab": 11, "innovation": 18}, "type_icon": "\u26a1", "type_label": "Velocity", "type_color": "#D97706", "has_data": true, "meetings_count": 5, "emails_sent_count": 10, "emails_recv_count": 7, "slack_count": 8, "files_count": 27, "db_meetings_count": 0, "detail": {"cal_events": [{"title": "Ben Montgomery \u2014 Meeting with Advisor AI Partners", "start": "10:00 AM", "end": "11:00 AM", "location": "Google Meet", "attendees": ["Ben Montgomery", "ben.montgomery@venturepointe.com"], "description": "Discovery call with Ben Montgomery from VenturePointe, Inc. Explored AI implementation for his role and team."}, {"title": "Jason Pratt \u2014 Meeting with Advisor AI Partners", "start": "12:00 PM", "end": "1:00 PM", "location": "Google Meet", "attendees": ["Jason Pratt", "jason@prattify.com"], "description": "Following up to email invite \u2014 Prattify Motion AI partnership discussion."}, {"title": "Taverna \u2014 Michael Newsome", "start": "1:30 PM", "end": "2:30 PM", "location": "Taverna", "attendees": ["Michael Newsome"], "description": "In-person lunch meeting with Michael Newsome."}, {"title": "Jean Hawney \u2014 Meeting with Advisor AI Partners", "start": "4:00 PM", "end": "5:00 PM", "location": "Google Meet", "attendees": ["Jean Hawney", "info@thelittleeaters.com"], "description": "Little Eaters & Talkers client meeting \u2014 payment setup, welcome email, April newsletter follow-up."}, {"title": "Arlington Chamber Social", "start": "5:00 PM", "end": "7:00 PM", "location": "Arlington", "attendees": [], "description": "Chamber of Commerce networking social event."}], "emails_sent": [{"to": "Jason Pratt <jason@prattify.com>", "subject": "Motion stays. Here's what we build around it.", "snippet": "For Jason Pratt \u00b7 Prattify Motion stays at the center. Here's what we build around it. Developed by the leading AI business incubator internationally \u2014 built to work with the tools you already run"}, {"to": "Ben Montgomery <ben.montgomery@venturepointe.com>", "subject": "Good sitting down with you today, Ben", "snippet": "VenturePointe, Inc. This is what VenturePointe looks like running on AI. Everything we talked about today \u2014 built out specifically for your role, your systems, and your team."}, {"to": "Doug Wilder <Doug@wildersuccess.com>", "subject": "Doug \u2014 here's what Wilder Success looks like running on AI", "snippet": "WilderSuccess.com 32 years of knowledge. One system to finally put it all to work. What I promised you on this morning's call \u2014 built out specifically for your coaching practice."}, {"to": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "I built your proposal system", "snippet": "For Diane Denholm \u00b7 Supporting Strategies. I built your proposal system. This is a working mockup \u2014 what your Proposal Engine looks like inside the AIOS."}, {"to": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "Diane \u2014 what if the inbox sorted itself (and your assistant never had to triage again)?", "snippet": "Taming the inbox \u2014 and what it's actually costing you not to. AIOS Inbox Intelligence \u2014 built for Supporting Strategies."}, {"to": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "Diane \u2014 I built your client knowledge base (and you can ask it anything)", "snippet": "What if you could ask your entire client history a question? AIOS Client Intelligence Hub \u2014 built for Supporting Strategies."}, {"to": "Jean Hawney <info@thelittleeaters.com>", "subject": "Re: Quick update \u2014 payment, welcome email + April newsletter", "snippet": "Hi Jean, Got it on all fronts \u2014 here's where things stand. PAYMENT LINK Yes, I have the payment request email ready and sending it your way for a quick review."}, {"to": "Tom Snogles <tom@twinklenights.com>", "subject": "Phone Number Porting \u2014 Twinkle Nights & SunPower Lawn Care", "snippet": "Hi Tom, As discussed on our last call, here are the details and next steps for porting your phone numbers for both Twinkle Nights and SunPower Lawn Care."}, {"to": "Naveen <upworknaveen1@gmail.com>", "subject": "Re: Twinkle Nights Updated Widget Code \u2014 Ready to Deploy (SunPower)", "snippet": "Hi Naveen, here is the Sun Power Lawn Care widget code with voice agent functionality enabled."}, {"to": "Brianna Gonzalez <support@twinklenights.com>", "subject": "Checking In \u2014 Twinkle Nights GHL Social Media Tools", "snippet": "Hope you're doing well. We got you set up with access to the social media tools in GHL last week and just wanted to check in."}], "emails_recv": [{"from": "Fathom <no-reply@fathom.video>", "subject": "Recap of your meeting with Jason Pratt", "snippet": "Meeting Purpose: Explore a potential AI partnership to boost business efficiency. Key Takeaways: Proposed Partnership \u2014 David Ortiz (Advisor AI Partners) offered a joint venture to implement AI."}, {"from": "Diane Denholm <ddenholm@supportingstrategies.com>", "subject": "Re: I built your proposal system", "snippet": "Wow! Very cool and very helpful. Was it supposed to generate the presentation as well when I click that button or was this just an example?"}, {"from": "Fathom <no-reply@fathom.video>", "subject": "Recap for \"Impromptu Google Meet Meeting\"", "snippet": "Meeting Purpose: Review project status, resolve blockers, and align on next steps. Key Takeaways: Heather's Project \u2014 client-facing demo is ready."}, {"from": "Aamish Aaftab <aamish@advisoraipartners.com>", "subject": "Final Account Audit \u2014 Tom Snogles", "snippet": "Final Account Audit \u2014 Tom Snogles: Twinkle Knights & Sun Power Lawn Care. Compiled April 22, 2026 | Sources: Notion workspace, meeting transcripts, GHL records, dashboard."}, {"from": "Jean Hawney <info@thelittleeaters.com>", "subject": "Re: Quick update \u2014 payment, welcome email + April newsletter", "snippet": "Molly \u2014 I see on your platform that the payment went through but it is not showing in stripe and it is not in my bank account."}, {"from": "Brianna Gonzalez <support@twinklenights.com>", "subject": "Re: Checking In \u2014 Twinkle Nights GHL Social Media Tools", "snippet": "Thanks for checking in! I just got logged in and took a look around. I would love a tour if you have time, Aamish."}, {"from": "Google Meet <meetings-noreply@google.com>", "subject": "Meeting records: Ben Montgomery - Meeting with Advisor AI Partners", "snippet": "The meeting records from your meeting have been uploaded to Drive. Video Recording available."}], "slack_msgs": [{"channel": "#DM \u2014 Aamish", "text": "Good morning. I would like to prepare a 'work scope' for Twinklenights. I am going to pull together what we originally sold him and what we are delivering.", "timestamp": "8:16 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Shared YouTube video \u2014 'I think this has application for Jean and our other clients. Please watch this and let's discuss it.'", "timestamp": "8:16 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Hey Aamish, David needs a full work audit for Twinkle Knights and Sun Power Lawn Care (Tom Snogles). Please copy this prompt and run it in your AI OS...", "timestamp": "8:29 AM"}, {"channel": "#DM \u2014 Aamish", "text": "We built a live audit page for Twinkle Nights and Sun Power Lawn Care \u2014 live at advisoraipartners-hub.netlify.app. YOUR PART: Open the page and click the teal 'Aamish Edit Mode' button.", "timestamp": "8:36 AM"}, {"channel": "#DM \u2014 Aamish", "text": "I'm ready to meet", "timestamp": "9:08 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Please update me on Heather. Are we ready to show her something? I want to create one of our beautiful HTML emails for her that shows everything we've done.", "timestamp": "9:57 AM"}, {"channel": "#DM \u2014 Aamish", "text": "I'm ready to reconnect again", "timestamp": "11:05 AM"}, {"channel": "#DM \u2014 Aamish", "text": "Can you please send an email to Michael and copy Olivia on it about Stella and activating \u2014 want to hand that off to you to make sure all of that is working.", "timestamp": "11:57 AM"}], "claude_work": [{"summary": "Built 'David's Day' \u2014 a full personal AI dashboard that pulls together everything David does daily: Calendar, Gmail, Slack, iMessages, GHL calls, meeting transcripts, and files built. Generates a vivid 'how was your day?' narrative using Claude Opus. The system includes a Python generator script, a beautiful light-mode HTML dashboard with timeline, category cards, day navigation, and stats strip. Created the /david-day skill so this can be run on demand any time. Also found 7 files modified today in the hub/ directory.", "outputs": ["scripts/generate_davids_day.py \u2014 main generator script", ".claude/commands/david-day.md \u2014 /david-day skill", "hub/daily-brief/2026-04-22.html \u2014 today's dashboard", "AIOS Starter Kit \u2014 David's Day system is live"]}], "files": [{"name": "2026-04-22.html", "path": "hub/daily-brief/2026-04-22.html", "ext": "HTML", "size_kb": 34.8, "modified": "01:06 PM"}, {"name": "2026-04-16.html", "path": "hub/daily-brief/2026-04-16.html", "ext": "HTML", "size_kb": 28.0, "modified": "01:12 PM"}, {"name": "2026-04-20.html", "path": "hub/daily-brief/2026-04-20.html", "ext": "HTML", "size_kb": 32.0, "modified": "01:12 PM"}, {"name": "2026-04-21.html", "path": "hub/daily-brief/2026-04-21.html", "ext": "HTML", "size_kb": 36.1, "modified": "01:12 PM"}, {"name": "2026-04-17.html", "path": "hub/daily-brief/2026-04-17.html", "ext": "HTML", "size_kb": 38.7, "modified": "01:12 PM"}, {"name": "2026-04-01.html", "path": "hub/daily-brief/2026-04-01.html", "ext": "HTML", "size_kb": 25.1, "modified": "01:12 PM"}, {"name": "2026-04-06.html", "path": "hub/daily-brief/2026-04-06.html", "ext": "HTML", "size_kb": 24.5, "modified": "01:12 PM"}, {"name": "2026-04-10.html", "path": "hub/daily-brief/2026-04-10.html", "ext": "HTML", "size_kb": 24.5, "modified": "01:12 PM"}, {"name": "2026-04-07.html", "path": "hub/daily-brief/2026-04-07.html", "ext": "HTML", "size_kb": 27.2, "modified": "01:12 PM"}, {"name": "2026-04-08.html", "path": "hub/daily-brief/2026-04-08.html", "ext": "HTML", "size_kb": 25.5, "modified": "01:12 PM"}, {"name": "2026-04-04.html", "path": "hub/daily-brief/2026-04-04.html", "ext": "HTML", "size_kb": 23.6, "modified": "01:12 PM"}, {"name": "2026-04-13.html", "path": "hub/daily-brief/2026-04-13.html", "ext": "HTML", "size_kb": 26.3, "modified": "01:12 PM"}, {"name": "2026-04-09.html", "path": "hub/daily-brief/2026-04-09.html", "ext": "HTML", "size_kb": 25.6, "modified": "01:12 PM"}, {"name": "2026-04-14.html", "path": "hub/daily-brief/2026-04-14.html", "ext": "HTML", "size_kb": 31.8, "modified": "01:12 PM"}, {"name": "2026-04-02.html", "path": "hub/daily-brief/2026-04-02.html", "ext": "HTML", "size_kb": 25.5, "modified": "01:12 PM"}, {"name": "2026-04-18.html", "path": "hub/daily-brief/2026-04-18.html", "ext": "HTML", "size_kb": 24.0, "modified": "01:12 PM"}, {"name": "2026-04-03.html", "path": "hub/daily-brief/2026-04-03.html", "ext": "HTML", "size_kb": 25.3, "modified": "01:12 PM"}, {"name": "2026-04-15.html", "path": "hub/daily-brief/2026-04-15.html", "ext": "HTML", "size_kb": 30.7, "modified": "01:12 PM"}, {"name": "productivity-index.html", "path": "hub/productivity-index.html", "ext": "HTML", "size_kb": 45.2, "modified": "03:24 PM"}, {"name": "aios-email-diane-denholm.html", "path": "hub/aios-email-diane-denholm.html", "ext": "HTML", "size_kb": 17.3, "modified": "04:54 PM"}, {"name": "supporting-strategies.html", "path": "hub/supporting-strategies.html", "ext": "HTML", "size_kb": 46.8, "modified": "04:54 PM"}, {"name": "collect_fathom.py", "path": "scripts/collect_fathom.py", "ext": "PY", "size_kb": 10.6, "modified": "05:06 PM"}, {"name": "meeting-dashboard.html", "path": "hub/meeting-dashboard.html", "ext": "HTML", "size_kb": 34.0, "modified": "07:05 AM"}, {"name": "twinkle-knights-audit.html", "path": "hub/twinkle-knights-audit.html", "ext": "HTML", "size_kb": 70.3, "modified": "08:36 AM"}, {"name": "ss-proposal-engine.html", "path": "hub/ss-proposal-engine.html", "ext": "HTML", "size_kb": 28.1, "modified": "08:52 AM"}, {"name": "ss-client-intelligence.html", "path": "hub/ss-client-intelligence.html", "ext": "HTML", "size_kb": 31.1, "modified": "09:14 AM"}, {"name": "ss-inbox-triage.html", "path": "hub/ss-inbox-triage.html", "ext": "HTML", "size_kb": 51.6, "modified": "09:20 AM"}], "db_meetings": []}}];
+const DIM_COLORS = {
+  output: "#2563EB", pipeline: "#0D9488",
+  meetings: "#7C3AED", collab: "#D97706", innovation: "#DC2626",
+};
+const DIM_MAX = { output: 20, pipeline: 20, meetings: 25, collab: 15, innovation: 20 };
+const DIM_LABELS = {
+  output: "Output", pipeline: "Pipeline",
+  meetings: "Meetings", collab: "Collaboration", innovation: "Innovation"
+};
+
+const todayStr = new Date().toISOString().split('T')[0];
+const ACTIVE_DATES = ALL_DATA.filter(x => x.has_data).map(x => x.date).sort();
+let currentBriefDate = todayStr;
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tab-pane').forEach(p =>
+    p.classList.toggle('active', p.id === 'tab-' + name));
+}
+
+// ── AIOS Pulse: show day detail ───────────────────────────────────────────────
+function showDay(dateStr) {
+  const d = ALL_DATA.find(x => x.date === dateStr);
+  if (!d || !d.has_data) return;
+
+  document.querySelectorAll('.cal-cell.selected').forEach(el => el.classList.remove('selected'));
+  const cell = document.querySelector(`[data-date="${dateStr}"]`);
+  if (cell) cell.classList.add('selected');
+
+  const panel = document.getElementById('day-detail');
+  panel.classList.add('active');
+
+  document.getElementById('dd-title').textContent = d.weekday + ', ' + d.friendly + ' 2026';
+  const badge = document.getElementById('dd-badge');
+  badge.textContent = d.type_icon + ' ' + d.type_label;
+  badge.style.background = d.type_color + '20';
+  badge.style.color = d.type_color;
+  badge.style.border = '1px solid ' + d.type_color + '50';
+
+  const scoreBig = document.getElementById('dd-score-big');
+  scoreBig.textContent = d.score + ' / 100';
+  scoreBig.style.color = d.type_color;
+
+  document.getElementById('dims-grid').innerHTML = Object.entries(d.dims).map(([key, val]) => {
+    const pct = Math.round(val / DIM_MAX[key] * 100);
+    return `<div class="dim-row">
+      <span class="dim-name mono">${DIM_LABELS[key]}</span>
+      <div class="dim-bar-wrap"><div class="dim-bar" style="width:${pct}%;background:${DIM_COLORS[key]}"></div></div>
+      <span class="dim-val syne" style="color:${DIM_COLORS[key]}">${val}</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('dd-meta').innerHTML = `
+    <div class="dd-stat"><span class="dd-stat-val syne">${d.meetings_count}</span><span class="dd-stat-lbl mono">Meetings</span></div>
+    <div class="dd-stat"><span class="dd-stat-val syne">${d.emails_sent_count}</span><span class="dd-stat-lbl mono">Emails Sent</span></div>
+    <div class="dd-stat"><span class="dd-stat-val syne">${d.files_count}</span><span class="dd-stat-lbl mono">Files Built</span></div>
+    <div class="dd-stat"><span class="dd-stat-val syne">${d.slack_count}</span><span class="dd-stat-lbl mono">Slack Msgs</span></div>
+  `;
+
+  const link = document.getElementById('dd-link');
+  link.href = '#';
+  link.onclick = (e) => { e.preventDefault(); loadBrief(dateStr); };
+  link.style.display = 'block';
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── David's Day inline renderer ───────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderBrief(dateStr) {
+  const d = ALL_DATA.find(x => x.date === dateStr);
+  const body = document.getElementById('brief-body');
+  if (!d || !d.has_data) {
+    body.innerHTML = `<div class="brief-empty"><h2>No data for this day</h2><p>Use /david-day to capture a live day.</p></div>`;
+    return;
+  }
+
+  const det = d.detail || {};
+  const calEvents  = det.cal_events  || [];
+  const emailsSent = det.emails_sent || [];
+  const emailsRecv = det.emails_recv || [];
+  const slackMsgs  = det.slack_msgs  || [];
+  const cwItems    = det.claude_work || [];
+  const files      = det.files       || [];
+  const dbMeet     = det.db_meetings || [];
+
+  // Pulse context
+  const sorted = ALL_DATA.filter(x => x.has_data).sort((a,b) => b.score-a.score);
+  const rank = sorted.findIndex(x => x.date === dateStr) + 1;
+  const isPeak = rank === 1;
+  const isRunnerUp = rank === 2;
+  const WEEKS = [
+    {"label":"Week 1","range":"Apr 1–5",  "dates":["2026-04-01","2026-04-02","2026-04-03","2026-04-04","2026-04-05"]},
+    {"label":"Week 2","range":"Apr 6–12", "dates":["2026-04-06","2026-04-07","2026-04-08","2026-04-09","2026-04-10","2026-04-11","2026-04-12"]},
+    {"label":"Week 3","range":"Apr 13–19","dates":["2026-04-13","2026-04-14","2026-04-15","2026-04-16","2026-04-17","2026-04-18","2026-04-19"]},
+    {"label":"Week 4","range":"Apr 20–22","dates":["2026-04-20","2026-04-21","2026-04-22"]},
+  ];
+  const weekObj = WEEKS.find(w => w.dates.includes(dateStr)) || {};
+  // weekly avg
+  let weekAvg = '—';
+  if (weekObj.dates) {
+    const wd = weekObj.dates.map(x => ALL_DATA.find(y => y.date===x)).filter(x => x && x.has_data);
+    if (wd.length) weekAvg = Math.round(wd.reduce((s,x)=>s+x.score,0)/wd.length);
+  }
+
+  // Dim chips
+  const dimChips = Object.entries(d.dims).map(([k,v]) => {
+    const bg = DIM_COLORS[k]+'18'; const fg = DIM_COLORS[k];
+    const lbl = DIM_LABELS[k];
+    return `<span class="bh-dim-chip" style="background:${bg};color:${fg};border-color:${fg}40">${lbl} ${v}</span>`;
+  }).join('');
+
+  // Hero
+  let heroHtml = `
+    <div class="brief-hero">
+      <div class="bh-left">
+        <div class="bh-date">${d.weekday}, ${d.friendly} 2026</div>
+        <div class="bh-badge" style="background:${d.type_color}18;color:${d.type_color};border:1px solid ${d.type_color}50">
+          ${d.type_icon} ${d.type_label} Day
+          ${isPeak ? ' &nbsp;👑 Peak Day' : ''}${isRunnerUp ? ' &nbsp;🥈 Runner-Up' : ''}
+        </div>
+        <div class="bh-dims" style="margin-top:12px">${dimChips}</div>
+      </div>
+      <div class="bh-right">
+        <div class="bh-score" style="color:${d.type_color}">${d.score}</div>
+        <div class="bh-score-lbl mono">OUT OF 100</div>
+      </div>
+    </div>`;
+
+  // Calendar section
+  let calHtml = '';
+  if (calEvents.length) {
+    const rows = calEvents.map(e => `
+      <div class="cal-event">
+        <span class="ce-time mono">${esc(e.start||'')}${e.end?'<br>'+esc(e.end):''}</span>
+        <div>
+          <div class="ce-title">${esc(e.title||'')}</div>
+          ${e.attendees&&e.attendees.length ? `<div class="ce-meta">${esc(e.attendees.slice(0,3).join(', '))}</div>`:''}
+          ${e.location ? `<span class="ce-loc">${esc(e.location)}</span>`:''}
+        </div>
+      </div>`).join('');
+    calHtml = `<div class="b-card"><div class="b-section-title syne">📅 Calendar <span class="b-count-badge mono">${calEvents.length}</span></div>${rows}</div>`;
+  }
+
+  // Emails sent section
+  let sentHtml = '';
+  if (emailsSent.length) {
+    const items = emailsSent.map(e => `
+      <div class="email-item">
+        <div class="ei-header">
+          <span class="ei-to mono">TO</span>
+          <span class="ei-name">${esc((e.to||'').replace(/<.*>/,'').trim())}</span>
+        </div>
+        <div class="ei-subj">${esc(e.subject||'')}</div>
+        <div class="ei-snippet">${esc(e.snippet||'')}</div>
+      </div>`).join('');
+    sentHtml = `<div class="b-card"><div class="b-section-title syne">📤 Emails Sent <span class="b-count-badge mono">${emailsSent.length}</span></div>${items}</div>`;
+  }
+
+  // Emails received section
+  let recvHtml = '';
+  if (emailsRecv.length) {
+    const items = emailsRecv.map(e => `
+      <div class="email-item">
+        <div class="ei-header">
+          <span class="ei-to mono">FROM</span>
+          <span class="ei-name">${esc((e.from||'').replace(/<.*>/,'').trim())}</span>
+        </div>
+        <div class="ei-subj">${esc(e.subject||'')}</div>
+        <div class="ei-snippet">${esc(e.snippet||'')}</div>
+      </div>`).join('');
+    recvHtml = `<div class="b-card" style="margin-top:14px"><div class="b-section-title syne">📥 Emails Received <span class="b-count-badge mono">${emailsRecv.length}</span></div>${items}</div>`;
+  }
+
+  // Slack section
+  let slackHtml = '';
+  if (slackMsgs.length) {
+    const items = slackMsgs.map(m => `
+      <div class="slack-item">
+        <div>
+          <div class="si-channel mono">${esc(m.channel||'')}</div>
+          <div class="si-text">${esc(m.text||'')}</div>
+        </div>
+        <span class="si-ts mono">${esc(m.timestamp||'')}</span>
+      </div>`).join('');
+    slackHtml = `<div class="b-card"><div class="b-section-title syne">💬 Slack <span class="b-count-badge mono">${slackMsgs.length}</span></div>${items}</div>`;
+  }
+
+  // Files built section
+  let filesHtml = '';
+  if (files.length) {
+    const items = files.map(f => `
+      <div class="file-item">
+        <span class="file-ext">${esc(f.ext||'FILE')}</span>
+        <span class="file-name">${esc(f.name||'')}</span>
+        <span class="file-size mono">${esc(f.size_kb)} KB</span>
+      </div>`).join('');
+    filesHtml = `<div class="b-card"><div class="b-section-title syne">🔨 Files Built <span class="b-count-badge mono">${files.length}</span></div>${items}</div>`;
+  }
+
+  // Claude / AI work section
+  let cwHtml = '';
+  if (cwItems.length) {
+    const items = cwItems.map(c => {
+      const outputs = (c.outputs||[]).map(o => `<span class="cw-output">${esc(o)}</span>`).join('');
+      return `<div class="cw-item">
+        <div class="cw-summary">${esc(c.summary||'')}</div>
+        ${outputs}
+      </div>`;
+    }).join('');
+    cwHtml = `<div class="b-card"><div class="b-section-title syne">🤖 AI Work <span class="b-count-badge mono">${cwItems.length}</span></div>${items}</div>`;
+  }
+
+  // Meeting transcripts section
+  let transcriptHtml = '';
+  if (dbMeet.length) {
+    const items = dbMeet.map(m => {
+      const actions = (m.action_items||[]).map(a => `<div class="mt-action">✓ ${esc(a)}</div>`).join('');
+      const keywords = (m.keywords||[]).map(k => `<span class="mt-keyword">${esc(k)}</span>`).join('');
+      return `<div class="mt-item">
+        <div class="mt-title">${esc(m.title||'Meeting')}</div>
+        ${m.summary ? `<div class="mt-summary">${esc(m.summary)}</div>`:''}
+        ${actions}
+        ${keywords ? `<div style="margin-top:6px">${keywords}</div>`:''}
+      </div>`;
+    }).join('');
+    transcriptHtml = `<div class="b-card"><div class="b-section-title syne">🎙 Meeting Recaps <span class="b-count-badge mono">${dbMeet.length}</span></div>${items}</div>`;
+  }
+
+  // Pulse context sidebar
+  const pulseCtx = `
+    <div class="pulse-context">
+      <div class="pc-title syne">⚡ Pulse Context</div>
+      <div class="pc-row"><span class="pc-lbl mono">Score</span><span class="pc-val syne" style="color:${d.type_color}">${d.score} / 100</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Day Type</span><span class="pc-val syne">${d.type_icon} ${d.type_label}</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">April Rank</span><span class="pc-val syne">${isPeak?'👑 ':''}&num;${rank} of ${sorted.length}</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Week</span><span class="pc-val syne">${weekObj.label||'—'} (${weekObj.range||''})</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Week Avg</span><span class="pc-val syne">${weekAvg}</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Meetings</span><span class="pc-val syne">${d.meetings_count}</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Emails Out</span><span class="pc-val syne">${d.emails_sent_count}</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Emails In</span><span class="pc-val syne">${d.emails_recv_count}</span></div>
+      <div class="pc-row"><span class="pc-lbl mono">Slack Msgs</span><span class="pc-val syne">${d.slack_count}</span></div>
+      <div class="pc-row" style="border-bottom:none"><span class="pc-lbl mono">Files Built</span><span class="pc-val syne">${d.files_count}</span></div>
+    </div>`;
+
+  body.innerHTML = `
+    <div class="brief-body">
+      ${heroHtml}
+      <div>
+        ${calHtml}
+        ${transcriptHtml}
+        ${cwHtml}
+        ${filesHtml}
+      </div>
+      <div>
+        ${pulseCtx}
+        ${sentHtml}
+        ${recvHtml}
+        ${slackHtml}
+      </div>
+    </div>`;
+}
+
+function loadBrief(dateStr) {
+  const available = ACTIVE_DATES.includes(dateStr) ? dateStr :
+    ACTIVE_DATES[ACTIVE_DATES.length - 1];
+  currentBriefDate = available;
+
+  const d = ALL_DATA.find(x => x.date === available);
+  document.getElementById('brief-date-label').textContent =
+    d ? d.weekday + ', ' + d.friendly + ' 2026' : available;
+
+  const idx = ACTIVE_DATES.indexOf(available);
+  document.getElementById('brief-prev').disabled = idx <= 0;
+  document.getElementById('brief-next').disabled = idx >= ACTIVE_DATES.length - 1;
+
+  renderBrief(available);
+  switchTab('brief');
+}
+
+function prevBriefDay() {
+  const idx = ACTIVE_DATES.indexOf(currentBriefDate);
+  if (idx > 0) loadBrief(ACTIVE_DATES[idx - 1]);
+}
+
+function nextBriefDay() {
+  const idx = ACTIVE_DATES.indexOf(currentBriefDate);
+  if (idx < ACTIVE_DATES.length - 1) loadBrief(ACTIVE_DATES[idx + 1]);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+const todayData = ALL_DATA.find(x => x.date === todayStr);
+const initDate = (todayData && todayData.has_data) ? todayStr :
+  (ALL_DATA.filter(x => x.has_data).sort((a,b) => b.score - a.score)[0] || {}).date;
+
+if (initDate) showDay(initDate);
+
+// Pre-render the brief for today silently
+if (initDate) {
+  currentBriefDate = initDate;
+  const dd = ALL_DATA.find(x => x.date === initDate);
+  document.getElementById('brief-date-label').textContent =
+    dd ? dd.weekday + ', ' + dd.friendly + ' 2026' : initDate;
+  const idx = ACTIVE_DATES.indexOf(initDate);
+  document.getElementById('brief-prev').disabled = idx <= 0;
+  document.getElementById('brief-next').disabled = idx >= ACTIVE_DATES.length - 1;
+  renderBrief(initDate);
+}
+</script>
+</body>
+</html>
