@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIOS Inbox Intelligence — Supporting Strategies Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1A3A6B;
+    --blue-light: #2451A3;
+    --teal: #0C7A6E;
+    --teal-light: #0E9688;
+    --gold: #B8860B;
+    --gold-light: #D4A017;
+    --bg: #F5F4F0;
+    --white: #FFFFFF;
+    --border: #E2E0DB;
+    --text: #1A1A1A;
+    --muted: #6B7280;
+    --sidebar-w: 220px;
+    --red: #DC2626;
+    --green: #059669;
+    --purple: #7C3AED;
+    --orange: #EA580C;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+
+  /* ── DEMO BANNER ─────────────────────────────────────── */
+  .demo-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: var(--gold); color: var(--white); text-align: center;
+    padding: 9px 20px; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .demo-banner a { color: var(--white); font-weight: 700; text-decoration: underline; }
+
+  /* ── APP SHELL ────────────────────────────────────────── */
+  .app { display: flex; height: 100vh; padding-top: 38px; }
+
+  /* ── SIDEBAR ──────────────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--blue); color: var(--white);
+    display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 20px 18px 14px; border-bottom: 1px solid rgba(255,255,255,.12);
+  }
+  .sidebar-logo .brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: .4px; line-height: 1.3; }
+  .sidebar-logo .sub { font-size: 10px; opacity: .55; margin-top: 3px; text-transform: uppercase; letter-spacing: .8px; }
+  .sidebar-client {
+    margin: 12px 10px; background: rgba(255,255,255,.1); border-radius: 8px;
+    padding: 10px 12px; font-size: 12px;
+  }
+  .sidebar-client .label { opacity: .6; font-size: 10px; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 4px; }
+  .sidebar-client .name { font-weight: 700; font-size: 13px; }
+  .sidebar-client .role { font-size: 11px; opacity: .7; margin-top: 2px; }
+  .nav-section { padding: 14px 10px 4px; font-size: 10px; opacity: .45; text-transform: uppercase; letter-spacing: .9px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; margin: 1px 6px; border-radius: 7px;
+    font-size: 13px; cursor: pointer; opacity: .75; transition: all .15s;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.1); opacity: 1; }
+  .nav-item.active { background: rgba(255,255,255,.15); opacity: 1; font-weight: 600; }
+  .nav-item .icon { font-size: 15px; width: 20px; text-align: center; }
+  .nav-badge {
+    margin-left: auto; background: var(--red); color: #fff;
+    font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px;
+  }
+  .nav-badge.gold { background: var(--gold); }
+  .sidebar-footer { margin-top: auto; padding: 14px 12px; border-top: 1px solid rgba(255,255,255,.12); font-size: 11px; opacity: .5; }
+
+  /* ── MAIN AREA ────────────────────────────────────────── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── TOPBAR ───────────────────────────────────────────── */
+  .topbar {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 24px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 14px; }
+  .topbar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 18px; color: var(--blue); }
+  .topbar-subtitle { font-size: 13px; color: var(--muted); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .tb-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 500; cursor: pointer;
+  }
+  .tb-chip.active { background: var(--teal); color: var(--white); border-color: var(--teal); }
+  .tb-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+  /* ── CONTENT GRID ─────────────────────────────────────── */
+  .content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* ── ROLE TABS ────────────────────────────────────────── */
+  .role-tabs {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; gap: 4px; align-items: flex-end;
+  }
+  .role-tab {
+    padding: 12px 18px 11px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-bottom: 3px solid transparent; color: var(--muted); transition: all .15s;
+    display: flex; align-items: center; gap: 8px; white-space: nowrap;
+  }
+  .role-tab:hover { color: var(--blue); }
+  .role-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .role-tab .rt-count {
+    background: var(--bg); border: 1px solid var(--border);
+    font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px;
+    color: var(--text);
+  }
+  .role-tab.active .rt-count { background: var(--blue); color: var(--white); border-color: var(--blue); }
+
+  /* ── PANEL GRID ───────────────────────────────────────── */
+  .panel-area {
+    flex: 1; overflow: hidden;
+    display: grid; grid-template-columns: 340px 1fr 300px;
+    gap: 0;
+  }
+
+  /* ── INBOX COLUMN ─────────────────────────────────────── */
+  .inbox-col {
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--white);
+  }
+  .inbox-header {
+    padding: 14px 16px 10px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .inbox-header-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 14px; color: var(--blue); }
+  .inbox-header-count { font-size: 11px; color: var(--muted); }
+  .inbox-search {
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  .inbox-search input {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 12px; font-size: 12px; background: var(--bg); outline: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .inbox-list { overflow-y: auto; flex: 1; }
+  .email-item {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background .1s;
+    position: relative;
+  }
+  .email-item:hover { background: #F9F8F5; }
+  .email-item.active { background: #EEF2FF; border-left: 3px solid var(--blue); }
+  .email-item.unread .email-sender { font-weight: 700; }
+  .email-item.unread::after {
+    content: ''; position: absolute; left: 5px; top: 50%; transform: translateY(-50%);
+    width: 6px; height: 6px; border-radius: 50%; background: var(--blue);
+  }
+  .email-priority {
+    display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px;
+  }
+  .ep-urgent { background: #FEE2E2; color: var(--red); }
+  .ep-client { background: #DBEAFE; color: #1D4ED8; }
+  .ep-internal { background: #D1FAE5; color: var(--green); }
+  .ep-vendor { background: #FEF3C7; color: #92400E; }
+  .ep-ai { background: #EDE9FE; color: var(--purple); }
+  .ep-review { background: #FFEDD5; color: var(--orange); }
+  .email-sender { font-size: 13px; color: var(--text); }
+  .email-subject { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .email-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .email-time { font-size: 10px; color: var(--muted); }
+  .email-tag { font-size: 10px; background: var(--bg); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; color: var(--muted); }
+  .ai-label { font-size: 10px; color: var(--purple); font-weight: 600; }
+
+  /* ── EMAIL DETAIL ─────────────────────────────────────── */
+  .detail-col {
+    overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; gap: 0;
+  }
+  .detail-header {
+    background: var(--white); padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-subject { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 18px; color: var(--blue); line-height: 1.3; }
+  .detail-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; align-items: center; }
+  .dm-chip {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; color: var(--muted);
+  }
+  .dm-chip strong { color: var(--text); font-weight: 600; }
+  .detail-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .da-btn {
+    padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--white);
+    font-family: 'Inter', sans-serif; transition: all .15s;
+  }
+  .da-btn:hover { background: var(--bg); }
+  .da-btn.primary { background: var(--blue); color: var(--white); border-color: var(--blue); }
+  .da-btn.primary:hover { background: var(--blue-light); }
+  .da-btn.teal { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+  /* AI TRIAGE CARD */
+  .ai-triage-card {
+    margin: 16px 20px; background: var(--white); border-radius: 12px;
+    border: 1px solid var(--border); overflow: hidden;
+  }
+  .atc-header {
+    background: linear-gradient(135deg, #7C3AED, #4F46E5);
+    padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .atc-header .label { color: var(--white); font-weight: 700; font-size: 13px; }
+  .atc-header .sublabel { color: rgba(255,255,255,.7); font-size: 11px; }
+  .atc-body { padding: 14px 16px; }
+  .atc-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .atc-row:last-child { margin-bottom: 0; }
+  .atc-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .atc-content .atc-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .atc-content .atc-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .atc-content .atc-highlight { color: var(--teal); font-weight: 600; }
+  .priority-meter {
+    display: flex; align-items: center; gap: 8px; margin: 12px 0 4px;
+    padding: 10px 14px; background: #FEF3C7; border-radius: 8px;
+  }
+  .pm-label { font-size: 12px; font-weight: 700; color: #92400E; }
+  .pm-bar { flex: 1; height: 6px; background: #FDE68A; border-radius: 3px; overflow: hidden; }
+  .pm-fill { height: 100%; background: #F59E0B; border-radius: 3px; }
+  .pm-score { font-size: 12px; font-weight: 700; color: #92400E; }
+
+  /* DRAFT REPLY */
+  .draft-card {
+    margin: 0 20px 16px; background: var(--white); border-radius: 12px;
+    border: 1px solid var(--border); overflow: hidden;
+  }
+  .dc-header {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .dc-header .label { font-weight: 700; font-size: 13px; color: var(--text); }
+  .dc-header .ai-tag { font-size: 11px; color: var(--purple); font-weight: 600; background: #EDE9FE; padding: 2px 8px; border-radius: 4px; }
+  .dc-body { padding: 14px 16px; }
+  .dc-to { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .dc-to strong { color: var(--text); }
+  .dc-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+  .dc-text p { margin-bottom: 10px; }
+  .dc-text p:last-child { margin-bottom: 0; }
+  .dc-actions { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+
+  /* EMAIL BODY */
+  .email-body-card {
+    margin: 0 20px 16px; background: var(--white); border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+  .eb-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px; }
+  .eb-text { font-size: 13px; color: var(--text); line-height: 1.7; }
+  .eb-text p { margin-bottom: 10px; }
+
+  /* ── RIGHT PANEL ──────────────────────────────────────── */
+  .right-panel {
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--white);
+  }
+  .rp-section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .rp-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 13px; color: var(--blue); margin-bottom: 10px; }
+
+  /* ROI SECTION */
+  .roi-big {
+    background: linear-gradient(135deg, var(--teal), #0E9688);
+    border-radius: 10px; padding: 14px; color: var(--white); margin-bottom: 10px;
+    text-align: center;
+  }
+  .roi-big .num { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 28px; }
+  .roi-big .label { font-size: 11px; opacity: .8; margin-top: 2px; }
+  .roi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+  .roi-row .rr-label { color: var(--muted); }
+  .roi-row .rr-val { font-weight: 700; color: var(--text); }
+  .roi-divider { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+  .roi-row.total .rr-val { color: var(--teal); font-size: 14px; }
+
+  /* TEAM STACK */
+  .team-member {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px; margin-bottom: 4px;
+    background: var(--bg); cursor: pointer; transition: background .15s;
+  }
+  .team-member:hover { background: #EEF2FF; }
+  .team-member.active { background: #EEF2FF; border: 1px solid #C7D2FE; }
+  .tm-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; color: var(--white); flex-shrink: 0;
+  }
+  .tm-info .tm-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .tm-info .tm-role { font-size: 10px; color: var(--muted); }
+  .tm-badge {
+    margin-left: auto; font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 99px;
+  }
+
+  /* RULES SECTION */
+  .rule-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 10px; border-radius: 8px; background: var(--bg); margin-bottom: 6px;
+  }
+  .rule-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .rule-text { font-size: 11px; color: var(--text); line-height: 1.4; }
+  .rule-text strong { color: var(--blue); font-size: 11px; }
+  .rule-toggle {
+    margin-left: auto; width: 30px; height: 16px; border-radius: 8px;
+    background: var(--teal); position: relative; flex-shrink: 0; cursor: pointer;
+  }
+  .rule-toggle::after {
+    content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--white); top: 2px; right: 2px; transition: right .2s;
+  }
+  .rule-toggle.off { background: var(--border); }
+  .rule-toggle.off::after { right: 16px; }
+
+  /* ── ROLE PANELS ──────────────────────────────────────── */
+  .role-panel { display: none; height: 100%; }
+  .role-panel.active { display: contents; }
+
+  /* ── ROI CALCULATOR PAGE ──────────────────────────────── */
+  .roi-page {
+    flex: 1; overflow-y: auto; padding: 24px;
+    background: var(--bg);
+  }
+  .roi-page-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px;
+  }
+  .roi-card {
+    background: var(--white); border-radius: 14px; border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .roi-card-header {
+    padding: 14px 18px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .roi-card-icon { font-size: 20px; }
+  .roi-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 14px; color: var(--blue); }
+  .roi-card-role { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .roi-card-body { padding: 16px 18px; }
+  .rcb-stat { margin-bottom: 14px; }
+  .rcb-stat .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+  .rcb-stat .stat-val { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: var(--teal); }
+  .rcb-stat .stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rcb-math { background: var(--bg); border-radius: 8px; padding: 10px 12px; font-size: 11px; color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+  .rcb-math .eq { color: var(--text); font-weight: 600; }
+  .rcb-rules { }
+  .rcb-rule { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+  .rcb-rule .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+  .firm-total-card {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, var(--blue), #2451A3);
+    border-radius: 14px; padding: 24px 28px; color: var(--white);
+  }
+  .ftc-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 20px; margin-bottom: 18px; }
+  .ftc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  .ftc-col .num { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 26px; }
+  .ftc-col .lbl { font-size: 11px; opacity: .7; margin-top: 4px; }
+  .ftc-divider { border: none; border-top: 1px solid rgba(255,255,255,.2); margin-bottom: 20px; }
+  .ftc-highlight {
+    background: rgba(255,255,255,.1); border-radius: 10px; padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ftc-highlight .big { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 36px; }
+  .ftc-highlight .detail { font-size: 13px; opacity: .8; max-width: 300px; line-height: 1.5; }
+  .ftc-highlight .roi-x { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 36px; color: var(--gold-light); }
+
+  /* Tab switcher for ROI page */
+  .page-tabs {
+    display: flex; gap: 0; background: var(--white); border-bottom: 1px solid var(--border);
+    padding: 0 24px; flex-shrink: 0;
+  }
+  .page-tab {
+    padding: 11px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-bottom: 3px solid transparent; color: var(--muted); transition: all .15s;
+  }
+  .page-tab:hover { color: var(--blue); }
+  .page-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+  /* ── HIDDEN SECTIONS ──────────────────────────────────── */
+  .view { display: none; }
+  .view.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+  .view-fill { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  🤖 Live Demo — AIOS Inbox Intelligence for Supporting Strategies &nbsp;|&nbsp;
+  <a href="https://meetings.advisoraipartners.com" target="_blank">Schedule a call with David →</a>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">AI Operating System</div>
+      <div class="sub">Supporting Strategies</div>
+    </div>
+    <div class="sidebar-client">
+      <div class="label">Signed in as</div>
+      <div class="name">Diane Denholm</div>
+      <div class="role">Co-Owner / Business Development</div>
+    </div>
+
+    <div class="nav-section">Inbox</div>
+    <div class="nav-item active" onclick="switchView('inbox')">
+      <span class="icon">📥</span> Inbox Intelligence
+      <span class="nav-badge">14</span>
+    </div>
+    <div class="nav-item" onclick="switchView('roi')">
+      <span class="icon">📊</span> ROI Calculator
+    </div>
+
+    <div class="nav-section">AIOS Apps</div>
+    <div class="nav-item" onclick="window.open('ss-proposal-engine.html','_blank')">
+      <span class="icon">📋</span> Proposal Engine
+    </div>
+    <div class="nav-item" onclick="window.open('ss-client-intelligence.html','_blank')">
+      <span class="icon">🧠</span> Client Intelligence
+    </div>
+    <div class="nav-item">
+      <span class="icon">📅</span> Meeting Scheduler
+    </div>
+    <div class="nav-item">
+      <span class="icon">📁</span> Client Portal
+    </div>
+
+    <div class="nav-section">Admin</div>
+    <div class="nav-item">
+      <span class="icon">⚙️</span> Inbox Rules
+      <span class="nav-badge gold">New</span>
+    </div>
+    <div class="nav-item">
+      <span class="icon">👥</span> Team Settings
+    </div>
+
+    <div class="sidebar-footer">AIOS v2.1 · April 2026</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ══ VIEW: INBOX ══════════════════════════════════════ -->
+    <div id="view-inbox" class="view active">
+
+      <div class="topbar">
+        <div class="topbar-left">
+          <div>
+            <div class="topbar-title">Inbox Intelligence</div>
+            <div class="topbar-subtitle">AI-triaged · role-customized · draft replies ready</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="tb-chip active"><span class="dot"></span> AI Active</div>
+          <div class="tb-chip" onclick="switchView('roi')">📊 View ROI</div>
+          <div class="tb-chip">⚙️ My Rules</div>
+        </div>
+      </div>
+
+      <!-- ROLE TABS -->
+      <div class="role-tabs">
+        <div class="role-tab active" onclick="switchRole('diane')">
+          👤 Diane — BD / Owner
+          <span class="rt-count">14</span>
+        </div>
+        <div class="role-tab" onclick="switchRole('pete')">
+          👤 Pete — Operations / Owner
+          <span class="rt-count">9</span>
+        </div>
+        <div class="role-tab" onclick="switchRole('ops')">
+          🔢 Ops Director
+          <span class="rt-count">22</span>
+        </div>
+        <div class="role-tab" onclick="switchRole('admin')">
+          📋 Admin / EA
+          <span class="rt-count">31</span>
+        </div>
+      </div>
+
+      <!-- PANEL GRID -->
+      <div class="panel-area">
+
+        <!-- INBOX LIST -->
+        <div class="inbox-col">
+          <div class="inbox-header">
+            <div>
+              <div class="inbox-header-title" id="inbox-header-title">Diane's Inbox</div>
+              <div class="inbox-header-count" id="inbox-header-count">14 emails · 6 AI-drafted replies ready</div>
+            </div>
+          </div>
+          <div class="inbox-search">
+            <input type="text" placeholder="🔍  Search emails…">
+          </div>
+          <div class="inbox-list" id="inbox-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- EMAIL DETAIL -->
+        <div class="detail-col" id="detail-col">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel" id="right-panel">
+          <!-- Populated by JS -->
+        </div>
+
+      </div>
+    </div><!-- /view-inbox -->
+
+    <!-- ══ VIEW: ROI CALCULATOR ════════════════════════════ -->
+    <div id="view-roi" class="view">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div>
+            <div class="topbar-title">ROI Calculator — Inbox Intelligence</div>
+            <div class="topbar-subtitle">Supporting Strategies firm-wide time & cost savings</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="tb-chip" onclick="switchView('inbox')">← Back to Inbox</div>
+        </div>
+      </div>
+      <div class="roi-page">
+        <div class="roi-page-grid">
+
+          <!-- Diane -->
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <div class="roi-card-icon">👤</div>
+              <div>
+                <div class="roi-card-title">Diane — Business Development</div>
+                <div class="roi-card-role">Co-Owner · BD, Client Relationships, Speaking</div>
+              </div>
+            </div>
+            <div class="roi-card-body">
+              <div class="rcb-stat">
+                <div class="stat-label">Annual Inbox Time Saved</div>
+                <div class="stat-val">$18,750</div>
+                <div class="stat-sub">187.5 hours/yr · Est. salary $125K</div>
+              </div>
+              <div class="rcb-math">
+                <span class="eq">1.5 hrs/day × 250 days = 375 hrs/yr</span><br>
+                AI handles 50% → <span class="eq">187.5 hrs saved</span><br>
+                $125K ÷ 2,000 hrs = <span class="eq">$62.50/hr → $11,719 direct</span><br>
+                + client response speed value → <span class="eq">≈ $18,750 total</span>
+              </div>
+              <div class="rcb-rules">
+                <div class="rcb-rule"><span class="dot"></span>Prospect emails → priority flag + AI-drafted intro response</div>
+                <div class="rcb-rule"><span class="dot"></span>Chamber / networking contacts → instant recognition + context</div>
+                <div class="rcb-rule"><span class="dot"></span>Client questions → routed to ops, not Diane</div>
+                <div class="rcb-rule"><span class="dot"></span>Meeting requests → AI checks calendar, proposes time</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pete -->
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <div class="roi-card-icon">👤</div>
+              <div>
+                <div class="roi-card-title">Pete — Operations / Executive</div>
+                <div class="roi-card-role">Co-Owner · Approvals, Escalations, Strategy</div>
+              </div>
+            </div>
+            <div class="roi-card-body">
+              <div class="rcb-stat">
+                <div class="stat-label">Annual Inbox Time Saved</div>
+                <div class="stat-val">$21,875</div>
+                <div class="stat-sub">218.75 hours/yr · Est. salary $125K</div>
+              </div>
+              <div class="rcb-math">
+                <span class="eq">1.75 hrs/day × 250 days = 437.5 hrs/yr</span><br>
+                AI handles 50% → <span class="eq">218.75 hrs saved</span><br>
+                $125K ÷ 2,000 hrs = <span class="eq">$62.50/hr → $13,672 direct</span><br>
+                + decision speed, fewer escalations → <span class="eq">≈ $21,875 total</span>
+              </div>
+              <div class="rcb-rules">
+                <div class="rcb-rule"><span class="dot"></span>Staff questions → filtered; only true decisions reach Pete</div>
+                <div class="rcb-rule"><span class="dot"></span>Client escalations → pre-summarized with context before Pete sees them</div>
+                <div class="rcb-rule"><span class="dot"></span>Vendor / software → auto-routed to ops team</div>
+                <div class="rcb-rule"><span class="dot"></span>Approvals → batched into single daily digest, not scattered</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ops Director -->
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <div class="roi-card-icon">🔢</div>
+              <div>
+                <div class="roi-card-title">Operations Director (×2)</div>
+                <div class="roi-card-role">Client Deliverables, Reporting, Team Coordination</div>
+              </div>
+            </div>
+            <div class="roi-card-body">
+              <div class="rcb-stat">
+                <div class="stat-label">Annual Savings (per person)</div>
+                <div class="stat-val">$10,000</div>
+                <div class="stat-sub">200 hours/yr · $75K salary · ×2 = $20K total</div>
+              </div>
+              <div class="rcb-math">
+                <span class="eq">2 hrs/day × 250 days = 500 hrs/yr</span><br>
+                AI handles 40% → <span class="eq">200 hrs saved</span><br>
+                $75K ÷ 2,000 = <span class="eq">$37.50/hr → $7,500 direct</span><br>
+                + fewer interruptions to Diane/Pete → <span class="eq">≈ $10,000/person</span>
+              </div>
+              <div class="rcb-rules">
+                <div class="rcb-rule"><span class="dot"></span>Client data requests → AI drafts standard pull response</div>
+                <div class="rcb-rule"><span class="dot"></span>Month-end crunch emails → priority-sorted automatically</div>
+                <div class="rcb-rule"><span class="dot"></span>Software / vendor → filtered out during close periods</div>
+                <div class="rcb-rule"><span class="dot"></span>Cross-client requests → flagged if they affect deliverable dates</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Admin/EA -->
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <div class="roi-card-icon">📋</div>
+              <div>
+                <div class="roi-card-title">Admin / Executive Assistant (×2)</div>
+                <div class="roi-card-role">Scheduling, Routing, Triage, Follow-ups</div>
+              </div>
+            </div>
+            <div class="roi-card-body">
+              <div class="rcb-stat">
+                <div class="stat-label">Savings per person</div>
+                <div class="stat-val">$12,500</div>
+                <div class="stat-sub">500 hours/yr · $50K salary · ×2 = $25K total</div>
+              </div>
+              <div class="rcb-math">
+                <span class="eq">2 hrs/day × 250 days = 500 hrs/yr</span><br>
+                AI handles 100% of triage → <span class="eq">500 hrs redirected</span><br>
+                $50K ÷ 2,000 = <span class="eq">$25/hr → $12,500 in redirected capacity</span><br>
+                Admin does higher-value work instead → <span class="eq">multiplier effect</span>
+              </div>
+              <div class="rcb-rules">
+                <div class="rcb-rule"><span class="dot"></span>Inbox triage for executives → fully automated; no manual sorting</div>
+                <div class="rcb-rule"><span class="dot"></span>Meeting requests → AI handles booking flow end-to-end</div>
+                <div class="rcb-rule"><span class="dot"></span>Follow-up reminders → AI sends, assistant just approves</div>
+                <div class="rcb-rule"><span class="dot"></span>Redirects capacity to client-facing and strategic work</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FIRM TOTAL -->
+          <div class="firm-total-card">
+            <div class="ftc-title">🏢 Supporting Strategies — Firm-Wide Inbox ROI</div>
+            <div class="ftc-grid">
+              <div class="ftc-col">
+                <div class="num">7</div>
+                <div class="lbl">Team members covered</div>
+              </div>
+              <div class="ftc-col">
+                <div class="num">1,706</div>
+                <div class="lbl">Hours reclaimed per year</div>
+              </div>
+              <div class="ftc-col">
+                <div class="num">$86,125</div>
+                <div class="lbl">Total annual value</div>
+              </div>
+              <div class="ftc-col">
+                <div class="num">8.6×</div>
+                <div class="lbl">Return on $10K AIOS investment</div>
+              </div>
+            </div>
+            <hr class="ftc-divider">
+            <div class="ftc-highlight">
+              <div>
+                <div style="font-size:13px;opacity:.75;margin-bottom:6px;">Year-one ROI on your $10K investment</div>
+                <div class="big">$86,125 saved</div>
+                <div style="font-size:13px;opacity:.75;margin-top:6px;">That's not counting the new revenue Diane closes faster because she's no longer buried in email.</div>
+              </div>
+              <div class="roi-x">8.6×</div>
+            </div>
+          </div>
+
+        </div><!-- /roi-page-grid -->
+
+        <!-- CTA at bottom -->
+        <div style="max-width:900px;margin-top:24px;background:var(--white);border-radius:14px;border:1px solid var(--border);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:18px;color:var(--blue);margin-bottom:6px;">Ready to tame the inbox?</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.5;">The entire AIOS platform — Inbox Intelligence, Proposal Engine, Client Intelligence Hub, and more — is available for <strong style="color:var(--teal)">$10,000 for your entire team</strong>. No seat limits. No per-user pricing.</div>
+          </div>
+          <a href="https://meetings.advisoraipartners.com" target="_blank" style="text-decoration:none;flex-shrink:0;margin-left:24px;">
+            <button style="background:var(--teal);color:#fff;border:none;border-radius:10px;padding:14px 24px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;">
+              Schedule a call with David →
+            </button>
+          </a>
+        </div>
+
+      </div><!-- /roi-page -->
+    </div><!-- /view-roi -->
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+const roles = {
+  diane: {
+    label: "Diane's Inbox",
+    count: "14 emails · 6 AI-drafted replies ready",
+    emails: [
+      { id:1, from:"Margaret Holloway", subject:"Following up on intro — Jacksonville COC", priority:"ep-client", tag:"Prospect", time:"9:14 AM", unread:true, active:true },
+      { id:2, from:"Thomas Reeves", subject:"Referral from Diane — bookkeeping question", priority:"ep-urgent", tag:"Hot Lead", time:"8:52 AM", unread:true },
+      { id:3, from:"Sunrise Capital Group", subject:"Q1 financial package — when can we expect?", priority:"ep-client", tag:"Client", time:"Yesterday" },
+      { id:4, from:"Jacksonville Chamber", subject:"April Mixer recap + upcoming events", priority:"ep-internal", tag:"Networking", time:"Yesterday" },
+      { id:5, from:"Pete Denholm", subject:"Re: Brightside Realty — follow up?", priority:"ep-internal", tag:"Internal", time:"Mon" },
+      { id:6, from:"HubSpot", subject:"Your CRM trial expires in 3 days", priority:"ep-vendor", tag:"Vendor", time:"Mon" },
+      { id:7, from:"Coastal Wealth Advisors", subject:"Interested in outsourced accounting", priority:"ep-urgent", tag:"New Lead", time:"Fri" },
+      { id:8, from:"AI Daily", subject:"Top AI tools for professional services", priority:"ep-ai", tag:"AI News", time:"Fri" },
+    ]
+  },
+  pete: {
+    label: "Pete's Inbox",
+    count: "9 emails · 4 AI-drafted replies ready",
+    emails: [
+      { id:1, from:"Ops Team", subject:"Month-end close status — 3 items flagged", priority:"ep-urgent", tag:"Action", time:"9:01 AM", unread:true, active:true },
+      { id:2, from:"Harbor Logistics Co.", subject:"Payroll discrepancy — need resolution", priority:"ep-client", tag:"Escalation", time:"8:30 AM", unread:true },
+      { id:3, from:"Diane Denholm", subject:"New prospect intro — Margaret Holloway", priority:"ep-internal", tag:"FYI", time:"Yesterday" },
+      { id:4, from:"QuickBooks", subject:"Subscription renewal — $2,400/yr", priority:"ep-vendor", tag:"Approval", time:"Yesterday" },
+      { id:5, from:"Staff Update", subject:"Remote work policy question", priority:"ep-internal", tag:"HR", time:"Mon" },
+      { id:6, from:"Accounting Software Co.", subject:"Demo request for new AP module", priority:"ep-vendor", tag:"Vendor", time:"Mon" },
+      { id:7, from:"Client: Tidal Creek Inc.", subject:"Adding new entity — pricing question", priority:"ep-review", tag:"Upsell", time:"Fri" },
+    ]
+  },
+  ops: {
+    label: "Ops Director — Sarah's Inbox",
+    count: "22 emails · 11 AI-drafted replies ready",
+    emails: [
+      { id:1, from:"Hartmann Group", subject:"March financials — 2 line items need clarification", priority:"ep-urgent", tag:"Deliverable", time:"9:22 AM", unread:true, active:true },
+      { id:2, from:"BlueStar Properties", subject:"New account onboarding checklist — status?", priority:"ep-client", tag:"Onboarding", time:"8:45 AM", unread:true },
+      { id:3, from:"Tech Solutions LLC", subject:"Payroll cut-off reminder for April", priority:"ep-review", tag:"Deadline", time:"Yesterday" },
+      { id:4, from:"Pete Denholm", subject:"Re: Capacity — can we take a 6th client?", priority:"ep-internal", tag:"Internal", time:"Yesterday" },
+      { id:5, from:"Gusto", subject:"Payroll run initiated — review required", priority:"ep-urgent", tag:"Action", time:"Mon" },
+      { id:6, from:"Sunrise Capital", subject:"Custom report format request", priority:"ep-client", tag:"Custom", time:"Mon" },
+      { id:7, from:"DocuSign", subject:"3 documents awaiting signature", priority:"ep-review", tag:"Sign", time:"Fri" },
+    ]
+  },
+  admin: {
+    label: "Admin Team Inbox",
+    count: "31 emails · AI handling triage automatically",
+    emails: [
+      { id:1, from:"Various Clients", subject:"[AI Batch] 8 meeting requests this week", priority:"ep-ai", tag:"AI Handled", time:"9:30 AM", unread:true, active:true },
+      { id:2, from:"Starbucks Corporate", subject:"Gift card order confirmation", priority:"ep-internal", tag:"Handled", time:"9:05 AM" },
+      { id:3, from:"Office Depot", subject:"Supply order shipped — tracking #4421", priority:"ep-vendor", tag:"Handled", time:"Yesterday" },
+      { id:4, from:"IT Support", subject:"Password reset request — S. Martinez", priority:"ep-internal", tag:"Handled", time:"Yesterday" },
+      { id:5, from:"Pete Denholm", subject:"Please reschedule Tuesday 2pm to 3pm", priority:"ep-urgent", tag:"Action", time:"Mon", unread:true },
+      { id:6, from:"Multiple Senders", subject:"[AI Batch] 12 CC'd emails — no action needed", priority:"ep-ai", tag:"AI Filed", time:"Mon" },
+      { id:7, from:"Event Venue", subject:"Chamber mixer logistics for April 29", priority:"ep-review", tag:"Forward", time:"Fri" },
+    ]
+  }
+};
+
+const emailDetails = {
+  diane: {
+    subject: "Following up on intro — Jacksonville COC",
+    from: "Margaret Holloway",
+    fromEmail: "margaret.holloway@jaxcoc.org",
+    to: "diane@supportingstrategies.com",
+    time: "Today, 9:14 AM",
+    body: `<p>Hi Diane,</p>
+<p>It was wonderful meeting you at the Jacksonville Chamber mixer last week! I've been thinking about our conversation regarding outsourced accounting. We've been handling everything in-house but honestly, our controller is drowning with the growth we've had this year.</p>
+<p>We have about 45 employees and three entities — a holding company, an operating LLC, and a nonprofit arm. We're doing around $8M in annual revenue and the complexity is starting to show. Month-end is taking 3 weeks, which is ridiculous.</p>
+<p>Would love to set up a call and hear more about how Supporting Strategies works. Are you available sometime this week or next?</p>
+<p>Best,<br>Margaret</p>`,
+    aiSummary: "Strong prospect. 45 employees, $8M revenue, 3 entities (holding, LLC, nonprofit). Pain: month-end taking 3 weeks. Ready to buy.",
+    aiPriority: 92,
+    aiCategory: "Hot Prospect",
+    draftReply: `Hi Margaret,\n\nSo glad we connected at the mixer! What you're describing — 3-week month-end closes across 3 entities — is exactly the kind of complexity we specialize in untangling.\n\nI'd love to learn more and see if we're a fit. I have availability Thursday afternoon or Friday morning — does either work for you?\n\nLooking forward to it,\nDiane`,
+    rules: [
+      { icon: "🎯", label: "Prospect flagged", desc: "Chamber contact matched — marked High Priority", on: true },
+      { icon: "📝", label: "AI drafted reply", desc: "Response ready — Diane just edits & sends", on: true },
+      { icon: "📅", label: "Calendar checked", desc: "Thu PM + Fri AM slots pre-loaded in draft", on: true },
+      { icon: "🔗", label: "Context enriched", desc: "Linked to Chamber mixer event, prior intro", on: true },
+    ]
+  },
+  admin: {
+    subject: "[AI Batch] 8 meeting requests this week",
+    from: "AIOS Inbox Intelligence",
+    fromEmail: "ai@aios.internal",
+    to: "admin@supportingstrategies.com",
+    time: "Today, 9:30 AM",
+    body: `<p><strong>Your AI inbox agent batched 8 meeting requests and handled them automatically:</strong></p>
+<p>✅ <strong>3 requests booked</strong> — Diane's calendar was open; AI confirmed the times and sent calendar invites.</p>
+<p>✅ <strong>2 rescheduled</strong> — Conflicts detected; AI proposed alternate times, senders confirmed.</p>
+<p>⏳ <strong>2 awaiting Diane's approval</strong> — Outside normal hours; flagged for review.</p>
+<p>❌ <strong>1 declined automatically</strong> — Duplicate request from same sender, forwarded to original thread.</p>
+<p>Total admin time saved this week: <strong>2.5 hours</strong>.</p>`,
+    aiSummary: "AI handled 8 scheduling requests autonomously this week. 3 booked, 2 rescheduled, 2 pending approval, 1 declined. 2.5 hrs saved.",
+    aiPriority: 15,
+    aiCategory: "AI Report",
+    draftReply: null,
+    rules: [
+      { icon: "📅", label: "Auto-booking active", desc: "AI books meetings in open slots without asking admin", on: true },
+      { icon: "⚡", label: "Conflict detection", desc: "Reschedules automatically when conflicts found", on: true },
+      { icon: "🚫", label: "Duplicate filter", desc: "Duplicate requests merged, not forwarded twice", on: true },
+      { icon: "📊", label: "Weekly summary", desc: "Batched report so admin sees one email, not 8", on: true },
+    ]
+  }
+};
+
+let currentRole = 'diane';
+let currentView = 'inbox';
+
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  currentView = view;
+
+  // Update sidebar nav items
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (view === 'inbox') document.querySelectorAll('.nav-item')[0].classList.add('active');
+  if (view === 'roi') document.querySelectorAll('.nav-item')[1].classList.add('active');
+}
+
+function switchRole(role) {
+  currentRole = role;
+  // Update tabs
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  event.target.closest('.role-tab').classList.add('active');
+  // Re-render
+  renderInbox(role);
+  renderDetail(role);
+  renderRightPanel(role);
+}
+
+function renderInbox(role) {
+  const data = roles[role];
+  document.getElementById('inbox-header-title').textContent = data.label;
+  document.getElementById('inbox-header-count').textContent = data.count;
+
+  const list = document.getElementById('inbox-list');
+  list.innerHTML = '';
+  data.emails.forEach((email, i) => {
+    const div = document.createElement('div');
+    div.className = 'email-item' + (email.unread ? ' unread' : '') + (email.active ? ' active' : '');
+    div.innerHTML = `
+      <div class="email-priority ${email.priority}">${email.tag}</div>
+      <div class="email-sender">${email.from}</div>
+      <div class="email-subject">${email.subject}</div>
+      <div class="email-meta">
+        <span class="email-time">${email.time}</span>
+        ${email.priority === 'ep-ai' ? '<span class="ai-label">🤖 AI handled</span>' : ''}
+      </div>
+    `;
+    div.onclick = () => {
+      document.querySelectorAll('.email-item').forEach(el => el.classList.remove('active'));
+      div.classList.add('active');
+    };
+    list.appendChild(div);
+  });
+}
+
+function renderDetail(role) {
+  const col = document.getElementById('detail-col');
+  const key = role === 'admin' ? 'admin' : 'diane';
+  const d = emailDetails[key] || emailDetails['diane'];
+
+  col.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-subject">${d.subject}</div>
+      <div class="detail-meta">
+        <span class="dm-chip">From: <strong>${d.from}</strong> &lt;${d.fromEmail}&gt;</span>
+        <span class="dm-chip">To: <strong>${d.to}</strong></span>
+        <span class="dm-chip">${d.time}</span>
+      </div>
+      <div class="detail-actions">
+        <button class="da-btn primary" onclick="this.innerHTML='✅ Sent!'">Send AI Reply</button>
+        <button class="da-btn teal">Edit Draft</button>
+        <button class="da-btn">Archive</button>
+        <button class="da-btn">Forward to Ops</button>
+      </div>
+    </div>
+
+    <div class="ai-triage-card">
+      <div class="atc-header">
+        <span style="font-size:20px">🤖</span>
+        <div>
+          <div class="label">AI Triage Analysis</div>
+          <div class="sublabel">Instant context · Priority score · Suggested action</div>
+        </div>
+      </div>
+      <div class="atc-body">
+        <div class="priority-meter">
+          <div class="pm-label">Priority Score</div>
+          <div class="pm-bar"><div class="pm-fill" style="width:${d.aiPriority}%"></div></div>
+          <div class="pm-score">${d.aiPriority}/100</div>
+        </div>
+        <div class="atc-row">
+          <div class="atc-icon">🎯</div>
+          <div class="atc-content">
+            <div class="atc-title">Category: ${d.aiCategory}</div>
+            <div class="atc-desc">${d.aiSummary}</div>
+          </div>
+        </div>
+        <div class="atc-row">
+          <div class="atc-icon">💡</div>
+          <div class="atc-content">
+            <div class="atc-title">Suggested Action</div>
+            <div class="atc-desc">
+              ${d.draftReply ? '<span class="atc-highlight">✅ AI reply drafted below</span> — review, edit, and send in one click.' : '<span class="atc-highlight">📊 AI report</span> — no reply needed. Filed to Admin > AI Reports.'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    ${d.draftReply ? `
+    <div class="draft-card">
+      <div class="dc-header">
+        <div class="label">✍️ AI-Drafted Reply</div>
+        <div class="ai-tag">🤖 AIOS Generated</div>
+      </div>
+      <div class="dc-body">
+        <div class="dc-to">To: <strong>${d.from}</strong> &lt;${d.fromEmail}&gt;</div>
+        <div class="dc-text">${d.draftReply.split('\n').filter(l => l).map(l => `<p>${l}</p>`).join('')}</div>
+      </div>
+      <div class="dc-actions">
+        <button class="da-btn primary" onclick="this.innerHTML='✅ Sent!'">Send Reply</button>
+        <button class="da-btn">Edit First</button>
+        <button class="da-btn">Discard</button>
+      </div>
+    </div>` : ''}
+
+    <div class="email-body-card">
+      <div class="eb-label">Original Email</div>
+      <div class="eb-text">${d.body}</div>
+    </div>
+  `;
+}
+
+function renderRightPanel(role) {
+  const panel = document.getElementById('right-panel');
+  const d = emailDetails[role === 'admin' ? 'admin' : 'diane'];
+
+  // ROI for this role
+  const roiMap = {
+    diane: { val: '$18,750', label: 'Annual value', hrs: '187.5 hrs/yr', rate: 'at $125K salary' },
+    pete: { val: '$21,875', label: 'Annual value', hrs: '218.75 hrs/yr', rate: 'at $125K salary' },
+    ops: { val: '$20,000', label: 'Annual value (×2)', hrs: '400 hrs/yr total', rate: '2 Ops Directors · $75K' },
+    admin: { val: '$25,000', label: 'Annual value (×2)', hrs: '1,000 hrs/yr total', rate: '2 Admins · $50K' },
+  };
+  const roi = roiMap[role];
+
+  // Team members
+  const teams = {
+    diane: [
+      { initials:'DD', color:'#1A3A6B', name:'Diane Denholm', role:'BD / Co-Owner', count:'14', countColor:'#DC2626', active: true },
+      { initials:'PD', color:'#0C7A6E', name:'Pete Denholm', role:'Ops / Co-Owner', count:'9', countColor:'#6B7280' },
+      { initials:'SM', color:'#7C3AED', name:'Sarah Martinez', role:'Ops Director', count:'22', countColor:'#6B7280' },
+    ],
+    pete: [
+      { initials:'PD', color:'#0C7A6E', name:'Pete Denholm', role:'Ops / Co-Owner', count:'9', countColor:'#DC2626', active: true },
+      { initials:'DD', color:'#1A3A6B', name:'Diane Denholm', role:'BD / Co-Owner', count:'14', countColor:'#6B7280' },
+    ],
+    ops: [
+      { initials:'SM', color:'#7C3AED', name:'Sarah Martinez', role:'Ops Director', count:'22', countColor:'#DC2626', active: true },
+      { initials:'JK', color:'#EA580C', name:'James Kim', role:'Ops Director', count:'18', countColor:'#6B7280' },
+    ],
+    admin: [
+      { initials:'TW', color:'#059669', name:'Tara Wilson', role:'Executive Admin', count:'31', countColor:'#DC2626', active: true },
+      { initials:'RL', color:'#B8860B', name:'Rosa Lopez', role:'Admin Assistant', count:'24', countColor:'#6B7280' },
+    ],
+  };
+  const team = teams[role] || teams['diane'];
+
+  panel.innerHTML = `
+    <div class="rp-section">
+      <div class="rp-title">📊 Your Inbox ROI</div>
+      <div class="roi-big">
+        <div class="num">${roi.val}</div>
+        <div class="label">${roi.label}</div>
+      </div>
+      <div class="roi-row"><span class="rr-label">Hours reclaimed/yr</span><span class="rr-val">${roi.hrs}</span></div>
+      <div class="roi-row"><span class="rr-label">Salary basis</span><span class="rr-val">${roi.rate}</span></div>
+      <hr class="roi-divider">
+      <div class="roi-row total"><span class="rr-label" style="font-weight:700;color:var(--text)">Firm-wide annual ROI</span><span class="rr-val">$86,125</span></div>
+      <button onclick="switchView('roi')" style="width:100%;margin-top:10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">View Full ROI Calculator →</button>
+    </div>
+
+    <div class="rp-section">
+      <div class="rp-title">👥 Team Inbox View</div>
+      ${team.map(m => `
+        <div class="team-member${m.active ? ' active' : ''}">
+          <div class="tm-avatar" style="background:${m.color}">${m.initials}</div>
+          <div class="tm-info">
+            <div class="tm-name">${m.name}</div>
+            <div class="tm-role">${m.role}</div>
+          </div>
+          <div class="tm-badge" style="background:${m.count > 10 ? '#FEE2E2' : '#D1FAE5'};color:${m.countColor}">${m.count}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="rp-section" style="border-bottom:none;overflow-y:auto;flex:1;">
+      <div class="rp-title">⚙️ Active AI Rules — ${role === 'diane' ? 'Diane' : role === 'pete' ? 'Pete' : role === 'ops' ? 'Ops Team' : 'Admin Team'}</div>
+      ${d.rules.map(r => `
+        <div class="rule-item">
+          <div class="rule-icon">${r.icon}</div>
+          <div class="rule-text"><strong>${r.label}</strong><br>${r.desc}</div>
+          <div class="rule-toggle${r.on ? '' : ' off'}"></div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ── INIT ──────────────────────────────────────────────────
+renderInbox('diane');
+renderDetail('diane');
+renderRightPanel('diane');
+</script>
+
+</body>
+</html>
