@@ -204,6 +204,19 @@
   #donutWrap .donut-center {
     position: absolute; text-align: center; pointer-events: none;
   }
+
+  /* ── Clickable pillboxes ── */
+  .pill-card {
+    cursor: pointer; transition: box-shadow 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .pill-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.10); transform: translateY(-1px); }
+  .pill-card.pill-active { box-shadow: 0 0 0 2.5px var(--pill-color, var(--blue)), 0 4px 14px rgba(0,0,0,0.10); }
+  .pill-card .pill-hint { font-size:10px; color:var(--muted); margin:6px 0 0; letter-spacing:0.04em; }
+
+  /* ── Filter dim ── */
+  .deliverable-row.filter-dim { opacity: 0.18; pointer-events: none; }
+  .above-scope-row.filter-dim { opacity: 0.18; pointer-events: none; }
 </style>
 </head>
 <body>
@@ -273,25 +286,29 @@
 
     <!-- ── Progress summary ── -->
     <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;" id="progressCards">
-      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div class="pill-card" id="pillDone" style="--pill-color:var(--green);background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;" onclick="filterByStatus('done')">
         <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">COMPLETED</p>
         <p class="syne" style="font-size:28px;font-weight:700;color:var(--green);margin:0 0 8px;" id="doneCount">0</p>
         <div class="progress-bar"><div class="progress-fill" id="doneBar" style="width:0%;background:var(--green);"></div></div>
+        <p class="pill-hint">Click to filter</p>
       </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div class="pill-card" id="pillProgress" style="--pill-color:var(--gold);background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;" onclick="filterByStatus('progress')">
         <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">IN PROGRESS</p>
         <p class="syne" style="font-size:28px;font-weight:700;color:#92400E;margin:0 0 8px;" id="progressCount">0</p>
         <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%;background:var(--gold);"></div></div>
+        <p class="pill-hint">Click to filter</p>
       </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div class="pill-card" id="pillPending" style="--pill-color:var(--orange);background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;" onclick="filterByStatus('pending')">
         <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">PENDING</p>
         <p class="syne" style="font-size:28px;font-weight:700;color:var(--orange);margin:0 0 8px;" id="pendingCount">0</p>
         <div class="progress-bar"><div class="progress-fill" id="pendingBar" style="width:0%;background:var(--orange);"></div></div>
+        <p class="pill-hint">Click to filter</p>
       </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+      <div class="pill-card" id="pillBlocked" style="--pill-color:var(--red);background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;" onclick="filterByStatus('blocked')">
         <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">BLOCKED</p>
         <p class="syne" style="font-size:28px;font-weight:700;color:var(--red);margin:0 0 8px;" id="blockedCount">0</p>
         <div class="progress-bar"><div class="progress-fill" id="blockedBar" style="width:0%;background:var(--red);"></div></div>
+        <p class="pill-hint">Click to filter</p>
       </div>
     </div>
   </div>
@@ -1429,6 +1446,49 @@ function updateTopCounts() {
   document.getElementById('pendingBar').style.width = pct(pending);
   document.getElementById('blockedBar').style.width = pct(blocked);
 }
+
+// ── Pillbox filter ─────────────────────────────────────────────
+let activeFilter = null;
+const pillMap = { done:'pillDone', progress:'pillProgress', pending:'pillPending', blocked:'pillBlocked' };
+const badgeMap = { done:'badge-done', progress:'badge-progress', pending:'badge-pending', blocked:'badge-blocked' };
+
+function filterByStatus(status) {
+  if (activeFilter === status) {
+    clearFilter(); return;
+  }
+  activeFilter = status;
+  const targetClass = badgeMap[status];
+
+  document.querySelectorAll('.deliverable-row').forEach(row => {
+    const badge = row.querySelector('.badge[onclick]');
+    const matches = badge && badge.classList.contains(targetClass);
+    row.classList.toggle('filter-dim', !matches);
+  });
+
+  Object.keys(pillMap).forEach(key => {
+    const el = document.getElementById(pillMap[key]);
+    if (el) el.classList.toggle('pill-active', key === status);
+  });
+
+  // Update hint text
+  document.querySelectorAll('.pill-hint').forEach(h => h.textContent = 'Click to filter');
+  const activeCard = document.getElementById(pillMap[status]);
+  if (activeCard) activeCard.querySelector('.pill-hint').textContent = 'Click to clear ✕';
+
+  // Scroll to first visible match
+  const first = Array.from(document.querySelectorAll('.deliverable-row')).find(r => !r.classList.contains('filter-dim'));
+  if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function clearFilter() {
+  activeFilter = null;
+  document.querySelectorAll('.deliverable-row').forEach(r => r.classList.remove('filter-dim'));
+  document.querySelectorAll('.pill-card').forEach(c => c.classList.remove('pill-active'));
+  document.querySelectorAll('.pill-hint').forEach(h => h.textContent = 'Click to filter');
+}
+
+// ESC clears filter
+document.addEventListener('keydown', e => { if (e.key === 'Escape') clearFilter(); });
 
 function updateAll() {
   updateScopeProgress();
