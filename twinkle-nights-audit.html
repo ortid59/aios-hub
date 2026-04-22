@@ -168,9 +168,14 @@
   .view-tab:hover { border-color: #94A3B8; color: var(--text); }
   .view-tab.vt-active { background: var(--blue); color: #fff; border-color: var(--blue); }
 
-  /* hide rows in proposed-only or delivered-only view */
-  body.view-proposed .delivered-col { display: none; }
-  body.view-delivered .proposed-col { display: none; }
+  /* view-mode styles */
+  .row-desc   { transition: opacity 0.2s; }
+  .row-status { transition: opacity 0.2s; }
+  body.view-proposed  .row-status { opacity: 0; pointer-events: none; }
+  body.view-proposed  .deliverable-row { border-left: 3px solid var(--blue); }
+  body.view-delivered .row-desc   { opacity: 0.4; }
+  body.view-delivered .badge { font-size: 12px !important; padding: 5px 14px !important; }
+  body.view-delivered .deliverable-row { border-left: 3px solid var(--green); }
 
   /* ── Scope progress bar (in proposed card) ── */
   .scope-progress-track {
@@ -452,7 +457,7 @@
       <div style="width:36px;height:36px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0;">🚀</div>
       <div style="flex:1;min-width:160px;">
         <h2 class="syne" style="font-size:18px;font-weight:700;margin:0;">Deliverables — Proposed vs. Delivered</h2>
-        <p style="font-size:12px;color:var(--muted);margin:0;">Click any status badge to cycle through statuses · Edit mode lets Aamish add notes</p>
+        <p style="font-size:12px;color:var(--muted);margin:0;" id="deliverables-subtitle">Click any status badge to cycle through statuses · Edit mode lets Aamish add notes</p>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;" class="no-print">
         <button class="view-tab vt-active" onclick="setView('both',this)">⊞ Full View</button>
@@ -1318,13 +1323,30 @@ function toggleEditMode() {
   }
 }
 
+// ── Classify row children so CSS can target them ───────────────
+function classifyRows() {
+  document.querySelectorAll('.deliverable-row').forEach(row => {
+    const flex = row.querySelector(':scope > div');
+    if (!flex || flex.children.length < 2) return;
+    flex.children[0].classList.add('row-desc');
+    flex.children[1].classList.add('row-status');
+  });
+}
+
 // ── View toggle (Proposed / Delivered / Both) ───────────────────
+const viewSubtitles = {
+  both:      'Click any status badge to cycle through statuses · Edit mode lets Aamish add notes',
+  proposed:  'Scope view — what was committed to Tom · status badges hidden',
+  delivered: 'Delivery view — current status of every item · click badges to update'
+};
 function setView(mode, btn) {
   document.querySelectorAll('.view-tab').forEach(b => b.classList.remove('vt-active'));
   btn.classList.add('vt-active');
-  document.body.classList.remove('view-proposed','view-delivered');
+  document.body.classList.remove('view-proposed', 'view-delivered');
   if (mode === 'proposed')  document.body.classList.add('view-proposed');
   if (mode === 'delivered') document.body.classList.add('view-delivered');
+  const sub = document.getElementById('deliverables-subtitle');
+  if (sub) sub.textContent = viewSubtitles[mode] || viewSubtitles.both;
 }
 
 // ── Count badges (scope items only — exclude above-scope rows) ──
@@ -1474,6 +1496,7 @@ function copyPrompt() {
 document.addEventListener('input', e => { if (e.target.matches('[data-field]')) autoSave(); });
 
 // ── Init ────────────────────────────────────────────────────────
+classifyRows();
 loadData();
 updateAll();
 </script>
