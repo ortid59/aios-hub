@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jane & Cormac Hawney — Personal AI OS</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background-color: #F0F2F5; font-family: Arial, Helvetica, sans-serif; color: #1C1C1E; }
+
+  .os-shell { display: flex; min-height: 100vh; }
+
+  /* SIDEBAR */
+  .sidebar { width: 220px; background-color: #1A3A6B; flex-shrink: 0; padding: 0; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 22px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar-logo .brand { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #A8C4E8; margin-bottom: 2px; }
+  .sidebar-logo .os-name { font-size: 15px; font-weight: 800; color: #ffffff; }
+  .sidebar-logo .os-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+  .sidebar-section { padding: 18px 0 6px; }
+  .sidebar-section-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.35); padding: 0 20px; margin-bottom: 4px; }
+  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; font-size: 13px; color: rgba(255,255,255,0.7); cursor: pointer; border-left: 3px solid transparent; }
+  .sidebar-item.active { background-color: rgba(255,255,255,0.1); border-left-color: #B8860B; color: #ffffff; font-weight: 700; }
+  .sidebar-item:hover { background-color: rgba(255,255,255,0.07); color: #ffffff; }
+  .sidebar-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-blue { background-color: #5B8DEF; }
+  .dot-teal { background-color: #2EC4B6; }
+  .dot-gold { background-color: #E8A917; }
+  .dot-purple { background-color: #8B74E8; }
+  .dot-green { background-color: #3DD68C; }
+  .dot-red { background-color: #FF6B6B; }
+  .dot-gray { background-color: rgba(255,255,255,0.4); }
+  .sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+  .sidebar-footer .user-name { font-size: 12px; font-weight: 700; color: #ffffff; }
+  .sidebar-footer .user-sub { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 1px; }
+  .view-toggle { display: flex; gap: 6px; margin-top: 10px; }
+  .view-btn { font-size: 10px; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); cursor: pointer; background: transparent; }
+  .view-btn.active { background-color: rgba(255,255,255,0.15); color: #ffffff; border-color: rgba(255,255,255,0.4); }
+
+  /* MAIN CONTENT */
+  .main { flex: 1; overflow-y: auto; padding: 28px 32px; }
+
+  /* TOP BAR */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .topbar-left .page-title { font-size: 22px; font-weight: 800; color: #1A3A6B; }
+  .topbar-left .page-sub { font-size: 13px; color: #6B7A8D; margin-top: 2px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .topbar-date { font-size: 12px; font-weight: 700; color: #1A3A6B; background-color: #EEF3FF; padding: 6px 14px; border-radius: 20px; }
+  .status-pill { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 20px; }
+  .status-live { background-color: #EDFAF5; color: #0C7A6E; border: 1px solid #b3e8d8; }
+
+  /* DAILY BRIEF */
+  .daily-brief { background-color: #1A3A6B; border-radius: 12px; padding: 22px 26px; margin-bottom: 24px; }
+  .brief-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .brief-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #B8860B; }
+  .brief-time { font-size: 11px; color: rgba(255,255,255,0.45); }
+  .brief-headline { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 10px; line-height: 1.4; }
+  .brief-items { display: flex; gap: 10px; flex-wrap: wrap; }
+  .brief-chip { font-size: 11px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .chip-gold { background-color: rgba(184,134,11,0.25); color: #E8C460; border: 1px solid rgba(184,134,11,0.3); }
+  .chip-teal { background-color: rgba(12,122,110,0.3); color: #4DD4C8; border: 1px solid rgba(12,122,110,0.4); }
+  .chip-blue { background-color: rgba(91,141,239,0.2); color: #8AB4F8; border: 1px solid rgba(91,141,239,0.3); }
+  .chip-red { background-color: rgba(255,107,107,0.2); color: #FF9E9E; border: 1px solid rgba(255,107,107,0.3); }
+
+  /* GRID LAYOUTS */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .grid-1-2 { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 20px; }
+
+  /* CARDS */
+  .card { background-color: #ffffff; border-radius: 12px; padding: 20px 22px; border: 1px solid #E8ECF0; }
+  .card-label { font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 14px; }
+  .label-blue { color: #1A3A6B; }
+  .label-teal { color: #0C7A6E; }
+  .label-gold { color: #B8860B; }
+  .label-purple { color: #4A3A9A; }
+  .label-green { color: #1A7A4A; }
+  .label-red { color: #C0392B; }
+  .label-gray { color: #6B7A8D; }
+
+  /* METRIC STAT */
+  .stat-big { font-size: 30px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .stat-label { font-size: 12px; color: #6B7A8D; }
+  .stat-change { font-size: 11px; font-weight: 700; margin-top: 4px; }
+  .change-up { color: #0C7A6E; }
+  .change-down { color: #C0392B; }
+  .change-flat { color: #B8860B; }
+
+  /* BUCKET BARS */
+  .bucket { margin-bottom: 14px; }
+  .bucket:last-child { margin-bottom: 0; }
+  .bucket-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+  .bucket-name { font-size: 12px; font-weight: 700; color: #1C1C1E; }
+  .bucket-value { font-size: 13px; font-weight: 800; }
+  .bucket-bar-bg { height: 7px; background-color: #EEF3FF; border-radius: 4px; overflow: hidden; }
+  .bucket-bar-fill { height: 100%; border-radius: 4px; }
+  .bucket-sub { font-size: 11px; color: #8A96A6; margin-top: 3px; }
+
+  /* SCHEDULE LIST */
+  .schedule-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #F0F2F5; }
+  .schedule-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .schedule-time { font-size: 11px; font-weight: 700; color: #1A3A6B; min-width: 52px; margin-top: 1px; }
+  .schedule-dot-col { display: flex; flex-direction: column; align-items: center; padding-top: 4px; }
+  .schedule-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .schedule-line { width: 1px; flex: 1; background-color: #E8ECF0; margin-top: 3px; min-height: 16px; }
+  .schedule-name { font-size: 13px; font-weight: 700; color: #1C1C1E; }
+  .schedule-meta { font-size: 11px; color: #8A96A6; margin-top: 1px; }
+  .schedule-tag { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; display: inline-block; margin-top: 4px; }
+  .tag-blue { background-color: #EEF3FF; color: #1A3A6B; }
+  .tag-teal { background-color: #E6F6F5; color: #0C7A6E; }
+  .tag-gold { background-color: #FDF8EC; color: #B8860B; }
+  .tag-purple { background-color: #F0F0FF; color: #4A3A9A; }
+  .tag-red { background-color: #FFF0F0; color: #C0392B; }
+
+  /* INBOX ITEMS */
+  .inbox-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #F0F2F5; }
+  .inbox-item:last-child { border-bottom: none; }
+  .inbox-priority { width: 5px; flex-shrink: 0; border-radius: 3px; align-self: stretch; min-height: 36px; }
+  .priority-high { background-color: #FF6B6B; }
+  .priority-med { background-color: #B8860B; }
+  .priority-low { background-color: #0C7A6E; }
+  .inbox-from { font-size: 12px; font-weight: 700; color: #1C1C1E; }
+  .inbox-subject { font-size: 12px; color: #4A5568; margin-top: 1px; }
+  .inbox-action { font-size: 10px; font-weight: 700; color: #1A3A6B; background-color: #EEF3FF; padding: 2px 8px; border-radius: 10px; margin-top: 4px; display: inline-block; }
+
+  /* TRANSACTION LIST */
+  .txn-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #F0F2F5; }
+  .txn-item:last-child { border-bottom: none; }
+  .txn-name { font-size: 12px; font-weight: 700; color: #1C1C1E; }
+  .txn-cat { font-size: 11px; color: #8A96A6; }
+  .txn-amount { font-size: 13px; font-weight: 800; }
+  .txn-out { color: #C0392B; }
+  .txn-in { color: #0C7A6E; }
+
+  /* METRICS ROW */
+  .metric-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .metric-chip { font-size: 11px; font-weight: 700; padding: 5px 12px; border-radius: 8px; }
+  .mchip-blue { background-color: #EEF3FF; color: #1A3A6B; }
+  .mchip-teal { background-color: #E6F6F5; color: #0C7A6E; }
+  .mchip-gold { background-color: #FDF8EC; color: #B8860B; }
+  .mchip-purple { background-color: #F0F0FF; color: #4A3A9A; }
+
+  /* PROGRESS RING PLACEHOLDER */
+  .ring-wrap { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .ring-svg { flex-shrink: 0; }
+  .ring-label { font-size: 13px; }
+  .ring-value { font-size: 20px; font-weight: 800; color: #1A3A6B; }
+  .ring-sub { font-size: 11px; color: #8A96A6; margin-top: 1px; }
+
+  /* FAMILY EVENTS */
+  .event-item { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid #F0F2F5; }
+  .event-item:last-child { border-bottom: none; }
+  .event-date { font-size: 10px; font-weight: 700; text-align: center; min-width: 36px; background-color: #EEF3FF; border-radius: 8px; padding: 5px 6px; }
+  .event-month { color: #1A3A6B; text-transform: uppercase; font-size: 9px; letter-spacing: 0.5px; }
+  .event-day { color: #1A3A6B; font-size: 16px; font-weight: 800; line-height: 1; }
+  .event-name { font-size: 13px; font-weight: 700; color: #1C1C1E; }
+  .event-sub { font-size: 11px; color: #8A96A6; margin-top: 1px; }
+
+  /* COMMAND CHIPS */
+  .cmd-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 4px; }
+  .cmd-item { background-color: #F5F7FA; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+  .cmd-item:hover { background-color: #EEF3FF; border-color: #B8C8E8; }
+  .cmd-slash { font-size: 11px; font-weight: 800; color: #B8860B; }
+  .cmd-name { font-size: 12px; font-weight: 700; color: #1C1C1E; margin-top: 1px; }
+  .cmd-desc { font-size: 10px; color: #8A96A6; margin-top: 2px; }
+
+  /* SECTION DIVIDER */
+  .section-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0 18px; }
+  .section-divider-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #8A96A6; white-space: nowrap; }
+  .section-divider-line { flex: 1; height: 1px; background-color: #E8ECF0; }
+
+  /* PORTUGAL BANNER */
+  .portugal-banner { background-color: #0C7A6E; border-radius: 12px; padding: 16px 22px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .portugal-banner .pb-left .pb-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 3px; }
+  .portugal-banner .pb-left .pb-text { font-size: 14px; font-weight: 700; color: #ffffff; }
+  .portugal-banner .pb-right { font-size: 11px; color: rgba(255,255,255,0.7); text-align: right; }
+  .portugal-banner .pb-right strong { color: #ffffff; font-size: 16px; display: block; }
+
+  /* ALERT CARD */
+  .alert-card { border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-start; }
+  .alert-card:last-child { margin-bottom: 0; }
+  .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .alert-title { font-size: 13px; font-weight: 700; }
+  .alert-sub { font-size: 11px; margin-top: 2px; }
+  .alert-gold { background-color: #FDF8EC; }
+  .alert-gold .alert-title { color: #B8860B; }
+  .alert-gold .alert-sub { color: #8A7020; }
+  .alert-teal { background-color: #E6F6F5; }
+  .alert-teal .alert-title { color: #0C7A6E; }
+  .alert-teal .alert-sub { color: #1A5A54; }
+  .alert-blue { background-color: #EEF3FF; }
+  .alert-blue .alert-title { color: #1A3A6B; }
+  .alert-blue .alert-sub { color: #3A5080; }
+
+  /* MILEAGE */
+  .mileage-bar { margin-top: 10px; }
+  .mb-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .mb-label { font-size: 11px; color: #6B7A8D; }
+  .mb-val { font-size: 12px; font-weight: 700; color: #1C1C1E; }
+  .mb-track { height: 8px; background-color: #F0F2F5; border-radius: 4px; overflow: hidden; }
+  .mb-fill { height: 100%; border-radius: 4px; background-color: #4A3A9A; }
+
+  /* LEAD CONNECTOR */
+  .lc-stat { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #F0F2F5; }
+  .lc-stat:last-child { border-bottom: none; }
+  .lc-name { font-size: 12px; color: #4A5568; }
+  .lc-val { font-size: 14px; font-weight: 800; color: #1C1C1E; }
+  .lc-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+  .badge-new { background-color: #EDFAF5; color: #0C7A6E; }
+  .badge-pending { background-color: #FDF8EC; color: #B8860B; }
+
+  .card-footer-link { font-size: 11px; font-weight: 700; color: #1A3A6B; text-decoration: none; margin-top: 14px; display: block; }
+</style>
+</head>
+<body>
+
+<div class="os-shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="brand">Advisor AI Partners</div>
+      <div class="os-name">Personal AI OS</div>
+      <div class="os-sub">Jane &amp; Cormac Hawney</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Overview</div>
+      <div class="sidebar-item active"><span class="sidebar-dot dot-gold"></span> Daily Command</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-blue"></span> Daily Brief</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-gray"></span> Inbox Triage</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Business</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-teal"></span> Practice Hub</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-teal"></span> Lead Connector</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-purple"></span> Community Platform</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-blue"></span> Content Engine</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Financial</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-gold"></span> Portfolio View</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-green"></span> QuickBooks</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-green"></span> Bookkeeping</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-gray"></span> Mileage Log</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Life</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-purple"></span> Family Calendar</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-blue"></span> Kids &amp; Events</div>
+      <div class="sidebar-item"><span class="sidebar-dot dot-teal"></span> Lifestyle Goals</div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-name">Jane Hawney</div>
+      <div class="user-sub">Little Eaters &amp; Talkers</div>
+      <div class="view-toggle">
+        <div class="view-btn active">Jane</div>
+        <div class="view-btn">Cormac</div>
+        <div class="view-btn">Both</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="page-title">Good morning, Jane.</div>
+        <div class="page-sub">Wednesday, April 22 &nbsp;·&nbsp; 4 patients today &nbsp;·&nbsp; 3 items need your attention</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-date">Wed Apr 22, 2026</div>
+        <div class="status-pill status-live">&#9679; Live</div>
+      </div>
+    </div>
+
+    <!-- DAILY BRIEF -->
+    <div class="daily-brief">
+      <div class="brief-header">
+        <div class="brief-label">&#9733; Daily Brief — Generated 5:02 AM</div>
+        <div class="brief-time">Updated 12 min ago</div>
+      </div>
+      <div class="brief-headline">Your long-term bucket is up 2.4% this week. 3 new parent inquiries came in overnight via Lead Connector. Liam has baseball at 5:30pm. Jackie sent the April bookkeeping summary — 2 transactions need your review.</div>
+      <div class="brief-items">
+        <span class="brief-chip chip-gold">&#8593; Portfolio +2.4%</span>
+        <span class="brief-chip chip-teal">3 New Inquiries</span>
+        <span class="brief-chip chip-blue">4 Patients Today</span>
+        <span class="brief-chip chip-red">2 Items Need Review</span>
+        <span class="brief-chip chip-teal">Feeding Camp: 18 Days</span>
+      </div>
+    </div>
+
+    <!-- PORTUGAL REMOTE MODE BANNER -->
+    <div class="portugal-banner">
+      <div class="pb-left">
+        <div class="pb-label">Remote Mode — Active</div>
+        <div class="pb-text">Portugal Scouting Trip: May 5 – June 2 &nbsp;·&nbsp; AI OS running while you're away. Practice ops, Lead Connector, and QuickBooks monitored.</div>
+      </div>
+      <div class="pb-right">
+        <strong>41</strong>
+        days until departure
+      </div>
+    </div>
+
+    <!-- ROW 1: STATS -->
+    <div class="grid-3">
+
+      <div class="card">
+        <div class="card-label label-teal">PRACTICE TODAY</div>
+        <div class="stat-big" style="color:#1A3A6B;">4</div>
+        <div class="stat-label">Patients scheduled</div>
+        <div class="stat-change change-flat">Mon–Thu–Fri drive route &nbsp;·&nbsp; 38 mi est.</div>
+        <div style="margin-top:12px;">
+          <div class="schedule-item">
+            <div class="schedule-time">9:00 AM</div>
+            <div style="flex:1;"><div class="schedule-name">Emma R.</div><div class="schedule-meta">Speech — In-home</div></div>
+            <span class="schedule-tag tag-teal">Forms ✓</span>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">11:30 AM</div>
+            <div style="flex:1;"><div class="schedule-name">Lucas P.</div><div class="schedule-meta">Feeding — In-home</div></div>
+            <span class="schedule-tag tag-gold">Forms pending</span>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">1:45 PM</div>
+            <div style="flex:1;"><div class="schedule-name">Sofia M.</div><div class="schedule-meta">Speech — In-home</div></div>
+            <span class="schedule-tag tag-teal">Forms ✓</span>
+          </div>
+          <div class="schedule-item">
+            <div class="schedule-time">3:30 PM</div>
+            <div style="flex:1;"><div class="schedule-name">Theo K.</div><div class="schedule-meta">Feeding eval — New</div></div>
+            <span class="schedule-tag tag-blue">New Patient</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label label-gold">PORTFOLIO SNAPSHOT</div>
+        <div class="stat-big" style="color:#1A3A6B;">$847K</div>
+        <div class="stat-label">Total across all accounts — Fidelity</div>
+        <div class="stat-change change-up">&#8593; $19,400 this month</div>
+        <div style="margin-top:16px;">
+          <div class="bucket">
+            <div class="bucket-header">
+              <div class="bucket-name">Long-Term (Equities)</div>
+              <div class="bucket-value" style="color:#1A3A6B;">$612K</div>
+            </div>
+            <div class="bucket-bar-bg"><div class="bucket-bar-fill" style="width:72%;background-color:#1A3A6B;"></div></div>
+            <div class="bucket-sub">100% equities &nbsp;·&nbsp; 10yr+ horizon &nbsp;·&nbsp; No bonds</div>
+          </div>
+          <div class="bucket">
+            <div class="bucket-header">
+              <div class="bucket-name">Intermediate (Kids/Goals)</div>
+              <div class="bucket-value" style="color:#B8860B;">$164K</div>
+            </div>
+            <div class="bucket-bar-bg"><div class="bucket-bar-fill" style="width:19%;background-color:#B8860B;"></div></div>
+            <div class="bucket-sub">College savings &nbsp;·&nbsp; Moderate allocation</div>
+          </div>
+          <div class="bucket">
+            <div class="bucket-header">
+              <div class="bucket-name">Cash / Emergency</div>
+              <div class="bucket-value" style="color:#0C7A6E;">$71K</div>
+            </div>
+            <div class="bucket-bar-bg"><div class="bucket-bar-fill" style="width:9%;background-color:#0C7A6E;"></div></div>
+            <div class="bucket-sub">Schwab money market &nbsp;·&nbsp; 3.2% yield &nbsp;·&nbsp; Fully liquid</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label label-teal">LEAD CONNECTOR</div>
+        <div class="lc-stat"><span class="lc-name">New inquiries (24h)</span><div><span class="lc-val">3</span> <span class="lc-badge badge-new">NEW</span></div></div>
+        <div class="lc-stat"><span class="lc-name">Awaiting reply</span><div><span class="lc-val">5</span> <span class="lc-badge badge-pending">PENDING</span></div></div>
+        <div class="lc-stat"><span class="lc-name">Active follow-up sequences</span><span class="lc-val">12</span></div>
+        <div class="lc-stat"><span class="lc-name">Google reviews (this month)</span><span class="lc-val">4</span></div>
+        <div class="lc-stat"><span class="lc-name">Newsletter subscribers</span><span class="lc-val">284</span></div>
+        <div style="margin-top:14px;">
+          <div class="alert-card alert-gold">
+            <div class="alert-icon">&#9888;</div>
+            <div><div class="alert-title">iMessage integration pending</div><div class="alert-sub">Mac Mini server setup will connect Lead Connector to iMessage. Reply hands-free from the Tesla.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION DIVIDER -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Financial Operations</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <!-- ROW 2: FINANCIAL -->
+    <div class="grid-2">
+
+      <div class="card">
+        <div class="card-label label-green">QUICKBOOKS &amp; BOOKKEEPING</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+          <div>
+            <div class="stat-big" style="color:#1A3A6B;">$28,440</div>
+            <div class="stat-label">Revenue — April MTD</div>
+            <div class="stat-change change-up">&#8593; 11% vs. March</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="stat-big" style="color:#C0392B;font-size:22px;">$11,280</div>
+            <div class="stat-label">Expenses — April MTD</div>
+            <div class="stat-change change-flat">Within budget</div>
+          </div>
+        </div>
+        <div class="card-label label-gray" style="margin-bottom:8px;">RECENT TRANSACTIONS</div>
+        <div class="txn-item"><div><div class="txn-name">Jane EMR — Monthly</div><div class="txn-cat">Software</div></div><div class="txn-amount txn-out">-$250</div></div>
+        <div class="txn-item"><div><div class="txn-name">GHL Lead Connector</div><div class="txn-cat">Software</div></div><div class="txn-amount txn-out">-$1,500</div></div>
+        <div class="txn-item"><div><div class="txn-name">Insurance Reimbursement</div><div class="txn-cat">Revenue</div></div><div class="txn-amount txn-in">+$3,200</div></div>
+        <div class="txn-item"><div><div class="txn-name">Jackie — Bookkeeping</div><div class="txn-cat">Professional Services</div></div><div class="txn-amount txn-out">-$350</div></div>
+        <div class="txn-item" style="background-color:#FFF8E1;border-radius:6px;padding:8px;border-bottom:none;margin-top:4px;"><div><div class="txn-name" style="color:#B8860B;">&#9888; Gas Reimbursement x3</div><div class="txn-cat" style="color:#8A7020;">Needs categorization — 3 transactions</div></div><div class="txn-amount" style="color:#B8860B;">$94</div></div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid #F0F2F5;">
+          <div class="alert-card alert-teal" style="margin-bottom:0;">
+            <div class="alert-icon">&#9679;</div>
+            <div><div class="alert-title">AI Bookkeeping Ready</div><div class="alert-sub">Claude + QuickBooks integration available. Replaces Jackie ($350/mo). Est. savings: $250/mo net of Digits.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label label-purple">MILEAGE &amp; EXPENSES</div>
+        <div class="stat-big" style="color:#4A3A9A;">847 mi</div>
+        <div class="stat-label">Logged this month</div>
+        <div class="stat-change change-flat">Est. deduction: $499 &nbsp;·&nbsp; IRS rate $0.59/mi</div>
+        <div class="mileage-bar">
+          <div class="mb-header"><div class="mb-label">Mon</div><div class="mb-val">42 mi</div></div>
+          <div class="mb-track"><div class="mb-fill" style="width:70%;"></div></div>
+        </div>
+        <div class="mileage-bar">
+          <div class="mb-header"><div class="mb-label">Wed</div><div class="mb-val">38 mi</div></div>
+          <div class="mb-track"><div class="mb-fill" style="width:63%;"></div></div>
+        </div>
+        <div class="mileage-bar">
+          <div class="mb-header"><div class="mb-label">Thu</div><div class="mb-val">51 mi</div></div>
+          <div class="mb-track"><div class="mb-fill" style="width:85%;"></div></div>
+        </div>
+        <div class="mileage-bar">
+          <div class="mb-header"><div class="mb-label">Fri</div><div class="mb-val">29 mi</div></div>
+          <div class="mb-track"><div class="mb-fill" style="width:48%;"></div></div>
+        </div>
+        <div style="margin-top:16px;">
+          <div class="alert-card alert-blue" style="margin-bottom:8px;">
+            <div class="alert-icon">&#9673;</div>
+            <div><div class="alert-title">Auto-log via Tesla GPS</div><div class="alert-sub">Once Mac Mini server is live, mileage logs automatically from your Tesla routes. No more paper calendar.</div></div>
+          </div>
+          <div class="alert-card alert-gold" style="margin-bottom:0;">
+            <div class="alert-icon">&#9888;</div>
+            <div><div class="alert-title">QuickBooks tracker bugged</div><div class="alert-sub">Missed 3 days last week. AI-assisted logging is a direct fix — all routes captured, no manual entry.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION DIVIDER -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Business Operations</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <!-- ROW 3: BUSINESS + INBOX -->
+    <div class="grid-2-1">
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <div class="card">
+          <div class="card-label label-purple">COMMUNITY PLATFORM — IN BUILD</div>
+          <div style="display:flex;gap:16px;">
+            <div style="flex:1;">
+              <div class="stat-big" style="color:#4A3A9A;">2</div>
+              <div class="stat-label">Tiers in build</div>
+            </div>
+            <div style="flex:1;">
+              <div class="stat-big" style="color:#1A3A6B;">Free</div>
+              <div class="stat-label">Tier 1 — existing patients</div>
+            </div>
+            <div style="flex:1;">
+              <div class="stat-big" style="color:#0C7A6E;">$10/mo</div>
+              <div class="stat-label">Tier 2 — premium content</div>
+            </div>
+          </div>
+          <div class="metric-row">
+            <span class="metric-chip mchip-purple">Educational Videos</span>
+            <span class="metric-chip mchip-teal">Blog Content</span>
+            <span class="metric-chip mchip-blue">Parent Forum</span>
+            <span class="metric-chip mchip-gold">Expert Q&amp;A</span>
+            <span class="metric-chip mchip-purple">Feeding Camp Prep</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label label-teal">PRACTICE PIPELINE</div>
+          <div style="display:flex;gap:24px;margin-bottom:14px;">
+            <div><div class="stat-big" style="color:#1A3A6B;font-size:24px;">22</div><div class="stat-label">Active patients</div></div>
+            <div><div class="stat-big" style="color:#0C7A6E;font-size:24px;">8</div><div class="stat-label">Waitlist</div></div>
+            <div><div class="stat-big" style="color:#B8860B;font-size:24px;">3</div><div class="stat-label">New inquiries</div></div>
+            <div><div class="stat-big" style="color:#4A3A9A;font-size:24px;">94%</div><div class="stat-label">Retention rate</div></div>
+          </div>
+          <div class="card-label label-gray" style="margin-bottom:8px;">MONTHLY PATIENT LIST — AUTOMATION STATUS</div>
+          <div class="alert-card alert-teal" style="margin-bottom:0;">
+            <div class="alert-icon">&#9679;</div>
+            <div><div class="alert-title">Automation active via GHL + Claude</div><div class="alert-sub">Monthly export auto-triggers Google review outreach and newsletter subscription. No more manual send to Amish.</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+
+        <div class="card">
+          <div class="card-label label-blue">INBOX TRIAGE</div>
+          <div class="inbox-item">
+            <div class="inbox-priority priority-high"></div>
+            <div><div class="inbox-from">Referral — Dr. Chen's office</div><div class="inbox-subject">New patient referral — 18mo feeding eval</div><div class="inbox-action">Draft reply</div></div>
+          </div>
+          <div class="inbox-item">
+            <div class="inbox-priority priority-med"></div>
+            <div><div class="inbox-from">Parent — Sofia M.</div><div class="inbox-subject">"Quick question about home practice"</div><div class="inbox-action">Route to community</div></div>
+          </div>
+          <div class="inbox-item">
+            <div class="inbox-priority priority-med"></div>
+            <div><div class="inbox-from">Jackie — Bookkeeping</div><div class="inbox-subject">April summary — 2 items need review</div><div class="inbox-action">Review</div></div>
+          </div>
+          <div class="inbox-item">
+            <div class="inbox-priority priority-low"></div>
+            <div><div class="inbox-from">Amish — Team</div><div class="inbox-subject">Chatbot conditional logic — ready to test</div><div class="inbox-action">View update</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label label-blue">COMMANDOS — QUICK ACTIONS</div>
+          <div class="cmd-grid">
+            <div class="cmd-item"><div class="cmd-slash">/</div><div class="cmd-name">parent-followup</div><div class="cmd-desc">Draft from today's notes</div></div>
+            <div class="cmd-item"><div class="cmd-slash">/</div><div class="cmd-name">monthly-report</div><div class="cmd-desc">Practice + financial summary</div></div>
+            <div class="cmd-item"><div class="cmd-slash">/</div><div class="cmd-name">newsletter</div><div class="cmd-desc">This week's content draft</div></div>
+            <div class="cmd-item"><div class="cmd-slash">/</div><div class="cmd-name">mileage-log</div><div class="cmd-desc">Log today's route</div></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SECTION DIVIDER -->
+    <div class="section-divider">
+      <div class="section-divider-line"></div>
+      <div class="section-divider-label">Family &amp; Life</div>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <!-- ROW 4: FAMILY + CORMAC VIEW -->
+    <div class="grid-2">
+
+      <div class="card">
+        <div class="card-label label-purple">FAMILY CALENDAR</div>
+        <div class="event-item">
+          <div class="event-date"><div class="event-month">APR</div><div class="event-day">22</div></div>
+          <div><div class="event-name">Liam — Baseball</div><div class="event-sub">5:30 PM &nbsp;·&nbsp; Memorial Park Field 3 &nbsp;·&nbsp; Don't forget gear</div></div>
+        </div>
+        <div class="event-item">
+          <div class="event-date"><div class="event-month">APR</div><div class="event-day">25</div></div>
+          <div><div class="event-name">Tesla Delivery</div><div class="event-sub">Arriving this week &nbsp;·&nbsp; 0% APR &nbsp;·&nbsp; Cormac handling pickup</div></div>
+        </div>
+        <div class="event-item">
+          <div class="event-date"><div class="event-month">MAY</div><div class="event-day">5</div></div>
+          <div><div class="event-name">Portugal Trip — Departure</div><div class="event-sub">Lisbon scouting &nbsp;·&nbsp; AI OS running remotely &nbsp;·&nbsp; 28 days</div></div>
+        </div>
+        <div class="event-item">
+          <div class="event-date"><div class="event-month">MAY</div><div class="event-day">10</div></div>
+          <div><div class="event-name">Feeding Camp — Planning Deadline</div><div class="event-sub">All registrations close &nbsp;·&nbsp; Materials need to be finalized</div></div>
+        </div>
+        <div class="event-item">
+          <div class="event-date" style="background-color:#E6F6F5;"><div class="event-month" style="color:#0C7A6E;">JUN</div><div class="event-day" style="color:#0C7A6E;">15</div></div>
+          <div><div class="event-name">Feeding Camp — Week 1</div><div class="event-sub">Little Eaters &amp; Talkers &nbsp;·&nbsp; Amish building registration portal</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label label-blue">CORMAC'S VIEW — Financial &amp; Household</div>
+        <div style="background-color:#F5F7FA;border-radius:8px;padding:12px 14px;margin-bottom:14px;border-left:4px solid #1A3A6B;">
+          <div style="font-size:11px;font-weight:700;color:#1A3A6B;margin-bottom:4px;">SEPARATE VIEW — SAME DATA</div>
+          <div style="font-size:12px;color:#4A5568;line-height:1.6;">Cormac sees the financial picture from his angle — audit-style reporting, portfolio performance, household budget. Jane sees the practice side. Both views pull from the same live data.</div>
+        </div>
+        <div class="lc-stat"><span class="lc-name">Household net cash flow (April)</span><span class="lc-val" style="color:#0C7A6E;">+$9,840</span></div>
+        <div class="lc-stat"><span class="lc-name">Emergency fund (months covered)</span><span class="lc-val">6.2 mo</span></div>
+        <div class="lc-stat"><span class="lc-name">Tesla loan — Apr payment</span><span class="lc-val" style="color:#C0392B;">-$847</span></div>
+        <div class="lc-stat"><span class="lc-name">Portfolio YTD return</span><span class="lc-val" style="color:#0C7A6E;">+8.4%</span></div>
+        <div class="lc-stat"><span class="lc-name">Trust accounts — last reviewed</span><span class="lc-val">Mar 12</span></div>
+        <div style="margin-top:14px;">
+          <div class="alert-card alert-blue" style="margin-bottom:0;">
+            <div class="alert-icon">&#9679;</div>
+            <div><div class="alert-title">Cormac's custom view ready to build</div><div class="alert-sub">His accounting background means he'll want P&amp;L format, balance sheet view, and audit trail access — all configurable.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER NOTE -->
+    <div style="text-align:center;padding:20px 0 8px;">
+      <div style="font-size:11px;color:#A0A8B4;line-height:1.7;">This is a preview of what your AI OS dashboard looks like when it's live.<br>Every number, every section, every view — pulled from your real systems in real time.<br><strong style="color:#1A3A6B;">Advisor AI Partners</strong> &nbsp;·&nbsp; david@advisoraipartners.com</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

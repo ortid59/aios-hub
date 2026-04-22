@@ -83,13 +83,20 @@
     .stat-item {
       display: flex; align-items: center; gap: 8px;
       padding: 0 20px; border-right: 1px solid var(--border);
-      height: 100%;
+      height: 100%; cursor: pointer; transition: all .15s;
+      border-bottom: 2px solid transparent; user-select: none;
     }
     .stat-item:first-child { padding-left: 0; }
     .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: var(--blue-xl); }
+    .stat-item.active {
+      background: var(--blue-xl); border-bottom-color: var(--blue-m);
+    }
+    .stat-item.active .stat-val { color: var(--blue-m); }
+    .stat-item.active .stat-lbl { color: var(--blue-m); }
     .stat-icon { font-size: 16px; }
-    .stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--ink); }
-    .stat-lbl { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+    .stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--ink); transition: color .15s; }
+    .stat-lbl { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; transition: color .15s; }
 
     /* ── Main layout ──────────────────────────────────────── */
     .main { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 112px); }
@@ -341,31 +348,31 @@
   </div>
 </nav>
 
-<!-- Stats strip -->
+<!-- Stats strip (clickable pill filters) -->
 <div class="stats-strip">
-  <div class="stat-item">
+  <div class="stat-item" data-filter="meetings" onclick="filterSection('meetings')">
     <span class="stat-icon">📅</span>
-    <span class="stat-val">5</span>
+    <span class="stat-val">8</span>
     <span class="stat-lbl mono">MEETINGS</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="emails" onclick="filterSection('emails')">
     <span class="stat-icon">📧</span>
     <span class="stat-val">17</span>
     <span class="stat-lbl mono">EMAILS</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="messages" onclick="filterSection('messages')">
     <span class="stat-icon">💬</span>
     <span class="stat-val">8</span>
     <span class="stat-lbl mono">MESSAGES</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="calls" onclick="filterSection('calls')">
     <span class="stat-icon">📞</span>
     <span class="stat-val">0</span>
     <span class="stat-lbl mono">CALLS</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="files" onclick="filterSection('files')">
     <span class="stat-icon">🔨</span>
-    <span class="stat-val">8</span>
+    <span class="stat-val">27</span>
     <span class="stat-lbl mono">FILES BUILT</span>
   </div>
 </div>
@@ -377,6 +384,30 @@
   <aside class="sidebar">
     <div class="sidebar-title mono">Timeline</div>
     <div class="tl-item">
+              <div class="tl-dot" style="background:#2563EB"></div>
+              <div class="tl-line"></div>
+              <div class="tl-content">
+                <span class="tl-time">04-22</span>
+                <span class="tl-label">Jean Hawney - Apr 22, 04:03 PM</span>
+              </div>
+            </div>
+<div class="tl-item">
+              <div class="tl-dot" style="background:#2563EB"></div>
+              <div class="tl-line"></div>
+              <div class="tl-content">
+                <span class="tl-time">04-22</span>
+                <span class="tl-label">Pamela Earls - Apr 22, 03:27 PM</span>
+              </div>
+            </div>
+<div class="tl-item">
+              <div class="tl-dot" style="background:#2563EB"></div>
+              <div class="tl-line"></div>
+              <div class="tl-content">
+                <span class="tl-time">04-22</span>
+                <span class="tl-label">Michael Newhouse Apr 22, 01:40 PM</span>
+              </div>
+            </div>
+<div class="tl-item">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -420,7 +451,7 @@
               <div class="tl-dot" style="background:#D97706"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
-                <span class="tl-time">01:03 PM</span>
+                <span class="tl-time">01:06 PM</span>
                 <span class="tl-label">Built: 2026-04-22.html</span>
               </div>
             </div>
@@ -428,40 +459,24 @@
               <div class="tl-dot" style="background:#D97706"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
-                <span class="tl-time">04:54 PM</span>
-                <span class="tl-label">Built: aios-email-diane-denholm.html</span>
+                <span class="tl-time">01:12 PM</span>
+                <span class="tl-label">Built: 2026-04-16.html</span>
               </div>
             </div>
 <div class="tl-item">
               <div class="tl-dot" style="background:#D97706"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
-                <span class="tl-time">04:54 PM</span>
-                <span class="tl-label">Built: supporting-strategies.html</span>
-              </div>
-            </div>
-<div class="tl-item">
-              <div class="tl-dot" style="background:#D97706"></div>
-              <div class="tl-line"></div>
-              <div class="tl-content">
-                <span class="tl-time">07:05 AM</span>
-                <span class="tl-label">Built: meeting-dashboard.html</span>
-              </div>
-            </div>
-<div class="tl-item">
-              <div class="tl-dot" style="background:#D97706"></div>
-              <div class="tl-line"></div>
-              <div class="tl-content">
-                <span class="tl-time">08:36 AM</span>
-                <span class="tl-label">Built: twinkle-knights-audit.html</span>
+                <span class="tl-time">01:12 PM</span>
+                <span class="tl-label">Built: 2026-04-20.html</span>
               </div>
             </div>
 <div class="tl-item">
               <div class="tl-dot" style="background:#D97706"></div>
               
               <div class="tl-content">
-                <span class="tl-time">08:52 AM</span>
-                <span class="tl-label">Built: ss-proposal-engine.html</span>
+                <span class="tl-time">01:12 PM</span>
+                <span class="tl-label">Built: 2026-04-21.html</span>
               </div>
             </div>
   </aside>
@@ -473,10 +488,10 @@
     <div class="narrative-card">
       <div class="narrative-eyebrow mono">How was your day, David?</div>
       <div class="narrative-text">
-        <p>Here's a look at Wednesday, April 22. Built 8 file(s) including 2026-04-22.html. Run with ANTHROPIC_API_KEY set for the full AI narrative.</p>
+        <p>Dashboard generated for 2026-04-22. Run without --no-narrative for the AI summary.</p>
       </div>
       <div class="narrative-footer">
-        <span class="narrative-gen mono">Generated 01:06 PM · 2026-04-22</span>
+        <span class="narrative-gen mono">Generated 07:52 PM · 2026-04-22</span>
         <span class="ai-badge mono">claude-opus-4-7</span>
       </div>
     </div>
@@ -485,14 +500,56 @@
     <div class="section-grid">
 
       <!-- Meetings -->
-      <div class="section-card full-width">
+      <div class="section-card full-width" data-section="meetings">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">📅</span> Meetings & Calls
           </div>
-          <span class="section-count count-blue mono">5</span>
+          <span class="section-count count-blue mono">8</span>
         </div>
         
+            <div class="meeting-card">
+              <div class="meeting-header">
+                <div class="meeting-title">Jean Hawney - Apr 22, 04:03 PM</div>
+                <div class="meeting-meta">
+                  <span class="meta-badge">1 min</span>
+                  <span class="meta-badge src-fireflies">fireflies</span>
+                </div>
+              </div>
+              
+              <p class="meeting-summary">The discussion revolved around leveraging AI tools to enhance operational efficiency and client interaction, particularly focusing on the adoption of Go High Level for its integrat…</p>
+              <span class="kw-tag">AI integration</span> <span class="kw-tag">community membership</span> <span class="kw-tag">voice-enabled chatbot</span> <span class="kw-tag">financial management</span>
+              
+            </div>
+
+            <div class="meeting-card">
+              <div class="meeting-header">
+                <div class="meeting-title">Pamela Earls - Apr 22, 03:27 PM</div>
+                <div class="meeting-meta">
+                  <span class="meta-badge">1 min</span>
+                  <span class="meta-badge src-fireflies">fireflies</span>
+                </div>
+              </div>
+              
+              <p class="meeting-summary">The team is implementing a web-based portal aimed at enhancing school document management by enabling direct uploads and tracking of submissions. Scheduled for rollout by the end o…</p>
+              <span class="kw-tag">school portal</span> <span class="kw-tag">financial documents</span> <span class="kw-tag">bank reconciliation</span> <span class="kw-tag">document upload</span>
+              
+            </div>
+
+            <div class="meeting-card">
+              <div class="meeting-header">
+                <div class="meeting-title">Michael Newhouse Apr 22, 01:40 PM</div>
+                <div class="meeting-meta">
+                  
+                  <span class="meta-badge src-fireflies">fireflies</span>
+                </div>
+              </div>
+              
+              <p class="meeting-summary">In the meeting, the team focused on building AI-powered business operating systems, emphasizing the importance of AIOS template creation to streamline proposal delivery in under 10…</p>
+              <span class="kw-tag">Go High Level</span> <span class="kw-tag">AIOS</span> <span class="kw-tag">Claude AI</span> <span class="kw-tag">website automation</span>
+              
+            </div>
+
             <div class="meeting-card">
               <div class="meeting-header">
                 <div class="meeting-title">Ben Montgomery — Meeting with Advisor AI Partners</div>
@@ -565,7 +622,7 @@
       </div>
 
       <!-- Emails -->
-      <div class="section-card">
+      <div class="section-card" data-section="emails">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">📧</span> Emails
@@ -585,7 +642,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="section-card">
+      <div class="section-card" data-section="messages">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">💬</span> Messages
@@ -599,7 +656,7 @@
       </div>
 
       <!-- Calls -->
-      <div class="section-card">
+      <div class="section-card" data-section="calls">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">📞</span> Phone Calls
@@ -610,17 +667,36 @@
       </div>
 
       <!-- Files Built -->
-      <div class="section-card">
+      <div class="section-card" data-section="files">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">🔨</span> Files Built
           </div>
-          <span class="section-count count-gold mono">8</span>
+          <span class="section-count count-gold mono">27</span>
         </div>
-        <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-22.html</span><span class="file-path">hub/daily-brief/2026-04-22.html</span></div><span class="file-time">01:03 PM</span></div>
+        <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-22.html</span><span class="file-path">hub/daily-brief/2026-04-22.html</span></div><span class="file-time">01:06 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-16.html</span><span class="file-path">hub/daily-brief/2026-04-16.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-20.html</span><span class="file-path">hub/daily-brief/2026-04-20.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-21.html</span><span class="file-path">hub/daily-brief/2026-04-21.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-17.html</span><span class="file-path">hub/daily-brief/2026-04-17.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-01.html</span><span class="file-path">hub/daily-brief/2026-04-01.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-06.html</span><span class="file-path">hub/daily-brief/2026-04-06.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-10.html</span><span class="file-path">hub/daily-brief/2026-04-10.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-07.html</span><span class="file-path">hub/daily-brief/2026-04-07.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-08.html</span><span class="file-path">hub/daily-brief/2026-04-08.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-04.html</span><span class="file-path">hub/daily-brief/2026-04-04.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-13.html</span><span class="file-path">hub/daily-brief/2026-04-13.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-09.html</span><span class="file-path">hub/daily-brief/2026-04-09.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-14.html</span><span class="file-path">hub/daily-brief/2026-04-14.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-02.html</span><span class="file-path">hub/daily-brief/2026-04-02.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-18.html</span><span class="file-path">hub/daily-brief/2026-04-18.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-03.html</span><span class="file-path">hub/daily-brief/2026-04-03.html</span></div><span class="file-time">01:12 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-15.html</span><span class="file-path">hub/daily-brief/2026-04-15.html</span></div><span class="file-time">01:12 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">aios-email-diane-denholm.html</span><span class="file-path">hub/aios-email-diane-denholm.html</span></div><span class="file-time">04:54 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">supporting-strategies.html</span><span class="file-path">hub/supporting-strategies.html</span></div><span class="file-time">04:54 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">meeting-dashboard.html</span><span class="file-path">hub/meeting-dashboard.html</span></div><span class="file-time">07:05 AM</span></div>
+<div class="file-row"><span class="file-ext ext-py">PY</span><div class="file-info"><span class="file-name">collect_fathom.py</span><span class="file-path">scripts/collect_fathom.py</span></div><span class="file-time">05:06 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">productivity-index.html</span><span class="file-path">hub/productivity-index.html</span></div><span class="file-time">05:22 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">meeting-dashboard.html</span><span class="file-path">hub/meeting-dashboard.html</span></div><span class="file-time">07:32 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">twinkle-knights-audit.html</span><span class="file-path">hub/twinkle-knights-audit.html</span></div><span class="file-time">08:36 AM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">ss-proposal-engine.html</span><span class="file-path">hub/ss-proposal-engine.html</span></div><span class="file-time">08:52 AM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">ss-client-intelligence.html</span><span class="file-path">hub/ss-client-intelligence.html</span></div><span class="file-time">09:14 AM</span></div>
@@ -648,11 +724,36 @@
 
 <footer class="page-footer">
   <span class="footer-brand syne">Advisor AI Partners · David's Day</span>
-  <span class="footer-gen mono">Generated 01:06 PM · 2026-04-22 · DataOS v1</span>
+  <span class="footer-gen mono">Generated 07:52 PM · 2026-04-22 · DataOS v1</span>
 </footer>
 
 <script>
   const currentDate = new Date("2026-04-22");
+
+  // ── Section filter (pillbox) ───────────────────────────────
+  let activeFilter = null;
+
+  function filterSection(name) {
+    const sections = document.querySelectorAll('[data-section]');
+    const pills    = document.querySelectorAll('.stat-item[data-filter]');
+    const grid     = document.querySelector('.section-grid');
+
+    if (activeFilter === name) {
+      // Deselect — show all
+      activeFilter = null;
+      sections.forEach(s => { s.style.display = ''; });
+      pills.forEach(p => p.classList.remove('active'));
+      if (grid) grid.style.gridTemplateColumns = '';
+    } else {
+      activeFilter = name;
+      sections.forEach(s => {
+        s.style.display = s.dataset.section === name ? '' : 'none';
+      });
+      pills.forEach(p => p.classList.toggle('active', p.dataset.filter === name));
+      // Expand selected section to full width
+      if (grid) grid.style.gridTemplateColumns = '1fr';
+    }
+  }
 
   function navDay(delta) {
     const d = new Date(currentDate);
