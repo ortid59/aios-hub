@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>David's Day — Apr 18</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ───────────────────────────────────────────── */
+    :root {
+      --blue:    #1E40AF; --blue-m:  #2563EB; --blue-l:  #DBEAFE; --blue-xl: #EFF6FF;
+      --teal:    #0F766E; --teal-m:  #0D9488; --teal-l:  #CCFBF1; --teal-xl: #F0FDFA;
+      --gold:    #B45309; --gold-m:  #D97706; --gold-l:  #FEF3C7; --gold-xl: #FFFBEB;
+      --purple:  #6D28D9; --purple-l:#EDE9FE;
+      --ink:     #0F172A; --ink-2:   #1E293B; --ink-3:   #334155;
+      --muted:   #64748B; --muted-l: #94A3B8;
+      --border:  #E2E8F0; --border-2:#CBD5E1;
+      --bg:      #F8FAFC; --surface: #FFFFFF; --surface-2: #F1F5F9;
+    }
+
+    /* ── Reset & base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; -webkit-font-smoothing: antialiased; }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .mono { font-family: 'Geist Mono', monospace; }
+
+    /* ── Top nav ──────────────────────────────────────────── */
+    .top-nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 12px; }
+    .nav-logo {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: linear-gradient(135deg, var(--blue-m) 0%, var(--teal-m) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px; color: #fff;
+    }
+    .nav-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; color: var(--ink); }
+    .nav-sub { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+    .nav-date-ctrl { display: flex; align-items: center; gap: 8px; }
+    .nav-btn {
+      width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--ink); font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s;
+    }
+    .nav-btn:hover { background: var(--blue-xl); border-color: var(--blue-l); color: var(--blue-m); }
+    .nav-date-label {
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: 14px;
+      color: var(--ink); white-space: nowrap;
+    }
+    .today-btn {
+      font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+      padding: 4px 10px; border-radius: 6px; border: 1px solid var(--blue-l);
+      background: var(--blue-xl); color: var(--blue-m); cursor: pointer;
+      transition: all .15s; letter-spacing: 0.05em;
+    }
+    .today-btn:hover { background: var(--blue-m); color: #fff; border-color: var(--blue-m); }
+
+    .nav-refresh {
+      font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+      padding: 5px 12px; border-radius: 6px; border: 1px solid var(--teal-l);
+      background: var(--teal-xl); color: var(--teal); cursor: pointer;
+      transition: all .15s; letter-spacing: 0.04em; display: flex; align-items: center; gap: 5px;
+    }
+    .nav-refresh:hover { background: var(--teal-m); color: #fff; border-color: var(--teal-m); }
+    .spin { display: inline-block; transition: transform .6s; }
+    .nav-refresh:hover .spin { transform: rotate(360deg); }
+
+    /* ── Stats strip ──────────────────────────────────────── */
+    .stats-strip {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 52px;
+      display: flex; align-items: center; gap: 0;
+    }
+    .stat-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 20px; border-right: 1px solid var(--border);
+      height: 100%;
+    }
+    .stat-item:first-child { padding-left: 0; }
+    .stat-item:last-child { border-right: none; }
+    .stat-icon { font-size: 16px; }
+    .stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--ink); }
+    .stat-lbl { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+
+    /* ── Main layout ──────────────────────────────────────── */
+    .main { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 112px); }
+
+    /* ── Sidebar / Timeline ───────────────────────────────── */
+    .sidebar {
+      background: var(--surface); border-right: 1px solid var(--border);
+      padding: 24px 20px; position: sticky; top: 112px; height: calc(100vh - 112px); overflow-y: auto;
+    }
+    .sidebar-title {
+      font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .tl-item { display: flex; position: relative; gap: 10px; min-height: 44px; }
+    .tl-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+      margin-top: 4px; position: relative; z-index: 1;
+      box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 0 4px currentColor;
+    }
+    .tl-line {
+      position: absolute; left: 4px; top: 14px; bottom: -8px; width: 2px;
+      background: var(--border); z-index: 0;
+    }
+    .tl-content { flex: 1; padding-bottom: 16px; }
+    .tl-time { display: block; font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+    .tl-label { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+    .tl-empty { font-size: 12px; color: var(--muted); font-style: italic; text-align: center; padding: 24px 0; }
+
+    /* ── Content area ─────────────────────────────────────── */
+    .content { padding: 28px 28px 60px; display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── Narrative card ───────────────────────────────────── */
+    .narrative-card {
+      background: linear-gradient(135deg, var(--blue-xl) 0%, var(--teal-xl) 100%);
+      border: 1px solid var(--blue-l); border-radius: 16px;
+      padding: 28px 32px; position: relative; overflow: hidden;
+    }
+    .narrative-card::before {
+      content: '"'; font-family: 'Syne', sans-serif; font-size: 120px; font-weight: 800;
+      color: var(--blue-l); position: absolute; top: -20px; left: 20px;
+      line-height: 1; pointer-events: none;
+    }
+    .narrative-eyebrow {
+      font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+    }
+    .narrative-eyebrow::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--teal-m); display: inline-block;
+    }
+    .narrative-text {
+      font-size: 15.5px; line-height: 1.75; color: var(--ink-2);
+      position: relative; z-index: 1;
+    }
+    .narrative-text p { margin-bottom: 14px; }
+    .narrative-text p:last-child { margin-bottom: 0; }
+    .narrative-footer {
+      margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--blue-l);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .narrative-gen {
+      font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted);
+    }
+    .ai-badge {
+      font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 500;
+      padding: 3px 9px; border-radius: 999px;
+      background: var(--blue-l); color: var(--blue-m); border: 1px solid #BFDBFE;
+    }
+
+    /* ── Section cards ────────────────────────────────────── */
+    .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .section-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .section-card.full-width { grid-column: 1 / -1; }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px;
+      color: var(--ink); display: flex; align-items: center; gap: 8px;
+    }
+    .section-icon { font-size: 16px; }
+    .section-count {
+      font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500;
+      padding: 2px 9px; border-radius: 999px;
+    }
+    .count-blue { background: var(--blue-l); color: var(--blue-m); }
+    .count-teal { background: var(--teal-l); color: var(--teal); }
+    .count-gold { background: var(--gold-l); color: var(--gold); }
+    .count-purple { background: var(--purple-l); color: var(--purple); }
+    .count-gray { background: var(--surface-2); color: var(--muted); }
+
+    .empty-state { font-size: 12px; color: var(--muted); font-style: italic; padding: 8px 0; }
+
+    /* ── Meeting cards ────────────────────────────────────── */
+    .meeting-card {
+      padding: 14px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; border-left: 3px solid var(--blue-m);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .meeting-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .meeting-title { font-weight: 600; font-size: 13px; color: var(--ink); }
+    .meeting-meta { display: flex; gap: 4px; flex-shrink: 0; }
+    .meta-badge {
+      font-family: 'Geist Mono', monospace; font-size: 9px; padding: 2px 7px;
+      border-radius: 4px; background: var(--surface-2); color: var(--muted);
+    }
+    .src-fireflies { background: #FEF3C7; color: #92400E; }
+    .src-calendar { background: var(--teal-l); color: var(--teal); }
+    .meeting-with { font-size: 11px; color: var(--muted); }
+    .meeting-summary { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+    .kw-tag {
+      display: inline-block; font-family: 'Geist Mono', monospace; font-size: 9px;
+      padding: 2px 6px; border-radius: 4px; background: var(--blue-l); color: var(--blue-m);
+      margin: 0 2px 2px 0;
+    }
+    .action-list {
+      font-size: 11px; color: var(--ink-3); padding-left: 16px; line-height: 1.6;
+    }
+
+    /* ── Email rows ───────────────────────────────────────── */
+    .email-group-label {
+      font-family: 'Geist Mono', monospace; font-size: 10px; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; margin-top: 4px;
+    }
+    .email-row {
+      display: flex; gap: 10px; padding: 10px; border-radius: 8px;
+      border: 1px solid var(--border); margin-bottom: 6px; align-items: flex-start;
+    }
+    .email-dir {
+      font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 700;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .sent .email-dir { color: var(--teal-m); }
+    .recv .email-dir { color: var(--blue-m); }
+    .email-to { font-size: 11px; font-weight: 600; color: var(--ink); }
+    .email-subject { font-size: 12px; color: var(--ink-2); }
+    .email-snippet { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* ── Messages ─────────────────────────────────────────── */
+    .msg-platform { margin: 6px 0 4px; }
+    .platform-label {
+      font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .slack-label { background: #4A154B; color: #fff; }
+    .im-label { background: #34C759; color: #fff; }
+    .msg-channel {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 10px; background: var(--surface-2); border-radius: 6px;
+      margin-bottom: 4px;
+    }
+    .ch-name { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--ink); }
+    .ch-count {
+      font-family: 'Geist Mono', monospace; font-size: 10px;
+      background: var(--purple-l); color: var(--purple); padding: 1px 6px; border-radius: 4px;
+    }
+    .msg-preview { font-size: 11px; color: var(--muted); padding: 2px 10px 8px; line-height: 1.4; }
+    .im-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 10px; background: var(--surface-2); border-radius: 6px; margin-bottom: 2px;
+    }
+    .im-contact { font-weight: 600; font-size: 12px; }
+    .im-count { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); }
+
+    /* ── Calls ────────────────────────────────────────────── */
+    .call-row {
+      display: flex; align-items: center; gap: 10px; padding: 10px;
+      border-radius: 8px; border: 1px solid var(--border); margin-bottom: 6px;
+    }
+    .outbound { border-left: 3px solid var(--teal-m); }
+    .inbound  { border-left: 3px solid var(--blue-m); }
+    .call-dir-icon {
+      font-family: 'Geist Mono', monospace; font-weight: 700; font-size: 14px; flex-shrink: 0;
+    }
+    .outbound .call-dir-icon { color: var(--teal-m); }
+    .inbound  .call-dir-icon { color: var(--blue-m); }
+    .call-info { flex: 1; }
+    .call-contact { display: block; font-weight: 600; font-size: 13px; }
+    .call-time { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); }
+    .call-dur { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--muted); }
+
+    /* ── Files ────────────────────────────────────────────── */
+    .file-row {
+      display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+      border-radius: 8px; background: var(--bg); border: 1px solid var(--border);
+      margin-bottom: 6px;
+    }
+    .file-ext {
+      font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 600;
+      padding: 3px 6px; border-radius: 4px; flex-shrink: 0;
+    }
+    .ext-html { background: #FEE2E2; color: #991B1B; }
+    .ext-md   { background: var(--gold-l); color: var(--gold); }
+    .ext-pdf  { background: #FEE2E2; color: #991B1B; }
+    .ext-py   { background: var(--teal-l); color: var(--teal); }
+    .ext-txt  { background: var(--surface-2); color: var(--muted); }
+    .file-info { flex: 1; min-width: 0; }
+    .file-name { display: block; font-size: 12px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-path { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+    .file-time { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); flex-shrink: 0; }
+
+    /* ── Claude work ──────────────────────────────────────── */
+    .claude-session {
+      padding: 12px; background: linear-gradient(135deg, var(--blue-xl), var(--purple-l));
+      border: 1px solid var(--blue-l); border-radius: 8px; margin-bottom: 8px;
+    }
+    .claude-summary { font-size: 12px; color: var(--ink-2); line-height: 1.5; margin-bottom: 6px; }
+    .claude-output { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--blue-m); padding: 2px 0; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    .page-footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-brand { font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12px; color: var(--muted); }
+    .footer-gen { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted-l); }
+
+    /* ── Scrollbar ────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- Top navigation -->
+<nav class="top-nav">
+  <div class="nav-brand">
+    <div class="nav-logo">D</div>
+    <div>
+      <div class="nav-title syne">David's Day</div>
+      <div class="nav-sub mono">ADVISOR AI PARTNERS · PERSONAL BRIEF</div>
+    </div>
+  </div>
+  <div class="nav-date-ctrl">
+    <button class="nav-btn" onclick="navDay(-1)" title="Previous day">‹</button>
+    <span class="nav-date-label">Saturday, April 18, 2026</span>
+    <button class="nav-btn" onclick="navDay(1)" title="Next day">›</button>
+    <button class="today-btn mono" onclick="navToday()">Today</button>
+    <button class="nav-refresh" onclick="refresh()" title="Refresh data">
+      <span class="spin">↺</span> Refresh
+    </button>
+  </div>
+</nav>
+
+<!-- Stats strip -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <span class="stat-icon">📅</span>
+    <span class="stat-val">0</span>
+    <span class="stat-lbl mono">MEETINGS</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-icon">📧</span>
+    <span class="stat-val">3</span>
+    <span class="stat-lbl mono">EMAILS</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-icon">💬</span>
+    <span class="stat-val">0</span>
+    <span class="stat-lbl mono">MESSAGES</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-icon">📞</span>
+    <span class="stat-val">0</span>
+    <span class="stat-lbl mono">CALLS</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-icon">🔨</span>
+    <span class="stat-val">0</span>
+    <span class="stat-lbl mono">FILES BUILT</span>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="main">
+
+  <!-- Sidebar timeline -->
+  <aside class="sidebar">
+    <div class="sidebar-title mono">Timeline</div>
+    <div class="tl-empty">Run today to see your timeline</div>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- Narrative -->
+    <div class="narrative-card">
+      <div class="narrative-eyebrow mono">How was your day, David?</div>
+      <div class="narrative-text">
+        <p>Here's a look at Saturday, April 18. Run with ANTHROPIC_API_KEY set for the full AI narrative.</p>
+      </div>
+      <div class="narrative-footer">
+        <span class="narrative-gen mono">Generated 01:12 PM · 2026-04-18</span>
+        <span class="ai-badge mono">claude-opus-4-7</span>
+      </div>
+    </div>
+
+    <!-- Section grid -->
+    <div class="section-grid">
+
+      <!-- Meetings -->
+      <div class="section-card full-width">
+        <div class="section-header">
+          <div class="section-title syne">
+            <span class="section-icon">📅</span> Meetings & Calls
+          </div>
+          <span class="section-count count-blue mono">0</span>
+        </div>
+        <p class="empty-state">No meetings captured yet</p>
+      </div>
+
+      <!-- Emails -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title syne">
+            <span class="section-icon">📧</span> Emails
+          </div>
+          <span class="section-count count-teal mono">3</span>
+        </div>
+        <div class="email-group-label">Received</div>
+<div class="email-row recv"><span class="email-dir">←</span><div><div class="email-to">Jean Hawney <info@thelittleeaters.com></div><div class="email-subject">Lindy — AI tool recommendation + friend who is doctor/developer</div><div class="email-snippet">This weekend I was with friends and one is a doctor who has gotten deep into AI as a developer. Chec</div></div></div>
+<div class="email-row recv"><span class="email-dir">←</span><div><div class="email-to">Jean Hawney <info@thelittleeaters.com></div><div class="email-subject">Re: Lindy — also check this out: MIA Plastic Surgery on Base44</div><div class="email-snippet">Check this out: MIA Plastic Surgery mia-aesthetic-art.base44.app. Also, on the podcast, the voice is</div></div></div>
+<div class="email-row recv"><span class="email-dir">←</span><div><div class="email-to">Bob Doran</div><div class="email-subject">Thank you David — really inspired me!</div><div class="email-snippet">Just wanted to thank you for calling today. You really inspired me more than you will ever know!</div></div></div>
+      </div>
+
+      <!-- Messages -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title syne">
+            <span class="section-icon">💬</span> Messages
+          </div>
+          <span class="section-count count-purple mono">0</span>
+        </div>
+        <p class="empty-state">No messages captured — run skill with Slack + iMessages MCP</p>
+      </div>
+
+      <!-- Calls -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title syne">
+            <span class="section-icon">📞</span> Phone Calls
+          </div>
+          <span class="section-count count-teal mono">0</span>
+        </div>
+        <p class="empty-state">No calls captured — run skill with GHL MCP</p>
+      </div>
+
+      <!-- Files Built -->
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-title syne">
+            <span class="section-icon">🔨</span> Files Built
+          </div>
+          <span class="section-count count-gold mono">0</span>
+        </div>
+        <p class="empty-state">No files built today — or run with today's date</p>
+      </div>
+
+      <!-- Claude Work -->
+      <div class="section-card full-width">
+        <div class="section-header">
+          <div class="section-title syne">
+            <span class="section-icon">🤖</span> Claude Work Sessions
+          </div>
+          <span class="section-count count-gray mono">0</span>
+        </div>
+        <p class="empty-state">Claude work captured via conversation hooks</p>
+      </div>
+
+    </div><!-- /section-grid -->
+  </main>
+</div><!-- /main -->
+
+<footer class="page-footer">
+  <span class="footer-brand syne">Advisor AI Partners · David's Day</span>
+  <span class="footer-gen mono">Generated 01:12 PM · 2026-04-18 · DataOS v1</span>
+</footer>
+
+<script>
+  const currentDate = new Date("2026-04-18");
+
+  function navDay(delta) {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() + delta);
+    const iso = d.toISOString().split("T")[0];
+    // Look for saved daily brief
+    window.location.href = iso + ".html";
+  }
+
+  function navToday() {
+    const today = new Date().toISOString().split("T")[0];
+    window.location.href = today + ".html";
+  }
+
+  function refresh() {
+    const btn = document.querySelector('.nav-refresh');
+    const spin = btn.querySelector('.spin');
+    spin.style.animation = 'spin 1s linear infinite';
+    btn.textContent = ' Refreshing…';
+    setTimeout(() => window.location.reload(), 1200);
+  }
+</script>
+</body>
+</html>
