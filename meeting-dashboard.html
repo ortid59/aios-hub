@@ -137,6 +137,7 @@
     .badge-fireflies { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue-mid); }
     .badge-notion    { background: var(--teal-light); color: var(--teal); border: 1px solid var(--teal-mid); }
     .badge-manual    { background: var(--gold-light); color: var(--gold); border: 1px solid var(--gold-mid); }
+    .badge-fathom    { background: #F0FDFA; color: #0D9488; border: 1px solid #99F6E4; }
 
     /* Detail pane */
     #detail-pane {
@@ -316,6 +317,7 @@
       </div>
       <button class="filter-pill active" data-filter="all">All</button>
       <button class="filter-pill" data-filter="fireflies">Fireflies</button>
+      <button class="filter-pill" data-filter="fathom">Fathom</button>
       <button class="filter-pill" data-filter="notion">Notion</button>
     </div>
   </div>
@@ -341,100 +343,208 @@
 
 <script>
 // ─── REAL DATA — Generated from data/data.db ──────────────────────────────────
-// Run: .venv/bin/python scripts/render_meeting_dashboard.py to regenerate
+// Run: python scripts/render_meeting_dashboard.py to regenerate
 const MEETINGS = [
   {
     "id": 1,
+    "meeting_id": "fathom_140183790",
+    "source": "fathom",
+    "title": "Jason Pratt - Meeting with Advisor AI Partners",
+    "date": "2026-04-22",
+    "duration_minutes": 34,
+    "fathom_url": "https://fathom.video/calls/646298212",
+    "summary": "Jason Pratt — 10-person marketing agency (20 clients). Key pain point: 7–10 day proposal turnaround using buggy Proposify, no time for AI adoption. David proposed Fractional AI Officer engagement, AIOS licensing (built on Claude/Morningstar AI), and a GoHighLevel joint venture. Path forward: migrate Pratt's team to Claude, integrate with Motion API to automate proposals and client onboarding.",
+    "action_items": [
+      {
+        "owner": "David Ortiz",
+        "text": "Email Jason AIOS/GoHighLevel info; request his 3 biggest AI wins + client onboarding overview"
+      },
+      {
+        "owner": "Jason Pratt",
+        "text": "Send follow-up email to David to schedule second meeting"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "meeting_id": "fathom_140157885",
+    "source": "fathom",
+    "title": "Impromptu Google Meet Meeting",
+    "date": "2026-04-22",
+    "duration_minutes": 17,
+    "fathom_url": "https://fathom.video/calls/647345697",
+    "summary": "Internal standup with Aamish. Heather project unblocked — approved $50 for 1,000 Lovable credits. Bug identified: Include/Recommend toggle incorrectly removes items from presentation when Recommend is toggled off. Jean's meeting shifted to Lindy AI focus (morning only for Aamish availability). New priority: standardized real-time client dashboard inspired by Twinkle Knights email-tracking tool.",
+    "action_items": [
+      {
+        "owner": "Aamish Aaftab",
+        "text": "Fix Include/Recommend toggle bug; send Heather preview link when resolved"
+      },
+      {
+        "owner": "Aamish Aaftab",
+        "text": "Email David Heather quotes for review"
+      },
+      {
+        "owner": "Aamish Aaftab",
+        "text": "Email David Slack prompt output (exceeded character limit)"
+      },
+      {
+        "owner": "David Ortiz",
+        "text": "Purchase 1,000 Lovable credits ($50)"
+      },
+      {
+        "owner": "David Ortiz",
+        "text": "Reschedule Jean meeting for morning; confirm topic is Lindy AI"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "meeting_id": "fathom_140114609",
+    "source": "fathom",
+    "title": "Ben Montgomery - Meeting with Advisor AI Partners",
+    "date": "2026-04-22",
+    "duration_minutes": 54,
+    "fathom_url": "https://fathom.video/calls/646298210",
+    "summary": "Ben Montgomery — MSP Client Relations Manager handling sales solo with no CRM, PowerPoint proposals, and manual quarterly reviews across Ninja/Grafana/Element. Pricing model ($60/workstation + overages) losing to unlimited competitors ($180+). David proposed AI OS to automate 50–70% of tasks (proposals, outreach, follow-ups, QBRs), enabling an unlimited pricing model. MSP could resell AI OS to clients as new revenue stream.",
+    "action_items": [
+      {
+        "owner": "David Ortiz",
+        "text": "Email Ben follow-up detailing AI OS and its potential for the MSP; include case studies"
+      },
+      {
+        "owner": "Ben Montgomery",
+        "text": "Present AI OS concept to partners to secure buy-in for a follow-up meeting"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "meeting_id": "fireflies_01KPP4K8QCVFT7H83WV5TE4PQJ",
+    "source": "fireflies",
+    "title": "David Ortiz  and Nik Volynkin",
+    "date": "2026-04-21",
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "The discussion focused on the setup and technical implementation of the AI Operating System (AIOS), highlighting challenges such as installation complexity and the importance of modular flexibility. An iterative installation approach was recommended, with David Ortiz deciding to reinstall AIOS to resolve Telegram integration issues, while Nik Volynkin suggested using multiple instances for safer testing. The conversation also introduced a three-tier pricing structure for AIOS services, targeting various user needs and emphasizing industry-specific solutions. The team outlined plans for prepackaging AIOS to cater to sectors like law and accounting. Recommendations for scalable setups included allowing self-installation via the Lovable app. The possibility of integrating voice AI was explored as a future enhancement to improve user experience.",
+    "action_items": []
+  },
+  {
+    "id": 5,
+    "meeting_id": "fireflies_01KPNPERVG1C1BGM3PTNNAMVGS",
+    "source": "fireflies",
+    "title": "Jay Coulter",
+    "date": "2026-04-20",
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "David Ortiz introduced a custom AI operating system (AIOS), designed as an autonomous intelligence layer to enhance business operations through automation and real-time insights. This system consists of five layers that include context loading, live data integration, and the automation of repetitive tasks, targeting small to medium-sized businesses like plumbers and consultants. Ortiz emphasized networking efforts to build credibility and generate sales, particularly through local chambers and university engagements. The presentation also discussed recruiting younger sales representatives to incentivize outreach and the capability to develop apps rapidly using low-code tools, ensuring quick adaptation to user needs.",
+    "action_items": []
+  },
+  {
+    "id": 6,
+    "meeting_id": "fireflies_01KPG428HM7FBS5N5MY4QPT27F",
+    "source": "fireflies",
+    "title": "David Ortiz  and Guy Last",
+    "date": "2026-04-20",
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "David Ortiz is establishing himself as a fractional AI officer, targeting financial advisors and entrepreneurs with AIOS implementations to create scalable revenue streams. He plans to charge between $5,000 and $10,000 per month for AIOS setups, promoting ongoing client engagement through hands-on support and education. Ortiz has secured $200,000 annually from AI consulting and is expanding into custom workflow projects, emphasizing the importance of cultural change in AI adoption. He actively engages with local businesses through initiatives like free consultations and workshops, while his structured onboarding process helps clients understand the benefits of AIOS. Ortiz uniquely positions himself to build strong client relationships by focusing on training and transparency rather than just delivering technology solutions.",
+    "action_items": []
+  },
+  {
+    "id": 7,
+    "meeting_id": "fireflies_01KPN7SKSAJBJT37A29NPKV8CY",
+    "source": "fireflies",
+    "title": "Aamish",
+    "date": "2026-04-20",
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "The meeting discussed the launch strategy for the AIOS product package, aimed at business owners and priced between $5,000 and $10,000. A two-pronged sales approach was proposed, where direct sales of AIOS installation would build trust before upselling integration with Go High Level for marketing automation. David Ortiz emphasized the need for remote installation to reduce friction and establish a credible university consulting role to support local businesses. The team is also aligning their LinkedIn branding to emphasize their services and conducting interactive surveys to identify client automation needs. Additionally, client dashboards are being created to track progress, and operational improvements have been implemented to streamline onboarding and communication.",
+    "action_items": []
+  },
+  {
+    "id": 8,
+    "meeting_id": "fireflies_01KPAW92MR5MFS8QWXR81KX1NN",
+    "source": "fireflies",
+    "title": "David Ortiz  and Nik Volynkin",
+    "date": "2026-04-17",
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "The discussion covered the deployment and configuration of AIOS, highlighting the ease of running it locally compared to on a VPS, with technical insights from Nik on setups and file transfers. Multiple AIOS instances can share data through cloud databases, but synchronization requires proper configuration. Custom packaging for client installs was addressed, noting that AIOS files are standardized. The meeting also focused on resolving Telegram bot disconnection issues, involving integration reinstallation and permission adjustments for automation. David presented a sales strategy targeting founders, aiming to charge for setups while leveraging referrals for upselling. Learning resources and support structures for AIOS were also outlined, emphasizing centralized access to course materials and the combination of AI auto-fixing and guided help.",
+    "action_items": []
+  },
+  {
+    "id": 9,
     "meeting_id": "fireflies_01KPBV88YW9MRZGNJR7KGJKHZ5",
     "source": "fireflies",
     "title": "David Ortiz and Todd Howland",
     "date": "2026-04-16",
     "duration_minutes": 59,
+    "fathom_url": "",
     "summary": "Career Transition: Moved from culinary arts to tech and financial advising after leaving Venezuela, taught programming himself. AI-Driven Marketing Solutions: Developed systems for advisors, automating content creation and compliance for effective outreach and engagement. Lead Generation Challenges: Existing leads have high bounce rates; proposed targeted AI methods for non-professional business owners.",
     "action_items": [
-      {"owner": "David", "text": "Continue developing and refining the AI-driven digital marketing and lead generation platform specifically tailored for financial advisors"},
-      {"owner": "David", "text": "Pursue clean data sources and verify quality of leads to improve targeted lead lists for LTC products and business owner segments"},
-      {"owner": "David", "text": "Implement conversational AI bots to automate lead qualification and client interactions within case management workflows"},
-      {"owner": "David", "text": "Explore multi-channel advertising strategies (Facebook, Instagram, LinkedIn) for client acquisition and lead nurturing using AI-generated content"},
-      {"owner": "David", "text": "Formalize performance-based revenue sharing model for advisor clients to incentivize adoption and scalability of the AI marketing platform"},
-      {"owner": "David", "text": "Engage advisors via direct outreach (email, phone, LinkedIn) to introduce AI platform and gain early users for pilot testing and feedback"}
+      {
+        "owner": "David",
+        "text": "Continue developing and refining the AI-driven digital marketing and lead generation platform for financial advisors"
+      },
+      {
+        "owner": "David",
+        "text": "Pursue clean data sources and verify quality of leads to improve targeted lead lists for LTC products"
+      },
+      {
+        "owner": "David",
+        "text": "Implement conversational AI bots to automate lead qualification and client interactions"
+      },
+      {
+        "owner": "David",
+        "text": "Explore multi-channel advertising strategies (Facebook, Instagram, LinkedIn) using AI-generated content"
+      },
+      {
+        "owner": "David",
+        "text": "Formalize performance-based revenue sharing model for advisor clients"
+      }
     ]
   },
   {
-    "id": 2,
+    "id": 10,
+    "meeting_id": "fireflies_01KP5XJQ48GH5VR38QMW0MB1AV",
+    "source": "fireflies",
+    "title": "David Ortiz.  and Mara Crisan",
+    "date": "2026-04-15",
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "The discussion aimed at increasing monthly recurring revenue from $5,000 to $50,000 through the scaling of AI automation and Go High Level services. David Ortiz highlighted pricing challenges, seeking a scalable $5,000 deliverable while presenting various project pricing options. The client base primarily consists of home service businesses from the Jacksonville Chamber of Commerce, with a target on successful business owners willing to invest in productivity gains. Operational bottlenecks were addressed, with plans to elevate leadership roles and hire additional staff. The team will complete market research and prospect lists in approximately two weeks, followed by follow-up scheduling to sustain momentum.",
+    "action_items": []
+  },
+  {
+    "id": 11,
     "meeting_id": "fireflies_01KP88VEEMNBA9VZ2HQ67V8YWT",
     "source": "fireflies",
     "title": "David Ortiz and Richard Igbinoba",
     "date": "2026-04-15",
-    "duration_minutes": 40,
-    "summary": "Remote Collaboration Setup: Mac Mini acts as a 24/7 server for seamless access and collaboration on AI OS projects. Concurrent Access: Multiple users can log in simultaneously, enabling independent workspaces while sharing the same hardware. Client Onboarding Timelines: Deployments typically take 1–5 days, focusing on audits, installations, and knowledge transfer.",
-    "action_items": [
-      {"owner": "David Ortiz", "text": "Set up Mac Mini as always-on server and synchronize project directories via iCloud to work seamlessly across devices"},
-      {"owner": "David Ortiz", "text": "Create separate user account on Mac Mini for assistant to enable simultaneous and isolated remote work sessions"},
-      {"owner": "David Ortiz", "text": "Explore and establish remote desktop access on Mac Mini for assistant using Jump Desktop or Chrome Remote Desktop"},
-      {"owner": "David Ortiz", "text": "Continue app development using CLAUDE code interface for client deliverables, leveraging CLI capabilities where necessary"},
-      {"owner": "David Ortiz", "text": "Plan AI OS client setup workflow with considerations for remote auditing, installation timeline, and knowledge transfer sessions"},
-      {"owner": "Richard I", "text": "Confirm specific steps to install multiple isolated CLAUDE code instances per user on Mac Mini and provide guidance to David"},
-      {"owner": "Richard I", "text": "Investigate detailed setup and configuration for Mac Mini multi-user server environment and share best practices"},
-      {"owner": "Richard I", "text": "Advise on appropriate remote connection tools (Jump Desktop, TailScale) tailored to mixed Mac/Windows user environments"},
-      {"owner": "Richard I", "text": "Clarify usage limitations and subscription plan recommendations for CLAUDE to ensure David and assistant have adequate access"},
-      {"owner": "Richard I", "text": "Keep David updated about the development status of the forthcoming SaaS tool for AI OS skill sharing and community collaboration"}
-    ]
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "The team discussed utilizing a Mac Mini as a 24/7 server for AI OS projects, enabling remote access and seamless collaboration. Richard emphasized continuous operation and scheduled jobs, while David plans to sync project directories with iCloud for device interoperability. Concurrent access is facilitated through separate user accounts on the Mac Mini, allowing multiple users to work simultaneously. Tools like Jump Desktop will enable Windows users to connect, avoiding additional VPS costs. The team outlined client onboarding timelines, which range from 1 to 5 days, and emphasized targeting non-technical clients for sustained business. Additionally, a $100/month Claude account is recommended for reliable performance, and efforts are ongoing to develop a SaaS platform for skill-sharing while addressing security concerns.",
+    "action_items": []
   },
   {
-    "id": 3,
-    "meeting_id": "fireflies_01KP5XJQ48GH5VR38QMW0MB1AV",
-    "source": "fireflies",
-    "title": "David Ortiz and Mara Crisan",
-    "date": "2026-04-15",
-    "duration_minutes": 34,
-    "summary": "Revenue Growth Goal: Aim to reach $50,000 in monthly recurring revenue by scaling AI automation and Go High Level services. Current Revenue Status: Currently at $5,000 MRR, targeting to 10x through AI automation projects. Pricing Challenges: Seeking a scalable $5,000 deliverable amidst diverse project pricing ranging from $1,000 to $15,000. Client Targeting: Focus on home service businesses and subcontractors.",
-    "action_items": [
-      {"owner": "David Ortiz", "text": "Book a strategy call with Guy to validate current pricing, offer structure, and Ideal Customer Profile targeting"},
-      {"owner": "David Ortiz", "text": "Book calls with Richard and Valera for technical clarifications on AI Operating System setup"},
-      {"owner": "David Ortiz", "text": "Complete the 'Start Here' module and review community channels (Wins, Share Your Builds, Hiring, Partnerships)"},
-      {"owner": "David Ortiz", "text": "Build and expand the warm contacts list using outbound systems course content and notify Mara when sufficiently large"},
-      {"owner": "David Ortiz", "text": "Work through LinkedIn Launchpad and optimize profile for content outreach; book LinkedIn coaching with Shreya"},
-      {"owner": "David Ortiz", "text": "Conduct market research and AI audits with existing business contacts to validate pricing and product-market fit"},
-      {"owner": "David Ortiz", "text": "Schedule and attend follow-up call with Mara approximately two weeks after completing initial tasks"},
-      {"owner": "David Ortiz", "text": "Confirm action items list from Fireflies transcript and request missing details from Mara if needed"},
-      {"owner": "Mara Crisan", "text": "Provide David with calendar link and pin it in the community for easy scheduling"},
-      {"owner": "Mara Crisan", "text": "Send AI audit guide template to help David with client conversations and pricing structuring"},
-      {"owner": "Mara Crisan", "text": "Share links to community resources including events calendar, workshop recordings, and Morningside Updates"},
-      {"owner": "Mara Crisan", "text": "Notify David when the AI auditing SaaS tool and supporting consultancy course are released"},
-      {"owner": "Mara Crisan", "text": "Assist in recruiting talent through community recommendations as David expands his team"},
-      {"owner": "Mara Crisan", "text": "Maintain communication via community DM for accountability and provide timely guidance on project progress"},
-      {"owner": "Mara Crisan", "text": "Monitor task completion and coordinate follow-up meeting schedule with David based on progress"},
-      {"owner": "Mara Crisan", "text": "Verify Fireflies transcript accuracy and send a clean action items list if any information is missing"}
-    ]
-  },
-  {
-    "id": 4,
-    "meeting_id": "fireflies_01KP4J2D6A2E4NSAX6FTKTMQ2N",
+    "id": 12,
+    "meeting_id": "fireflies_01KP5TDS5AFT1800X8MSBCSB0W",
     "source": "fireflies",
     "title": "David Ortiz and Kevin Taheryan",
     "date": "2026-04-14",
-    "duration_minutes": 64,
-    "summary": "Current Revenue: AI business generates about $6,000 monthly; $15,000 and $5,000 contracts show initial traction. Business Challenges: Needs a repeatable, scalable offer; inconsistent income hampers predictable growth. Revenue Goals: Aims for $50,000 monthly revenue in six months, replacing project work with steady recurring income. Program Benefits: Access to expert coaches and resources in the AAA Accelerator.",
-    "action_items": [
-      {"owner": "David Ortiz", "text": "Review and sign the professional agreement document sent by Kevin"},
-      {"owner": "David Ortiz", "text": "Book and attend onboarding call with dedicated client success manager Amara, including assistant participation"},
-      {"owner": "David Ortiz", "text": "Respond to Kevin's text message for contact confirmation post-call"},
-      {"owner": "David Ortiz", "text": "Engage actively with AAA Accelerator platform, access AIOS course and community for offer and system development"},
-      {"owner": "Kevin Taheryan", "text": "Send professional agreement and ensure David receives onboarding invitation to the Circle platform"},
-      {"owner": "Kevin Taheryan", "text": "Assist David with platform navigation, expert bookings, and course introductions, especially AIOS program"},
-      {"owner": "Kevin Taheryan", "text": "Support David in offer creation and scaling strategies via coaching experts like Andrew and Otto"},
-      {"owner": "Kevin Taheryan", "text": "Maintain ongoing communication with David with periodic check-ins after enrollment to track progress"},
-      {"owner": "Kevin Taheryan", "text": "Provide access to unlimited one-on-one calls with experts and oversee group calls scheduling"}
-    ]
+    "duration_minutes": 1,
+    "fathom_url": "",
+    "summary": "David Ortiz is focused on transitioning his AI business into a scalable model, targeting $50,000 in monthly revenue to support his lifestyle and personal goals, including relocating to Lisbon. Currently generating about $6,000 monthly, David is shifting from one-off projects to a stable recurring revenue model. He has committed to the AAA accelerator program, which offers extensive support, including access to AI experts and coaching. A key focus will be developing a clear, repeatable offer for clients, as well as refining pricing models. The program's structure aims to mitigate risks associated with his market positioning and help establish a strong, client-focused business strategy.",
+    "action_items": []
   },
   {
-    "id": 5,
+    "id": 13,
     "meeting_id": "notion_33b03758-d6de-804c-9385-ee0531915991",
     "source": "notion",
     "title": "Daniel Pail's Availability (Tours)",
     "date": "2026-04-07",
     "duration_minutes": 30,
+    "fathom_url": "",
     "summary": "",
     "action_items": []
   }
@@ -471,6 +581,8 @@ function daysAgo(dateStr) {
 function sourceBadge(source) {
   const map = {
     fireflies: ['badge-fireflies', 'Fireflies'],
+    fathom:    ['badge-fathom',     'Fathom'],
+    fathom:    ['badge-fathom',     'Fathom'],
     notion:    ['badge-notion', 'Notion'],
     manual:    ['badge-manual', 'Manual'],
   };
