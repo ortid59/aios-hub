@@ -4,6 +4,95 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AIOS Hub — Advisor AI Partners</title>
+
+  <!-- PIN GATE SCRIPT -->
+  <script>
+    (function() {
+      var PIN = '342436';
+      var KEY = 'aios_hub_auth';
+      var EXPIRY_DAYS = 7;
+      function isAuthed() {
+        try {
+          var d = JSON.parse(localStorage.getItem(KEY));
+          return d && d.pin === PIN && Date.now() < d.exp;
+        } catch(e) { return false; }
+      }
+      function setAuth() {
+        localStorage.setItem(KEY, JSON.stringify({
+          pin: PIN, exp: Date.now() + EXPIRY_DAYS * 86400000
+        }));
+      }
+      window._checkPin = function() {
+        var val = document.getElementById('pin-input').value.replace(/\D/g,'');
+        if (val === PIN) {
+          setAuth();
+          var ov = document.getElementById('pin-overlay');
+          ov.style.opacity = '0';
+          ov.style.transition = 'opacity 0.3s';
+          setTimeout(function(){ ov.style.display = 'none'; }, 300);
+        } else {
+          var box = document.getElementById('pin-box');
+          box.classList.add('shake');
+          document.getElementById('pin-input').value = '';
+          document.getElementById('pin-error').style.opacity = '1';
+          setTimeout(function(){
+            box.classList.remove('shake');
+            document.getElementById('pin-error').style.opacity = '0';
+          }, 700);
+        }
+      };
+      window._pinKey = function(e) { if (e.key === 'Enter') window._checkPin(); };
+      document.addEventListener('DOMContentLoaded', function() {
+        if (!isAuthed()) {
+          document.getElementById('pin-overlay').style.display = 'flex';
+          document.getElementById('pin-input').focus();
+        }
+      });
+    })();
+  </script>
+
+  <!-- PIN GATE STYLES -->
+  <style>
+    #pin-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(135deg, #1B4FD8 0%, #1244C8 50%, #0AADA8 100%);
+      align-items: center; justify-content: center;
+    }
+    #pin-box {
+      background: #fff; border-radius: 20px; padding: 48px 40px 40px;
+      width: 340px; text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+    }
+    .pin-mark {
+      width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 20px;
+      background: linear-gradient(135deg, #1B4FD8, #0AADA8);
+      display: flex; align-items: center; justify-content: center; font-size: 26px;
+    }
+    #pin-box h2 { font-size: 20px; font-weight: 800; color: #1E2535; margin-bottom: 6px; letter-spacing: -0.4px; }
+    #pin-box p { font-size: 13px; color: #9AA3B5; margin-bottom: 28px; }
+    #pin-input {
+      width: 100%; border: 2px solid #D8DCE6; border-radius: 12px;
+      padding: 14px 16px; font-size: 28px; font-weight: 700; letter-spacing: 10px;
+      text-align: center; color: #1E2535; outline: none; transition: border-color 0.2s;
+      font-family: monospace;
+    }
+    #pin-input:focus { border-color: #1B4FD8; }
+    #pin-error { font-size: 12px; color: #E53E3E; margin-top: 10px; opacity: 0; transition: opacity 0.2s; min-height: 18px; }
+    #pin-submit {
+      width: 100%; margin-top: 20px; padding: 14px;
+      background: linear-gradient(135deg, #1B4FD8, #0AADA8);
+      color: white; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #pin-submit:hover { opacity: 0.88; }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+    }
+    .shake { animation: shake 0.5s ease; }
+  </style>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -161,6 +250,19 @@
   </style>
 </head>
 <body>
+
+  <!-- PIN GATE OVERLAY -->
+  <div id="pin-overlay">
+    <div id="pin-box">
+      <div class="pin-mark">🔑</div>
+      <h2>Advisor AI Partners</h2>
+      <p>Enter your PIN to access the hub</p>
+      <input id="pin-input" type="password" inputmode="numeric" maxlength="6"
+             placeholder="••••••" onkeydown="window._pinKey(event)" autocomplete="off" />
+      <div id="pin-error">Incorrect PIN — try again</div>
+      <button id="pin-submit" onclick="window._checkPin()">Unlock Hub</button>
+    </div>
+  </div>
 
 <header>
   <div class="logo">
