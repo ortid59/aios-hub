@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Proposal Engine — Supporting Strategies</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F4F5F7;
+      --surface: #FFFFFF;
+      --sidebar: #1A3A6B;
+      --sidebar-text: rgba(255,255,255,0.65);
+      --sidebar-active: rgba(255,255,255,0.12);
+      --blue: #1A3A6B;
+      --blue-soft: #EBF0FA;
+      --teal: #0C7A6E;
+      --teal-soft: #E6F5F2;
+      --gold: #B8860B;
+      --gold-soft: #FBF3E0;
+      --green: #166534;
+      --green-soft: #DCFCE7;
+      --amber: #B85A00;
+      --amber-soft: #FEF0E0;
+      --purple: #5B21B6;
+      --purple-soft: #EDE9FE;
+      --red: #991B1B;
+      --red-soft: #FEE2E2;
+      --text-dark: #1C1C1E;
+      --text-mid: #52525B;
+      --text-light: #A1A1AA;
+      --border: rgba(0,0,0,0.07);
+      --border-mid: rgba(0,0,0,0.12);
+      --heading: 'Plus Jakarta Sans', sans-serif;
+      --body: 'Inter', sans-serif;
+    }
+    body { font-family: var(--body); background: var(--bg); color: var(--text-mid); font-size: 13px; line-height: 1.5; display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 220px; background: var(--sidebar); flex-shrink: 0;
+      display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50;
+    }
+    .sidebar-logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-logo .logo-mark { font-family: var(--heading); font-size: 13px; font-weight: 800; color: #fff; }
+    .sidebar-logo .logo-sub { font-size: 10px; color: var(--sidebar-text); letter-spacing: 0.5px; margin-top: 2px; }
+    .sidebar-section { padding: 16px 12px 4px; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 7px; margin: 1px 8px;
+      font-size: 13px; font-weight: 500; color: var(--sidebar-text);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--sidebar-active); color: #fff; }
+    .nav-item.active { background: rgba(255,255,255,0.15); color: #fff; font-weight: 600; }
+    .nav-item .nav-icon { font-size: 14px; width: 18px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--teal); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+    .sidebar-bottom { margin-top: auto; padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .user-pill { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .user-name { font-size: 12px; font-weight: 600; color: #fff; }
+    .user-role { font-size: 10px; color: var(--sidebar-text); }
+
+    /* ── MAIN ── */
+    .main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 40;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .topbar-title { font-family: var(--heading); font-size: 16px; font-weight: 700; color: var(--text-dark); }
+    .topbar-breadcrumb { font-size: 12px; color: var(--text-light); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .topbar-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border-radius: 7px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: none; font-family: var(--body);
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-secondary { background: var(--bg); color: var(--text-dark); border: 1px solid var(--border-mid); }
+
+    /* ── CONTENT ── */
+    .content { padding: 24px 28px; flex: 1; }
+
+    /* ── STAT CARDS ── */
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+    .stat-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-light); margin-bottom: 8px; }
+    .stat-value { font-family: var(--heading); font-size: 28px; font-weight: 800; color: var(--text-dark); line-height: 1; margin-bottom: 6px; }
+    .stat-change { font-size: 11px; display: flex; align-items: center; gap: 4px; }
+    .stat-change.up { color: var(--green); }
+    .stat-change.neutral { color: var(--text-light); }
+
+    /* ── MAIN GRID ── */
+    .main-grid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+
+    /* ── PANEL ── */
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .panel-title { font-family: var(--heading); font-size: 14px; font-weight: 700; color: var(--text-dark); }
+    .panel-body { padding: 20px; }
+    .panel-action { font-size: 12px; font-weight: 600; color: var(--blue); cursor: pointer; }
+
+    /* ── MEETING CARD ── */
+    .meeting-card {
+      border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+      margin-bottom: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .meeting-card:hover { border-color: var(--blue); box-shadow: 0 2px 12px rgba(26,58,107,0.08); }
+    .meeting-card.selected { border-color: var(--blue); background: var(--blue-soft); }
+    .meeting-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .meeting-client { font-weight: 700; font-size: 14px; color: var(--text-dark); }
+    .meeting-time { font-size: 11px; color: var(--text-light); }
+    .meeting-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+    .meta-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px;
+    }
+    .chip-green { background: var(--green-soft); color: var(--green); }
+    .chip-blue { background: var(--blue-soft); color: var(--blue); }
+    .chip-amber { background: var(--amber-soft); color: var(--amber); }
+    .chip-teal { background: var(--teal-soft); color: var(--teal); }
+    .chip-purple { background: var(--purple-soft); color: var(--purple); }
+    .chip-gold { background: var(--gold-soft); color: var(--gold); }
+
+    /* ── EXTRACTED DATA ── */
+    .extract-section { margin-top: 20px; }
+    .extract-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-light); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .extract-label .ai-badge { background: var(--teal-soft); color: var(--teal); font-size: 9px; padding: 2px 7px; border-radius: 100px; letter-spacing: 0.5px; }
+    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .field-item { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+    .field-key { font-size: 10px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+    .field-val { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+    .field-val.highlight { color: var(--blue); }
+
+    /* ── PRICING CALCULATOR ── */
+    .pricing-section { margin-top: 20px; }
+    .pricing-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .pricing-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .pricing-row:last-child { border-bottom: none; }
+    .pricing-row.total { background: var(--blue-soft); font-weight: 700; }
+    .pricing-service { color: var(--text-dark); }
+    .pricing-detail { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+    .pricing-amount { font-weight: 700; color: var(--blue); font-family: var(--heading); }
+    .pricing-amount.total-amount { font-size: 18px; color: var(--blue); }
+    .pricing-tier { font-size: 10px; background: var(--blue-soft); color: var(--blue); padding: 2px 7px; border-radius: 100px; font-weight: 600; }
+
+    /* ── GENERATE BUTTON ── */
+    .generate-btn {
+      width: 100%; background: var(--teal); color: #fff;
+      border: none; border-radius: 10px; padding: 14px;
+      font-family: var(--heading); font-size: 15px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 20px; transition: all 0.2s;
+    }
+    .generate-btn:hover { background: #0a6860; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(12,122,110,0.3); }
+
+    /* ── PROPOSAL PREVIEW (RIGHT PANEL) ── */
+    .proposal-header { background: var(--blue); padding: 20px; color: #fff; }
+    .proposal-logo-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .proposal-logo { font-family: var(--heading); font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.7); }
+    .proposal-date { font-size: 10px; color: rgba(255,255,255,0.5); }
+    .proposal-client-name { font-family: var(--heading); font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .proposal-sub { font-size: 12px; color: rgba(255,255,255,0.7); }
+    .proposal-body { padding: 20px; }
+    .proposal-section { margin-bottom: 20px; }
+    .proposal-section-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-light); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .scope-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 12px; color: var(--text-dark); border-bottom: 1px solid var(--border); }
+    .scope-item:last-child { border-bottom: none; }
+    .scope-check { color: var(--teal); font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .proposal-price-block { background: var(--blue-soft); border: 1px solid rgba(26,58,107,0.15); border-radius: 10px; padding: 16px; text-align: center; }
+    .proposal-price-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 6px; opacity: 0.7; }
+    .proposal-price { font-family: var(--heading); font-size: 32px; font-weight: 800; color: var(--blue); line-height: 1; }
+    .proposal-price-sub { font-size: 11px; color: var(--text-mid); margin-top: 4px; }
+    .proposal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+    .prop-btn {
+      padding: 10px; border-radius: 8px; font-family: var(--body); font-size: 12px;
+      font-weight: 600; cursor: pointer; border: none; text-align: center;
+    }
+    .prop-btn-primary { background: var(--blue); color: #fff; }
+    .prop-btn-secondary { background: var(--bg); color: var(--text-dark); border: 1px solid var(--border-mid); }
+    .ai-note { display: flex; align-items: flex-start; gap: 8px; background: var(--teal-soft); border-radius: 8px; padding: 12px; margin-top: 16px; font-size: 12px; color: var(--teal); line-height: 1.5; }
+    .ai-note-icon { font-size: 14px; flex-shrink: 0; }
+
+    /* ── PIPELINE TABLE ── */
+    .pipeline-section { margin-top: 20px; }
+    .pipeline-table { width: 100%; border-collapse: collapse; }
+    .pipeline-table th { text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-light); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .pipeline-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .pipeline-table tr:last-child td { border-bottom: none; }
+    .pipeline-table tr:hover td { background: var(--bg); }
+    .client-name-cell { font-weight: 600; color: var(--text-dark); }
+    .stage-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .time-saved { font-size: 11px; color: var(--teal); font-weight: 600; }
+
+    /* ── PROGRESS BAR ANIMATION ── */
+    @keyframes progress { from { width: 0%; } to { width: var(--target); } }
+    .progress-bar { height: 6px; border-radius: 100px; background: var(--border); overflow: hidden; margin-top: 8px; }
+    .progress-fill { height: 100%; border-radius: 100px; animation: progress 1s ease-out forwards; }
+
+    /* ── TABS ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+    .tab { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-mid); }
+    .tab.active { background: var(--blue); color: #fff; }
+    .tab:hover:not(.active) { background: var(--border); }
+
+    /* ── DEMO BANNER ── */
+    .demo-banner {
+      background: linear-gradient(135deg, var(--blue), #0f4f8a);
+      padding: 10px 28px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .demo-banner p { font-size: 12px; color: rgba(255,255,255,0.85); }
+    .demo-banner strong { color: #fff; }
+    .demo-banner a { color: rgba(255,255,255,0.7); font-size: 12px; text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">Supporting Strategies</div>
+    <div class="logo-sub">AI Proposal Engine</div>
+  </div>
+
+  <div class="sidebar-section">Main</div>
+  <div class="nav-item active"><span class="nav-icon">📋</span> Proposal Engine <span class="nav-badge">3</span></div>
+  <div class="nav-item"><span class="nav-icon">📊</span> Pipeline</div>
+  <div class="nav-item"><span class="nav-icon">📅</span> Meetings</div>
+  <div class="nav-item"><span class="nav-icon">👥</span> Evangelists</div>
+
+  <div class="sidebar-section">Content</div>
+  <div class="nav-item"><span class="nav-icon">💼</span> LinkedIn Engine</div>
+  <div class="nav-item"><span class="nav-icon">📇</span> Card Scanner</div>
+
+  <div class="sidebar-section">Operations</div>
+  <div class="nav-item"><span class="nav-icon">📌</span> Client Briefs</div>
+  <div class="nav-item"><span class="nav-icon">⚙️</span> Settings</div>
+
+  <div class="sidebar-bottom">
+    <div class="user-pill">
+      <div class="user-avatar">DD</div>
+      <div>
+        <div class="user-name">Diane Denholm</div>
+        <div class="user-role">Business Development</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- DEMO BANNER -->
+  <div class="demo-banner">
+    <p>🤖 <strong>This is a mockup</strong> — a preview of what your Proposal Engine would look like inside the AIOS. Built specifically for Supporting Strategies.</p>
+    <a href="https://meetings.advisoraipartners.com">Schedule a call with David →</a>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Proposal Engine</div>
+      <div class="topbar-breadcrumb">Tuesday, April 21, 2026</div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn btn-secondary">📤 Export Pipeline</button>
+      <button class="topbar-btn btn-primary">+ New Proposal</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STAT CARDS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label">Needs Assessments — This Week</div>
+        <div class="stat-value">4</div>
+        <div class="stat-change up">↑ 1 from last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Proposals Generated</div>
+        <div class="stat-value">3</div>
+        <div class="stat-change neutral">1 pending processing</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Avg. Generation Time</div>
+        <div class="stat-value">6 <span style="font-size:16px;color:var(--text-light);font-weight:500;">min</span></div>
+        <div class="stat-change up">↓ from 62 min before AI</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Hours Saved This Week</div>
+        <div class="stat-value">14 <span style="font-size:16px;color:var(--text-light);font-weight:500;">hrs</span></div>
+        <div class="stat-change up">Across 4 reps</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+
+      <!-- LEFT: MEETING + EXTRACTED DATA + PRICING -->
+      <div>
+        <!-- Recent Meetings -->
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-header">
+            <div class="panel-title">Recent Meetings — Ready to Process</div>
+            <div class="panel-action">View all →</div>
+          </div>
+          <div class="panel-body">
+            <div class="tabs">
+              <div class="tab active">Pending (1)</div>
+              <div class="tab">Generated (3)</div>
+              <div class="tab">Sent (8)</div>
+            </div>
+
+            <!-- PENDING MEETING -->
+            <div class="meeting-card selected">
+              <div class="meeting-card-top">
+                <div class="meeting-client">Hartmann Group</div>
+                <div class="meeting-time">Today, 9:15 AM · 38 min</div>
+              </div>
+              <div class="meeting-meta">
+                <span class="meta-chip chip-green">✓ Transcript Ready</span>
+                <span class="meta-chip chip-blue">Google Meet</span>
+                <span class="meta-chip chip-amber">⏳ Awaiting Processing</span>
+                <span class="meta-chip chip-purple">Professional Services</span>
+              </div>
+            </div>
+
+            <!-- AUTO-EXTRACTED DATA -->
+            <div class="extract-section">
+              <div class="extract-label">
+                Auto-Extracted from Transcript
+                <span class="ai-badge">✨ AI</span>
+              </div>
+              <div class="field-grid">
+                <div class="field-item">
+                  <div class="field-key">Company</div>
+                  <div class="field-val">Hartmann Group</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Industry</div>
+                  <div class="field-val">Professional Services</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Entity Type</div>
+                  <div class="field-val">S-Corporation</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Software</div>
+                  <div class="field-val">QuickBooks Online</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Bank Accounts</div>
+                  <div class="field-val highlight">2 (Chase, BofA)</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Monthly Transactions</div>
+                  <div class="field-val highlight">~150</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Credit Cards</div>
+                  <div class="field-val highlight">3 cards</div>
+                </div>
+                <div class="field-item">
+                  <div class="field-key">Employees (Payroll)</div>
+                  <div class="field-val highlight">4</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;">
+                <div class="field-item" style="background:var(--teal-soft);">
+                  <div class="field-key" style="color:var(--teal);">Services Identified</div>
+                  <div class="field-val" style="color:var(--teal);">Bookkeeping · Monthly Reporting · Payroll</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PRICING CALCULATOR -->
+            <div class="pricing-section">
+              <div class="extract-label">
+                Pricing Calculator — Auto-Populated
+                <span class="ai-badge">20-Year Model</span>
+              </div>
+              <div class="pricing-table">
+                <div class="pricing-row">
+                  <div>
+                    <div class="pricing-service">Bookkeeping</div>
+                    <div class="pricing-detail">150 transactions/mo · 2 bank accounts · 3 credit cards</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="pricing-tier">Tier 3</span>
+                    <span class="pricing-amount">$1,450/mo</span>
+                  </div>
+                </div>
+                <div class="pricing-row">
+                  <div>
+                    <div class="pricing-service">Monthly Reporting</div>
+                    <div class="pricing-detail">P&L, Balance Sheet, Cash Flow · Standard package</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="pricing-tier">Standard</span>
+                    <span class="pricing-amount">$275/mo</span>
+                  </div>
+                </div>
+                <div class="pricing-row">
+                  <div>
+                    <div class="pricing-service">Payroll Processing</div>
+                    <div class="pricing-detail">4 employees · bi-weekly · direct deposit</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="pricing-tier">4 EE</span>
+                    <span class="pricing-amount">$385/mo</span>
+                  </div>
+                </div>
+                <div class="pricing-row total">
+                  <div>
+                    <div class="pricing-service">Monthly Total</div>
+                    <div class="pricing-detail" style="color:var(--blue);opacity:0.7;">Billed monthly · cancel anytime · price locked 12 mo</div>
+                  </div>
+                  <span class="pricing-amount total-amount">$2,110/mo</span>
+                </div>
+              </div>
+            </div>
+
+            <button class="generate-btn" onclick="this.innerHTML='✅ &nbsp; Proposal Generated — Opening Preview...'">
+              ✨ &nbsp; Generate Proposal &amp; Presentation
+            </button>
+          </div>
+        </div>
+
+        <!-- PIPELINE TABLE -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Proposal Pipeline</div>
+            <div class="panel-action">Full pipeline →</div>
+          </div>
+          <div class="panel-body" style="padding:0;">
+            <table class="pipeline-table">
+              <thead>
+                <tr>
+                  <th>Client</th>
+                  <th>Rep</th>
+                  <th>Monthly Value</th>
+                  <th>Stage</th>
+                  <th>Time Saved</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="client-name-cell">Hartmann Group</div><div style="font-size:11px;color:var(--text-light);">Today · Pending</div></td>
+                  <td>Diane D.</td>
+                  <td style="font-weight:700;color:var(--blue);">$2,110</td>
+                  <td><span class="stage-pill chip-amber">Processing</span></td>
+                  <td class="time-saved">56 min</td>
+                </tr>
+                <tr>
+                  <td><div class="client-name-cell">Kellner &amp; Associates</div><div style="font-size:11px;color:var(--text-light);">Yesterday · Sent</div></td>
+                  <td>Marcus R.</td>
+                  <td style="font-weight:700;color:var(--blue);">$1,680</td>
+                  <td><span class="stage-pill chip-blue">Proposal Sent</span></td>
+                  <td class="time-saved">54 min</td>
+                </tr>
+                <tr>
+                  <td><div class="client-name-cell">Teal Bay Services</div><div style="font-size:11px;color:var(--text-light);">Apr 18 · Presentation Scheduled</div></td>
+                  <td>Diane D.</td>
+                  <td style="font-weight:700;color:var(--blue);">$3,240</td>
+                  <td><span class="stage-pill chip-purple">Presentation</span></td>
+                  <td class="time-saved">58 min</td>
+                </tr>
+                <tr>
+                  <td><div class="client-name-cell">Rivera CPA Group</div><div style="font-size:11px;color:var(--text-light);">Apr 16 · Closed Won</div></td>
+                  <td>Sarah M.</td>
+                  <td style="font-weight:700;color:var(--green);">$1,920</td>
+                  <td><span class="stage-pill chip-green">✓ Closed</span></td>
+                  <td class="time-saved">61 min</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PROPOSAL PREVIEW -->
+      <div>
+        <div class="panel" style="position:sticky;top:72px;">
+          <div class="proposal-header">
+            <div class="proposal-logo-row">
+              <div class="proposal-logo">Supporting Strategies — Northeast Florida</div>
+              <div class="proposal-date">April 21, 2026</div>
+            </div>
+            <div class="proposal-client-name">Hartmann Group</div>
+            <div class="proposal-sub">Bookkeeping &amp; Payroll Services Proposal</div>
+          </div>
+          <div class="proposal-body">
+
+            <div class="proposal-section">
+              <div class="proposal-section-label">Scope of Services</div>
+              <div class="scope-item"><span class="scope-check">✓</span> Full-charge bookkeeping (150 transactions/mo, 2 bank accounts, 3 credit cards)</div>
+              <div class="scope-item"><span class="scope-check">✓</span> Monthly financial reporting — P&amp;L, Balance Sheet, Cash Flow</div>
+              <div class="scope-item"><span class="scope-check">✓</span> Payroll processing for 4 employees, bi-weekly, direct deposit</div>
+              <div class="scope-item"><span class="scope-check">✓</span> QuickBooks Online management &amp; reconciliation</div>
+              <div class="scope-item"><span class="scope-check">✓</span> Dedicated bookkeeper + operations support team</div>
+            </div>
+
+            <div class="proposal-section">
+              <div class="proposal-section-label">Investment</div>
+              <div class="proposal-price-block">
+                <div class="proposal-price-label">Fixed Monthly Fee</div>
+                <div class="proposal-price">$2,110</div>
+                <div class="proposal-price-sub">Per month · price locked 12 months · no surprises</div>
+              </div>
+            </div>
+
+            <div class="proposal-section">
+              <div class="proposal-section-label">Next Steps</div>
+              <div class="scope-item"><span class="scope-check" style="color:var(--blue);">1</span> Review this proposal together on our follow-up call</div>
+              <div class="scope-item"><span class="scope-check" style="color:var(--blue);">2</span> Confirm scope and sign the engagement agreement</div>
+              <div class="scope-item"><span class="scope-check" style="color:var(--blue);">3</span> Meet your dedicated bookkeeper — onboarding in 48 hrs</div>
+            </div>
+
+            <div class="proposal-actions">
+              <button class="prop-btn prop-btn-primary">📤 Send to Client</button>
+              <button class="prop-btn prop-btn-secondary">✏️ Edit Proposal</button>
+            </div>
+
+            <div class="ai-note">
+              <span class="ai-note-icon">✨</span>
+              <span>This proposal was generated in <strong>6 minutes</strong> from the Google Meet transcript. Scope, data fields, and pricing were extracted and populated automatically.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
