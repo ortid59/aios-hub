@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VenturePointe — Running on AI OS | Advisor AI Partners</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F5F4F0;
+      --bg-warm: #FAFAF7;
+      --surface: #FFFFFF;
+      --navy: #0D2B4E;
+      --navy-mid: #1A3F6F;
+      --navy-soft: #EBF0FA;
+      --teal: #0C7A6E;
+      --teal-soft: #E6F5F2;
+      --gold: #B8860B;
+      --gold-soft: #FBF3E0;
+      --blue: #155eef;
+      --blue-soft: #EEF4FF;
+      --purple: #6B3FA0;
+      --purple-soft: #F3EEFF;
+      --green: #166534;
+      --green-soft: #DCFCE7;
+      --amber: #B85A00;
+      --amber-soft: #FEF0E0;
+      --red: #991B1B;
+      --red-soft: #FEE2E2;
+      --text-dark: #1C1C1E;
+      --text-mid: #52525B;
+      --text-light: #A1A1AA;
+      --border: rgba(0,0,0,0.07);
+      --border-mid: rgba(0,0,0,0.12);
+      --heading: 'Plus Jakarta Sans', sans-serif;
+      --body: 'Inter', sans-serif;
+      --expo: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    body { font-family: var(--body); color: var(--text-mid); background: var(--bg); line-height: 1.65; font-size: 15px; }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+    h1, h2, h3, h4 { font-family: var(--heading); color: var(--text-dark); line-height: 1.18; }
+    h1 { font-size: clamp(28px, 5vw, 50px); font-weight: 800; letter-spacing: -0.5px; }
+    h2 { font-size: clamp(22px, 3.5vw, 38px); font-weight: 800; letter-spacing: -0.3px; }
+    h3 { font-size: 18px; font-weight: 700; }
+    h4 { font-size: 14px; font-weight: 700; }
+
+    .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-light); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); display: inline-block; }
+
+    section { padding: 88px 0; position: relative; overflow: hidden; }
+    .bg-warm { background: var(--bg-warm); }
+    .bg-surface { background: var(--surface); }
+    .bg-navy { background: var(--navy); }
+
+    .orb { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    section > .container { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 0; position: sticky; top: 0; z-index: 100; }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-left { display: flex; align-items: center; gap: 14px; }
+    .nav-logo { font-family: var(--heading); font-size: 15px; font-weight: 800; color: var(--navy); text-decoration: none; }
+    .nav-sep { color: var(--text-light); font-size: 16px; }
+    .nav-sub { font-size: 13px; color: var(--text-mid); }
+    .nav-pill { background: var(--teal-soft); color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 5px 12px; border-radius: 100px; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-link { font-size: 13px; font-weight: 500; color: var(--text-mid); padding: 6px 14px; border-radius: 20px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-link:hover { background: var(--bg); color: var(--text-dark); }
+
+    /* ── HERO ── */
+    .hero { padding: 88px 0 72px; }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .hero-left h1 { margin-bottom: 20px; }
+    .hero-left h1 .accent { color: var(--teal); }
+    .hero-lead { font-size: 16px; color: var(--text-mid); line-height: 1.78; margin-bottom: 32px; max-width: 480px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--navy); color: #fff;
+      padding: 14px 28px; border-radius: 100px;
+      font-family: var(--body); font-weight: 600; font-size: 14px;
+      text-decoration: none;
+      transition: transform 0.3s var(--expo), box-shadow 0.3s var(--expo);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(13,43,78,0.2); }
+
+    /* Hero stack card */
+    .hero-card { background: var(--surface); border: 1px solid var(--border-mid); border-radius: 20px; padding: 28px; box-shadow: 0 4px 32px rgba(0,0,0,0.06); }
+    .hero-card-label { font-size: 10px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; color: var(--text-light); margin-bottom: 18px; }
+    .stack-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+    .stack-row:last-child { border-bottom: none; }
+    .stack-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .stack-name { font-family: var(--heading); font-size: 13px; font-weight: 700; color: var(--text-dark); }
+    .stack-desc { font-size: 11px; color: var(--text-light); }
+    .stack-badge { margin-left: auto; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; white-space: nowrap; }
+    .badge-live { background: var(--green-soft); color: var(--green); }
+    .badge-connect { background: var(--teal-soft); color: var(--teal); }
+    .badge-manual { background: var(--red-soft); color: var(--red); }
+
+    /* ── BEFORE SECTION ── */
+    .before-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+    .bc-card { background: var(--surface); border: 1.5px solid var(--border-mid); border-radius: 14px; padding: 20px; }
+    .bc-icon { font-size: 22px; margin-bottom: 10px; }
+    .bc-card h4 { font-size: 13px; color: var(--text-dark); margin-bottom: 4px; }
+    .bc-card p { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+    .bc-tag { display: inline-block; margin-top: 10px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px; background: var(--red-soft); color: var(--red); }
+    .funnel-line { text-align: center; font-size: 13px; font-weight: 600; color: var(--text-light); letter-spacing: 1px; text-transform: uppercase; margin: 12px 0; }
+    .before-result { background: var(--red-soft); border: 1.5px solid #FECACA; border-radius: 14px; padding: 24px 28px; display: flex; align-items: flex-start; gap: 20px; }
+    .before-result-icon { font-size: 36px; flex-shrink: 0; }
+    .before-result h3 { font-size: 16px; color: var(--red); margin-bottom: 6px; }
+    .before-result p { font-size: 13px; color: #7f1d1d; line-height: 1.6; }
+    .time-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .time-chip { background: white; border: 1px solid #FECACA; color: var(--red); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; }
+
+    /* ── ROLE TABS ── */
+    .role-tabs { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+    .role-tab {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 100px; border: 1.5px solid var(--border-mid);
+      background: var(--surface); font-size: 13px; font-weight: 600; color: var(--text-mid);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .role-tab:hover { border-color: var(--navy); color: var(--navy); }
+    .role-tab.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .role-tab .avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.2); }
+    .role-tab:not(.active) .avatar { background: var(--bg); color: var(--text-dark); }
+
+    /* ── COMMAND CENTER (APP SHELL) ── */
+    .app-shell { background: #0F172A; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.18); }
+    .app-topbar { background: #1E293B; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .app-topbar-left { display: flex; align-items: center; gap: 14px; }
+    .app-title { font-family: var(--heading); font-size: 14px; font-weight: 700; color: white; }
+    .app-breadcrumb { font-size: 12px; color: rgba(255,255,255,0.35); }
+    .app-topbar-right { display: flex; align-items: center; gap: 10px; }
+    .app-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.5); }
+    .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
+    .app-user { display: flex; align-items: center; gap: 8px; }
+    .app-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: white; }
+    .app-username { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); }
+
+    /* Stat bar */
+    .app-statbar { background: #1E293B; padding: 0 20px; display: flex; gap: 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .app-stat { padding: 14px 20px; border-right: 1px solid rgba(255,255,255,0.06); flex: 1; }
+    .app-stat:last-child { border-right: none; }
+    .app-stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+    .app-stat-value { font-family: var(--heading); font-size: 22px; font-weight: 800; color: white; line-height: 1; }
+    .app-stat-change { font-size: 11px; color: #22C55E; margin-top: 3px; }
+    .app-stat-change.warn { color: #F59E0B; }
+    .app-stat-change.neutral { color: rgba(255,255,255,0.35); }
+
+    /* Content area */
+    .app-content { padding: 18px 20px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .app-content.two-col { grid-template-columns: 1.4fr 1fr; }
+    .app-panel { background: #1E293B; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; overflow: hidden; }
+    .ap-header { padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; }
+    .ap-title { font-family: var(--heading); font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85); display: flex; align-items: center; gap: 6px; }
+    .ap-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; }
+    .ap-badge-teal { background: rgba(12,122,110,0.25); color: #2DD4BF; }
+    .ap-badge-amber { background: rgba(184,90,0,0.25); color: #F59E0B; }
+    .ap-badge-blue { background: rgba(21,94,239,0.2); color: #60A5FA; }
+    .ap-badge-green { background: rgba(22,101,52,0.25); color: #4ADE80; }
+    .ap-action { font-size: 11px; color: rgba(255,255,255,0.3); cursor: pointer; }
+    .ap-body { padding: 14px 16px; }
+
+    /* Pipeline rows */
+    .pip-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+    .pip-row:last-child { border-bottom: none; }
+    .pip-co { font-weight: 600; color: rgba(255,255,255,0.85); flex: 1; }
+    .pip-stage { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
+    .ps-warm { background: rgba(22,101,52,0.2); color: #4ADE80; }
+    .ps-follow { background: rgba(21,94,239,0.2); color: #60A5FA; }
+    .ps-prop { background: rgba(184,90,0,0.2); color: #F59E0B; }
+    .ps-cold { background: rgba(153,27,27,0.25); color: #FCA5A5; }
+    .pip-days { font-size: 10px; color: rgba(255,255,255,0.3); width: 60px; text-align: right; }
+
+    /* Proposal items */
+    .prop-item { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+    .prop-item:last-child { border-bottom: none; }
+    .prop-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .pd-green { background: #4ADE80; }
+    .pd-blue { background: #60A5FA; }
+    .pd-amber { background: #F59E0B; }
+    .prop-name { flex: 1; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .prop-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 100px; background: rgba(12,122,110,0.25); color: #2DD4BF; }
+    .prop-tag-waiting { background: rgba(184,90,0,0.2); color: #F59E0B; }
+    .prop-tag-sent { background: rgba(21,94,239,0.2); color: #60A5FA; }
+
+    /* Health bars */
+    .health-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+    .health-row:last-child { border-bottom: none; }
+    .health-name { width: 90px; font-weight: 600; color: rgba(255,255,255,0.8); font-size: 11px; flex-shrink: 0; }
+    .health-bar-wrap { flex: 1; height: 5px; background: rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
+    .health-bar { height: 100%; border-radius: 10px; }
+    .hb-green { background: #4ADE80; }
+    .hb-amber { background: #F59E0B; }
+    .hb-red { background: #F87171; }
+    .health-pct { font-size: 11px; color: rgba(255,255,255,0.4); width: 36px; text-align: right; }
+
+    /* Project bars */
+    .proj-item { padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .proj-item:last-child { border-bottom: none; }
+    .proj-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .proj-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); }
+    .proj-hrs { font-size: 11px; color: rgba(255,255,255,0.35); }
+    .proj-bar-wrap { height: 5px; background: rgba(255,255,255,0.07); border-radius: 10px; overflow: hidden; }
+    .proj-bar { height: 100%; border-radius: 10px; }
+    .pb-teal { background: #2DD4BF; }
+    .pb-amber { background: #F59E0B; }
+    .pb-red { background: #F87171; }
+
+    /* Review items */
+    .rev-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px; }
+    .rev-item:last-child { border-bottom: none; }
+    .rev-client { font-weight: 600; color: rgba(255,255,255,0.8); }
+    .rev-date { font-size: 10px; color: rgba(255,255,255,0.3); }
+    .rev-btn { font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; border: none; cursor: pointer; }
+    .rb-ready { background: rgba(22,101,52,0.3); color: #4ADE80; }
+    .rb-generate { background: rgba(12,122,110,0.25); color: #2DD4BF; }
+
+    /* Full-width panel */
+    .app-content-full { padding: 0 20px 18px; }
+    .app-panel-full { background: #1E293B; border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; overflow: hidden; }
+    .pw-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+    .pw-col { padding: 14px 16px; border-right: 1px solid rgba(255,255,255,0.06); }
+    .pw-col:last-child { border-right: none; }
+
+    /* ── MODULE PILLS ── */
+    .modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .mod-pill {
+      background: var(--surface); border: 1.5px solid var(--border-mid);
+      border-radius: 16px; padding: 24px;
+      transition: transform 0.3s var(--expo), box-shadow 0.3s var(--expo);
+    }
+    .mod-pill:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(0,0,0,0.08); }
+    .mod-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .mod-icon { font-size: 26px; margin-bottom: 12px; }
+    .mod-pill h3 { font-size: 15px; color: var(--text-dark); margin-bottom: 8px; }
+    .mod-pill p { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+    .mod-quote { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-light); font-style: italic; line-height: 1.5; }
+    .mod-quote strong { color: var(--text-mid); font-style: normal; }
+    .mod-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 10px; }
+
+    /* ── ORG ROLES ── */
+    .roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .role-card { background: var(--surface); border: 1.5px solid var(--border-mid); border-radius: 16px; padding: 22px; }
+    .role-card.featured { border-color: var(--navy); box-shadow: 0 4px 24px rgba(13,43,78,0.1); }
+    .role-avatar-lg { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 12px; }
+    .role-name { font-family: var(--heading); font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 2px; }
+    .role-title { font-size: 11px; color: var(--text-light); margin-bottom: 14px; }
+    .role-modules { display: flex; flex-direction: column; gap: 6px; }
+    .role-mod { font-size: 11px; color: var(--text-mid); display: flex; align-items: center; gap: 6px; }
+    .role-mod::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+    .role-badge-featured { display: inline-block; background: var(--navy); color: white; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px; }
+
+    /* ── STACK FLOW ── */
+    .stack-flow { display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; gap: 0; }
+    .sf-source { background: var(--surface); border: 1.5px solid var(--border-mid); border-radius: 14px; padding: 18px 14px; text-align: center; }
+    .sf-source-icon { font-size: 24px; margin-bottom: 8px; }
+    .sf-source h4 { font-size: 12px; color: var(--text-dark); }
+    .sf-source p { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+    .sf-arrow { text-align: center; font-size: 20px; color: var(--text-light); }
+    .sf-center { background: var(--navy); border-radius: 16px; padding: 24px 18px; text-align: center; color: white; }
+    .sf-center-icon { font-size: 28px; margin-bottom: 8px; }
+    .sf-center h4 { font-size: 13px; font-weight: 700; color: white; }
+    .sf-center p { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+    /* ── WHITE LABEL ── */
+    .wl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .wl-cards { display: flex; flex-direction: column; gap: 14px; }
+    .wl-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; display: flex; gap: 14px; align-items: flex-start; }
+    .wl-card-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .wl-card h4 { font-size: 13px; font-weight: 700; color: white; margin-bottom: 4px; }
+    .wl-card p { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.55; }
+    .wl-revenue { background: rgba(184,134,11,0.15); border: 1px solid rgba(184,134,11,0.3); border-radius: 14px; padding: 24px; margin-top: 24px; }
+    .wl-revenue h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gold); margin-bottom: 10px; }
+    .wl-revenue p { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.65; }
+    .wl-revenue strong { color: #F59E0B; }
+
+    /* ── CTA ── */
+    .cta-inner { text-align: center; max-width: 560px; margin: 0 auto; }
+    .cta-inner h2 { color: white; margin-bottom: 14px; }
+    .cta-inner p { color: rgba(255,255,255,0.7); margin-bottom: 32px; font-size: 16px; }
+    .btn-gold { background: var(--gold); color: var(--navy); font-family: var(--body); font-weight: 800; font-size: 15px; padding: 16px 40px; border-radius: 100px; text-decoration: none; display: inline-block; transition: opacity 0.2s; }
+    .btn-gold:hover { opacity: 0.9; }
+    .cta-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 16px; }
+
+    /* ── FOOTER ── */
+    .footer { background: #0A1628; padding: 28px 0; text-align: center; }
+    .footer p { font-size: 12px; color: rgba(255,255,255,0.3); }
+    .footer a { color: var(--gold); text-decoration: none; }
+
+    /* Role panel visibility */
+    .role-panel { display: none; }
+    .role-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="container">
+    <div class="nav-left">
+      <span class="nav-logo">VenturePointe</span>
+      <span class="nav-sep">/</span>
+      <span class="nav-sub">AI Operating System Proposal</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="nav-links">
+        <a href="#problem" class="nav-link">The Problem</a>
+        <a href="#command-center" class="nav-link">Command Center</a>
+        <a href="#org" class="nav-link">By Role</a>
+        <a href="#resell" class="nav-link">Resell Opportunity</a>
+      </div>
+      <span class="nav-pill">Built for Ben</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero bg-surface">
+  <div class="orb" style="width:500px;height:500px;top:-150px;right:-180px;background:rgba(13,43,78,0.04);"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <div class="eyebrow"><span class="dot"></span> Prepared exclusively for VenturePointe, Inc.</div>
+        <h1>One AI OS.<br>Every Role.<br><span class="accent">One True Technology Partner.</span></h1>
+        <p class="hero-lead">VenturePointe runs on five fragmented systems with one person manually connecting them. Here's what the business looks like when the AI OS ties it all together — built specifically for how your team works.</p>
+        <a href="#command-center" class="btn-primary">See Ben's Command Center &darr;</a>
+      </div>
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-card-label">VenturePointe Current Stack</div>
+          <div class="stack-row">
+            <div class="stack-icon" style="background:#EBF0FA;">📊</div>
+            <div><div class="stack-name">Ninja RMM</div><div class="stack-desc">Device health, tickets, endpoint reporting</div></div>
+            <span class="stack-badge badge-manual">Manual Export</span>
+          </div>
+          <div class="stack-row">
+            <div class="stack-icon" style="background:#E6F5F2;">📈</div>
+            <div><div class="stack-name">Grafana</div><div class="stack-desc">Network &amp; server performance dashboards</div></div>
+            <span class="stack-badge badge-manual">Screenshot &amp; Paste</span>
+          </div>
+          <div class="stack-row">
+            <div class="stack-icon" style="background:#FBF3E0;">🗂️</div>
+            <div><div class="stack-name">Element (Internal CRM)</div><div class="stack-desc">Ticketing, client data, SOPs</div></div>
+            <span class="stack-badge badge-manual">Manual Lookup</span>
+          </div>
+          <div class="stack-row">
+            <div class="stack-icon" style="background:#F3EEFF;">📉</div>
+            <div><div class="stack-name">Power BI</div><div class="stack-desc">Monthly billing &amp; usage reports</div></div>
+            <span class="stack-badge badge-manual">Separate Login</span>
+          </div>
+          <div class="stack-row">
+            <div class="stack-icon" style="background:#DCFCE7;">🤖</div>
+            <div><div class="stack-name">Athena (Internal AI)</div><div class="stack-desc">Your team's existing AI engine</div></div>
+            <span class="stack-badge badge-connect">AI-Ready</span>
+          </div>
+          <div class="stack-row">
+            <div class="stack-icon" style="background:#FEE2E2;">📋</div>
+            <div><div class="stack-name">Sales Spreadsheet</div><div class="stack-desc">Manual funnel, no automation</div></div>
+            <span class="stack-badge badge-manual">No Automation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     THE PROBLEM
+══════════════════════════════════════════ -->
+<section id="problem" class="bg-warm">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> Today's Reality</div>
+    <h2 style="margin-bottom:12px;">What Ben's Day Actually Looks Like</h2>
+    <p style="max-width:580px;margin-bottom:40px;font-size:15px;">Sales. Client retention. Quarterly reviews. Project coordination. P1 translation to C-levels. One person. Every deliverable built by hand — pulling from four different systems into a PowerPoint.</p>
+
+    <div class="before-grid">
+      <div class="bc-card">
+        <div class="bc-icon">📊</div>
+        <h4>Ninja RMM</h4>
+        <p>Pull ticket data, device health, endpoint reports</p>
+        <span class="bc-tag">Step 1 of 4</span>
+      </div>
+      <div class="bc-card">
+        <div class="bc-icon">📈</div>
+        <h4>Grafana</h4>
+        <p>Screenshot server &amp; network performance charts</p>
+        <span class="bc-tag">Step 2 of 4</span>
+      </div>
+      <div class="bc-card">
+        <div class="bc-icon">🗂️</div>
+        <h4>Element</h4>
+        <p>Look up client data, SOP history, ticket aging</p>
+        <span class="bc-tag">Step 3 of 4</span>
+      </div>
+      <div class="bc-card">
+        <div class="bc-icon">📉</div>
+        <h4>Power BI</h4>
+        <p>Separate login for billing &amp; usage summaries</p>
+        <span class="bc-tag">Step 4 of 4</span>
+      </div>
+      <div class="bc-card">
+        <div class="bc-icon">📋</div>
+        <h4>Sales Spreadsheet</h4>
+        <p>Manual funnel tracking — no alerts, no follow-ups</p>
+        <span class="bc-tag">Zero Automation</span>
+      </div>
+      <div class="bc-card">
+        <div class="bc-icon">💬</div>
+        <h4>Teams Ping</h4>
+        <p>How Ben learns a P1 is happening — reactively</p>
+        <span class="bc-tag">Always Reactive</span>
+      </div>
+    </div>
+
+    <div class="funnel-line">↓ &nbsp; All roads lead to one place &nbsp; ↓</div>
+
+    <div class="before-result">
+      <div class="before-result-icon">📑</div>
+      <div>
+        <h3>Another PowerPoint. Built by hand. Again.</h3>
+        <p>Every quarterly review, every proposal, every SOW — assembled manually by one person pulling from six different places. No scale. No system. No time left for new business.</p>
+        <div class="time-row">
+          <span class="time-chip">3 hrs × 10 client reviews/year</span>
+          <span class="time-chip">2 hrs per proposal</span>
+          <span class="time-chip">SOWs: Word docs, every time</span>
+          <span class="time-chip">Follow-up: whenever he remembers</span>
+          <span class="time-chip">P1s interrupt every focus block</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     COMMAND CENTER — ROLE TABS
+══════════════════════════════════════════ -->
+<section id="command-center" class="bg-surface">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> The AI OS Command Center</div>
+    <h2 style="margin-bottom:12px;">Every Role. One System. Completely Different View.</h2>
+    <p style="max-width:600px;margin-bottom:36px;font-size:15px;">Each person on the VenturePointe team gets a dashboard built for their exact role. Click a role below to see what their AI OS looks like.</p>
+
+    <div class="role-tabs">
+      <div class="role-tab active" onclick="switchRole('ben', this)">
+        <div class="avatar">BM</div>
+        Ben Montgomery
+        <span style="font-size:10px;opacity:0.7;">· Client Relations &amp; Sales</span>
+      </div>
+      <div class="role-tab" onclick="switchRole('ceo', this)">
+        <div class="avatar">CE</div>
+        CEO / Partners
+        <span style="font-size:10px;opacity:0.7;">· Leadership View</span>
+      </div>
+      <div class="role-tab" onclick="switchRole('desk', this)">
+        <div class="avatar">SD</div>
+        Service Desk Manager
+        <span style="font-size:10px;opacity:0.7;">· Operations View</span>
+      </div>
+      <div class="role-tab" onclick="switchRole('tech', this)">
+        <div class="avatar">EG</div>
+        Engineers / Techs
+        <span style="font-size:10px;opacity:0.7;">· Field &amp; Support View</span>
+      </div>
+    </div>
+
+    <!-- BEN'S DASHBOARD -->
+    <div id="panel-ben" class="role-panel active">
+      <div class="app-shell">
+        <div class="app-topbar">
+          <div class="app-topbar-left">
+            <div class="app-title">Ben's AI OS</div>
+            <div class="app-breadcrumb">Client Relations &amp; Sales &nbsp;/&nbsp; Wednesday Focus Day</div>
+          </div>
+          <div class="app-topbar-right">
+            <div class="app-status"><span class="pulse-dot"></span> All systems live</div>
+            <div class="app-user">
+              <div class="app-avatar">BM</div>
+              <div class="app-username">Ben Montgomery</div>
+            </div>
+          </div>
+        </div>
+        <div class="app-statbar">
+          <div class="app-stat">
+            <div class="app-stat-label">Pipeline Value</div>
+            <div class="app-stat-value">$184K</div>
+            <div class="app-stat-change">+2 new leads this week</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Proposals Out</div>
+            <div class="app-stat-value">7</div>
+            <div class="app-stat-change warn">3 need follow-up today</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Client Health</div>
+            <div class="app-stat-value">8/10</div>
+            <div class="app-stat-change">1 at-risk flagged</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Q2 Reviews Ready</div>
+            <div class="app-stat-value">4</div>
+            <div class="app-stat-change neutral">Auto-drafted · 6 pending</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Projects On Budget</div>
+            <div class="app-stat-value">5/6</div>
+            <div class="app-stat-change warn">1 approaching limit</div>
+          </div>
+        </div>
+        <div class="app-content">
+          <!-- Pipeline -->
+          <div class="app-panel">
+            <div class="ap-header">
+              <div class="ap-title">🎯 Sales Pipeline <span class="ap-badge ap-badge-teal">CRM Active</span></div>
+              <span class="ap-action">View all</span>
+            </div>
+            <div class="ap-body">
+              <div class="pip-row"><span class="pip-co">Coastal Home Health</span><span class="pip-stage ps-warm">Warm Lead</span><span class="pip-days">Today</span></div>
+              <div class="pip-row"><span class="pip-co">Ortega Roofing Group</span><span class="pip-stage ps-follow">Auto Follow-Up ✓</span><span class="pip-days">2d ago</span></div>
+              <div class="pip-row"><span class="pip-co">NexGen Legal Partners</span><span class="pip-stage ps-prop">Proposal Out</span><span class="pip-days">8 days</span></div>
+              <div class="pip-row"><span class="pip-co">First Coast Auto Group</span><span class="pip-stage ps-cold">Re-engage ⚡</span><span class="pip-days">AI Alert</span></div>
+              <div class="pip-row"><span class="pip-co">Jax Home Healthcare</span><span class="pip-stage ps-follow">Follow-Up Due</span><span class="pip-days">Tomorrow</span></div>
+              <div class="pip-row"><span class="pip-co">Mandarin Law Firm</span><span class="pip-stage ps-warm">Discovery Booked</span><span class="pip-days">Friday</span></div>
+            </div>
+          </div>
+          <!-- Proposals -->
+          <div class="app-panel">
+            <div class="ap-header">
+              <div class="ap-title">📄 Proposal Queue <span class="ap-badge ap-badge-blue">AI Draft</span></div>
+              <span class="ap-action">New proposal</span>
+            </div>
+            <div class="ap-body">
+              <div class="prop-item"><span class="prop-dot pd-green"></span><span class="prop-name">Coastal Home Health</span><span class="prop-tag">AI Ready ✓</span></div>
+              <div class="prop-item"><span class="prop-dot pd-blue"></span><span class="prop-name">NexGen Legal</span><span class="prop-tag prop-tag-sent">Sent · Open</span></div>
+              <div class="prop-item"><span class="prop-dot pd-amber"></span><span class="prop-name">First Coast Auto</span><span class="prop-tag prop-tag-waiting">Awaiting Reply</span></div>
+              <div class="prop-item"><span class="prop-dot pd-green"></span><span class="prop-name">Gainesville Roofing</span><span class="prop-tag">AI Ready ✓</span></div>
+              <div class="prop-item"><span class="prop-dot pd-blue"></span><span class="prop-name">Lakewood Law Firm</span><span class="prop-tag prop-tag-sent">Opened · No Reply</span></div>
+              <div class="prop-item"><span class="prop-dot pd-green"></span><span class="prop-name">Mandarin Medical</span><span class="prop-tag">Drafting...</span></div>
+            </div>
+          </div>
+          <!-- Client Health -->
+          <div class="app-panel">
+            <div class="ap-header">
+              <div class="ap-title">💚 Client Health <span class="ap-badge ap-badge-green">Auto-Pulled</span></div>
+              <span class="ap-action">Full report</span>
+            </div>
+            <div class="ap-body">
+              <div class="health-row"><span class="health-name">Roofing Co.</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:92%"></div></div><span class="health-pct">92%</span></div>
+              <div class="health-row"><span class="health-name">Home Health A</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:88%"></div></div><span class="health-pct">88%</span></div>
+              <div class="health-row"><span class="health-name">Legal Group</span><div class="health-bar-wrap"><div class="health-bar hb-amber" style="width:61%"></div></div><span class="health-pct">61%</span></div>
+              <div class="health-row"><span class="health-name">Auto Group</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:84%"></div></div><span class="health-pct">84%</span></div>
+              <div class="health-row"><span class="health-name">Non-Profit Org</span><div class="health-bar-wrap"><div class="health-bar hb-red" style="width:38%"></div></div><span class="health-pct">38% ⚠️</span></div>
+              <div class="health-row"><span class="health-name">Dental Group</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:95%"></div></div><span class="health-pct">95%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="app-content">
+          <!-- Quarterly Reviews -->
+          <div class="app-panel">
+            <div class="ap-header">
+              <div class="ap-title">📋 Q2 Review Generator <span class="ap-badge ap-badge-teal">Auto-Draft</span></div>
+              <span class="ap-action">Schedule all</span>
+            </div>
+            <div class="ap-body">
+              <div class="rev-item"><div><div class="rev-client">Gainesville Roofing Co.</div><div class="rev-date">Q2 · Due May 1 · Ninja + Grafana + Element pulled</div></div><button class="rev-btn rb-ready">Deck Ready ✓</button></div>
+              <div class="rev-item"><div><div class="rev-client">Home Health Agency A</div><div class="rev-date">Q2 · Due May 8 · Auto-pull queued</div></div><button class="rev-btn rb-ready">Deck Ready ✓</button></div>
+              <div class="rev-item"><div><div class="rev-client">Legal Partners Group</div><div class="rev-date">Q2 · Due May 15</div></div><button class="rev-btn rb-generate">Generate</button></div>
+              <div class="rev-item"><div><div class="rev-client">First Coast Auto</div><div class="rev-date">Q2 · Due May 22</div></div><button class="rev-btn rb-generate">Generate</button></div>
+              <div class="rev-item"><div><div class="rev-client">Dental Group</div><div class="rev-date">Q2 · Due May 28</div></div><button class="rev-btn rb-generate">Generate</button></div>
+            </div>
+          </div>
+          <!-- Project Hours -->
+          <div class="app-panel">
+            <div class="ap-header">
+              <div class="ap-title">🏗️ Project Hours vs. Budget</div>
+              <span class="ap-action">All projects</span>
+            </div>
+            <div class="ap-body">
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Gainesville Office Move</span><span class="proj-hrs">14 / 20 hrs</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:70%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Win 11 Migration · Legal</span><span class="proj-hrs">9 / 10 hrs ⚠️</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-amber" style="width:90%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">VoIP Rollout · Auto Group</span><span class="proj-hrs">6 / 16 hrs</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:38%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Server Replace · Health A</span><span class="proj-hrs">12 / 10 hrs 🔴</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-red" style="width:100%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Network Cable · New Client</span><span class="proj-hrs">3 / 12 hrs</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:25%"></div></div></div>
+            </div>
+          </div>
+          <!-- Follow-Up Automation -->
+          <div class="app-panel">
+            <div class="ap-header">
+              <div class="ap-title">🔁 Follow-Up Automation</div>
+              <span class="ap-action">Edit sequences</span>
+            </div>
+            <div class="ap-body">
+              <div class="pip-row"><span class="pip-co">NexGen Legal</span><span class="pip-stage ps-follow">Day 7 Sent ✓</span><span class="pip-days">Today</span></div>
+              <div class="pip-row"><span class="pip-co">Lakewood Law</span><span class="pip-stage ps-cold">Day 14 Queued</span><span class="pip-days">Tomorrow</span></div>
+              <div class="pip-row"><span class="pip-co">First Coast Auto</span><span class="pip-stage ps-prop">Day 3 Queued</span><span class="pip-days">Friday</span></div>
+              <div class="pip-row"><span class="pip-co">Mandarin Medical</span><span class="pip-stage ps-warm">Sequence Active</span><span class="pip-days">New</span></div>
+              <div class="pip-row"><span class="pip-co">Home Health B</span><span class="pip-stage ps-follow">Day 7 Sent ✓</span><span class="pip-days">Yesterday</span></div>
+              <div class="pip-row"><span class="pip-co">Ortega Roofing</span><span class="pip-stage ps-warm">Replied ✓</span><span class="pip-days">2d ago</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end ben panel -->
+
+    <!-- CEO DASHBOARD -->
+    <div id="panel-ceo" class="role-panel">
+      <div class="app-shell">
+        <div class="app-topbar">
+          <div class="app-topbar-left">
+            <div class="app-title">CEO / Partners AI OS</div>
+            <div class="app-breadcrumb">Leadership View &nbsp;/&nbsp; Company-Wide Overview</div>
+          </div>
+          <div class="app-topbar-right">
+            <div class="app-status"><span class="pulse-dot"></span> All systems live</div>
+            <div class="app-user"><div class="app-avatar" style="background:#B8860B;">CE</div><div class="app-username">CEO — VenturePointe</div></div>
+          </div>
+        </div>
+        <div class="app-statbar">
+          <div class="app-stat"><div class="app-stat-label">MRR</div><div class="app-stat-value">$187K</div><div class="app-stat-change">+$4.2K from last month</div></div>
+          <div class="app-stat"><div class="app-stat-label">Active Clients</div><div class="app-stat-value">24</div><div class="app-stat-change neutral">2 at-risk flagged</div></div>
+          <div class="app-stat"><div class="app-stat-label">Pipeline</div><div class="app-stat-value">$184K</div><div class="app-stat-change">7 proposals out</div></div>
+          <div class="app-stat"><div class="app-stat-label">Utilization</div><div class="app-stat-value">78%</div><div class="app-stat-change warn">2 techs at capacity</div></div>
+          <div class="app-stat"><div class="app-stat-label">P1s This Month</div><div class="app-stat-value">3</div><div class="app-stat-change neutral">All resolved &lt;4hrs</div></div>
+        </div>
+        <div class="app-content two-col">
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">📊 Revenue &amp; Retention Overview</div><span class="ap-action">Export</span></div>
+            <div class="ap-body">
+              <div class="health-row"><span class="health-name">Tier 1 MRR</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:88%"></div></div><span class="health-pct">$142K</span></div>
+              <div class="health-row"><span class="health-name">Tier 2 MRR</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:60%"></div></div><span class="health-pct">$31K</span></div>
+              <div class="health-row"><span class="health-name">Project Rev.</span><div class="health-bar-wrap"><div class="health-bar hb-amber" style="width:42%"></div></div><span class="health-pct">$14K</span></div>
+              <div class="health-row"><span class="health-name">Break/Fix</span><div class="health-bar-wrap"><div class="health-bar hb-amber" style="width:25%"></div></div><span class="health-pct">$8.2K</span></div>
+              <div style="height:12px;"></div>
+              <div class="pip-row"><span class="pip-co">Legal Group</span><span class="pip-stage ps-cold">At-Risk Client</span><span class="pip-days">Ben notified</span></div>
+              <div class="pip-row"><span class="pip-co">Non-Profit Org</span><span class="pip-stage ps-cold">Health: 38%</span><span class="pip-days">Review pending</span></div>
+              <div class="pip-row"><span class="pip-co">Roofing Co.</span><span class="pip-stage ps-warm">Expansion Opp.</span><span class="pip-days">+$3.2K potential</span></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div class="app-panel">
+              <div class="ap-header"><div class="ap-title">🧑‍💼 Team Utilization</div></div>
+              <div class="ap-body">
+                <div class="health-row"><span class="health-name">Ben M.</span><div class="health-bar-wrap"><div class="health-bar hb-amber" style="width:92%"></div></div><span class="health-pct">92%</span></div>
+                <div class="health-row"><span class="health-name">Eng. Team</span><div class="health-bar-wrap"><div class="health-bar hb-amber" style="width:85%"></div></div><span class="health-pct">85%</span></div>
+                <div class="health-row"><span class="health-name">Service Desk</span><div class="health-bar-wrap"><div class="health-bar hb-red" style="width:98%"></div></div><span class="health-pct">98% ⚠️</span></div>
+                <div class="health-row"><span class="health-name">Field Techs</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:71%"></div></div><span class="health-pct">71%</span></div>
+              </div>
+            </div>
+            <div class="app-panel">
+              <div class="ap-header"><div class="ap-title">🚨 P1 Escalation Log</div><span class="ap-badge ap-badge-green">All Resolved</span></div>
+              <div class="ap-body">
+                <div class="pip-row"><span class="pip-co">Gainesville · Fire event</span><span class="pip-stage ps-warm">Resolved</span><span class="pip-days">3.2 hrs</span></div>
+                <div class="pip-row"><span class="pip-co">Comcast outage · Health A</span><span class="pip-stage ps-warm">Resolved</span><span class="pip-days">1.8 hrs</span></div>
+                <div class="pip-row"><span class="pip-co">Server fail · Roofing</span><span class="pip-stage ps-warm">Resolved</span><span class="pip-days">2.4 hrs</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end ceo panel -->
+
+    <!-- SERVICE DESK DASHBOARD -->
+    <div id="panel-desk" class="role-panel">
+      <div class="app-shell">
+        <div class="app-topbar">
+          <div class="app-topbar-left">
+            <div class="app-title">Service Desk Manager AI OS</div>
+            <div class="app-breadcrumb">Operations View &nbsp;/&nbsp; Tickets, Escalations &amp; Capacity</div>
+          </div>
+          <div class="app-topbar-right">
+            <div class="app-status"><span class="pulse-dot"></span> Ninja + Element connected</div>
+            <div class="app-user"><div class="app-avatar" style="background:#155eef;">SD</div><div class="app-username">Service Desk Mgr.</div></div>
+          </div>
+        </div>
+        <div class="app-statbar">
+          <div class="app-stat"><div class="app-stat-label">Open Tickets</div><div class="app-stat-value">47</div><div class="app-stat-change warn">6 aging &gt;24hrs</div></div>
+          <div class="app-stat"><div class="app-stat-label">P1 Active</div><div class="app-stat-value">0</div><div class="app-stat-change">All clear</div></div>
+          <div class="app-stat"><div class="app-stat-label">Techs On Calls</div><div class="app-stat-value">6/8</div><div class="app-stat-change neutral">2 available</div></div>
+          <div class="app-stat"><div class="app-stat-label">Avg. Resolution</div><div class="app-stat-value">2.1h</div><div class="app-stat-change">-18min vs. last week</div></div>
+          <div class="app-stat"><div class="app-stat-label">White Glove SLA</div><div class="app-stat-value">97%</div><div class="app-stat-change">3 flagged today</div></div>
+        </div>
+        <div class="app-content">
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">🎫 Ticket Queue</div><span class="ap-badge ap-badge-amber">6 Aging</span></div>
+            <div class="ap-body">
+              <div class="pip-row"><span class="pip-co">Roofing · Password Reset ×4</span><span class="pip-stage ps-warm">In Progress</span><span class="pip-days">22m</span></div>
+              <div class="pip-row"><span class="pip-co">Legal · Outlook Sync Issue</span><span class="pip-stage ps-cold">Aging ⚠️</span><span class="pip-days">26h</span></div>
+              <div class="pip-row"><span class="pip-co">Health A · VPN Fail</span><span class="pip-stage ps-prop">Escalated</span><span class="pip-days">4h</span></div>
+              <div class="pip-row"><span class="pip-co">Auto · Printer Deploy</span><span class="pip-stage ps-follow">Queued</span><span class="pip-days">Today</span></div>
+              <div class="pip-row"><span class="pip-co">Non-Profit · MFA Setup</span><span class="pip-stage ps-warm">In Progress</span><span class="pip-days">1.2h</span></div>
+              <div class="pip-row"><span class="pip-co">Dental · Workstation OOW</span><span class="pip-stage ps-cold">Aging ⚠️</span><span class="pip-days">31h</span></div>
+            </div>
+          </div>
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">👥 Tech Availability</div></div>
+            <div class="ap-body">
+              <div class="health-row"><span class="health-name">Tech 1</span><div class="health-bar-wrap"><div class="health-bar hb-red" style="width:95%"></div></div><span class="health-pct">On Call</span></div>
+              <div class="health-row"><span class="health-name">Tech 2</span><div class="health-bar-wrap"><div class="health-bar hb-red" style="width:100%"></div></div><span class="health-pct">On Call</span></div>
+              <div class="health-row"><span class="health-name">Tech 3</span><div class="health-bar-wrap"><div class="health-bar hb-amber" style="width:80%"></div></div><span class="health-pct">On Call</span></div>
+              <div class="health-row"><span class="health-name">Tech 4</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:30%"></div></div><span class="health-pct">Available</span></div>
+              <div class="health-row"><span class="health-name">Tech 5</span><div class="health-bar-wrap"><div class="health-bar hb-red" style="width:90%"></div></div><span class="health-pct">Field</span></div>
+              <div class="health-row"><span class="health-name">Tech 6</span><div class="health-bar-wrap"><div class="health-bar hb-green" style="width:20%"></div></div><span class="health-pct">Available</span></div>
+            </div>
+          </div>
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">⏱️ Support Hours Usage</div><span class="ap-badge ap-badge-amber">2 Near Limit</span></div>
+            <div class="ap-body">
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Legal Group (5h plan)</span><span class="proj-hrs">4.8 / 5 hrs ⚠️</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-amber" style="width:96%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Dental (3h plan)</span><span class="proj-hrs">2.7 / 3 hrs ⚠️</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-amber" style="width:90%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Auto Group (Unlimited)</span><span class="proj-hrs">14.2 hrs used</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:50%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Roofing Co. (Unlimited)</span><span class="proj-hrs">22.1 hrs used</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:70%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Non-Profit (2h plan)</span><span class="proj-hrs">0.8 / 2 hrs</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:40%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end desk panel -->
+
+    <!-- ENGINEER/TECH DASHBOARD -->
+    <div id="panel-tech" class="role-panel">
+      <div class="app-shell">
+        <div class="app-topbar">
+          <div class="app-topbar-left">
+            <div class="app-title">Engineer / Tech AI OS</div>
+            <div class="app-breadcrumb">Field &amp; Support View &nbsp;/&nbsp; My Assignments Today</div>
+          </div>
+          <div class="app-topbar-right">
+            <div class="app-status"><span class="pulse-dot"></span> Ninja + Element live</div>
+            <div class="app-user"><div class="app-avatar" style="background:#6B3FA0;">EG</div><div class="app-username">Engineer / Tech</div></div>
+          </div>
+        </div>
+        <div class="app-statbar">
+          <div class="app-stat"><div class="app-stat-label">My Tickets</div><div class="app-stat-value">8</div><div class="app-stat-change warn">2 approaching SLA</div></div>
+          <div class="app-stat"><div class="app-stat-label">Next Dispatch</div><div class="app-stat-value">2:30 PM</div><div class="app-stat-change neutral">Legal · Outlook fix</div></div>
+          <div class="app-stat"><div class="app-stat-label">SOPs Available</div><div class="app-stat-value">142</div><div class="app-stat-change">AI-searchable</div></div>
+          <div class="app-stat"><div class="app-stat-label">Knowledge Base</div><div class="app-stat-value">Ask AI</div><div class="app-stat-change">Instant answers</div></div>
+          <div class="app-stat"><div class="app-stat-label">Hours Logged Today</div><div class="app-stat-value">4.2h</div><div class="app-stat-change neutral">Auto-tracked</div></div>
+        </div>
+        <div class="app-content">
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">📋 My Tickets Today</div></div>
+            <div class="ap-body">
+              <div class="pip-row"><span class="pip-co">Legal · Outlook Sync</span><span class="pip-stage ps-cold">SLA ⚠️ 2h left</span><span class="pip-days">26h</span></div>
+              <div class="pip-row"><span class="pip-co">Health A · VPN Fail</span><span class="pip-stage ps-prop">In Progress</span><span class="pip-days">4h</span></div>
+              <div class="pip-row"><span class="pip-co">Dental · Workstation OOW</span><span class="pip-stage ps-cold">SLA ⚠️</span><span class="pip-days">31h</span></div>
+              <div class="pip-row"><span class="pip-co">Roofing · Password Reset</span><span class="pip-stage ps-warm">Resolved ✓</span><span class="pip-days">Done</span></div>
+              <div class="pip-row"><span class="pip-co">Auto · Printer Deploy</span><span class="pip-stage ps-follow">Remote — 2:30pm</span><span class="pip-days">Today</span></div>
+            </div>
+          </div>
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">🤖 AI Knowledge Base</div><span class="ap-badge ap-badge-teal">SOPs Loaded</span></div>
+            <div class="ap-body">
+              <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px;margin-bottom:10px;">
+                <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-bottom:4px;">Ask the AI OS anything...</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.6);">How do I fix Outlook sync on Exchange 365?</div>
+              </div>
+              <div style="background:rgba(12,122,110,0.15);border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                <div style="font-size:11px;color:#2DD4BF;font-weight:700;margin-bottom:4px;">AI OS Answer</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.65);line-height:1.5;">1. Check autodiscover in DNS. 2. Run SaRA tool. 3. Re-create Outlook profile if autodiscover fails. SOP #047 has full steps.</div>
+              </div>
+              <div class="pip-row"><span class="pip-co">SOP #047 · Outlook Fix</span><span class="pip-stage ps-warm">Loaded</span><span class="pip-days">View</span></div>
+              <div class="pip-row"><span class="pip-co">SOP #112 · VPN Troubleshoot</span><span class="pip-stage ps-follow">Relevant</span><span class="pip-days">View</span></div>
+            </div>
+          </div>
+          <div class="app-panel">
+            <div class="ap-header"><div class="ap-title">⏱️ Time &amp; Project Tracker</div><span class="ap-badge ap-badge-blue">Auto-Log</span></div>
+            <div class="ap-body">
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Legal · Outlook (today)</span><span class="proj-hrs">1.2 hrs</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:40%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Health A · VPN</span><span class="proj-hrs">0.8 hrs</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:25%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Roofing · Password Reset</span><span class="proj-hrs">0.4 hrs ✓</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-teal" style="width:15%"></div></div></div>
+              <div class="proj-item"><div class="proj-top"><span class="proj-name">Office Move Project</span><span class="proj-hrs">1.8 hrs today</span></div><div class="proj-bar-wrap"><div class="proj-bar pb-amber" style="width:55%"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end tech panel -->
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MODULE PILLS
+══════════════════════════════════════════ -->
+<section class="bg-warm">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> The Five Modules — Built for Ben</div>
+    <h2 style="margin-bottom:12px;">Mapped Directly to What You Said.</h2>
+    <p style="max-width:580px;margin-bottom:40px;font-size:15px;">Every module in Ben's AI OS connects to a specific pain point he described. Nothing generic — built for the exact role he plays at VenturePointe.</p>
+    <div class="modules-grid">
+
+      <div class="mod-pill" style="border-top:3px solid #1A3A6B;">
+        <div class="mod-num" style="color:#1A3A6B;">MODULE 01</div>
+        <div class="mod-icon">🎯</div>
+        <h3>Lead Tracking &amp; CRM</h3>
+        <p>The spreadsheet gets replaced. Every prospect, every stage, every follow-up date tracked automatically. Cold prospects get flagged before they're gone.</p>
+        <div class="mod-quote"><strong>Ben said:</strong> "I have a spreadsheet I use, a sales funnel report. It's all manual and very time-consuming."</div>
+        <span class="mod-tag" style="background:#EBF0FA;color:#1A3A6B;">Replaces: Spreadsheet</span>
+      </div>
+
+      <div class="mod-pill" style="border-top:3px solid #0C7A6E;">
+        <div class="mod-num" style="color:#0C7A6E;">MODULE 02</div>
+        <div class="mod-icon">📄</div>
+        <h3>Proposal Generation</h3>
+        <p>Finish a discovery call, feed the system your notes, and get a full draft in minutes. You review, adjust, and send. Follow-up sequences run automatically behind every proposal sent.</p>
+        <div class="mod-quote"><strong>Ben said:</strong> "I plug all the information into a formatted PowerPoint. Proposals stall — I don't want to say I'm being ghosted, but..."</div>
+        <span class="mod-tag" style="background:#E6F5F2;color:#0C7A6E;">Replaces: Manual PowerPoint</span>
+      </div>
+
+      <div class="mod-pill" style="border-top:3px solid #155eef;">
+        <div class="mod-num" style="color:#155eef;">MODULE 03</div>
+        <div class="mod-icon">📋</div>
+        <h3>Automated Quarterly Reviews</h3>
+        <p>Ninja, Grafana, Element, and Power BI pull automatically. The executive deck gets drafted and queued for your review. Eight to ten clients a year — no manual assembly.</p>
+        <div class="mod-quote"><strong>Ben said:</strong> "I pull from all these reporting systems and put it into a deck. This is all manual process."</div>
+        <span class="mod-tag" style="background:#EEF4FF;color:#155eef;">Replaces: 4 manual data pulls</span>
+      </div>
+
+      <div class="mod-pill" style="border-top:3px solid #B8860B;">
+        <div class="mod-num" style="color:#B8860B;">MODULE 04</div>
+        <div class="mod-icon">🏗️</div>
+        <h3>Project Hours &amp; SOW Tracker</h3>
+        <p>Live view of every project against budget. Automatic alert at 75% of hours before the client gets surprised. SOWs drafted from project notes — ready for review and sign-off.</p>
+        <div class="mod-quote"><strong>Ben said:</strong> "I need to know if we're approaching that 10 hours and we're not completing the project."</div>
+        <span class="mod-tag" style="background:#FBF3E0;color:#B8860B;">Replaces: Manual check-ins</span>
+      </div>
+
+      <div class="mod-pill" style="border-top:3px solid #6B3FA0;">
+        <div class="mod-num" style="color:#6B3FA0;">MODULE 05</div>
+        <div class="mod-icon">🖥️</div>
+        <h3>Unified Role Dashboard</h3>
+        <p>One screen: pipeline, client health, escalating tickets, project hours, and follow-up queue. You see P1s before they become a Teams ping. Reactive becomes proactive.</p>
+        <div class="mod-quote"><strong>Ben said:</strong> "We don't have any live dashboard. They just call me when it gets to a point where I need to reach out."</div>
+        <span class="mod-tag" style="background:#F3EEFF;color:#6B3FA0;">Replaces: Reactive Teams pings</span>
+      </div>
+
+      <div class="mod-pill" style="border-top:3px solid #0C7A6E;background:var(--teal-soft);">
+        <div class="mod-num" style="color:#0C7A6E;">EVERY ROLE</div>
+        <div class="mod-icon">👥</div>
+        <h3>Role-Based for the Whole Org</h3>
+        <p>The CEO gets MRR and team utilization. The Service Desk Manager gets ticket queues and SLA alerts. Engineers get SOP search and time tracking. Each role gets what they need — nothing else.</p>
+        <div class="mod-quote"><strong>Ben said:</strong> "Our CEO, service desk manager, engineers — everyone has their own needs."</div>
+        <span class="mod-tag" style="background:white;color:#0C7A6E;">Built for Everyone</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     HOW THE OS CONNECTS YOUR STACK
+══════════════════════════════════════════ -->
+<section class="bg-surface">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> Under the Hood</div>
+    <h2 style="margin-bottom:12px;">The AI OS Connects What You Already Have.</h2>
+    <p style="max-width:580px;margin-bottom:48px;font-size:15px;">No ripping out systems. No new platforms to learn. The OS sits on top of Ninja, Grafana, Element, and Power BI — pulling everything into one intelligent layer your team talks to in plain English.</p>
+    <div class="stack-flow">
+      <div>
+        <div class="sf-source" style="margin-bottom:14px;">
+          <div class="sf-source-icon">📊</div>
+          <h4>Ninja RMM</h4>
+          <p>Tickets &amp; device health</p>
+        </div>
+        <div class="sf-source">
+          <div class="sf-source-icon">📈</div>
+          <h4>Grafana</h4>
+          <p>Server &amp; network data</p>
+        </div>
+      </div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-center">
+        <div class="sf-center-icon">🤖</div>
+        <h4>AI OS</h4>
+        <p>Built on Claude Code<br>Licensed via Morningstar AI</p>
+      </div>
+      <div class="sf-arrow">→</div>
+      <div>
+        <div class="sf-source" style="margin-bottom:14px;">
+          <div class="sf-source-icon">🗂️</div>
+          <h4>Element CRM</h4>
+          <p>Clients, SOPs, tickets</p>
+        </div>
+        <div class="sf-source">
+          <div class="sf-source-icon">📉</div>
+          <h4>Power BI</h4>
+          <p>Billing &amp; usage reports</p>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--text-light);margin-top:28px;">Athena — your existing internal AI engine — integrates directly. You don't start over. You level up.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     WHITE LABEL / RESELL
+══════════════════════════════════════════ -->
+<section id="resell" class="bg-navy">
+  <div class="orb" style="width:500px;height:500px;top:-100px;right:-100px;background:rgba(12,122,110,0.1);"></div>
+  <div class="container">
+    <div class="wl-grid">
+      <div>
+        <div class="eyebrow" style="color:rgba(255,255,255,0.4);">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;"></span>
+          The Bigger Opportunity
+        </div>
+        <h2 style="color:white;margin-bottom:18px;">VenturePointe Could Offer This to Its Own Clients.</h2>
+        <p style="color:rgba(255,255,255,0.7);margin-bottom:20px;font-size:15px;line-height:1.75;">The small businesses you support are dealing with exactly what you're dealing with. No CRM. Spreadsheet tracking. Nobody building their reports. You could package a lightweight version of the AI OS as an add-on service.</p>
+        <p style="color:rgba(255,255,255,0.7);margin-bottom:24px;font-size:15px;line-height:1.75;">VenturePointe already built Athena. Your team understands what AI can do. This is the next layer — and the one that opens a revenue stream no other MSP in Jacksonville is offering yet.</p>
+        <p style="color:rgba(255,255,255,0.7);font-size:15px;line-height:1.75;">Walk into the partner meeting not as someone asking them to spend money. As someone showing them a new revenue line.</p>
+        <div class="wl-revenue">
+          <h4>Example Revenue Model</h4>
+          <p>10 SMB clients &times; $300/mo AI OS add-on = <strong>$3,000/month</strong> in new recurring revenue — without adding headcount. No other MSP in Jacksonville is doing this today.</p>
+        </div>
+      </div>
+      <div class="wl-cards">
+        <div class="wl-card">
+          <div class="wl-card-icon">📊</div>
+          <div><h4>Auto-Generated Client Reports</h4><p>Give your SMB clients the same quarterly snapshot you currently build manually — delivered automatically. Positions VenturePointe as proactive vs. every other MSP still sending static PDFs.</p></div>
+        </div>
+        <div class="wl-card">
+          <div class="wl-card-icon">🔔</div>
+          <div><h4>Proactive Asset &amp; Renewal Alerts</h4><p>Your non-asset-managed clients would know their hardware expiration dates before they become emergencies. A built-in upsell path your current model doesn't have.</p></div>
+        </div>
+        <div class="wl-card">
+          <div class="wl-card-icon">💼</div>
+          <div><h4>White-Label AI OS</h4><p>Beyond IT support — you become the company that helps their whole operation run smarter. That's not a commodity. That's a defensible position against the unlimited-model MSPs.</p></div>
+        </div>
+        <div class="wl-card">
+          <div class="wl-card-icon">🏆</div>
+          <div><h4>A Real Answer to "Why VenturePointe?"</h4><p>When a prospect asks what's different — this closes the deal. No other MSP in Jacksonville is walking in with this conversation.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CTA
+══════════════════════════════════════════ -->
+<section style="background:linear-gradient(135deg,#0C7A6E 0%,#0D2B4E 100%);padding:88px 0;">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="eyebrow" style="color:rgba(255,255,255,0.4);justify-content:center;"><span style="width:7px;height:7px;border-radius:50%;background:var(--gold);display:inline-block;"></span> Ready to Move Forward</div>
+      <h2>Let's Get the Partners in the Room.</h2>
+      <p>No generic demo. A live walkthrough built on VenturePointe's actual workflow — Ninja, Grafana, Element, and your team's real roles.</p>
+      <a href="https://meetings.advisoraipartners.com" class="btn-gold" target="_blank">Schedule a Partner Meeting</a>
+      <p class="cta-sub">David Ortiz &nbsp;&middot;&nbsp; Advisor AI Partners &nbsp;&middot;&nbsp; david@advisoraipartners.com &nbsp;&middot;&nbsp; (305) 254-4455</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Prepared by <a href="https://advisoraipartners.com" target="_blank">Advisor AI Partners</a> for Ben Montgomery at VenturePointe, Inc. &nbsp;&middot;&nbsp; April 2026</p>
+</div>
+
+<script>
+  function switchRole(role, el) {
+    document.querySelectorAll('.role-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + role).classList.add('active');
+    el.classList.add('active');
+  }
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>

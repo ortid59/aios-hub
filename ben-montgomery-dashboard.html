@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VenturePointe x Advisor AI Partners — AI OS Proposal</title>
+  <style>
+    :root {
+      --navy: #0d2b4e;
+      --navy-mid: #1a3f6f;
+      --teal: #0e7c86;
+      --gold: #c8a84b;
+      --light-bg: #f5f7fa;
+      --white: #ffffff;
+      --text: #1a1a2e;
+      --text-muted: #5c6878;
+      --border: #dde3ec;
+      --red-soft: #fde8e8;
+      --red: #c0392b;
+      --green-soft: #e6f4f1;
+      --green: #0e7c6a;
+      --amber: #e67e22;
+      --amber-soft: #fef3e2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--light-bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--navy);
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    nav .logo-badge {
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    nav .logo-text {
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 6px;
+    }
+    nav .nav-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    nav .nav-links a:hover, nav .nav-links a.active {
+      background: rgba(255,255,255,0.12);
+      color: white;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, var(--teal) 100%);
+      color: white;
+      padding: 72px 40px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      background: rgba(200, 168, 75, 0.08);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 240px; height: 240px;
+      background: rgba(14, 124, 134, 0.15);
+      border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p {
+      font-size: 18px;
+      opacity: 0.85;
+      max-width: 560px;
+      margin: 0 auto 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-stat {
+      text-align: center;
+    }
+    .hero-stat .number {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-stat .label {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      padding: 64px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-header {
+      margin-bottom: 40px;
+    }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+    .section-header h2 {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 600px;
+    }
+
+    /* ── BEFORE / AFTER TOGGLE ── */
+    .toggle-container {
+      display: flex;
+      background: var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      width: fit-content;
+      margin-bottom: 32px;
+    }
+    .toggle-btn {
+      padding: 10px 28px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--text-muted);
+    }
+    .toggle-btn.active {
+      background: white;
+      color: var(--navy);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .toggle-btn.active.after { color: var(--teal); }
+
+    /* ── BEFORE STATE ── */
+    .before-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .source-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .source-card .source-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin: 0 auto 12px;
+    }
+    .source-card h4 { font-size: 13px; font-weight: 700; color: var(--navy); }
+    .source-card p { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .source-card .pain-tag {
+      display: inline-block;
+      background: var(--red-soft);
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    .funnel-arrow {
+      text-align: center;
+      font-size: 28px;
+      color: var(--text-muted);
+      margin: 8px 0;
+    }
+
+    .output-card {
+      background: var(--red-soft);
+      border: 1.5px solid #f5c0c0;
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .output-card .output-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+    .output-card h3 { font-size: 16px; font-weight: 700; color: var(--red); }
+    .output-card p { font-size: 13px; color: #8b3a3a; margin-top: 4px; }
+    .time-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .time-pill {
+      background: white;
+      border: 1px solid #f5c0c0;
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── AFTER STATE ── */
+    .after-panel { display: none; }
+    .after-panel.visible { display: block; }
+    .before-panel.hidden { display: none; }
+
+    .command-center {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    .cc-header {
+      background: var(--navy);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cc-header h3 { color: white; font-size: 15px; font-weight: 700; }
+    .cc-header .status-dot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+    .dot-live {
+      width: 8px; height: 8px;
+      background: #2ecc71;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .cc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .cc-panel {
+      padding: 24px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .cc-panel:nth-child(even) { border-right: none; }
+    .cc-panel:nth-child(n+5) { border-bottom: none; }
+    .cc-panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cc-panel-title .panel-icon { font-size: 14px; }
+
+    /* Pipeline */
+    .pipeline-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .pipeline-row:last-child { border-bottom: none; }
+    .pipeline-row .company { font-weight: 600; color: var(--navy); }
+    .pipeline-row .stage {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .stage-proposal { background: #fff3cd; color: #856404; }
+    .stage-follow { background: #cce5ff; color: #004085; }
+    .stage-warm { background: #d4edda; color: #155724; }
+    .stage-cold { background: #f8d7da; color: #721c24; }
+    .pipeline-row .days { color: var(--text-muted); font-size: 11px; }
+
+    /* Proposal queue */
+    .proposal-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .proposal-item:last-child { border-bottom: none; }
+    .proposal-status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-green { background: var(--green); }
+    .dot-amber { background: var(--amber); }
+    .dot-blue { background: #3498db; }
+    .proposal-item .name { flex: 1; font-weight: 600; color: var(--navy); }
+    .proposal-item .auto-tag {
+      font-size: 9px;
+      font-weight: 700;
+      background: var(--green-soft);
+      color: var(--green);
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    /* Client health */
+    .client-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .client-row:last-child { border-bottom: none; }
+    .health-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .health-bar {
+      height: 100%;
+      border-radius: 10px;
+    }
+    .health-green { background: var(--green); }
+    .health-amber { background: var(--amber); }
+    .health-red { background: var(--red); }
+    .client-name { width: 90px; font-weight: 600; color: var(--navy); font-size: 11px; }
+    .client-pct { font-size: 11px; color: var(--text-muted); width: 36px; text-align: right; }
+
+    /* Quarterly review */
+    .review-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-item .rname { font-weight: 600; color: var(--navy); }
+    .review-item .rdate { color: var(--text-muted); font-size: 11px; }
+    .review-btn {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+    .review-btn.ready { background: var(--green); }
+
+    /* Project tracker */
+    .project-item {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .project-item:last-child { border-bottom: none; }
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .project-name { font-weight: 600; color: var(--navy); }
+    .project-hours { font-size: 11px; color: var(--text-muted); }
+    .project-bar-wrap {
+      height: 6px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .project-bar { height: 100%; border-radius: 10px; }
+    .pb-safe { background: var(--teal); }
+    .pb-warn { background: var(--amber); }
+    .pb-over { background: var(--red); }
+
+    /* ── MODULES SECTION ── */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .module-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: default;
+    }
+    .module-card:hover {
+      box-shadow: 0 8px 28px rgba(13,43,78,0.1);
+      transform: translateY(-2px);
+    }
+    .module-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .module-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .module-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .module-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .module-card .module-from {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .module-card .module-from strong { color: var(--navy); }
+    .module-tag {
+      display: inline-block;
+      background: var(--green-soft);
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    /* ── WHITE LABEL SECTION ── */
+    .white-label-section {
+      background: var(--navy);
+      padding: 64px 40px;
+      color: white;
+    }
+    .white-label-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .wl-left .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .wl-left h2 {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .wl-left p {
+      opacity: 0.8;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .revenue-callout {
+      background: rgba(200, 168, 75, 0.15);
+      border: 1px solid rgba(200, 168, 75, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .revenue-callout h4 {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .revenue-callout p {
+      opacity: 0.9;
+      font-size: 13px;
+      margin: 0;
+    }
+    .wl-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .wl-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .wl-card-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .wl-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .wl-card p { font-size: 12px; opacity: 0.7; }
+
+    /* ── ROI SECTION ── */
+    .roi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .roi-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .roi-card .roi-number {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--teal);
+      line-height: 1;
+    }
+    .roi-card .roi-unit {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .roi-card .roi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    .roi-card .roi-context {
+      font-size: 11px;
+      color: var(--teal);
+      margin-top: 6px;
+      font-weight: 600;
+    }
+
+    .comparison-table {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .ct-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      background: var(--light-bg);
+      border-bottom: 1.5px solid var(--border);
+    }
+    .ct-header div {
+      padding: 12px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+    .ct-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .ct-row:last-child { border-bottom: none; }
+    .ct-row div {
+      padding: 14px 20px;
+      font-size: 13px;
+    }
+    .ct-row .task { font-weight: 600; color: var(--navy); }
+    .ct-row .before { color: var(--red); }
+    .ct-row .after { color: var(--green); font-weight: 600; }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--navy-mid) 100%);
+      padding: 64px 40px;
+      text-align: center;
+      color: white;
+    }
+    .cta-section h2 {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .cta-section p {
+      font-size: 16px;
+      opacity: 0.85;
+      max-width: 480px;
+      margin: 0 auto 32px;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 800;
+      padding: 16px 40px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.9; }
+    .cta-sub {
+      margin-top: 16px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      padding: 24px 40px;
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 12px;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    /* ── DIVIDER ── */
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-badge">VP × AAP</div>
+    <span class="logo-text">VenturePointe AI Operating System Proposal</span>
+  </div>
+  <div class="nav-links">
+    <a href="#problem" class="active">The Problem</a>
+    <a href="#solution">The Solution</a>
+    <a href="#white-label">Resell Opportunity</a>
+    <a href="#roi">ROI</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Prepared exclusively for Ben Montgomery · VenturePointe, Inc.</div>
+  <h1>One Person Running<br><span>Five Different Jobs.</span></h1>
+  <p>There's a better way. Here's what the AI Operating System looks like built specifically for your role.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="number">5</div>
+      <div class="label">Fragmented Systems</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number">~200</div>
+      <div class="label">Hours Lost Per Year</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number">1</div>
+      <div class="label">Person Doing It All</div>
+    </div>
+  </div>
+</div>
+
+<!-- BEFORE / AFTER -->
+<div id="problem" style="background: var(--light-bg); padding: 64px 40px;">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <div class="section-header">
+      <div class="section-eyebrow">Today vs. Tomorrow</div>
+      <h2>What Ben's Day Looks Like</h2>
+      <p>Toggle between your current reality and what the AI OS delivers.</p>
+    </div>
+
+    <div class="toggle-container">
+      <button class="toggle-btn active" id="btn-before" onclick="showBefore()">Today — Before AI OS</button>
+      <button class="toggle-btn after" id="btn-after" onclick="showAfter()">After AI OS</button>
+    </div>
+
+    <!-- BEFORE -->
+    <div id="before-panel">
+      <div class="before-grid">
+        <div class="source-card">
+          <div class="source-icon" style="background:#e8f0fe;">📊</div>
+          <h4>Ninja RMM</h4>
+          <p>Device health, ticket data, endpoint reporting</p>
+          <span class="pain-tag">Manual export</span>
+        </div>
+        <div class="source-card">
+          <div class="source-icon" style="background:#fce8e6;">📈</div>
+          <h4>Grafana</h4>
+          <p>Network & server performance dashboards</p>
+          <span class="pain-tag">Screenshot & paste</span>
+        </div>
+        <div class="source-card">
+          <div class="source-icon" style="background:#e6f4ea;">🗂️</div>
+          <h4>Element (Internal CRM)</h4>
+          <p>Ticketing system, client data, SOPs</p>
+          <span class="pain-tag">Manual lookup</span>
+        </div>
+        <div class="source-card">
+          <div class="source-icon" style="background:#fff3e0;">📉</div>
+          <h4>Power BI</h4>
+          <p>Monthly billing and usage reports</p>
+          <span class="pain-tag">Separate login</span>
+        </div>
+        <div class="source-card">
+          <div class="source-icon" style="background:#fce4ec;">📋</div>
+          <h4>Sales Spreadsheet</h4>
+          <p>Manual funnel tracking, no automation</p>
+          <span class="pain-tag">Zero automation</span>
+        </div>
+        <div class="source-card">
+          <div class="source-icon" style="background:#ede7f6;">💬</div>
+          <h4>Microsoft Teams</h4>
+          <p>P1 alerts arrive here — no proactive dashboard</p>
+          <span class="pain-tag">Reactive only</span>
+        </div>
+      </div>
+
+      <div class="funnel-arrow">↓ &nbsp; All roads lead to one place &nbsp; ↓</div>
+
+      <div class="output-card">
+        <div class="output-icon">📑</div>
+        <div>
+          <h3>Another PowerPoint. Built by hand. Again.</h3>
+          <p>Every quarterly review, every proposal, every SOW — assembled manually by one person pulling from six different places. No scale. No system. No time left for new business.</p>
+          <div class="time-pills">
+            <span class="time-pill">3 hrs per quarterly review × 10 clients</span>
+            <span class="time-pill">Proposals: 2+ hrs each</span>
+            <span class="time-pill">SOWs: manual Word docs</span>
+            <span class="time-pill">Follow-up: spreadsheet or forgotten</span>
+            <span class="time-pill">P1s: interrupts every focus block</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div id="after-panel" class="after-panel">
+      <div class="command-center">
+        <div class="cc-header">
+          <h3>Ben Montgomery — AI Command Center</h3>
+          <div class="status-dot"><span class="dot-live"></span> Live · All systems connected</div>
+        </div>
+        <div class="cc-grid">
+
+          <!-- Pipeline -->
+          <div class="cc-panel">
+            <div class="cc-panel-title"><span class="panel-icon">🎯</span> Sales Pipeline</div>
+            <div class="pipeline-row">
+              <span class="company">Coastal Home Health</span>
+              <span class="stage stage-warm">Warm Lead</span>
+              <span class="days">Today</span>
+            </div>
+            <div class="pipeline-row">
+              <span class="company">Ortega Roofing Group</span>
+              <span class="stage stage-follow">Follow-Up Sent</span>
+              <span class="days">Auto · 2d ago</span>
+            </div>
+            <div class="pipeline-row">
+              <span class="company">NexGen Legal Partners</span>
+              <span class="stage stage-proposal">Proposal Out</span>
+              <span class="days">8 days</span>
+            </div>
+            <div class="pipeline-row">
+              <span class="company">First Coast Auto Group</span>
+              <span class="stage stage-cold">Re-engage</span>
+              <span class="days">AI alert</span>
+            </div>
+            <div class="pipeline-row">
+              <span class="company">Jax Home Healthcare</span>
+              <span class="stage stage-follow">Follow-Up Due</span>
+              <span class="days">Tomorrow</span>
+            </div>
+          </div>
+
+          <!-- Proposals -->
+          <div class="cc-panel">
+            <div class="cc-panel-title"><span class="panel-icon">📄</span> Proposal Queue</div>
+            <div class="proposal-item">
+              <span class="proposal-status-dot dot-green"></span>
+              <span class="name">Coastal Home Health</span>
+              <span class="auto-tag">AI Draft Ready</span>
+            </div>
+            <div class="proposal-item">
+              <span class="proposal-status-dot dot-blue"></span>
+              <span class="name">NexGen Legal</span>
+              <span class="auto-tag">Sent · Tracking</span>
+            </div>
+            <div class="proposal-item">
+              <span class="proposal-status-dot dot-amber"></span>
+              <span class="name">First Coast Auto</span>
+              <span class="auto-tag">Awaiting Review</span>
+            </div>
+            <div class="proposal-item">
+              <span class="proposal-status-dot dot-green"></span>
+              <span class="name">Gainesville Roofing Co.</span>
+              <span class="auto-tag">AI Draft Ready</span>
+            </div>
+            <div class="proposal-item">
+              <span class="proposal-status-dot dot-blue"></span>
+              <span class="name">Lakewood Law Firm</span>
+              <span class="auto-tag">Opened · No Reply</span>
+            </div>
+          </div>
+
+          <!-- Client Health -->
+          <div class="cc-panel">
+            <div class="cc-panel-title"><span class="panel-icon">💚</span> Client Health Monitor</div>
+            <div class="client-row">
+              <span class="client-name">Roofing Co.</span>
+              <div class="health-bar-wrap"><div class="health-bar health-green" style="width:92%"></div></div>
+              <span class="client-pct">92%</span>
+            </div>
+            <div class="client-row">
+              <span class="client-name">Home Health A</span>
+              <div class="health-bar-wrap"><div class="health-bar health-green" style="width:88%"></div></div>
+              <span class="client-pct">88%</span>
+            </div>
+            <div class="client-row">
+              <span class="client-name">Legal Group</span>
+              <div class="health-bar-wrap"><div class="health-bar health-amber" style="width:61%"></div></div>
+              <span class="client-pct">61%</span>
+            </div>
+            <div class="client-row">
+              <span class="client-name">Auto Group</span>
+              <div class="health-bar-wrap"><div class="health-bar health-green" style="width:85%"></div></div>
+              <span class="client-pct">85%</span>
+            </div>
+            <div class="client-row">
+              <span class="client-name">Non-Profit Org</span>
+              <div class="health-bar-wrap"><div class="health-bar health-red" style="width:38%"></div></div>
+              <span class="client-pct">38%</span>
+            </div>
+          </div>
+
+          <!-- Quarterly Reviews -->
+          <div class="cc-panel">
+            <div class="cc-panel-title"><span class="panel-icon">📋</span> Quarterly Review Generator</div>
+            <div class="review-item">
+              <div>
+                <div class="rname">Roofing Manufacturing Co.</div>
+                <div class="rdate">Q2 · Due May 1</div>
+              </div>
+              <button class="review-btn ready">Deck Ready ✓</button>
+            </div>
+            <div class="review-item">
+              <div>
+                <div class="rname">Home Health Agency A</div>
+                <div class="rdate">Q2 · Due May 8</div>
+              </div>
+              <button class="review-btn">Generate</button>
+            </div>
+            <div class="review-item">
+              <div>
+                <div class="rname">Legal Partners Group</div>
+                <div class="rdate">Q2 · Due May 15</div>
+              </div>
+              <button class="review-btn">Generate</button>
+            </div>
+            <div class="review-item">
+              <div>
+                <div class="rname">First Coast Auto</div>
+                <div class="rdate">Q2 · Due May 22</div>
+              </div>
+              <button class="review-btn">Generate</button>
+            </div>
+          </div>
+
+          <!-- Project Hours — full width -->
+          <div class="cc-panel" style="grid-column: 1 / -1; border-right: none; border-bottom: none;">
+            <div class="cc-panel-title"><span class="panel-icon">🏗️</span> Project Hours vs. Budget</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+              <div>
+                <div class="project-item">
+                  <div class="project-top">
+                    <span class="project-name">Gainesville Office Move</span>
+                    <span class="project-hours">14 / 20 hrs</span>
+                  </div>
+                  <div class="project-bar-wrap"><div class="project-bar pb-safe" style="width:70%"></div></div>
+                </div>
+                <div class="project-item">
+                  <div class="project-top">
+                    <span class="project-name">Windows 11 Migration · Legal</span>
+                    <span class="project-hours">9 / 10 hrs</span>
+                  </div>
+                  <div class="project-bar-wrap"><div class="project-bar pb-warn" style="width:90%"></div></div>
+                </div>
+              </div>
+              <div>
+                <div class="project-item">
+                  <div class="project-top">
+                    <span class="project-name">VoIP Rollout · Auto Group</span>
+                    <span class="project-hours">6 / 16 hrs</span>
+                  </div>
+                  <div class="project-bar-wrap"><div class="project-bar pb-safe" style="width:38%"></div></div>
+                </div>
+                <div class="project-item">
+                  <div class="project-top">
+                    <span class="project-name">Server Replacement · Health A</span>
+                    <span class="project-hours">12 / 10 hrs ⚠️</span>
+                  </div>
+                  <div class="project-bar-wrap"><div class="project-bar pb-over" style="width:100%"></div></div>
+                </div>
+              </div>
+              <div>
+                <div class="project-item">
+                  <div class="project-top">
+                    <span class="project-name">Network Cabling · New Client</span>
+                    <span class="project-hours">3 / 12 hrs</span>
+                  </div>
+                  <div class="project-bar-wrap"><div class="project-bar pb-safe" style="width:25%"></div></div>
+                </div>
+                <div class="project-item">
+                  <div class="project-top">
+                    <span class="project-name">Asset Audit · Non-Profit</span>
+                    <span class="project-hours">4 / 6 hrs</span>
+                  </div>
+                  <div class="project-bar-wrap"><div class="project-bar pb-safe" style="width:67%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- MODULES -->
+<div id="solution" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">The Five Modules</div>
+    <h2>Built for How You Actually Work</h2>
+    <p>Each module maps directly to a task you described. Nothing generic — this is built for Ben's role.</p>
+  </div>
+  <div class="modules-grid">
+
+    <div class="module-card">
+      <div class="module-number">MODULE 01</div>
+      <div class="module-icon">🎯</div>
+      <h3>Lead Tracking & CRM</h3>
+      <p>Replaces the spreadsheet. Every prospect, every conversation, every follow-up date — tracked automatically. When someone goes cold, the system flags it before they're lost.</p>
+      <div class="module-from"><strong>You said:</strong> "I have a spreadsheet I use, a sales funnel report. It's all manual and very time-consuming."</div>
+      <span class="module-tag">Replaces: Spreadsheet</span>
+    </div>
+
+    <div class="module-card">
+      <div class="module-number">MODULE 02</div>
+      <div class="module-icon">📄</div>
+      <h3>Proposal Generation</h3>
+      <p>You finish a discovery call, feed the system your notes, and get a fully drafted proposal in minutes. Not hours. You review, adjust, and send. The PowerPoint template becomes a starting point the AI fills.</p>
+      <div class="module-from"><strong>You said:</strong> "I plug in all the information I gather from a sales call into a formatted PowerPoint."</div>
+      <span class="module-tag">Replaces: Manual PowerPoint</span>
+    </div>
+
+    <div class="module-card">
+      <div class="module-number">MODULE 03</div>
+      <div class="module-icon">📋</div>
+      <h3>Automated Quarterly Reviews</h3>
+      <p>The system pulls from Ninja, Grafana, Element, and Power BI automatically, drafts the executive deck, and queues it for your review. Eight to ten clients per year — all handled without manual data assembly.</p>
+      <div class="module-from"><strong>You said:</strong> "I pull from Ninja, Grafana, Element, Power BI and put it into a deck. This is all manual process."</div>
+      <span class="module-tag">Replaces: 4 manual data pulls</span>
+    </div>
+
+    <div class="module-card">
+      <div class="module-number">MODULE 04</div>
+      <div class="module-icon">🏗️</div>
+      <h3>Project Hours & SOW Tracker</h3>
+      <p>Real-time view of every active project — hours used vs. budgeted, scope status, and an automatic alert when you're approaching the 25% overage threshold before the client gets surprised by the invoice.</p>
+      <div class="module-from"><strong>You said:</strong> "If it's a project that we figure 10 hours on, I need to know if we're approaching that 10 hours and we're not completing the project."</div>
+      <span class="module-tag">Replaces: Manual check-ins</span>
+    </div>
+
+    <div class="module-card">
+      <div class="module-number">MODULE 05</div>
+      <div class="module-icon">🖥️</div>
+      <h3>Unified Role Dashboard</h3>
+      <p>One screen. Pipeline, client health, open tickets, project status, and follow-up queue — all visible at once. You stop getting pulled into P1 calls blind because you can see what's escalating before it becomes a call.</p>
+      <div class="module-from"><strong>You said:</strong> "We don't have any type of live dashboard. They just call me when it gets to a point where I need to reach out to someone."</div>
+      <span class="module-tag">Replaces: Reactive Teams pings</span>
+    </div>
+
+    <div class="module-card">
+      <div class="module-number">BONUS</div>
+      <div class="module-icon">🤖</div>
+      <h3>Follow-Up Automation</h3>
+      <p>Every proposal that goes out has a follow-up sequence behind it. Day 3, day 7, day 14 — customized messages based on where the prospect is in the conversation. Proposals stop going cold because no one had time to follow up.</p>
+      <div class="module-from"><strong>You said:</strong> "A lot of times they get caught up in other things. I don't want to say I'm being ghosted, but proposals stall."</div>
+      <span class="module-tag">New capability</span>
+    </div>
+
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- WHITE LABEL -->
+<div id="white-label" class="white-label-section">
+  <div class="white-label-inner">
+    <div class="wl-left">
+      <div class="eyebrow">The Bigger Opportunity</div>
+      <h2>VenturePointe Could Offer This to Its Own Clients</h2>
+      <p>The same system you'd use internally is a service your own MSP clients would pay for. The small businesses you support are dealing with the same thing: no CRM, spreadsheet tracking, nobody building their quarterly reports.</p>
+      <p>You already built Athena. Your team understands what AI can do. This is the next layer — and the one that opens a new revenue stream your competitors in Jacksonville aren't offering yet.</p>
+      <div class="revenue-callout">
+        <h4>Example Revenue Model</h4>
+        <p>10 SMB clients × $300/mo AI OS add-on = <strong style="color: var(--gold);">$3,000/month</strong> in new recurring revenue — without adding headcount.</p>
+      </div>
+    </div>
+    <div class="wl-right">
+      <div class="wl-card">
+        <div class="wl-card-icon">📊</div>
+        <div>
+          <h4>Auto-Generated Client Reports</h4>
+          <p>Give your SMB clients the same quarterly snapshot you build manually today — but delivered automatically. Makes you look proactive vs. every other MSP still sending static PDFs.</p>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-icon">🔔</div>
+        <div>
+          <h4>Proactive Asset & Renewal Alerts</h4>
+          <p>Your non-asset-managed clients would know their hardware expiration dates before they become emergencies. A built-in upsell path that your current model doesn't have.</p>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-icon">💼</div>
+        <div>
+          <h4>White-Label AI OS for Their Business</h4>
+          <p>Beyond IT support — you become the company that helps their whole operation run smarter. That's not a commodity. That's a defensible position against the all-you-can-eat MSPs.</p>
+        </div>
+      </div>
+      <div class="wl-card">
+        <div class="wl-card-icon">🏆</div>
+        <div>
+          <h4>A Real Differentiator in Jacksonville</h4>
+          <p>When a prospect asks "what's the difference between you and the company charging $180/workstation" — this is the answer that closes deals.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROI -->
+<div id="roi" class="section">
+  <div class="section-header">
+    <div class="section-eyebrow">Return on Investment</div>
+    <h2>Time Reclaimed. Deals Closed. Revenue Added.</h2>
+    <p>Estimated based on what Ben described in our conversation. Conservative numbers.</p>
+  </div>
+
+  <div class="roi-grid">
+    <div class="roi-card">
+      <div class="roi-number">120<span class="roi-unit">hrs</span></div>
+      <div class="roi-label">Hours saved per year on quarterly client reviews</div>
+      <div class="roi-context">10 clients × 3 hrs × 4 quarters</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-number">~80<span class="roi-unit">hrs</span></div>
+      <div class="roi-label">Hours saved per year on proposal creation</div>
+      <div class="roi-context">From ~2 hrs to ~20 min per proposal</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-number">3×</div>
+      <div class="roi-label">More proposals sent per month with automated follow-up</div>
+      <div class="roi-context">Fewer cold stalls, more closes</div>
+    </div>
+    <div class="roi-card">
+      <div class="roi-number">$0</div>
+      <div class="roi-label">ZoomInfo spend needed for lead intelligence</div>
+      <div class="roi-context">vs. $1,200–$1,400/mo they rejected</div>
+    </div>
+  </div>
+
+  <div class="comparison-table">
+    <div class="ct-header">
+      <div>Task</div>
+      <div>Today (Before)</div>
+      <div>With AI OS</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">Quarterly client review deck</div>
+      <div class="before">2–3 hours, 4 manual data pulls</div>
+      <div class="after">30 min review · AI assembles it</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">New business proposal</div>
+      <div class="before">1.5–2 hours in PowerPoint</div>
+      <div class="after">~20 min · AI drafts from your notes</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">Follow-up after proposal</div>
+      <div class="before">Manual, often forgotten, prospects ghost</div>
+      <div class="after">Automated sequence · Day 3 / 7 / 14</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">Lead tracking</div>
+      <div class="before">Manual spreadsheet, no alerts</div>
+      <div class="after">CRM with auto-flag for cold prospects</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">P1 escalation awareness</div>
+      <div class="before">Teams ping, no live visibility</div>
+      <div class="after">Live dashboard · See it before the call</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">Project hours vs. budget</div>
+      <div class="before">No real-time view, surprises at invoice</div>
+      <div class="after">Live tracker · Alert at 75% of budget</div>
+    </div>
+    <div class="ct-row">
+      <div class="task">SOW creation</div>
+      <div class="before">Manual Word/Adobe, multi-step review</div>
+      <div class="after">AI draft from project notes, sign-ready</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Ready to See It Built for VenturePointe?</h2>
+  <p>Let's get your partners in the room. No pitch deck — just a live demo built on your actual workflow.</p>
+  <a href="https://meetings.advisoraipartners.com" class="cta-btn" target="_blank">Schedule a Partner Meeting</a>
+  <div class="cta-sub">David Ortiz · Advisor AI Partners · david@advisoraipartners.com · (305) 254-4455</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  Prepared by <a href="https://advisoraipartners.com" target="_blank">Advisor AI Partners</a> for Ben Montgomery at VenturePointe, Inc. · April 2026
+</footer>
+
+<script>
+  function showBefore() {
+    document.getElementById('before-panel').style.display = 'block';
+    document.getElementById('after-panel').classList.remove('visible');
+    document.getElementById('btn-before').classList.add('active');
+    document.getElementById('btn-after').classList.remove('active');
+  }
+  function showAfter() {
+    document.getElementById('before-panel').style.display = 'none';
+    document.getElementById('after-panel').classList.add('visible');
+    document.getElementById('btn-after').classList.add('active');
+    document.getElementById('btn-before').classList.remove('active');
+  }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('nav .nav-links a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('nav .nav-links a').forEach(a => a.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
