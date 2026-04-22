@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Client Audit — Twinkle Nights & Sun Power Lawn Care</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --blue:   #1B4F8A; --blue-l:  #DBEAFE; --blue-s: rgba(27,79,138,0.08);
+    --teal:   #0D9488; --teal-l:  #CCFBF1; --teal-s: rgba(13,148,136,0.08);
+    --gold:   #C9A227; --gold-l:  #FEF3C7; --gold-s: rgba(201,162,39,0.10);
+    --green:  #059669; --green-l: #D1FAE5;
+    --orange: #EA580C; --orange-l:#FFEDD5;
+    --red:    #DC2626; --red-l:   #FEE2E2;
+    --slate:  #475569; --slate-l: #F1F5F9;
+    --border: #E2E8F0; --bg: #F8FAFC; --text: #0F172A; --muted: #64748B;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+  .syne { font-family: 'Syne', sans-serif; }
+  .mono { font-family: 'Geist Mono', monospace; }
+
+  /* ── Print / client view hides edit controls ── */
+  @media print {
+    .no-print, .edit-controls, .edit-mode-banner, #editModeBar { display: none !important; }
+    .editable-field { border: none !important; background: transparent !important; padding: 0 !important; }
+    body { background: #fff; }
+    .card { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* ── Status badges ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 999px;
+    font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500;
+    letter-spacing: 0.05em; white-space: nowrap; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .badge:hover { opacity: 0.8; }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .badge-done    { background: var(--green-l);  color: var(--green); }
+  .badge-done .badge-dot { background: var(--green); }
+  .badge-progress{ background: var(--gold-l);   color: #92400E; }
+  .badge-progress .badge-dot { background: var(--gold); }
+  .badge-pending { background: var(--orange-l); color: var(--orange); }
+  .badge-pending .badge-dot { background: var(--orange); }
+  .badge-blocked { background: var(--red-l);    color: var(--red); }
+  .badge-blocked .badge-dot { background: var(--red); }
+
+  /* ── Deliverable rows ── */
+  .deliverable-row {
+    padding: 14px 20px; border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .deliverable-row:last-child { border-bottom: none; }
+  .deliverable-row:hover { background: var(--slate-l); }
+
+  /* ── Editable fields ── */
+  .editable-field {
+    width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+    color: var(--text); background: #fff; resize: vertical; outline: none;
+    transition: border-color 0.15s;
+  }
+  .editable-field:focus { border-color: var(--teal); }
+  .editable-field::placeholder { color: var(--muted); }
+  .edit-only { display: none; }
+
+  /* ── Edit mode active ── */
+  body.edit-mode .edit-only { display: block; }
+  body.edit-mode .view-only { display: none; }
+  body.edit-mode #editModeBar { display: flex; }
+
+  /* ── Toggle button ── */
+  .toggle-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.15s; font-family: 'Space Grotesk', sans-serif;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #143D6B; }
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-teal:hover { background: #0f766e; }
+  .btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: #94A3B8; }
+  .btn-gold { background: var(--gold); color: #fff; }
+  .btn-gold:hover { background: #b7911f; }
+
+  /* ── Section tabs ── */
+  .section-tab {
+    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1.5px solid transparent; font-family: 'Geist Mono', monospace;
+    letter-spacing: 0.03em; color: var(--muted); background: transparent;
+    transition: all 0.15s;
+  }
+  .section-tab:hover { background: var(--slate-l); color: var(--text); }
+  .section-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  /* ── Edit mode banner ── */
+  #editModeBar {
+    display: none; position: sticky; top: 0; z-index: 50;
+    background: var(--teal); color: #fff;
+    padding: 10px 24px; align-items: center; justify-content: space-between;
+    font-size: 13px; font-weight: 500;
+  }
+
+  /* ── Aamish input section ── */
+  .aamish-section {
+    background: linear-gradient(135deg, rgba(13,148,136,0.04), rgba(27,79,138,0.04));
+    border: 1.5px dashed rgba(13,148,136,0.3);
+    border-radius: 10px; padding: 16px;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 999px; background: var(--green); transition: width 0.4s ease; }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 0; }
+
+  /* ── Copy prompt button ── */
+  #copyConfirm { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ── Edit mode sticky bar ── -->
+<div id="editModeBar">
+  <span>✏️ &nbsp;Edit Mode Active — Aamish, fill in your deliverables below and click Save when done.</span>
+  <div style="display:flex;gap:8px;">
+    <button class="toggle-btn btn-outline" style="padding:6px 14px;font-size:12px;" onclick="saveData()">💾 Save Progress</button>
+    <button class="toggle-btn btn-outline" style="padding:6px 14px;font-size:12px;" onclick="toggleEditMode()">Exit Edit Mode</button>
+  </div>
+</div>
+
+<!-- ── Page wrapper ── -->
+<div style="max-width:1100px;margin:0 auto;padding:32px 24px;">
+
+  <!-- ── Header ── -->
+  <div style="margin-bottom:32px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <p class="mono" style="font-size:11px;color:var(--muted);letter-spacing:0.1em;margin:0 0 8px;">ADVISOR AI PARTNERS · CLIENT AUDIT</p>
+        <h1 class="syne" style="font-size:32px;font-weight:800;margin:0 0 6px;line-height:1.1;">Twinkle Nights &<br>Sun Power Lawn Care</h1>
+        <p style="color:var(--muted);font-size:15px;margin:0;">Tom Snogles · Proposal vs. Delivered Reconciliation</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;" class="no-print">
+          <button class="toggle-btn btn-teal" onclick="toggleEditMode()" id="editBtn">✏️ Aamish Edit Mode</button>
+          <button class="toggle-btn btn-outline" onclick="window.print()">🖨️ Print / Export</button>
+          <button class="toggle-btn btn-gold" onclick="copyPrompt()" id="copyBtn">
+            <span id="copyLabel">📋 Copy AI Prompt</span>
+            <span id="copyConfirm">✅ Copied!</span>
+          </button>
+        </div>
+        <p class="mono" style="font-size:11px;color:var(--muted);margin:0;" id="lastSaved">Last updated: <span id="lastSavedTime">—</span></p>
+      </div>
+    </div>
+
+    <!-- ── Meta strip ── -->
+    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;padding:16px 20px;background:#fff;border:1px solid var(--border);border-radius:10px;">
+      <div><p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 3px;letter-spacing:0.08em;">CLIENT</p><p style="font-size:14px;font-weight:600;margin:0;">Tom Snogles</p></div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div><p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 3px;letter-spacing:0.08em;">BRANDS</p><p style="font-size:14px;font-weight:600;margin:0;">Twinkle Nights · Sun Power Lawn Care</p></div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div><p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 3px;letter-spacing:0.08em;">CONTRACT DATE</p><p style="font-size:14px;font-weight:600;margin:0;">February 2, 2026</p></div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div><p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 3px;letter-spacing:0.08em;">SETUP FEE</p><p style="font-size:14px;font-weight:600;margin:0;">$5,000</p></div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div><p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 3px;letter-spacing:0.08em;">MONTHLY RETAINER</p><p style="font-size:14px;font-weight:600;margin:0;">$2,000 / mo</p></div>
+    </div>
+
+    <!-- ── Progress summary ── -->
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;" id="progressCards">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">COMPLETED</p>
+        <p class="syne" style="font-size:28px;font-weight:700;color:var(--green);margin:0 0 8px;" id="doneCount">0</p>
+        <div class="progress-bar"><div class="progress-fill" id="doneBar" style="width:0%;background:var(--green);"></div></div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">IN PROGRESS</p>
+        <p class="syne" style="font-size:28px;font-weight:700;color:#92400E;margin:0 0 8px;" id="progressCount">0</p>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%;background:var(--gold);"></div></div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">PENDING</p>
+        <p class="syne" style="font-size:28px;font-weight:700;color:var(--orange);margin:0 0 8px;" id="pendingCount">0</p>
+        <div class="progress-bar"><div class="progress-fill" id="pendingBar" style="width:0%;background:var(--orange);"></div></div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <p class="mono" style="font-size:10px;color:var(--muted);margin:0 0 6px;letter-spacing:0.08em;">BLOCKED</p>
+        <p class="syne" style="font-size:28px;font-weight:700;color:var(--red);margin:0 0 8px;" id="blockedCount">0</p>
+        <div class="progress-bar"><div class="progress-fill" id="blockedBar" style="width:0%;background:var(--red);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1: WHAT WAS PROPOSED
+  ══════════════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-header" style="background:linear-gradient(135deg,var(--blue-s),transparent);">
+      <div style="width:36px;height:36px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0;">📋</div>
+      <div>
+        <h2 class="syne" style="font-size:18px;font-weight:700;margin:0;">What Was Proposed</h2>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Original scope as presented to Tom Snogles — January 2026</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;" id="proposedGrid">
+      <!-- Pricing -->
+      <div style="padding:20px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);">
+        <p class="mono" style="font-size:10px;letter-spacing:0.08em;color:var(--muted);margin:0 0 12px;">INVESTMENT</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--blue-s);border-radius:8px;">
+            <span style="font-size:14px;font-weight:500;">Setup Fee (One-Time)</span>
+            <span class="syne" style="font-size:18px;font-weight:700;color:var(--blue);">$5,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--teal-s);border-radius:8px;">
+            <span style="font-size:14px;font-weight:500;">Monthly Retainer</span>
+            <span class="syne" style="font-size:18px;font-weight:700;color:var(--teal);">$2,000/mo</span>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin:0;padding:6px 14px;">Note: Reduced rate offered in exchange for expected client referrals.</p>
+        </div>
+      </div>
+      <!-- Services proposed -->
+      <div style="padding:20px;border-bottom:1px solid var(--border);">
+        <p class="mono" style="font-size:10px;letter-spacing:0.08em;color:var(--muted);margin:0 0 12px;">SERVICES INCLUDED</p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> AI Voice Agent (both businesses)</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> AI Chatbot / Receptionist (both websites)</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> Reputation Management</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> A2P Text Messaging Compliance &amp; Setup</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> CRM &amp; Workflow Automation (Go High Level)</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> Knowledge Base Building (both brands)</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> FAQ Development &amp; Loading</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:14px;"><span style="color:var(--teal);">●</span> Terms of Service Documentation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div style="padding:16px 20px;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.08em;color:var(--muted);margin:0 0 10px;">ENGAGEMENT TIMELINE</p>
+      <div style="display:flex;gap:0;overflow-x:auto;">
+        <div style="flex:1;min-width:140px;padding:10px 14px;border-left:3px solid var(--blue);background:#fff;border-radius:0 6px 6px 0;margin-right:8px;">
+          <p class="mono" style="font-size:10px;color:var(--muted);margin:0;">JAN 20–21, 2026</p>
+          <p style="font-size:13px;font-weight:600;margin:4px 0 0;">Initial meeting + Proposal sent</p>
+        </div>
+        <div style="flex:1;min-width:140px;padding:10px 14px;border-left:3px solid var(--teal);background:#fff;border-radius:0 6px 6px 0;margin-right:8px;">
+          <p class="mono" style="font-size:10px;color:var(--muted);margin:0;">JAN 29 – FEB 2, 2026</p>
+          <p style="font-size:13px;font-weight:600;margin:4px 0 0;">Agreement signed · Payment confirmed</p>
+        </div>
+        <div style="flex:1;min-width:140px;padding:10px 14px;border-left:3px solid var(--gold);background:#fff;border-radius:0 6px 6px 0;margin-right:8px;">
+          <p class="mono" style="font-size:10px;color:var(--muted);margin:0;">FEB 26, 2026</p>
+          <p style="font-size:13px;font-weight:600;margin:4px 0 0;">Kickoff call · A2P punch list sent</p>
+        </div>
+        <div style="flex:1;min-width:140px;padding:10px 14px;border-left:3px solid var(--green);background:#fff;border-radius:0 6px 6px 0;margin-right:8px;">
+          <p class="mono" style="font-size:10px;color:var(--muted);margin:0;">MAR–APR 2026</p>
+          <p style="font-size:13px;font-weight:600;margin:4px 0 0;">Build-out · Testing · Check-ins</p>
+        </div>
+        <div style="flex:1;min-width:140px;padding:10px 14px;border-left:3px solid var(--orange);background:#fff;border-radius:0 6px 6px 0;">
+          <p class="mono" style="font-size:10px;color:var(--muted);margin:0;">APR 21, 2026</p>
+          <p style="font-size:13px;font-weight:600;margin:4px 0 0;">Latest check-in · This audit</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2: DELIVERABLES (Proposed vs. Delivered)
+  ══════════════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-header" style="background:linear-gradient(135deg,var(--teal-s),transparent);">
+      <div style="width:36px;height:36px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0;">🚀</div>
+      <div>
+        <h2 class="syne" style="font-size:18px;font-weight:700;margin:0;">Deliverables — Proposed vs. Delivered</h2>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Click any status badge to cycle through statuses · Edit mode lets Aamish add notes</p>
+      </div>
+    </div>
+
+    <!-- Category: Platform & Infrastructure -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">PLATFORM &amp; INFRASTRUCTURE</p>
+    </div>
+
+    <div class="deliverable-row" data-id="ghl-setup">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Go High Level sub-account setup — both businesses</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">GHL platform configured for Twinkle Nights + Sun Power Lawn Care</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Add your notes on this deliverable:</p>
+          <textarea class="editable-field" rows="2" data-field="ghl-setup-notes" placeholder="e.g. Sub-account created on [date], pipeline named X, automations Y and Z configured..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="agreement">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Service agreement signed &amp; payment confirmed</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Letter of Understanding executed Feb 2, 2026; electronic bank transfer set up</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: David</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="kickoff">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Kickoff call completed — Tom + full team</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Sales manager, office manager, operations coordinator attended — Feb 26, 2026</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: David</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: AI Chatbot -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">AI CHATBOT / RECEPTIONIST</p>
+    </div>
+
+    <div class="deliverable-row" data-id="tk-chatbot">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Twinkle Nights chatbot — LIVE on website</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">AI receptionist deployed on twinklenights.com main site (confirmed Mar 31, 2026)</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Chatbot details (deploy date, configuration, knowledge base used, any known issues):</p>
+          <textarea class="editable-field" rows="2" data-field="tk-chatbot-notes" placeholder="e.g. Deployed on [date], knowledge base includes X topics, handoff logic set to trigger when..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="splc-chatbot">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Sun Power Lawn Care chatbot — Built, ON HOLD</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Deployment paused due to incorrect service area data; needs correction (Gainesville + surrounding areas only)</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-blocked" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>BLOCKED</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Current status of SPLC chatbot fix + what's needed to unblock:</p>
+          <textarea class="editable-field" rows="2" data-field="splc-chatbot-notes" placeholder="e.g. Tom still needs to send updated service area list. Once received, I will update the knowledge base and re-test."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="chatbot-handoff">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Chatbot handoff logic &amp; AI transparency language</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Content refined for professional tone; human takeover logic implemented during active conversations</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Notes on handoff configuration:</p>
+          <textarea class="editable-field" rows="2" data-field="chatbot-handoff-notes" placeholder="e.g. Handoff triggers when user says 'speak to someone', timeout after X minutes, notifies via..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: A2P Compliance -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">A2P TEXT MESSAGING COMPLIANCE</p>
+    </div>
+
+    <div class="deliverable-row" data-id="a2p-guidance">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">A2P compliance punch list delivered to Tom</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Phone field optional, two SMS consent checkboxes, Privacy Policy/ToS links — sent Feb 26, 2026</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish/David</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="a2p-websites">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Tom confirmed all websites A2P-ready</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Tom confirmed updates live on both sites by March 11, 2026</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Tom</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="a2p-registration">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">A2P registration submitted to carrier</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Pending confirmation that forms are compliant before submission</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has A2P been submitted? What is the current registration status?</p>
+          <textarea class="editable-field" rows="2" data-field="a2p-reg-notes" placeholder="e.g. Submitted on [date], currently in review. Expected approval [date]. OR: Not yet submitted, waiting on X."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Terms of Service & Legal Docs -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">LEGAL DOCUMENTATION</p>
+    </div>
+
+    <div class="deliverable-row" data-id="tos-tk">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Twinkle Nights — Terms of Service</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Document created and shared with Tom's team for publishing</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="tos-splc">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Sun Power Lawn Care — Terms of Service</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Document created and shared with Tom's team for publishing</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Knowledge Bases -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">KNOWLEDGE BASES &amp; FAQs</p>
+    </div>
+
+    <div class="deliverable-row" data-id="kb-tk">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Twinkle Nights — Knowledge base built &amp; loaded</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">FAQ document populated; knowledge base loaded into chatbot</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — What topics are covered? Any gaps identified?</p>
+          <textarea class="editable-field" rows="2" data-field="kb-tk-notes" placeholder="e.g. Covers pricing, services, booking process, FAQs. Gap: seasonal availability not yet included."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="kb-splc">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Sun Power Lawn Care — Knowledge base built (service area needs fix)</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">10-question FAQ loaded; service area data incorrect and needs updating</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-progress" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>IN PROGRESS</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has the service area been corrected? What's outstanding?</p>
+          <textarea class="editable-field" rows="2" data-field="kb-splc-notes" placeholder="e.g. Waiting on Tom to confirm exact service radius. Once received, will update KB and redeploy chatbot."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Voice AI & Phone -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">VOICE AI &amp; PHONE SYSTEM</p>
+    </div>
+
+    <div class="deliverable-row" data-id="voice-agent">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Voice AI agent — in testing</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Testing underway for both businesses; increased structured testing required</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-progress" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>IN PROGRESS</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Voice agent current status, what's been tested, what needs testing:</p>
+          <textarea class="editable-field" rows="2" data-field="voice-agent-notes" placeholder="e.g. Basic call answering tested. Needs: FAQ responses, booking flow, STOP/HELP handling, transcript review..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="voice-scripts">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Voice AI phone scripts (AI disclosure focus)</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Multiple options to be generated for both Sun Power and Twinkle Nights; must disclose AI involvement to callers</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Paste your voice script options here or describe status:</p>
+          <textarea class="editable-field" rows="4" data-field="voice-scripts-notes" placeholder="Option 1 (TK): 'Hi, this is Twinkle Nights AI assistant...' &#10;Option 2 (SPLC): ..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="phone-porting">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Phone number porting — Nextiva → GHL</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Decision made Apr 21 to port for cost efficiency; Tom needs to provide bill + account number; porting email to be sent by Aamish</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish + Tom</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has porting email been sent? What's the current status?</p>
+          <textarea class="editable-field" rows="2" data-field="phone-porting-notes" placeholder="e.g. Porting email sent to Tom on [date]. Waiting on: last 3 months billing statement, account number, phone numbers to port."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Calendar Integration -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">CALENDAR &amp; BOOKING</p>
+    </div>
+
+    <div class="deliverable-row" data-id="calendar-setup">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Google Calendar integration — 15-min appointments configured</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Automated availability syncing; Google Meet set as standard platform for initial consultations</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-done" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>DONE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="calendar-finalize">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Amanda &amp; Michelle — availability schedules + profile pictures finalized</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Both team members need to complete calendar setup and upload profile photos</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Tom's team</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has this been completed? Any follow-up needed?</p>
+          <textarea class="editable-field" rows="2" data-field="calendar-finalize-notes" placeholder="e.g. Amanda set up her calendar on [date]. Michelle still pending as of [date]. Have followed up X times."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: GHL Permissions -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">GHL ACCESS &amp; PERMISSIONS</p>
+    </div>
+
+    <div class="deliverable-row" data-id="ghl-permissions">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">GHL full permissions — Amanda McCauley &amp; Michelle Jones</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Both team members need full access granted within GHL system</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Have permissions been granted? What access level?</p>
+          <textarea class="editable-field" rows="2" data-field="ghl-permissions-notes" placeholder="e.g. Amanda given full access on [date]. Michelle still pending — need her email to send invite."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: CRM & Custom Software -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">CRM &amp; CUSTOM SOFTWARE</p>
+    </div>
+
+    <div class="deliverable-row" data-id="crm-analysis">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Tinsel CRM proposal template analysis — replicate in GHL</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Direct integration with Tinsel CRM / Service Autopilot not possible; GHL email template replication being analyzed</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-progress" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>IN PROGRESS</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — What has been done on CRM replication? What's the plan?</p>
+          <textarea class="editable-field" rows="2" data-field="crm-notes" placeholder="e.g. Reviewed Tinsel proposal template. Can replicate fields X, Y, Z in GHL. Custom fields needed: ..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="crm-dashboards">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Custom CRM dashboards — Notion / requirements definition</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">David building custom CRM; Amanda + Michelle to define dashboard requirements; Notion dashboards in progress</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: David + Aamish</span>
+          <span class="badge badge-progress" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>IN PROGRESS</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Dashboard status and what's been built:</p>
+          <textarea class="editable-field" rows="2" data-field="crm-dashboards-notes" placeholder="e.g. Notion dashboard created with views for: leads, jobs, revenue. Still needs: ..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Social Media -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">SOCIAL MEDIA</p>
+    </div>
+
+    <div class="deliverable-row" data-id="social-media">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Social media tool setup + Briana onboarding</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Tool set up; Aamish to contact Briana (support@twinkle.com) to assess usage and login needs</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has Briana been contacted? What's the status of the social media tool?</p>
+          <textarea class="editable-field" rows="2" data-field="social-media-notes" placeholder="e.g. Reached out to Briana on [date]. She is using the tool for Instagram posts. Set up on [date]."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: AI Deployment Quotes -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">AI DEPLOYMENT QUOTES &amp; NEXT PHASE</p>
+    </div>
+
+    <div class="deliverable-row" data-id="ai-quotes">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Deployment quotes for both accounts</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Tom requested quotes for both Sun Power and Twinkle Nights AI deployment options (Apr 21 meeting)</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Paste deployment option quotes or pricing tiers here:</p>
+          <textarea class="editable-field" rows="4" data-field="ai-quotes-notes" placeholder="Option A (Basic): $... covers... &#10;Option B (Full deployment): $... covers... &#10;Option C (Enterprise): $... covers..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="ai-code">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">AI agent deployment code forwarded to Naveen + Tom</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Code and relevant deployment documentation to be shared</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has deployment code been sent? To whom and when?</p>
+          <textarea class="editable-field" rows="2" data-field="ai-code-notes" placeholder="e.g. Sent to naveen@... and tom@... on [date] via [method]. Includes: ..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category: Monthly Meetings -->
+    <div style="padding:12px 20px 0;background:var(--slate-l);">
+      <p class="mono" style="font-size:10px;letter-spacing:0.1em;color:var(--muted);margin:0;padding:8px 0;">ONGOING RELATIONSHIP</p>
+    </div>
+
+    <div class="deliverable-row" data-id="monthly-meetings">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Tom's request: attend monthly AI update meetings</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">Tom wants to attend our monthly team meetings for AI updates; Aamish to inform David</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: Aamish → David</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+      <div class="edit-only" style="margin-top:10px;">
+        <div class="aamish-section">
+          <p style="font-size:11px;color:var(--teal);font-weight:600;margin:0 0 6px;">Aamish — Has David been informed? What was decided?</p>
+          <textarea class="editable-field" rows="2" data-field="monthly-meetings-notes" placeholder="e.g. Informed David on [date]. Decision: Tom added to monthly Twinkle check-ins starting [date]."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="deliverable-row" data-id="hiring-session">
+      <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <p style="font-size:14px;font-weight:600;margin:0 0 2px;">Hiring process automation — dedicated session with Tom</p>
+          <p style="font-size:12px;color:var(--muted);margin:0;">David + Tom to schedule review focused on hiring topics and potential automation builds</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span class="mono" style="font-size:10px;color:var(--muted);">OWNER: David + Tom</span>
+          <span class="badge badge-pending" onclick="cycleStatus(this)" title="Click to change status"><span class="badge-dot"></span>PENDING</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3: AAMISH — ADDITIONAL WORK LOG
+  ══════════════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-header" style="background:linear-gradient(135deg,var(--teal-s),transparent);">
+      <div style="width:36px;height:36px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0;">🔧</div>
+      <div>
+        <h2 class="syne" style="font-size:18px;font-weight:700;margin:0;">Aamish — Additional Work Log</h2>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Anything built, configured, or completed that isn't listed above — add it here</p>
+      </div>
+    </div>
+    <div style="padding:20px;">
+      <div class="edit-only">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Additional Twinkle Nights work completed:</label>
+            <textarea class="editable-field" rows="4" data-field="extra-tk" placeholder="List any work done for Twinkle Nights not captured above. Include dates and current status."></textarea>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Additional Sun Power Lawn Care work completed:</label>
+            <textarea class="editable-field" rows="4" data-field="extra-splc" placeholder="List any work done for Sun Power Lawn Care not captured above. Include dates and current status."></textarea>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Tools / integrations / automations built (details):</label>
+            <textarea class="editable-field" rows="4" data-field="extra-tools" placeholder="e.g. GHL workflows: Lead nurture sequence (5 emails + 3 SMS), appointment reminder automation, missed call text-back..."></textarea>
+          </div>
+          <div>
+            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Anything still outstanding that David should know about:</label>
+            <textarea class="editable-field" rows="3" data-field="extra-outstanding" placeholder="e.g. Waiting on X from Tom. Blocked on Y. Need decision from David on Z."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="view-only" style="padding:20px 0;">
+        <div class="aamish-section" style="background:var(--slate-l);border-color:var(--border);border-style:solid;">
+          <p style="font-size:14px;color:var(--muted);margin:0;text-align:center;">Aamish's additional work log will appear here once Edit Mode is completed and saved.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 4: OPEN ITEMS TABLE
+  ══════════════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:24px;">
+    <div class="card-header" style="background:linear-gradient(135deg,var(--gold-s),transparent);">
+      <div style="width:36px;height:36px;border-radius:8px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0;">⚡</div>
+      <div>
+        <h2 class="syne" style="font-size:18px;font-weight:700;margin:0;">Open Action Items</h2>
+        <p style="font-size:12px;color:var(--muted);margin:0;">Everything still pending as of April 22, 2026</p>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background:var(--slate-l);">
+            <th style="text-align:left;padding:10px 16px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);">ACTION ITEM</th>
+            <th style="text-align:left;padding:10px 16px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);">OWNER</th>
+            <th style="text-align:left;padding:10px 16px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);">STATUS</th>
+            <th style="text-align:left;padding:10px 16px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);min-width:160px;" class="edit-only">AAMISH NOTES</th>
+          </tr>
+        </thead>
+        <tbody id="actionItemsTable">
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Fix Sun Power chatbot service area data</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-blocked" onclick="cycleStatus(this)"><span class="badge-dot"></span>BLOCKED</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-splcfix" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Generate voice AI script options (both brands)</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-voicescripts" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Send phone porting email to Tom</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-porting" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Provide AI deployment quotes for both accounts</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-quotes" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Forward AI agent deployment code to Naveen + Tom</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-code" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Contact Briana for social media tool onboarding</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-briana" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Update GHL permissions — Amanda + Michelle</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-perms" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Inform David: Tom requests monthly meeting access</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Aamish → David</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-meetings" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Tom to send porting docs (bill, account #, phone #s)</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Tom Snogles</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-tomporting" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Tom to send edited chatbot scripts (Sun Power + TK)</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Tom Snogles</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-tomscripts" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px 16px;">Finalize calendar availability — Amanda + Michelle</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">Tom's team</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-cal" placeholder="Update..."></textarea></td>
+          </tr>
+          <tr>
+            <td style="padding:10px 16px;">Schedule hiring automation session — David + Tom</td>
+            <td style="padding:10px 16px;" class="mono" style="font-size:11px;">David + Tom</td>
+            <td style="padding:10px 16px;"><span class="badge badge-pending" onclick="cycleStatus(this)"><span class="badge-dot"></span>PENDING</span></td>
+            <td style="padding:10px 16px;" class="edit-only"><textarea class="editable-field" rows="1" data-field="action-hiring" placeholder="Update..."></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div style="text-align:center;padding:24px 0;border-top:1px solid var(--border);">
+    <p style="font-size:12px;color:var(--muted);margin:0;">
+      Advisor AI Partners · david@advisoraipartners.com · 305-254-4455 · advisoraipartners.com<br>
+      <span class="mono" style="font-size:10px;">Audit generated April 22, 2026 · Updated: <span id="footerUpdated">—</span></span>
+    </p>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- ── Hidden AI Prompt for copy ── -->
+<textarea id="aiPromptText" style="position:absolute;left:-9999px;">
+PROMPT FOR AAMISH'S AI OS:
+
+I need a full audit of all work completed, in progress, and pending for two client accounts under Tom Snogles:
+1. Twinkle Nights (twinklenights.com)
+2. Sun Power Lawn Care (SPLC)
+
+Pull from all your memory, ClickUp tasks, Notion databases, meeting transcripts, GHL records, and any other sources available.
+
+Compile the following:
+
+A) Everything built or configured in GHL for both accounts: chatbots and AI agents with status (live, on hold, in testing), automations and workflows, pipelines, forms, sub-account settings, calendar integrations, and A2P compliance work done.
+
+B) Voice AI and phone system work: scripts written or drafted, phone number porting status, call forwarding and text automation setup.
+
+C) Knowledge bases: what has been loaded for Twinkle Nights, what has been loaded for Sun Power Lawn Care, and any updates or gaps identified.
+
+D) Social media or content work done for either account.
+
+E) CRM and custom software work (Tinsel CRM replication in GHL, proposal templates, dashboards).
+
+F) Outstanding action items assigned to you that are not yet complete.
+
+G) Any quotes, pricing, or deployment options you have generated or were asked to generate for Tom.
+
+For each item note: what was done, the date if known, current status, and what is still pending. Once compiled, send the summary back to David at david@advisoraipartners.com.
+</textarea>
+
+<script>
+// ── Status cycling ──────────────────────────────────────────────
+const statusCycle = ['badge-done', 'badge-progress', 'badge-pending', 'badge-blocked'];
+const statusLabels = { 'badge-done': 'DONE', 'badge-progress': 'IN PROGRESS', 'badge-pending': 'PENDING', 'badge-blocked': 'BLOCKED' };
+
+function cycleStatus(el) {
+  const current = statusCycle.find(s => el.classList.contains(s));
+  const next = statusCycle[(statusCycle.indexOf(current) + 1) % statusCycle.length];
+  el.classList.remove(...statusCycle);
+  el.classList.add(next);
+  el.querySelector('.badge-dot').style.cssText = '';
+  el.childNodes[1].textContent = statusLabels[next];
+  updateProgressCounts();
+  autoSave();
+}
+
+// ── Edit mode toggle ────────────────────────────────────────────
+function toggleEditMode() {
+  document.body.classList.toggle('edit-mode');
+  const btn = document.getElementById('editBtn');
+  if (document.body.classList.contains('edit-mode')) {
+    btn.textContent = '👁 View Mode';
+    btn.className = 'toggle-btn btn-outline';
+  } else {
+    btn.textContent = '✏️ Aamish Edit Mode';
+    btn.className = 'toggle-btn btn-teal';
+  }
+}
+
+// ── Progress counts ─────────────────────────────────────────────
+function updateProgressCounts() {
+  const badges = document.querySelectorAll('.badge');
+  let done = 0, progress = 0, pending = 0, blocked = 0, total = 0;
+  badges.forEach(b => {
+    if (!b.closest('#progressCards')) {
+      if (b.classList.contains('badge-done'))     { done++; total++; }
+      if (b.classList.contains('badge-progress')) { progress++; total++; }
+      if (b.classList.contains('badge-pending'))  { pending++; total++; }
+      if (b.classList.contains('badge-blocked'))  { blocked++; total++; }
+    }
+  });
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('progressCount').textContent = progress;
+  document.getElementById('pendingCount').textContent = pending;
+  document.getElementById('blockedCount').textContent = blocked;
+  const pct = (n) => total ? Math.round(n/total*100)+'%' : '0%';
+  document.getElementById('doneBar').style.width = pct(done);
+  document.getElementById('progressBar').style.width = pct(progress);
+  document.getElementById('pendingBar').style.width = pct(pending);
+  document.getElementById('blockedBar').style.width = pct(blocked);
+}
+
+// ── Persist to localStorage ─────────────────────────────────────
+function saveData() {
+  const data = {};
+  // Save all textarea values
+  document.querySelectorAll('[data-field]').forEach(el => {
+    data[el.dataset.field] = el.value;
+  });
+  // Save all badge statuses
+  document.querySelectorAll('.badge[onclick]').forEach(el => {
+    const row = el.closest('[data-id]');
+    if (row) {
+      const status = statusCycle.find(s => el.classList.contains(s));
+      data['status-' + row.dataset.id] = status;
+    }
+  });
+  const now = new Date().toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
+  data['_lastSaved'] = now;
+  localStorage.setItem('twinkle-audit', JSON.stringify(data));
+  document.getElementById('lastSavedTime').textContent = now;
+  document.getElementById('footerUpdated').textContent = now;
+}
+
+function autoSave() {
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(saveData, 800);
+}
+
+function loadData() {
+  const raw = localStorage.getItem('twinkle-audit');
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    document.querySelectorAll('[data-field]').forEach(el => {
+      if (data[el.dataset.field] !== undefined) el.value = data[el.dataset.field];
+    });
+    document.querySelectorAll('.badge[onclick]').forEach(el => {
+      const row = el.closest('[data-id]');
+      if (row && data['status-' + row.dataset.id]) {
+        const saved = data['status-' + row.dataset.id];
+        el.classList.remove(...statusCycle);
+        el.classList.add(saved);
+        el.childNodes[1].textContent = statusLabels[saved];
+      }
+    });
+    if (data['_lastSaved']) {
+      document.getElementById('lastSavedTime').textContent = data['_lastSaved'];
+      document.getElementById('footerUpdated').textContent = data['_lastSaved'];
+    }
+  } catch(e) {}
+}
+
+// ── Copy AI prompt ──────────────────────────────────────────────
+function copyPrompt() {
+  const text = document.getElementById('aiPromptText').value;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('copyLabel').style.display = 'none';
+    document.getElementById('copyConfirm').style.display = 'inline';
+    setTimeout(() => {
+      document.getElementById('copyLabel').style.display = 'inline';
+      document.getElementById('copyConfirm').style.display = 'none';
+    }, 2500);
+  });
+}
+
+// ── Auto-save on textarea input ─────────────────────────────────
+document.addEventListener('input', (e) => {
+  if (e.target.matches('[data-field]')) autoSave();
+});
+
+// ── Init ────────────────────────────────────────────────────────
+loadData();
+updateProgressCounts();
+</script>
+</body>
+</html>
