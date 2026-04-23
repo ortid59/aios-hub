@@ -83,13 +83,20 @@
     .stat-item {
       display: flex; align-items: center; gap: 8px;
       padding: 0 20px; border-right: 1px solid var(--border);
-      height: 100%;
+      height: 100%; cursor: pointer; transition: all .15s;
+      border-bottom: 2px solid transparent; user-select: none;
     }
     .stat-item:first-child { padding-left: 0; }
     .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: var(--blue-xl); }
+    .stat-item.active {
+      background: var(--blue-xl); border-bottom-color: var(--blue-m);
+    }
+    .stat-item.active .stat-val { color: var(--blue-m); }
+    .stat-item.active .stat-lbl { color: var(--blue-m); }
     .stat-icon { font-size: 16px; }
-    .stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--ink); }
-    .stat-lbl { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+    .stat-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; color: var(--ink); transition: color .15s; }
+    .stat-lbl { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; transition: color .15s; }
 
     /* ── Main layout ──────────────────────────────────────── */
     .main { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 112px); }
@@ -104,7 +111,8 @@
       text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
       margin-bottom: 20px;
     }
-    .tl-item { display: flex; position: relative; gap: 10px; min-height: 44px; }
+    .tl-item { display: flex; position: relative; gap: 10px; min-height: 44px; cursor: pointer; border-radius: 6px; padding: 2px 4px; transition: background .15s; }
+    .tl-item:hover { background: var(--blue-xl); }
     .tl-dot {
       width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
       margin-top: 4px; position: relative; z-index: 1;
@@ -341,29 +349,29 @@
   </div>
 </nav>
 
-<!-- Stats strip -->
+<!-- Stats strip (clickable pill filters) -->
 <div class="stats-strip">
-  <div class="stat-item">
+  <div class="stat-item" data-filter="meetings" onclick="filterSection('meetings')">
     <span class="stat-icon">📅</span>
     <span class="stat-val">2</span>
     <span class="stat-lbl mono">MEETINGS</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="emails" onclick="filterSection('emails')">
     <span class="stat-icon">📧</span>
     <span class="stat-val">0</span>
     <span class="stat-lbl mono">EMAILS</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="messages" onclick="filterSection('messages')">
     <span class="stat-icon">💬</span>
     <span class="stat-val">0</span>
     <span class="stat-lbl mono">MESSAGES</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="calls" onclick="filterSection('calls')">
     <span class="stat-icon">📞</span>
     <span class="stat-val">0</span>
     <span class="stat-lbl mono">CALLS</span>
   </div>
-  <div class="stat-item">
+  <div class="stat-item" data-filter="files" onclick="filterSection('files')">
     <span class="stat-icon">🔨</span>
     <span class="stat-val">0</span>
     <span class="stat-lbl mono">FILES BUILT</span>
@@ -376,7 +384,7 @@
   <!-- Sidebar timeline -->
   <aside class="sidebar">
     <div class="sidebar-title mono">Timeline</div>
-    <div class="tl-item">
+    <div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -384,7 +392,7 @@
                 <span class="tl-label">Michael <> David (Image Studios)</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               
               <div class="tl-content">
@@ -404,7 +412,7 @@
         <p>Here's a look at Monday, April 06. Run with ANTHROPIC_API_KEY set for the full AI narrative.</p>
       </div>
       <div class="narrative-footer">
-        <span class="narrative-gen mono">Generated 01:12 PM · 2026-04-06</span>
+        <span class="narrative-gen mono">Generated 08:07 PM · 2026-04-06</span>
         <span class="ai-badge mono">claude-opus-4-7</span>
       </div>
     </div>
@@ -413,7 +421,7 @@
     <div class="section-grid">
 
       <!-- Meetings -->
-      <div class="section-card full-width">
+      <div class="section-card full-width" data-section="meetings">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">📅</span> Meetings & Calls
@@ -451,7 +459,7 @@
       </div>
 
       <!-- Emails -->
-      <div class="section-card">
+      <div class="section-card" data-section="emails">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">📧</span> Emails
@@ -462,7 +470,7 @@
       </div>
 
       <!-- Messages -->
-      <div class="section-card">
+      <div class="section-card" data-section="messages">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">💬</span> Messages
@@ -473,7 +481,7 @@
       </div>
 
       <!-- Calls -->
-      <div class="section-card">
+      <div class="section-card" data-section="calls">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">📞</span> Phone Calls
@@ -484,7 +492,7 @@
       </div>
 
       <!-- Files Built -->
-      <div class="section-card">
+      <div class="section-card" data-section="files">
         <div class="section-header">
           <div class="section-title syne">
             <span class="section-icon">🔨</span> Files Built
@@ -511,11 +519,50 @@
 
 <footer class="page-footer">
   <span class="footer-brand syne">Advisor AI Partners · David's Day</span>
-  <span class="footer-gen mono">Generated 01:12 PM · 2026-04-06 · DataOS v1</span>
+  <span class="footer-gen mono">Generated 08:07 PM · 2026-04-06 · DataOS v1</span>
 </footer>
 
 <script>
   const currentDate = new Date("2026-04-06");
+
+  // ── Section filter (pillbox) ───────────────────────────────
+  let activeFilter = null;
+
+  // ── Timeline click → scroll to section ───────────────────────
+  function scrollToSection(name) {
+    // First filter to show only that section
+    filterSection(name);
+    // Then scroll to it
+    const target = document.querySelector('[data-section="' + name + '"]');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.style.outline = '2px solid var(--blue-m)';
+      target.style.outlineOffset = '4px';
+      setTimeout(() => { target.style.outline = ''; target.style.outlineOffset = ''; }, 1800);
+    }
+  }
+
+  function filterSection(name) {
+    const sections = document.querySelectorAll('[data-section]');
+    const pills    = document.querySelectorAll('.stat-item[data-filter]');
+    const grid     = document.querySelector('.section-grid');
+
+    if (activeFilter === name) {
+      // Deselect — show all
+      activeFilter = null;
+      sections.forEach(s => { s.style.display = ''; });
+      pills.forEach(p => p.classList.remove('active'));
+      if (grid) grid.style.gridTemplateColumns = '';
+    } else {
+      activeFilter = name;
+      sections.forEach(s => {
+        s.style.display = s.dataset.section === name ? '' : 'none';
+      });
+      pills.forEach(p => p.classList.toggle('active', p.dataset.filter === name));
+      // Expand selected section to full width
+      if (grid) grid.style.gridTemplateColumns = '1fr';
+    }
+  }
 
   function navDay(delta) {
     const d = new Date(currentDate);

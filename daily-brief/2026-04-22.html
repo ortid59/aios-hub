@@ -111,7 +111,8 @@
       text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted);
       margin-bottom: 20px;
     }
-    .tl-item { display: flex; position: relative; gap: 10px; min-height: 44px; }
+    .tl-item { display: flex; position: relative; gap: 10px; min-height: 44px; cursor: pointer; border-radius: 6px; padding: 2px 4px; transition: background .15s; }
+    .tl-item:hover { background: var(--blue-xl); }
     .tl-dot {
       width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
       margin-top: 4px; position: relative; z-index: 1;
@@ -383,7 +384,7 @@
   <!-- Sidebar timeline -->
   <aside class="sidebar">
     <div class="sidebar-title mono">Timeline</div>
-    <div class="tl-item">
+    <div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#2563EB"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -391,7 +392,7 @@
                 <span class="tl-label">Jean Hawney - Apr 22, 04:03 PM</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#2563EB"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -399,7 +400,7 @@
                 <span class="tl-label">Pamela Earls - Apr 22, 03:27 PM</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#2563EB"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -407,7 +408,7 @@
                 <span class="tl-label">Michael Newhouse Apr 22, 01:40 PM</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -415,7 +416,7 @@
                 <span class="tl-label">Ben Montgomery — Meeting with Advisor AI</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -423,7 +424,7 @@
                 <span class="tl-label">Jason Pratt — Meeting with Advisor AI Pa</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -431,7 +432,7 @@
                 <span class="tl-label">Taverna — Michael Newsome</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -439,7 +440,7 @@
                 <span class="tl-label">Jean Hawney — Meeting with Advisor AI Pa</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('meetings')" title="Jump to meetings">
               <div class="tl-dot" style="background:#0D9488"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
@@ -447,36 +448,36 @@
                 <span class="tl-label">Arlington Chamber Social</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('files')" title="Jump to files">
               <div class="tl-dot" style="background:#D97706"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
-                <span class="tl-time">01:12 PM</span>
-                <span class="tl-label">Built: 2026-04-16.html</span>
+                <span class="tl-time">04:54 PM</span>
+                <span class="tl-label">Built: aios-email-diane-denholm.html</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('files')" title="Jump to files">
               <div class="tl-dot" style="background:#D97706"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
-                <span class="tl-time">01:12 PM</span>
-                <span class="tl-label">Built: 2026-04-20.html</span>
+                <span class="tl-time">04:54 PM</span>
+                <span class="tl-label">Built: supporting-strategies.html</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('files')" title="Jump to files">
               <div class="tl-dot" style="background:#D97706"></div>
               <div class="tl-line"></div>
               <div class="tl-content">
-                <span class="tl-time">01:12 PM</span>
-                <span class="tl-label">Built: 2026-04-21.html</span>
+                <span class="tl-time">05:06 PM</span>
+                <span class="tl-label">Built: collect_fathom.py</span>
               </div>
             </div>
-<div class="tl-item">
+<div class="tl-item" onclick="scrollToSection('files')" title="Jump to files">
               <div class="tl-dot" style="background:#D97706"></div>
               
               <div class="tl-content">
-                <span class="tl-time">01:12 PM</span>
-                <span class="tl-label">Built: 2026-04-17.html</span>
+                <span class="tl-time">07:32 PM</span>
+                <span class="tl-label">Built: meeting-dashboard.html</span>
               </div>
             </div>
   </aside>
@@ -488,10 +489,10 @@
     <div class="narrative-card">
       <div class="narrative-eyebrow mono">How was your day, David?</div>
       <div class="narrative-text">
-        <p>Dashboard generated for 2026-04-22. Run without --no-narrative for the AI summary.</p>
+        <p>Here's a look at Wednesday, April 22. Had 3 meeting(s): Jean Hawney - Apr 22, 04:03 PM, Pamela Earls - Apr 22, 03:27 PM, Michael Newhouse Apr 22, 01:40 PM. Built 27 file(s) including aios-email-diane-denholm.html. Run with ANTHROPIC_API_KEY set for the full AI narrative.</p>
       </div>
       <div class="narrative-footer">
-        <span class="narrative-gen mono">Generated 07:58 PM · 2026-04-22</span>
+        <span class="narrative-gen mono">Generated 08:07 PM · 2026-04-22</span>
         <span class="ai-badge mono">claude-opus-4-7</span>
       </div>
     </div>
@@ -694,29 +695,29 @@
           </div>
           <span class="section-count count-gold mono">27</span>
         </div>
-        <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-16.html</span><span class="file-path">hub/daily-brief/2026-04-16.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-20.html</span><span class="file-path">hub/daily-brief/2026-04-20.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-21.html</span><span class="file-path">hub/daily-brief/2026-04-21.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-17.html</span><span class="file-path">hub/daily-brief/2026-04-17.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-01.html</span><span class="file-path">hub/daily-brief/2026-04-01.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-06.html</span><span class="file-path">hub/daily-brief/2026-04-06.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-10.html</span><span class="file-path">hub/daily-brief/2026-04-10.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-07.html</span><span class="file-path">hub/daily-brief/2026-04-07.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-08.html</span><span class="file-path">hub/daily-brief/2026-04-08.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-04.html</span><span class="file-path">hub/daily-brief/2026-04-04.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-13.html</span><span class="file-path">hub/daily-brief/2026-04-13.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-09.html</span><span class="file-path">hub/daily-brief/2026-04-09.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-14.html</span><span class="file-path">hub/daily-brief/2026-04-14.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-02.html</span><span class="file-path">hub/daily-brief/2026-04-02.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-18.html</span><span class="file-path">hub/daily-brief/2026-04-18.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-03.html</span><span class="file-path">hub/daily-brief/2026-04-03.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-15.html</span><span class="file-path">hub/daily-brief/2026-04-15.html</span></div><span class="file-time">01:12 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">aios-email-diane-denholm.html</span><span class="file-path">hub/aios-email-diane-denholm.html</span></div><span class="file-time">04:54 PM</span></div>
+        <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">aios-email-diane-denholm.html</span><span class="file-path">hub/aios-email-diane-denholm.html</span></div><span class="file-time">04:54 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">supporting-strategies.html</span><span class="file-path">hub/supporting-strategies.html</span></div><span class="file-time">04:54 PM</span></div>
 <div class="file-row"><span class="file-ext ext-py">PY</span><div class="file-info"><span class="file-name">collect_fathom.py</span><span class="file-path">scripts/collect_fathom.py</span></div><span class="file-time">05:06 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">meeting-dashboard.html</span><span class="file-path">hub/meeting-dashboard.html</span></div><span class="file-time">07:32 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">productivity-index.html</span><span class="file-path">hub/productivity-index.html</span></div><span class="file-time">07:52 PM</span></div>
-<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-22.html</span><span class="file-path">hub/daily-brief/2026-04-22.html</span></div><span class="file-time">07:56 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-22.html</span><span class="file-path">hub/daily-brief/2026-04-22.html</span></div><span class="file-time">07:58 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-16.html</span><span class="file-path">hub/daily-brief/2026-04-16.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-20.html</span><span class="file-path">hub/daily-brief/2026-04-20.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-21.html</span><span class="file-path">hub/daily-brief/2026-04-21.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-17.html</span><span class="file-path">hub/daily-brief/2026-04-17.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-01.html</span><span class="file-path">hub/daily-brief/2026-04-01.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-06.html</span><span class="file-path">hub/daily-brief/2026-04-06.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-10.html</span><span class="file-path">hub/daily-brief/2026-04-10.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-07.html</span><span class="file-path">hub/daily-brief/2026-04-07.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-08.html</span><span class="file-path">hub/daily-brief/2026-04-08.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-04.html</span><span class="file-path">hub/daily-brief/2026-04-04.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-13.html</span><span class="file-path">hub/daily-brief/2026-04-13.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-09.html</span><span class="file-path">hub/daily-brief/2026-04-09.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-14.html</span><span class="file-path">hub/daily-brief/2026-04-14.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-02.html</span><span class="file-path">hub/daily-brief/2026-04-02.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-18.html</span><span class="file-path">hub/daily-brief/2026-04-18.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-03.html</span><span class="file-path">hub/daily-brief/2026-04-03.html</span></div><span class="file-time">08:07 PM</span></div>
+<div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">2026-04-15.html</span><span class="file-path">hub/daily-brief/2026-04-15.html</span></div><span class="file-time">08:07 PM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">twinkle-knights-audit.html</span><span class="file-path">hub/twinkle-knights-audit.html</span></div><span class="file-time">08:36 AM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">ss-proposal-engine.html</span><span class="file-path">hub/ss-proposal-engine.html</span></div><span class="file-time">08:52 AM</span></div>
 <div class="file-row"><span class="file-ext ext-html">HTML</span><div class="file-info"><span class="file-name">ss-client-intelligence.html</span><span class="file-path">hub/ss-client-intelligence.html</span></div><span class="file-time">09:14 AM</span></div>
@@ -744,7 +745,7 @@
 
 <footer class="page-footer">
   <span class="footer-brand syne">Advisor AI Partners · David's Day</span>
-  <span class="footer-gen mono">Generated 07:58 PM · 2026-04-22 · DataOS v1</span>
+  <span class="footer-gen mono">Generated 08:07 PM · 2026-04-22 · DataOS v1</span>
 </footer>
 
 <script>
@@ -752,6 +753,20 @@
 
   // ── Section filter (pillbox) ───────────────────────────────
   let activeFilter = null;
+
+  // ── Timeline click → scroll to section ───────────────────────
+  function scrollToSection(name) {
+    // First filter to show only that section
+    filterSection(name);
+    // Then scroll to it
+    const target = document.querySelector('[data-section="' + name + '"]');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.style.outline = '2px solid var(--blue-m)';
+      target.style.outlineOffset = '4px';
+      setTimeout(() => { target.style.outline = ''; target.style.outlineOffset = ''; }, 1800);
+    }
+  }
 
   function filterSection(name) {
     const sections = document.querySelectorAll('[data-section]');
