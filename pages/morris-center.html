@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Integration Analysis — The Morris Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:        #2B7E7C;
+  --teal-light:  #3D9E9C;
+  --teal-dark:   #1C5250;
+  --teal-glow:   rgba(43,126,124,0.12);
+  --teal-border: rgba(43,126,124,0.25);
+  --seafoam:     #EEF6F6;
+  --seafoam-mid: #D8EEED;
+  --warm:        #E07B3A;
+  --warm-glow:   rgba(224,123,58,0.12);
+  --white:       #FFFFFF;
+  --text:        #2D3A3A;
+  --text-light:  #4A5E5D;
+  --text-muted:  #7A8E8D;
+  --border:      #D0E4E4;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--text); line-height: 1.6;
+  background: var(--white);
+}
+
+/* ── NAV ── */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  padding: 10px 24px;
+  display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;
+  border-bottom: 2px solid var(--teal);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+}
+.topnav a {
+  color: var(--text-light); text-decoration: none;
+  font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 4px;
+  transition: all 0.2s; letter-spacing: 0.3px;
+}
+.topnav a:hover { color: var(--teal); background: var(--teal-glow); }
+
+/* ── SECTIONS ── */
+.section { padding: 72px 24px; }
+.section-inner { max-width: 1000px; margin: 0 auto; }
+.bg-seafoam { background: var(--seafoam); }
+.bg-white   { background: var(--white); }
+.bg-dark    { background: var(--teal-dark); }
+
+.section-label {
+  font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--teal); font-weight: 700; margin-bottom: 10px;
+}
+.bg-dark .section-label { color: var(--teal-light); }
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px; font-weight: 800; line-height: 1.2;
+  color: var(--teal-dark); margin-bottom: 8px;
+}
+.bg-dark .section-title { color: var(--white); }
+.section-subtitle {
+  font-size: 16px; color: var(--text-light); line-height: 1.7;
+  margin-bottom: 32px; max-width: 700px;
+}
+.bg-dark .section-subtitle { color: rgba(255,255,255,0.72); }
+
+/* ── COVER ── */
+.cover {
+  padding: 90px 24px 72px;
+  text-align: center;
+  background: linear-gradient(160deg, var(--white) 0%, var(--seafoam) 100%);
+  border-bottom: 1px solid var(--border);
+}
+.cover-logo-wrap {
+  width: 80px; height: 80px;
+  background: var(--teal-glow);
+  border: 2px solid var(--teal-border);
+  border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 28px; font-size: 30px;
+}
+.cover-badge {
+  display: inline-block;
+  background: var(--teal-glow);
+  border: 1px solid var(--teal-border);
+  color: var(--teal);
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 6px 18px; border-radius: 20px; margin-bottom: 22px;
+}
+.cover-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 46px; font-weight: 900; color: var(--teal-dark);
+  line-height: 1.12; margin-bottom: 18px;
+}
+.cover-title span { color: var(--teal); }
+.cover-sub {
+  font-size: 18px; color: var(--text-light); max-width: 580px;
+  margin: 0 auto 36px; font-weight: 300; line-height: 1.7;
+}
+.cover-meta {
+  display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+  padding-top: 28px; border-top: 1px solid var(--border);
+  max-width: 580px; margin: 0 auto;
+}
+.cover-meta-item { text-align: center; }
+.cover-meta-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 700;
+}
+.cover-meta-value { font-size: 14px; color: var(--teal-dark); font-weight: 600; margin-top: 3px; }
+
+/* ── CARDS ── */
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+.card {
+  background: var(--white); border-radius: 12px; padding: 24px 26px;
+  border-left: 4px solid var(--teal);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.card h3 { font-size: 15px; font-weight: 700; color: var(--teal-dark); margin-bottom: 8px; }
+.card p  { font-size: 14px; color: var(--text-light); line-height: 1.7; }
+.card.warm   { border-left-color: var(--warm); }
+.card.teal-l { border-left-color: var(--teal-light); }
+.card.mid    { border-left-color: var(--seafoam-mid); border-left-color: #4AADAA; }
+.bg-white .card { background: var(--seafoam); }
+.bg-dark  .card { background: rgba(255,255,255,0.08); }
+.bg-dark  .card h3 { color: var(--white); }
+.bg-dark  .card p  { color: rgba(255,255,255,0.7); }
+
+/* ── PLATFORM STACK ── */
+.platform-stack {
+  margin-top: 36px;
+  border: 2px solid var(--teal-border);
+  border-radius: 16px; overflow: hidden;
+}
+.platform-header {
+  background: var(--teal-dark);
+  padding: 18px 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.platform-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 800; color: var(--white);
+}
+.platform-header span {
+  font-size: 11px; color: var(--teal-light); font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.platform-body { background: var(--white); padding: 24px 28px; }
+.ai-tiles { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.ai-tile {
+  flex: 1; min-width: 170px;
+  background: var(--seafoam);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px; text-align: center;
+}
+.ai-tile .icon { font-size: 26px; margin-bottom: 8px; }
+.ai-tile h4 { font-size: 13px; font-weight: 800; color: var(--teal-dark); margin-bottom: 4px; }
+.ai-tile p  { font-size: 11px; color: var(--text-muted); line-height: 1.55; }
+.platform-note {
+  background: var(--teal-glow);
+  border: 1px solid var(--teal-border);
+  border-radius: 10px; padding: 14px 22px;
+  text-align: center; font-size: 14px; color: var(--text); line-height: 1.6;
+}
+.platform-note strong { color: var(--teal-dark); }
+
+/* ── FOCUS AREAS (replaces generic pillars) ── */
+.focus-areas { display: flex; flex-direction: column; gap: 20px; margin-top: 28px; }
+.focus-area {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 28px 30px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.focus-num {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.fa1 .focus-num { background: var(--teal-glow); }
+.fa2 .focus-num { background: rgba(61,158,156,0.12); }
+.fa3 .focus-num { background: rgba(224,123,58,0.1); }
+.fa4 .focus-num { background: rgba(28,82,80,0.08); }
+.fa5 .focus-num { background: rgba(43,126,124,0.07); border: 1px dashed var(--teal-border); }
+.focus-content h3 {
+  font-size: 17px; font-weight: 800; color: var(--teal-dark);
+  margin-bottom: 6px; line-height: 1.3;
+}
+.focus-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 10px; display: block;
+}
+.focus-content p {
+  font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 12px;
+}
+.focus-bullets { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.focus-bullets li {
+  font-size: 12px; color: var(--text-light);
+  padding-left: 16px; position: relative; line-height: 1.6;
+}
+.focus-bullets li::before {
+  content: '✓'; position: absolute; left: 0;
+  color: var(--teal); font-weight: 700; font-size: 11px;
+}
+.focus-area.open {
+  background: var(--seafoam);
+  border: 1.5px dashed var(--teal-border);
+}
+.focus-area.open .focus-content h3 { color: var(--text-muted); }
+.focus-area.open .focus-label { color: var(--text-muted); }
+.focus-area.open p { font-style: italic; }
+
+/* ── WHY ME ── */
+.why-me-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px; }
+.why-card {
+  background: var(--white);
+  border-radius: 14px; padding: 28px 24px;
+  box-shadow: 0 2px 14px rgba(0,0,0,0.05);
+  border-top: 4px solid var(--teal);
+}
+.why-card.warm-top { border-top-color: var(--warm); }
+.why-card.mid-top  { border-top-color: var(--teal-light); }
+.why-card .icon-row { font-size: 28px; margin-bottom: 12px; }
+.why-card h3 { font-size: 16px; font-weight: 800; color: var(--teal-dark); margin-bottom: 10px; }
+.why-card p  { font-size: 14px; color: var(--text-light); line-height: 1.75; }
+
+/* ── ROADMAP ── */
+.roadmap { display: flex; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+.phase {
+  flex: 1; min-width: 200px;
+  background: var(--white); border-radius: 12px;
+  padding: 22px 18px; position: relative;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.phase::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; border-radius: 12px 12px 0 0;
+}
+.phase:nth-child(1)::before { background: var(--teal); }
+.phase:nth-child(2)::before { background: var(--teal-light); }
+.phase:nth-child(3)::before { background: var(--warm); }
+.phase:nth-child(4)::before { background: var(--teal-dark); }
+.phase-when { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; }
+.phase-name { font-size: 16px; font-weight: 800; color: var(--teal-dark); margin-bottom: 10px; }
+.phase-list { list-style: none; }
+.phase-list li {
+  font-size: 12px; color: var(--text-light); line-height: 1.65;
+  padding: 3px 0 3px 18px; position: relative;
+}
+.phase-list li::before { content: '✓'; position: absolute; left: 0; color: var(--teal); font-weight: 700; font-size: 11px; }
+.roadmap-note {
+  margin-top: 20px; text-align: center; font-size: 14px;
+  color: var(--text-light); line-height: 1.65;
+  padding: 18px 24px; background: var(--white); border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.roadmap-note strong { color: var(--teal-dark); }
+
+/* ── CTA ── */
+.cta-wrap { text-align: center; max-width: 680px; margin: 0 auto; }
+.cta-steps {
+  display: flex; gap: 18px; margin: 32px 0;
+  text-align: center; flex-wrap: wrap; justify-content: center;
+}
+.cta-step {
+  flex: 1; min-width: 170px; padding: 22px 14px;
+  background: var(--white); border: 1px solid var(--teal-border); border-radius: 12px;
+}
+.cta-step-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--teal); color: var(--white);
+  font-weight: 800; font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+}
+.cta-step h4 { font-size: 13px; font-weight: 700; color: var(--teal-dark); margin-bottom: 5px; }
+.cta-step p  { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+.cta-btn {
+  display: inline-block;
+  background: var(--teal);
+  color: var(--white);
+  font-weight: 800; font-size: 15px; letter-spacing: 0.3px;
+  padding: 14px 36px; border-radius: 8px;
+  text-decoration: none; margin: 8px 0;
+  transition: background 0.2s;
+}
+.cta-btn:hover { background: var(--teal-light); }
+.cta-contact { margin-top: 24px; font-size: 13px; color: var(--text-muted); }
+.cta-contact a { color: var(--teal); text-decoration: none; font-weight: 600; }
+
+/* ── DIVIDER ── */
+.teal-divider {
+  height: 1px; background: linear-gradient(to right, transparent, var(--teal), transparent);
+  max-width: 180px; margin: 0 auto 28px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .cover-title { font-size: 30px; }
+  .section-title { font-size: 26px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .why-me-cards { grid-template-columns: 1fr; }
+  .focus-area { grid-template-columns: 1fr; }
+  .focus-num { display: none; }
+  .roadmap { flex-direction: column; }
+  .ai-tiles { flex-direction: column; }
+  .topnav a { font-size: 10px; padding: 5px 8px; }
+  .cover-meta { gap: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav class="topnav">
+  <a href="#overview">Overview</a>
+  <a href="#heard">What I Heard</a>
+  <a href="#platform">The Platform</a>
+  <a href="#focus">Focus Areas</a>
+  <a href="#why-me">Why Me</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#investment">Investment</a>
+</nav>
+
+<!-- ══════════════ COVER ══════════════ -->
+<section id="overview" class="cover">
+  <!-- Swap for embedded logo when ready:
+       <img src="data:image/png;base64,[logo_b64]" alt="Advisor AI Partners" class="cover-logo"> -->
+  <div class="cover-logo-wrap">🧠</div>
+
+  <div class="cover-badge">Analysis Prepared for The Morris Center</div>
+
+  <h1 class="cover-title">
+    What <span>AI Integration</span><br>Can Do for TMC
+  </h1>
+
+  <p class="cover-sub">
+    An honest look at where AI fits inside The Morris Center's operations — what becomes possible, how it would work, and what it takes to get there.
+  </p>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Prepared For</div>
+      <div class="cover-meta-value">Dr. Tim Conway — The Morris Center</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Prepared By</div>
+      <div class="cover-meta-value">David Ortiz — Fractional AI Officer</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Date</div>
+      <div class="cover-meta-value">April 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ WHAT I HEARD ══════════════ -->
+<section id="heard" class="section bg-seafoam">
+  <div class="section-inner">
+    <p class="section-label">Starting Point</p>
+    <h2 class="section-title">What I Took Away from Our Conversation</h2>
+    <p class="section-subtitle">
+      You were direct and specific — which made this analysis easier to focus. These are the four areas you named, plus what I heard underneath each one.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>📣 TMC Marketing Needs a System, Not Just Content</h3>
+        <p>The Morris Center has over 38 years of expertise and a genuinely differentiated approach — but marketing that relies on manual effort doesn't scale. The opportunity is to build a content and distribution engine that works consistently in the background, without adding to the team's daily workload.</p>
+      </div>
+      <div class="card teal-l">
+        <h3>💬 Incoming Inquiries Need a Smarter First Response</h3>
+        <p>Families reaching out about a child's learning challenges are often anxious and time-sensitive. When an inquiry arrives after hours — or gets lost in an email queue — that's not just an operational miss. It's a family that didn't get help. An intelligent chatbot doesn't replace the human relationship; it makes sure the right human gets involved sooner.</p>
+      </div>
+      <div class="card warm">
+        <h3>📋 Scheduling Operations Are More Complex Than They Look</h3>
+        <p>TMC isn't booking a single service type — you're scheduling in-person and virtual tours, initial screenings, full and partial evaluations across multiple disciplines, ongoing sessions, and team coordination. Every one of those has different protocols and different stakeholders. Streamlining the intake and scheduling SOPs means fewer manual steps without losing the clinical precision you've spent 38 years building.</p>
+      </div>
+      <div class="card mid">
+        <h3>📞 Client Services Friction Adds Up</h3>
+        <p>Schedule changes, billing questions, status updates — these are necessary, but when they're handled entirely by your clinical staff, they divert attention from the work that actually requires their expertise. The goal isn't to remove the human touch. It's to make sure the human touch is where it matters most.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ THE TWO LAYERS ══════════════ -->
+<section id="platform" class="section bg-white">
+  <div class="section-inner">
+    <p class="section-label">The System Architecture</p>
+    <h2 class="section-title">Two Layers. One Operating System.</h2>
+    <p class="section-subtitle">
+      What gets deployed for The Morris Center isn't a single tool — it's two distinct layers working together. The first is the technology platform. The second is where TMC's actual clinical operations get built in. Understanding both is how you evaluate whether this is the right fit.
+    </p>
+
+    <!-- LAYER 1: GHL -->
+    <div class="platform-stack" style="margin-bottom: 24px;">
+      <div class="platform-header">
+        <h3>Layer 1 — GoHighLevel (GHL)</h3>
+        <span>The Technology Platform</span>
+      </div>
+      <div class="platform-body">
+        <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 20px;">
+          GoHighLevel is the underlying platform — an enterprise-grade business operating system used by thousands of service businesses. It consolidates every tool TMC currently uses (or should be using) into one system with one login, one dashboard, and one source of truth. Think of it as the engine under the hood.
+        </p>
+        <div class="ai-tiles">
+          <div class="ai-tile">
+            <div class="icon">🗃️</div>
+            <h4>CRM & Pipelines</h4>
+            <p>Every contact, inquiry, and client relationship in one place. Custom pipelines for each service type.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">📅</div>
+            <h4>Scheduling System</h4>
+            <p>Multi-service calendar with automated confirmations, reminders, and intake forms per appointment type.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">💬</div>
+            <h4>Unified Inbox</h4>
+            <p>SMS, email, web chat, Instagram, and Facebook Messenger — all in one inbox for your team.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">⚙️</div>
+            <h4>Workflow Automation</h4>
+            <p>Visual drag-and-drop automation builder. Every trigger, sequence, and follow-up mapped without code.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">📣</div>
+            <h4>Reputation & Marketing</h4>
+            <p>Google review automation, social scheduling, email campaigns, and SEO blog publishing — all native.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">📊</div>
+            <h4>Reporting & Analytics</h4>
+            <p>Real-time dashboards: lead sources, conversion rates, appointment volume, and campaign performance.</p>
+          </div>
+        </div>
+        <div class="platform-note">
+          <strong>What GHL replaces:</strong> Standalone CRM · Email platform · SMS tool · Booking software · Review management tool · Chat widget · Social media scheduler · Form builder · Landing page tool — all in one system, one bill.
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYER 2: AIOS -->
+    <div class="platform-stack">
+      <div class="platform-header" style="background: #1A4A48;">
+        <h3>Layer 2 — AIOS (AI Operating System)</h3>
+        <span>TMC's Clinical Operations, Built In</span>
+      </div>
+      <div class="platform-body">
+        <p style="font-size: 14px; color: var(--text-light); line-height: 1.7; margin-bottom: 20px;">
+          GHL is the platform. AIOS is what David builds <em>on top of it</em> — a layer that translates The Morris Center's specific clinical workflows, SOPs, and daily operations into intelligent automations. GoHighLevel does what it does out of the box. The AIOS is what makes it work like a system that knows TMC.
+        </p>
+        <div class="ai-tiles">
+          <div class="ai-tile">
+            <div class="icon">🗣️</div>
+            <h4>SLP Daily Operations</h4>
+            <p>Session prep notifications, parent communication templates, post-session follow-ups — all automated per clinician workflow.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">📋</div>
+            <h4>Clinical SOPs Digitized</h4>
+            <p>Every intake, scheduling, and handoff SOP mapped into the system. What used to live in a binder runs automatically.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">🤖</div>
+            <h4>AI Trained on TMC</h4>
+            <p>Chatbot and Voice AI configured with TMC's services, conditions, programs, and intake language — not generic scripts.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">🔗</div>
+            <h4>Interdisciplinary Handoffs</h4>
+            <p>Automated coordination between SLPs, OTs, and psychologists — referrals, evaluations, and team reviews triggered by the system.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">👨‍👩‍👧</div>
+            <h4>Family Communication Layer</h4>
+            <p>Progress updates, session notes, scheduling changes, and billing communications — all branded to TMC, all consistent.</p>
+          </div>
+          <div class="ai-tile">
+            <div class="icon">📈</div>
+            <h4>Ongoing Optimization</h4>
+            <p>The system improves over time. David reviews performance, adjusts automations, and trains your team as operations evolve.</p>
+          </div>
+        </div>
+        <div class="platform-note" style="background: rgba(28,82,80,0.08); border-color: rgba(28,82,80,0.2);">
+          <strong>The distinction that matters:</strong> Anyone can configure GoHighLevel. The AIOS is what makes it specific to how The Morris Center actually operates — the clinical complexity, the service types, the family relationships, and the 38-year standard of care you've built.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════ FOCUS AREAS ══════════════ -->
+<section id="focus" class="section bg-seafoam">
+  <div class="section-inner">
+    <p class="section-label">Applied to TMC</p>
+    <h2 class="section-title">The Five Areas We'd Focus On</h2>
+    <p class="section-subtitle">
+      Here's how the platform maps to the priorities you laid out — and one area worth exploring together that you left open.
+    </p>
+
+    <div class="focus-areas">
+
+      <!-- AREA 1: MARKETING -->
+      <div class="focus-area fa1">
+        <div class="focus-num">📣</div>
+        <div class="focus-content">
+          <span class="focus-label">Focus Area 1 — Marketing</span>
+          <h3>A Marketing Engine Built on 38 Years of Expertise</h3>
+          <p>
+            The Morris Center has more credibility and depth than most organizations ever develop. The challenge is converting that expertise into consistent, searchable, shareable content that reaches families before they even know TMC exists. The AIBOS Content AI turns your existing knowledge — your research, your methods, your clinicians — into a steady stream of blog posts, newsletters, and social content, without requiring anyone on your team to stare at a blank page.
+          </p>
+          <ul class="focus-bullets">
+            <li>Automated weekly blog content tied to TMC's research areas</li>
+            <li>Email newsletter for prospective and current families</li>
+            <li>Social media scheduling across all active platforms</li>
+            <li>Google review automation (post-session request flows)</li>
+            <li>Reputation monitoring: every review tracked and responded to</li>
+            <li>SEO-optimized content to reach families searching for help</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- AREA 2: CHATBOT & INQUIRY CAPTURE -->
+      <div class="focus-area fa2">
+        <div class="focus-num">💬</div>
+        <div class="focus-content">
+          <span class="focus-label">Focus Area 2 — Inquiry Capture</span>
+          <h3>Intelligent First Response for Families Reaching Out</h3>
+          <p>
+            A family searching for help with their child's dyslexia at 10pm isn't going to wait until 9am to try again. The chatbot becomes TMC's first point of contact — answering common questions about services, capturing the family's name and email, and either booking a consultation or routing the inquiry to the right team member. It doesn't replace your intake coordinators. It makes sure they're working with warm, pre-qualified leads instead of cold inbox messages.
+          </p>
+          <ul class="focus-bullets">
+            <li>Website chatbot — available 24/7 for prospective family inquiries</li>
+            <li>Intelligent FAQ responses (services, conditions, insurance, locations)</li>
+            <li>Lead capture: name, email, child's age, area of concern</li>
+            <li>Automatic CRM entry and staff notification for new inquiries</li>
+            <li>Email + SMS follow-up sequence for unscheduled leads</li>
+            <li>Unified inbox: web, SMS, email all in one place for your team</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- AREA 3: SCHEDULING & OPERATIONS -->
+      <div class="focus-area fa3">
+        <div class="focus-num">📋</div>
+        <div class="focus-content">
+          <span class="focus-label">Focus Area 3 — Scheduling & Operations</span>
+          <h3>Streamlined SOPs for Every Appointment Type</h3>
+          <p>
+            TMC's scheduling isn't simple — virtual tours, in-person tours, initial screenings, partial evaluations, full assessments, team reviews, and ongoing sessions all have different protocols, different staff requirements, and different preparation steps. The goal here is to digitize your SOPs so that each appointment type has a defined intake workflow: what information is collected, what is sent to the family, what the clinical team receives, and what follow-up is triggered automatically.
+          </p>
+          <ul class="focus-bullets">
+            <li>Separate booking flows for each appointment type (tour, screening, evaluation)</li>
+            <li>In-person and virtual scheduling with automated confirmations and reminders</li>
+            <li>Pre-appointment intake forms (digital, mobile-friendly)</li>
+            <li>Staff notification and calendar sync for each booking type</li>
+            <li>Automated preparation emails to families (what to bring, what to expect)</li>
+            <li>Post-appointment follow-up sequencing for each service type</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- AREA 4: CLIENT SERVICES -->
+      <div class="focus-area fa4">
+        <div class="focus-num">📞</div>
+        <div class="focus-content">
+          <span class="focus-label">Focus Area 4 — Client Services</span>
+          <h3>Routine Requests Handled Without Consuming Clinical Time</h3>
+          <p>
+            Schedule changes, billing questions, status requests — these are necessary interactions, but they don't require a clinician. The Conversational AI handles routine client service requests through SMS, email, or web chat, escalating to a human only when the situation warrants it. Your staff's time stays focused on the work that genuinely requires their expertise and attention.
+          </p>
+          <ul class="focus-bullets">
+            <li>Automated responses to common billing and scheduling questions</li>
+            <li>Self-service appointment rescheduling via SMS or web</li>
+            <li>Billing notification sequences (reminders, payment confirmations)</li>
+            <li>Session reminder and no-show recovery automation</li>
+            <li>Escalation triggers for complex or sensitive inquiries</li>
+            <li>All conversations logged to CRM for continuity</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- AREA 5: OPEN -->
+      <div class="focus-area fa5 open">
+        <div class="focus-num">❓</div>
+        <div class="focus-content">
+          <span class="focus-label">Focus Area 5 — To Be Defined Together</span>
+          <h3>You Left This One Open — Intentionally</h3>
+          <p>
+            You listed four priorities and put a question mark on the fifth. That's the right instinct. There are usually one or two high-leverage opportunities that don't surface until we map the actual operations together. My best guesses based on what I know about TMC so far: internal staff documentation and SOPs, family portal and progress communication, or scholarship and financial aid inquiry routing. The audit call is where that fifth area becomes clear.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- .focus-areas -->
+  </div>
+</section>
+
+<!-- ══════════════ WHY ME ══════════════ -->
+<section id="why-me" class="section bg-white">
+  <div class="section-inner">
+    <p class="section-label">A Fair Question</p>
+    <h2 class="section-title">Why Me</h2>
+    <p class="section-subtitle">
+      You asked directly — and you deserved a direct answer. You also specifically said "other than being local and a nice guy," which I appreciated. So here's my honest answer, without the sales pitch.
+    </p>
+
+    <div class="why-me-cards">
+      <div class="why-card">
+        <div class="icon-row">🍳</div>
+        <h3>I Think in Systems Before I Think in Technology</h3>
+        <p>
+          I trained at the Culinary Institute of America. In a professional kitchen, nothing moves until the mise en place is right — every ingredient prepped, every station ready, every step in the right sequence. That's the exact mindset I bring to AI implementation. Before I configure a single automation, I have to understand the workflow it's supposed to serve. Most of the AI work that fails does so because technology was installed on top of a broken process. I don't do that.
+        </p>
+      </div>
+      <div class="why-card warm-top">
+        <div class="icon-row">📊</div>
+        <h3>I've Run a Real Operation, Not Just Advised on One</h3>
+        <p>
+          My background is in financial advising — managing clients, building workflows, navigating compliance, and growing a practice. I understand what it feels like to miss a call and lose a client. To have a great lead go cold because no one followed up. To have your best staff spending time on administrative tasks instead of the work they were hired to do. The AIBOS isn't theoretical — I built it for my own practice first, before I started deploying it for anyone else.
+        </p>
+      </div>
+      <div class="why-card mid-top">
+        <div class="icon-row">🎓</div>
+        <h3>I Build So You Own It, Not So You Need Me</h3>
+        <p>
+          This is the part that separates what I do from most AI work. When the build phase ends, I don't hand off a system that only I understand. I teach your team — how it works, how to adjust it, how to read the data, how to grow it. The goal is for The Morris Center to have a capability it owns and operates independently. Not a vendor dependency that requires a monthly call for every small change.
+        </p>
+      </div>
+      <div class="why-card">
+        <div class="icon-row">🤝</div>
+        <h3>I Take the Time to Understand Before I Build Anything</h3>
+        <p>
+          I'm not going to walk in with a pre-configured system and tell you it fits. TMC's intake complexity — the number of service types, the clinical sensitivity of what you do, the trust families place in you — requires that I understand your operation before a single automation is deployed. The audit call isn't a sales call. It's the diagnostic step. Nothing gets built until the picture is right.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ROADMAP ══════════════ -->
+<section id="roadmap" class="section bg-seafoam">
+  <div class="section-inner">
+    <p class="section-label">Getting There</p>
+    <h2 class="section-title">A Phased Approach</h2>
+    <p class="section-subtitle">
+      Nothing goes live until it's right. The implementation is phased so your team isn't overwhelmed, each layer is tested before the next is built, and the clinical operations never miss a beat.
+    </p>
+
+    <div class="roadmap">
+      <div class="phase">
+        <div class="phase-when">Phase 1 — Weeks 1–3</div>
+        <div class="phase-name">Foundation & Audit</div>
+        <ul class="phase-list">
+          <li>Operations mapping: every service type, workflow, and touchpoint</li>
+          <li>Current tools audit and migration plan</li>
+          <li>AIBOS platform setup and team onboarding</li>
+          <li>CRM build: contacts, pipelines, inquiry stages</li>
+          <li>Identify the fifth focus area</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-when">Phase 2 — Weeks 4–6</div>
+        <div class="phase-name">Inquiry & Scheduling</div>
+        <ul class="phase-list">
+          <li>Website chatbot live with TMC-specific FAQs</li>
+          <li>Lead capture and CRM auto-population active</li>
+          <li>Separate booking flows per appointment type</li>
+          <li>Intake forms, confirmations, and reminders automated</li>
+          <li>Voice AI configured for after-hours calls</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-when">Phase 3 — Weeks 7–9</div>
+        <div class="phase-name">Marketing & Reputation</div>
+        <ul class="phase-list">
+          <li>Content AI: blog, newsletter, and social cadence activated</li>
+          <li>Google review automation post-appointment</li>
+          <li>Reputation monitoring dashboard live</li>
+          <li>Family email sequences: prospective and current clients</li>
+          <li>Referral and word-of-mouth automation</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <div class="phase-when">Phase 4 — Weeks 10–12</div>
+        <div class="phase-name">Client Services & Handoff</div>
+        <ul class="phase-list">
+          <li>Self-service client communications live</li>
+          <li>Billing notification and payment reminder flows</li>
+          <li>Full-loop audit and optimization</li>
+          <li>Team training and system ownership transfer</li>
+          <li>Ongoing support model defined</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════ INVESTMENT MODEL ══════════════ -->
+<section id="investment" class="section bg-white">
+  <div class="section-inner">
+    <p class="section-label">How the Investment Works</p>
+    <h2 class="section-title">The Fee Structure</h2>
+    <p class="section-subtitle">
+      The structure is already defined. The only variables are the scope of your implementation — how many team members, which service types, how deep the AIOS build goes. A conversation about what TMC actually needs is all it takes to arrive at the right numbers together.
+    </p>
+
+    <div class="focus-areas" style="gap: 16px;">
+
+      <!-- GHL PLATFORM -->
+      <div class="focus-area fa1" style="align-items: center;">
+        <div class="focus-num">🗃️</div>
+        <div class="focus-content">
+          <span class="focus-label">Component 1 — GoHighLevel Platform</span>
+          <h3>Setup Fee + Monthly Subscription</h3>
+          <p>
+            GoHighLevel is the technology foundation — the CRM, scheduling, automation engine, unified inbox, and marketing tools. There is a one-time setup fee to configure and deploy the platform for TMC, and an ongoing monthly subscription to keep it running. This is the base layer everything else sits on top of.
+          </p>
+          <ul class="focus-bullets">
+            <li>One-time platform setup and configuration fee</li>
+            <li>Monthly subscription covers the full GHL platform</li>
+            <li>Replaces the cost of multiple standalone tools</li>
+            <li>Subscription scales with TMC's usage and team size</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- AIOS IMPLEMENTATION -->
+      <div class="focus-area fa2">
+        <div class="focus-num">⚙️</div>
+        <div class="focus-content">
+          <span class="focus-label">Component 2 — AIOS Implementation</span>
+          <h3>A Phased Implementation Fee — Four Deliverables</h3>
+          <p>
+            The AIOS implementation fee covers the work of translating TMC's operations into the system — the build, the configuration, and the knowledge transfer. It is scoped to the level of integration TMC needs and broken into four concrete deliverables:
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
+            <div style="background: var(--seafoam); border-radius: 10px; padding: 16px 20px; border-left: 3px solid var(--teal);">
+              <div style="font-size: 12px; font-weight: 800; color: var(--teal-dark); margin-bottom: 4px;">01 — Team Onboarding</div>
+              <div style="font-size: 13px; color: var(--text-light); line-height: 1.65;">The platform is installed and configured for each designated team member — SLPs, OTs, front desk, coordinators, and anyone else who touches the workflows. Each person's view and permissions are set up for how they actually work.</div>
+            </div>
+            <div style="background: var(--seafoam); border-radius: 10px; padding: 16px 20px; border-left: 3px solid var(--teal-light);">
+              <div style="font-size: 12px; font-weight: 800; color: var(--teal-dark); margin-bottom: 4px;">02 — Initial Build-Out</div>
+              <div style="font-size: 13px; color: var(--text-light); line-height: 1.65;">This is the core implementation: TMC's SOPs, service types, intake workflows, scheduling logic, and daily operations are mapped and built into the system. The goal is that every team member's day — from first inquiry to ongoing client management — has a defined, automated flow behind it.</div>
+            </div>
+            <div style="background: var(--seafoam); border-radius: 10px; padding: 16px 20px; border-left: 3px solid var(--warm);">
+              <div style="font-size: 12px; font-weight: 800; color: var(--teal-dark); margin-bottom: 4px;">03 — Training for Self-Sufficiency</div>
+              <div style="font-size: 13px; color: var(--text-light); line-height: 1.65;">Training isn't an add-on — it's a core deliverable. Every team member who uses the system learns it well enough to operate it independently. The goal is that TMC owns the system when the implementation ends, not that they need to call for every small change.</div>
+            </div>
+            <div style="background: var(--seafoam); border-radius: 10px; padding: 16px 20px; border-left: 3px solid rgba(43,126,124,0.4); border-style: solid; border-width: 1px 1px 1px 3px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <div style="font-size: 12px; font-weight: 800; color: var(--teal-dark);">04 — Optional Ongoing Retainer</div>
+                <span style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: var(--teal-glow); color: var(--teal); padding: 2px 8px; border-radius: 10px;">Optional</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-light); line-height: 1.65;">After the implementation is complete, some organizations choose to keep David engaged on a retainer basis — to continue optimizing, build new automations as TMC grows, and respond to operational changes. This is entirely optional. The system is designed to run without it.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="roadmap-note" style="margin-top: 20px;">
+      <strong>How pricing works in practice:</strong> The structure above is fixed. What changes is scope — how many team members, which service types, how deep the AIOS build goes, and whether an ongoing retainer makes sense. When we've had a real conversation about what TMC needs, the right investment becomes clear for both of us.
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer style="background: var(--teal-dark); padding: 28px 24px; text-align: center;">
+  <p style="font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 1px;">
+    ADVISOR AI PARTNERS &nbsp;·&nbsp; advisoraipartners.com &nbsp;·&nbsp; Prepared for The Morris Center — Confidential
+  </p>
+</footer>
+
+</body>
+</html>
