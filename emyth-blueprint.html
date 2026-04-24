@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIOS E-Myth Blueprint — Advisor AI Partners</title>
+  <style>
+    /* ── Brand Tokens ── */
+    :root {
+      --blue:    #1a3a5c;
+      --teal:    #0d8a8a;
+      --teal-lt: #e6f7f7;
+      --gold:    #c9a84c;
+      --gold-lt: #fdf6e3;
+      --ink:     #1e1e2e;
+      --muted:   #5a6a7a;
+      --border:  #dce4ed;
+      --bg:      #f8fafb;
+      --white:   #ffffff;
+      --red:     #c0392b;
+      --green:   #1a7a5a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    /* ── Typography ── */
+    h1 { font-size: 2.4rem; font-weight: 800; line-height: 1.15; color: var(--blue); }
+    h2 { font-size: 1.65rem; font-weight: 700; color: var(--blue); margin-bottom: 12px; }
+    h3 { font-size: 1.15rem; font-weight: 700; color: var(--blue); margin-bottom: 8px; }
+    h4 { font-size: 0.95rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    p  { color: var(--muted); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--ink); }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, var(--blue) 0%, #0d4f6e 100%);
+      color: var(--white);
+      padding: 72px 0 56px;
+    }
+    .hero .eyebrow {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--blue);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 { color: var(--white); font-size: 2.8rem; }
+    .hero .subtitle {
+      color: rgba(255,255,255,0.78);
+      font-size: 1.15rem;
+      max-width: 640px;
+      margin-top: 14px;
+    }
+    .hero .tagline {
+      margin-top: 28px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.1);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 6px 6px 0;
+      color: rgba(255,255,255,0.9);
+      font-style: italic;
+      font-size: 1.05rem;
+      max-width: 640px;
+    }
+
+    /* ── Problem Banner ── */
+    .problem-band {
+      background: #fdf2f2;
+      border-top: 4px solid var(--red);
+      padding: 36px 0;
+    }
+    .problem-band .inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .problem-band .icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.4rem;
+    }
+    .problem-band h2 { color: var(--red); margin-bottom: 6px; }
+    .problem-band p  { color: #6b2020; }
+
+    /* ── Section Labels ── */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--teal-lt);
+      color: var(--teal);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Role Synthesis Table ── */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 28px;
+    }
+    .role-card {
+      background: var(--white);
+      padding: 28px 24px;
+    }
+    .role-card.header {
+      background: var(--blue);
+      color: white;
+    }
+    .role-card.header h4 { color: rgba(255,255,255,0.65); }
+    .role-card.header .role-name { font-size: 1.25rem; font-weight: 800; color: white; }
+    .role-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .badge-entrepreneur { background: #fff3cd; color: #8a6000; }
+    .badge-manager     { background: var(--teal-lt); color: var(--teal); }
+    .badge-technician  { background: #eef0ff; color: #3d3d8f; }
+    .role-focus { font-size: 0.88rem; font-weight: 600; color: var(--muted); margin-bottom: 10px; }
+    .role-impl  { font-size: 0.9rem; color: var(--ink); }
+    .role-impl strong { color: var(--teal); }
+
+    /* ── Layer Stack ── */
+    .layer-stack { margin-top: 32px; display: flex; flex-direction: column; gap: 16px; }
+    .layer-item {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .layer-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: white;
+    }
+    .layer-num.l1 { background: var(--gold); color: var(--blue); }
+    .layer-num.l2 { background: var(--teal); }
+    .layer-num.l3 { background: var(--blue); }
+    .layer-num.l4 { background: #5b4fb5; }
+    .layer-num.l5 { background: var(--green); }
+    .layer-body {
+      background: var(--white);
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-left: none;
+      border-radius: 0 10px 10px 0;
+    }
+    .layer-body h3 { font-size: 1rem; margin-bottom: 4px; }
+    .layer-body .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: var(--teal-lt);
+      color: var(--teal);
+    }
+    .tag.gold { background: var(--gold-lt); color: #7a5c00; }
+    .tag.purple { background: #f0eeff; color: #5b4fb5; }
+    .tag.green { background: #e6f5ef; color: var(--green); }
+    .tag.blue { background: #e8f0f8; color: var(--blue); }
+
+    /* ── E-Myth parallel callout ── */
+    .parallel-box {
+      background: var(--gold-lt);
+      border: 1px solid #e8d48a;
+      border-left: 4px solid var(--gold);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 18px;
+      margin-top: 10px;
+    }
+    .parallel-box .label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #7a5c00;
+      margin-bottom: 4px;
+    }
+    .parallel-box p { color: #5a4000; font-size: 0.9rem; }
+
+    /* ── Bandwidth Pivot ── */
+    .bandwidth-visual {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .bw-card {
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .bw-card .bw-header {
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .bw-before .bw-header { background: #fdf2f2; color: var(--red); }
+    .bw-after  .bw-header { background: #e6f5ef; color: var(--green); }
+    .bw-bar-wrap { background: var(--white); border: 1px solid var(--border); border-top: none; padding: 18px; }
+    .bw-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .bw-row:last-child { margin-bottom: 0; }
+    .bw-label { width: 80px; font-size: 0.82rem; font-weight: 600; color: var(--muted); flex-shrink: 0; }
+    .bw-bar { height: 22px; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 0.78rem; font-weight: 700; color: white; }
+    .bar-itb { background: var(--red); }
+    .bar-otb { background: var(--green); }
+
+    /* ── KPIs ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .kpi-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+    .kpi-icon { font-size: 2rem; margin-bottom: 10px; }
+    .kpi-name { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px; }
+    .kpi-value { font-size: 1.6rem; font-weight: 800; color: var(--blue); margin-bottom: 6px; }
+    .kpi-desc  { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Roadmap ── */
+    .roadmap { margin-top: 32px; position: relative; }
+    .roadmap-item {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 16px;
+      padding-bottom: 32px;
+      position: relative;
+    }
+    .roadmap-item:last-child { padding-bottom: 0; }
+    .roadmap-item::before {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .roadmap-item:last-child::before { display: none; }
+    .rm-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: white;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .rm1 { background: var(--gold); color: var(--blue); }
+    .rm2 { background: var(--teal); }
+    .rm3 { background: var(--blue); }
+    .rm4 { background: #5b4fb5; }
+    .rm5 { background: var(--green); }
+    .rm-body {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .rm-body h3 { font-size: 1rem; margin-bottom: 4px; }
+    .rm-phase {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .rm-files {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .file-tag {
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      background: #f0f4f8;
+      color: var(--blue);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Narrative Pillars ── */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .pillar-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 20px;
+    }
+    .pillar-card .pillar-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+    }
+    .pi1 { background: #fff3cd; }
+    .pi2 { background: var(--teal-lt); }
+    .pi3 { background: #eef0ff; }
+    .pi4 { background: #e6f5ef; }
+    .pillar-card h3 { font-size: 1rem; margin-bottom: 6px; }
+    .pillar-card p { font-size: 0.88rem; }
+
+    /* ── Mise en Place callout ── */
+    .mise-box {
+      background: linear-gradient(135deg, var(--blue) 0%, #0d4f6e 100%);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-top: 32px;
+      color: white;
+    }
+    .mise-box .mise-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .mise-box h3 { color: white; font-size: 1.3rem; margin-bottom: 10px; }
+    .mise-box p  { color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+
+    /* ── Summary CTA ── */
+    .summary-band {
+      background: var(--teal);
+      padding: 48px 0;
+      text-align: center;
+    }
+    .summary-band h2 { color: white; font-size: 1.8rem; margin-bottom: 12px; }
+    .summary-band p  { color: rgba(255,255,255,0.8); max-width: 560px; margin: 0 auto 24px; }
+    .cta-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--blue);
+      font-weight: 800;
+      font-size: 0.95rem;
+      padding: 14px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--blue);
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 0.82rem;
+    }
+    footer strong { color: rgba(255,255,255,0.85); }
+
+    /* ── Quote Block ── */
+    blockquote {
+      border-left: 4px solid var(--teal);
+      padding: 12px 18px;
+      background: var(--teal-lt);
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+      font-style: italic;
+      color: var(--ink);
+    }
+    blockquote cite {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.82rem;
+      font-style: normal;
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    /* ── Divider ── */
+    .divider { height: 4px; background: linear-gradient(90deg, var(--teal), var(--gold)); border: none; margin: 0; }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      h1 { font-size: 1.9rem; }
+      .role-grid { grid-template-columns: 1fr; }
+      .bandwidth-visual { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .pillars-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <div class="container">
+    <span class="eyebrow">Advisor AI Partners — AIOS Methodology</span>
+    <h1>The AIOS E-Myth Blueprint</h1>
+    <p class="subtitle">Architecting the Autonomous Enterprise — how the AI Operating System solves the 40-year-old Operator Trap Michael Gerber warned us about.</p>
+    <div class="tagline">"The E-Myth gave us the philosophy of a business that runs without us. AIOS gives us the actual code to make it happen."</div>
+  </div>
+</div>
+<hr class="divider" />
+
+<!-- ── THE OPERATOR TRAP ── -->
+<div class="problem-band">
+  <div class="container">
+    <div class="inner">
+      <div class="icon">⚠</div>
+      <div>
+        <h2>The Operator Trap</h2>
+        <p>Michael Gerber's E-Myth identified the core disease of small business: a founder who is simultaneously the <strong>Technician</strong> (doing the work), the <strong>Manager</strong> (organizing the work), and the <strong>Entrepreneur</strong> (supposed to be inventing the future) — with 80% of bandwidth consumed by the first two. The result: a self-employed person who has built a job, not a business. Every hour spent answering calls, building proposals, chasing leads, and checking dashboards is an hour not spent on growth. The old solution was to hire, systematize, and write manuals. In 2026, there is a better answer.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── THE SYNTHESIS ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Part 1</span>
+    <h2>The Role Synthesis — E-Myth Meets AIOS</h2>
+    <p>Every E-Myth role maps directly to a layer of the AI Operating System. The Entrepreneur stays human. The Manager and Technician become AI.</p>
+
+    <div class="role-grid">
+
+      <!-- Header row -->
+      <div class="role-card header">
+        <h4>E-Myth Role</h4>
+        <div class="role-name">The Entrepreneur</div>
+      </div>
+      <div class="role-card header">
+        <h4>E-Myth Role</h4>
+        <div class="role-name">The Manager</div>
+      </div>
+      <div class="role-card header">
+        <h4>E-Myth Role</h4>
+        <div class="role-name">The Technician</div>
+      </div>
+
+      <!-- Primary Focus row -->
+      <div class="role-card">
+        <h4>Primary Focus</h4>
+        <p class="role-focus">The Future — Vision &amp; Strategy</p>
+        <p class="role-impl">Defines the direction, identifies new opportunities, decides what to build next. Works <em>on</em> the business, not in it.</p>
+      </div>
+      <div class="role-card">
+        <h4>Primary Focus</h4>
+        <p class="role-focus">The Present — Order &amp; Pragmatism</p>
+        <p class="role-impl">Monitors what's happening today. Enforces systems. Measures results. Sounds the alarm when something is off.</p>
+      </div>
+      <div class="role-card">
+        <h4>Primary Focus</h4>
+        <p class="role-focus">The Task — Hands-On Work</p>
+        <p class="role-impl">Does the actual work. Builds deliverables, executes workflows, writes reports, sends follow-ups.</p>
+      </div>
+
+      <!-- AIOS Implementation row -->
+      <div class="role-card">
+        <span class="role-badge badge-entrepreneur">Stays Human</span>
+        <h4>AIOS Implementation</h4>
+        <p class="role-impl"><strong>You — the Context Architect.</strong> You define the Context OS: your values, strategy, team roles, and business DNA. You direct the system toward new initiatives. The AI reads your mind because you wrote it down.</p>
+      </div>
+      <div class="role-card">
+        <span class="role-badge badge-manager">Automated</span>
+        <h4>AIOS Implementation</h4>
+        <p class="role-impl"><strong>The AIOS Intelligence Layer.</strong> Cron jobs pull data at 6 AM. The Daily Brief synthesizes the last 24 hours. KPI dashboards surface opportunities and flags. The Manager never sleeps and never needs a meeting.</p>
+      </div>
+      <div class="role-card">
+        <span class="role-badge badge-technician">Augmented</span>
+        <h4>AIOS Implementation</h4>
+        <p class="role-impl"><strong>AI Agents (Claude Code + Command OS).</strong> Agents execute repeatable digital tasks — proposal generation, lead analysis, follow-up drafts, compliance audits — at 10x the speed of any human assistant.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE FRANCHISE PROTOTYPE 2.0 ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Part 2</span>
+    <h2>The Franchise Prototype 2.0 — Layers of Your AIOS</h2>
+    <p>Gerber's Franchise Prototype required printed manuals and low-skilled labor. In the AIOS world, your manuals are Context Files and your labor is AI Agents. Five layers. Each one independently valuable. Together, they create a business that runs while you sleep in Lisbon.</p>
+
+    <div class="layer-stack">
+
+      <div class="layer-item">
+        <div class="layer-num l1">1</div>
+        <div class="layer-body">
+          <div class="rm-phase">The Entrepreneur's Mind</div>
+          <h3>Context OS — The Business DNA Layer</h3>
+          <p>Instead of a printed SOP binder, you build a directory of markdown files that define everything the AI needs to know about your business. This is the foundation. Nothing else works without it.</p>
+          <div class="meta">
+            <span class="tag gold">context/business-info.md</span>
+            <span class="tag gold">context/strategy.md</span>
+            <span class="tag gold">context/personal-info.md</span>
+            <span class="tag gold">CLAUDE.md</span>
+          </div>
+          <div class="parallel-box" style="margin-top:14px">
+            <div class="label">E-Myth Parallel</div>
+            <p>This is Gerber's "Operations Manual" — but instead of a 3-ring binder collecting dust, it's a living document your AI reads at the start of every session. Update it and the entire system updates with it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-item">
+        <div class="layer-num l2">2</div>
+        <div class="layer-body">
+          <div class="rm-phase">The Manager's Eyes</div>
+          <h3>Data OS — The Intelligence Layer</h3>
+          <p>Connect your real data sources — GoHighLevel pipeline, Monarch Money, FX rates, Stripe revenue — into a daily-refreshed SQLite database. The AIOS can now see the numbers. No more logging in to check dashboards.</p>
+          <div class="meta">
+            <span class="tag">data/data.db</span>
+            <span class="tag">scripts/collect_ghl.py</span>
+            <span class="tag">scripts/collect_monarch.py</span>
+            <span class="tag">context/group/key-metrics.md</span>
+          </div>
+          <div class="parallel-box" style="margin-top:14px">
+            <div class="label">E-Myth Parallel</div>
+            <p>This is the Manager's reporting system — but it runs automatically at 6 AM every morning, not after a 2-hour weekly staff meeting. The AIOS identifies the "fat" (inefficiencies to cut) and the "skinny" (opportunities to capture).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-item">
+        <div class="layer-num l2">3</div>
+        <div class="layer-body">
+          <div class="rm-phase">The Manager's Voice</div>
+          <h3>Daily Brief — The Command Intelligence Layer</h3>
+          <p>Every morning, the AIOS synthesizes the last 24 hours into a story: what happened, what's at risk, what needs your attention. Delivered to your phone before you pick up your coffee. The Manager reports to the Entrepreneur — no meeting required.</p>
+          <div class="meta">
+            <span class="tag">outputs/daily-brief/</span>
+            <span class="tag">scripts/generate_metrics.py</span>
+            <span class="tag">Command OS cron jobs</span>
+          </div>
+          <div class="parallel-box" style="margin-top:14px">
+            <div class="label">E-Myth Parallel</div>
+            <p>In the old model, the Manager interrupted the Entrepreneur six times a day with status updates. The Daily Brief compresses all of that into one intentional read — giving you the Managerial order without surrendering Entrepreneurial focus.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-item">
+        <div class="layer-num l4">4</div>
+        <div class="layer-body">
+          <div class="rm-phase">The Technician's Hands</div>
+          <h3>Command OS — The Automation &amp; Augmentation Layer</h3>
+          <p>The AI executes your repeatable tasks via Telegram-connected agents. Two modes: <strong>Automation</strong> (runs without you — lead monitoring, report generation, follow-up sequencing) and <strong>Augmentation</strong> (you still do it, but 10× faster — proposals, presentations, email drafts, code).</p>
+          <div class="meta">
+            <span class="tag purple">Command OS (Telegram Bot)</span>
+            <span class="tag purple">Claude Code agents</span>
+            <span class="tag purple">GHL workflows</span>
+            <span class="tag purple">Make.com automations</span>
+          </div>
+          <div class="parallel-box" style="margin-top:14px">
+            <div class="label">E-Myth Parallel</div>
+            <p>In Gerber's model, the Technician is a skilled employee following a manual. In the AIOS, the Technician is Claude — it has read every manual you've written, never calls in sick, never asks for a raise, and can handle 12 workflows simultaneously from your phone.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-item">
+        <div class="layer-num l5">5</div>
+        <div class="layer-body">
+          <div class="rm-phase">The Entrepreneur's Runway</div>
+          <h3>Build Phase — The Growth Layer</h3>
+          <p>With 80% of Technician and Manager tasks reclaimed, the Entrepreneur now has bandwidth to build. New revenue streams, new client segments, new products — all launched in days instead of months because the "team" never sleeps and the infrastructure is already in place.</p>
+          <div class="meta">
+            <span class="tag green">New revenue streams</span>
+            <span class="tag green">7-day launches</span>
+            <span class="tag green">Image Studios 360 corporate deal</span>
+            <span class="tag green">Lisbon-ready business</span>
+          </div>
+          <div class="parallel-box" style="margin-top:14px">
+            <div class="label">E-Myth Parallel</div>
+            <p>This is what Gerber promised the Entrepreneur could have — time and mental space to innovate. The AIOS doesn't just promise it; it creates the structural precondition for it by eliminating the tasks that steal it.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── BANDWIDTH PIVOT ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Part 3</span>
+    <h2>The Bandwidth Pivot — From ITB to OTB</h2>
+    <p>The goal of the AIOS is a single measurable shift: from spending 80% of your time <strong>In The Business</strong> (ITB) to spending 80% of your time <strong>On The Business</strong> (OTB). This is not a motivational idea — it's an engineering problem.</p>
+
+    <div class="bandwidth-visual">
+      <div class="bw-card bw-before">
+        <div class="bw-header">BEFORE — The Operator Trap</div>
+        <div class="bw-bar-wrap">
+          <div class="bw-row">
+            <div class="bw-label">Technician</div>
+            <div class="bw-bar bar-itb" style="width:55%">55%</div>
+          </div>
+          <div class="bw-row">
+            <div class="bw-label">Manager</div>
+            <div class="bw-bar bar-itb" style="width:25%">25%</div>
+          </div>
+          <div class="bw-row">
+            <div class="bw-label">Entrepreneur</div>
+            <div class="bw-bar bar-otb" style="width:20%">20%</div>
+          </div>
+          <p style="font-size:0.82rem;color:var(--red);margin-top:12px;">80% of bandwidth trapped. No room to build, sell, or think.</p>
+        </div>
+      </div>
+      <div class="bw-card bw-after">
+        <div class="bw-header">AFTER — The AIOS State</div>
+        <div class="bw-bar-wrap">
+          <div class="bw-row">
+            <div class="bw-label">Technician</div>
+            <div class="bw-bar bar-itb" style="width:10%">10%</div>
+          </div>
+          <div class="bw-row">
+            <div class="bw-label">Manager</div>
+            <div class="bw-bar bar-itb" style="width:10%">10%</div>
+          </div>
+          <div class="bw-row">
+            <div class="bw-label">Entrepreneur</div>
+            <div class="bw-bar bar-otb" style="width:80%">80%</div>
+          </div>
+          <p style="font-size:0.82rem;color:var(--green);margin-top:12px;">80% reclaimed. Available for growth, strategy, and life.</p>
+        </div>
+      </div>
+    </div>
+
+    <blockquote style="margin-top:28px">
+      "A 3-month project — a webinar, a product launch, a full funnel — now takes 7 days because the Manager and the Technician never sleep."
+      <cite>— AIOS Bandwidth Pivot Principle</cite>
+    </blockquote>
+
+    <h3 style="margin-top:28px;margin-bottom:12px">The Three-Step Pivot Process</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
+        <div style="font-size:1.6rem;margin-bottom:8px">📋</div>
+        <h4>Step 1 — Task Audit</h4>
+        <p style="font-size:0.88rem">List every recurring Technician task you perform. Use <code style="font-size:0.8rem;background:#f0f4f8;padding:1px 5px;border-radius:3px">context/task-audit.md</code> as your scoreboard. Identify time cost and automation potential for each.</p>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
+        <div style="font-size:1.6rem;margin-bottom:8px">⚙️</div>
+        <h4>Step 2 — Automate at 60%</h4>
+        <p style="font-size:0.88rem">Use Claude Code and the <code style="font-size:0.8rem;background:#f0f4f8;padding:1px 5px;border-radius:3px">/explore</code> command to systematically eliminate tasks. Target: 60–70% of Technician work automated within 90 days. Each task removed = bandwidth recovered.</p>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px">
+        <div style="font-size:1.6rem;margin-bottom:8px">📈</div>
+        <h4>Step 3 — Deploy Revenue per Employee</h4>
+        <p style="font-size:0.88rem">As AI absorbs Technician roles, Revenue per Employee (RPE) climbs while headcount stays flat. RPE is the ultimate proof the AIOS is working — a leaner, faster, more profitable business.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── THE THREE KPIs ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Part 4</span>
+    <h2>The Three AIOS KPIs</h2>
+    <p>Traditional businesses measure revenue, costs, and headcount. The AIOS business measures something different: the degree to which the system has replaced the operator. These three metrics are your scoreboard.</p>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">📍</div>
+        <div class="kpi-name">Away-From-Desk Autonomy</div>
+        <div class="kpi-value">Target: 8 hrs/day</div>
+        <div class="kpi-desc">How many hours per day can you step completely away and the business continues without you? This is the Entrepreneurial freedom metric. "Mobile Command" — running the business from a phone in Lisbon — is the goal state.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-name">Task Automation %</div>
+        <div class="kpi-value">Target: 60–70%</div>
+        <div class="kpi-desc">What percentage of your recurring Technician tasks has the AIOS absorbed? Track this in your Task Audit file. The Manager (AIOS) tracks this metric for the Entrepreneur automatically via the Daily Brief.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-name">Revenue per Employee</div>
+        <div class="kpi-value">Target: ↑ steadily</div>
+        <div class="kpi-desc">Total revenue ÷ headcount (human + contractor). As AI absorbs roles, this climbs without adding people. The AIOS turns a small team into a large-company output machine. This is the financial proof of the system.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── IMPLEMENTATION ROADMAP ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Part 5</span>
+    <h2>Implementation Roadmap</h2>
+    <p>Five phases. Each phase builds on the previous. Each phase is independently valuable — you don't need to complete all five to start seeing results.</p>
+
+    <div class="roadmap">
+
+      <div class="roadmap-item">
+        <div class="rm-circle rm1">1</div>
+        <div class="rm-body">
+          <div class="rm-phase">Week 1–2 — Build the Entrepreneur's Layer</div>
+          <h3>Install the Context OS</h3>
+          <p>Document your Primary Aim, business model, team structure, and current strategy in files the AI can read. This is Gerber's "Operations Manual" reimagined. Without this layer, every AI interaction starts from zero.</p>
+          <div class="rm-files">
+            <span class="file-tag">context/business-info.md</span>
+            <span class="file-tag">context/personal-info.md</span>
+            <span class="file-tag">context/strategy.md</span>
+            <span class="file-tag">CLAUDE.md</span>
+          </div>
+          <p style="margin-top:10px;font-size:0.85rem"><strong>E-Myth milestone:</strong> The Entrepreneur has articulated the vision. The system has something to work from.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="rm-circle rm2">2</div>
+        <div class="rm-body">
+          <div class="rm-phase">Week 2–4 — Install the Manager's Eyes</div>
+          <h3>Connect the Data OS &amp; Launch the Daily Brief</h3>
+          <p>Connect your real data sources. Run the daily collection pipeline. Configure the Daily Brief to deliver a business summary to your phone each morning. For the first time, the Manager reports to you — not the other way around.</p>
+          <div class="rm-files">
+            <span class="file-tag">scripts/collect_ghl.py</span>
+            <span class="file-tag">scripts/collect_monarch.py</span>
+            <span class="file-tag">data/data.db</span>
+            <span class="file-tag">outputs/daily-brief/</span>
+          </div>
+          <p style="margin-top:10px;font-size:0.85rem"><strong>E-Myth milestone:</strong> The Manager is running. You now have 100% visibility with 0% of the meeting overhead.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="rm-circle rm3">3</div>
+        <div class="rm-body">
+          <div class="rm-phase">Month 1–3 — Automate the Technician</div>
+          <h3>Task Audit + 60% Automation Target</h3>
+          <p>Audit every recurring task. Use the <code style="font-size:0.8rem;background:#f0f4f8;padding:1px 5px;border-radius:3px">/task-audit</code> command to score each task by time cost and automation potential. Systematically eliminate. Each task automated is permanent bandwidth recovered. Goal: 60–70% of Technician work off your plate.</p>
+          <div class="rm-files">
+            <span class="file-tag">context/task-audit.md</span>
+            <span class="file-tag">GHL workflows</span>
+            <span class="file-tag">Make.com automations</span>
+            <span class="file-tag">Claude Code agents</span>
+          </div>
+          <p style="margin-top:10px;font-size:0.85rem"><strong>E-Myth milestone:</strong> The Technician is largely off your payroll. The AIOS does it for fractions of a cent per task.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="rm-circle rm4">4</div>
+        <div class="rm-body">
+          <div class="rm-phase">Month 2–4 — Augment What Remains</div>
+          <h3>Install Command OS (Mobile Command)</h3>
+          <p>Deploy the Telegram-connected Command OS so that the remaining Technician tasks you still touch happen at 10× speed from your phone. Proposals, follow-up emails, content, analysis — all through natural language, from anywhere in the world.</p>
+          <div class="rm-files">
+            <span class="file-tag">module-installs/command-os-v1/</span>
+            <span class="file-tag">Telegram Bot</span>
+            <span class="file-tag">Agent sessions</span>
+            <span class="file-tag">Cron job triggers</span>
+          </div>
+          <p style="margin-top:10px;font-size:0.85rem"><strong>E-Myth milestone:</strong> You are no longer location-dependent. The business runs from Lisbon, from a café, from your phone.</p>
+        </div>
+      </div>
+
+      <div class="roadmap-item">
+        <div class="rm-circle rm5">5</div>
+        <div class="rm-body">
+          <div class="rm-phase">Month 3+ — The Entrepreneur Goes to Work</div>
+          <h3>Deploy Reclaimed Bandwidth on Growth</h3>
+          <p>Use the reclaimed 80% Entrepreneurial bandwidth to launch what previously took 3 months in 7 days: new revenue streams, new client segments, new partnerships. The Image Studios 360 corporate deal, the LifeBridge advisor network, the AIOS methodology itself — all become viable projects because the execution infrastructure is already built and waiting.</p>
+          <div class="rm-files">
+            <span class="file-tag">Image Studios 360 deck</span>
+            <span class="file-tag">LifeBridge advisor recruiting</span>
+            <span class="file-tag">AIOS client deployments</span>
+            <span class="file-tag">Lisbon operations</span>
+          </div>
+          <p style="margin-top:10px;font-size:0.85rem"><strong>E-Myth milestone:</strong> The business works. You don't have to. This is what Gerber spent 40 years trying to explain.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── MARKETING NARRATIVE ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Part 6</span>
+    <h2>Marketing the AIOS Entrepreneur</h2>
+    <p>The methodology is also the marketing. These four narrative pillars translate the AIOS E-Myth story into prospect-facing language that resonates with business owners who are still in the Operator Trap.</p>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-icon pi1">🔓</div>
+        <h3>The End of the Operator Trap</h3>
+        <p>Position AIOS as the definitive escape from the technician role Gerber warned about. "Michael Gerber told us what the problem was in 1986. We finally have the technology to solve it." This resonates with any business owner who has read the E-Myth — which is millions of people.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon pi2">📱</div>
+        <h3>Away-From-Desk Autonomy</h3>
+        <p>Use "Mobile Command" as the proof point. Show running a seven-figure initiative from a phone via Telegram-connected AIOS layers. The image of managing your entire business from a café in Lisbon is the aspiration made tangible — not a motivational poster, but a live demonstration.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon pi3">⚡</div>
+        <h3>Speed as a Competitive Moat</h3>
+        <p>When your AIOS converts a 3-month project timeline to 7 days, that delta is a structural competitive advantage. While competitors are still hiring, briefing, and managing, your system has already shipped. This is the moat Gerber never had access to.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-icon pi4">🧠</div>
+        <h3>The Practitioner, Not the Theorist</h3>
+        <p>Most consultants in this space are either marketers pretending to understand AI, or technical people who don't understand business. The AIOS Entrepreneur is neither — it's a business operator who built the system for themselves first, proved it works, and now helps others replicate it. This is the E-Myth "turn-key revolution" in human form.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── THE MISE EN PLACE CONNECTION ── -->
+<section>
+  <div class="container">
+    <span class="section-label">Founder's Lens</span>
+    <h2>The Mise en Place Connection</h2>
+    <p>There is a deeper parallel that runs through all of this — one that connects the E-Myth, the AIOS, and the worldview of a classically trained chef turned financial advisor turned AI architect.</p>
+
+    <div class="mise-box">
+      <div class="mise-label">The Chef's Principle Applied</div>
+      <h3>Mise en Place is the Original AIOS</h3>
+      <p>In a professional kitchen, <em>mise en place</em> means "everything in its place." Before the first order fires, the chef has pre-positioned every ingredient, tool, and process — so that when the rush hits, execution is pure and fast. No searching. No improvising. No friction. The kitchen runs like a machine because the system was built before the pressure arrived.</p>
+      <p style="margin-top:12px">The AIOS is mise en place for your business. The Context OS positions your strategy. The Data OS positions your numbers. The Command OS positions your tools. When an opportunity arrives — a corporate pitch, a client crisis, a new market window — you don't scramble. You execute. The system was already set.</p>
+      <p style="margin-top:12px">Gerber said a great business should feel like a franchise prototype running with precision. A great kitchen says the same thing. The AIOS is the technology that finally makes that precision achievable at a one-person scale.</p>
+    </div>
+
+    <blockquote style="margin-top:24px">
+      "I cooked everything but the books — and now I've automated both."
+      <cite>— David Ortiz, Advisor AI Partners</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ── SUMMARY ── -->
+<div class="summary-band">
+  <div class="container">
+    <h2>The AIOS E-Myth Blueprint — Summary</h2>
+    <p>The E-Myth gave us the philosophy. The AIOS gives us the implementation. Five layers, three KPIs, and a systematic Bandwidth Pivot from 80% In The Business to 80% On The Business — not as a vision, but as an engineering project you can start today.</p>
+    <a href="meetings.advisoraipartners.com" class="cta-btn">Book a Strategy Session</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <strong>Advisor AI Partners</strong> — Fractional AI Officer Practice &nbsp;|&nbsp; david@advisoraipartners.com &nbsp;|&nbsp; advisoraipartners.com<br />
+  <span style="font-size:0.75rem;opacity:0.6;margin-top:6px;display:block">AIOS E-Myth Blueprint v1.0 &nbsp;·&nbsp; Built with Claude Code &nbsp;·&nbsp; April 2026</span>
+</footer>
+
+</body>
+</html>
