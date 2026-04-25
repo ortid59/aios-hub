@@ -2,9 +2,10 @@
   publish = "."
 
 [[redirects]]
-  from = "/"
-  to   = "/hub.html"
+  from  = "/"
+  to    = "/hub.html"
   status = 200
+  force  = true
 
 [[headers]]
   for = "/*"
