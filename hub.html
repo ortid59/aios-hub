@@ -1072,12 +1072,14 @@
       }
 
       // Lazy-load thumbnails with IntersectionObserver + ResizeObserver
+      // NOTE: iframe.src always returns the full current-page URL when src="" is set in HTML,
+      // so we must use getAttribute('src') (returns "" or null) to detect an unloaded iframe.
       const io = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
           const scaler = entry.target;
           const iframe = scaler.querySelector('iframe');
-          if (iframe && !iframe.src) {
+          if (iframe && !iframe.getAttribute('src')) {
             iframe.src = scaler.dataset.src;
           }
           io.unobserve(scaler);
@@ -1109,7 +1111,7 @@
         <div class="gallery-card${active}" data-id="${p.id}" onclick="selectPage('${p.id}')">
           <div class="card-thumb">
             <div class="thumb-scaler" data-src="${p.url}">
-              <iframe src="" loading="lazy" title="${p.title}"></iframe>
+              <iframe title="${p.title}"></iframe>
             </div>
             <a class="card-open-btn" href="${p.url}" target="_blank" onclick="event.stopPropagation()" title="Open in new tab">↗</a>
           </div>
