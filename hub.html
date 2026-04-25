@@ -102,6 +102,71 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
 
+    /* ── TOP NAV BAR ────────────────────────────────── */
+    .topnav {
+      height: 48px;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+    .topnav-search {
+      position: relative;
+      flex: 1;
+      max-width: 380px;
+    }
+    .topnav-search input {
+      width: 100%;
+      padding: 7px 12px 7px 32px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .topnav-search input:focus {
+      border-color: var(--blue);
+      background: var(--white);
+    }
+    .topnav-search input::placeholder { color: var(--gray-400); }
+    .topnav-search-icon {
+      position: absolute;
+      left: 10px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 13px;
+      pointer-events: none;
+    }
+    .topnav-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--gray-200);
+      flex-shrink: 0;
+    }
+    .topnav-select {
+      padding: 7px 30px 7px 12px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 12.5px;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239AA3B5' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+    .topnav-select:focus { border-color: var(--blue); background-color: var(--white); }
+    .topnav-select:hover { border-color: var(--gray-400); }
+
     /* ── LAYOUT ─────────────────────────────────────── */
     .main { display: flex; flex: 1; overflow: hidden; }
 
@@ -163,37 +228,15 @@
 
     /* Filters */
     .sidebar-filters {
-      padding: 10px;
+      padding: 10px 10px 8px;
       flex-shrink: 0;
       border-bottom: 1px solid var(--gray-100);
       display: flex;
       flex-direction: column;
       gap: 7px;
     }
-    .search-wrap { position: relative; }
-    .search-wrap input {
-      width: 100%;
-      padding: 7px 10px 7px 28px;
-      border: 1.5px solid var(--gray-200);
-      border-radius: 7px;
-      font-size: 12px;
-      color: var(--gray-800);
-      background: var(--gray-50);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .search-wrap input:focus { border-color: var(--blue); background: var(--white); }
-    .search-wrap input::placeholder { color: var(--gray-400); }
-    .search-icon {
-      position: absolute;
-      left: 9px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--gray-400);
-      font-size: 11px;
-      pointer-events: none;
-    }
     .filter-row { display: flex; gap: 6px; }
-    select.f-input, input[type="date"].f-input {
+    input[type="date"].f-input {
       flex: 1;
       padding: 6px 8px;
       border: 1.5px solid var(--gray-200);
@@ -206,10 +249,7 @@
       transition: border-color 0.15s;
       min-width: 0;
     }
-    select.f-input:focus, input[type="date"].f-input:focus {
-      border-color: var(--blue);
-      background: var(--white);
-    }
+    input[type="date"].f-input:focus { border-color: var(--blue); background: var(--white); }
     .clear-btn {
       padding: 6px 10px;
       border: 1.5px solid var(--gray-200);
@@ -274,6 +314,14 @@
       line-height: 1.3;
     }
     .page-item.active .pi-title { color: var(--blue); }
+    .pi-client {
+      font-size: 10.5px;
+      color: var(--gray-600);
+      margin-top: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .pi-date { font-size: 10px; color: var(--gray-400); margin-top: 1px; }
     .no-results {
       text-align: center;
@@ -449,6 +497,14 @@
       text-overflow: ellipsis;
       margin-bottom: 5px;
     }
+    .card-client {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .card-meta { display: flex; align-items: center; justify-content: space-between; }
     .card-tag {
       font-size: 9.5px; font-weight: 700;
@@ -485,6 +541,24 @@
     </div>
   </header>
 
+  <!-- ── TOP NAV BAR ── -->
+  <div class="topnav">
+    <div class="topnav-search">
+      <span class="topnav-search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Search pages…" oninput="applyFilters()">
+    </div>
+    <div class="topnav-sep"></div>
+    <select class="topnav-select" id="client-select" onchange="applyFilters()">
+      <option value="">All Clients</option>
+    </select>
+    <select class="topnav-select" id="sort-select" onchange="applyFilters()">
+      <option value="date-desc">Newest first</option>
+      <option value="date-asc">Oldest first</option>
+      <option value="name-asc">Name A–Z</option>
+      <option value="name-desc">Name Z–A</option>
+    </select>
+  </div>
+
   <div class="main">
 
     <!-- ── SIDEBAR ── -->
@@ -519,18 +593,6 @@
       </div>
 
       <div class="sidebar-filters">
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input type="text" id="search-input" placeholder="Search pages…" oninput="applyFilters()">
-        </div>
-        <div class="filter-row">
-          <select class="f-input" id="sort-select" onchange="applyFilters()">
-            <option value="date-desc">Newest first</option>
-            <option value="date-asc">Oldest first</option>
-            <option value="name-asc">Name A–Z</option>
-            <option value="name-desc">Name Z–A</option>
-          </select>
-        </div>
         <div class="filter-row">
           <input type="date" class="f-input" id="date-input" onchange="applyFilters()" title="Filter by date">
           <button class="clear-btn" onclick="clearDate()">Clear</button>
@@ -571,53 +633,53 @@
 
     const PAGES = [
       // Dashboards
-      { id:'aios-dashboard',        title:'AIOS Dashboard',                       desc:'Main operating view — business metrics, pipeline, and system status',        category:'dashboard', date:'2026-04-20', icon:'📊', bg:'#EEF3FF', url:'aios-dashboard.html' },
-      { id:'meeting-dashboard',     title:'Meeting Intelligence',                  desc:'Meeting transcripts, action items, and intelligence from Fireflies',         category:'dashboard', date:'2026-04-18', icon:'🎙️', bg:'#E6F7F7', url:'meeting-dashboard.html' },
-      { id:'deliverables-dashboard',title:'Deliverables Dashboard',               desc:'Track all client deliverables and project outputs across engagements',       category:'dashboard', date:'2026-04-17', icon:'📦', bg:'#FDF5DC', url:'deliverables-dashboard.html' },
-      { id:'project-dashboard',     title:'Project Portfolio',                     desc:'All active Claude Cowork projects — status, priority, and progress',        category:'dashboard', date:'2026-04-16', icon:'🗂️', bg:'#EEF3FF', url:'project-dashboard.html' },
-      { id:'productivity-index',    title:'AIOS Pulse',                            desc:"David's productivity index — daily output tracking and momentum metrics",  category:'dashboard', date:'2026-04-22', icon:'⚡', bg:'#E6F7F7', url:'productivity-index.html' },
-      { id:'gtd-dashboard',         title:'GTD Command Center',                   desc:'Daily operating system — Inbox, Today, Waiting For, Someday',               category:'dashboard', date:'2026-04-15', icon:'✅', bg:'#E6F7F7', url:'gtd-dashboard.html' },
-      { id:'task-audit-dashboard',  title:'Task Audit Dashboard',                 desc:'73 mapped tasks scored for automation potential — bandwidth recovery',        category:'dashboard', date:'2026-04-14', icon:'🤖', bg:'#EEF3FF', url:'task-audit-dashboard.html' },
+      { id:'aios-dashboard',        title:'AIOS Dashboard',                        client:'Advisor AI Partners',    desc:'Main operating view — business metrics, pipeline, and system status',        category:'dashboard', date:'2026-04-20', icon:'📊', bg:'#EEF3FF', url:'aios-dashboard.html' },
+      { id:'meeting-dashboard',     title:'Meeting Intelligence',                   client:'Advisor AI Partners',    desc:'Meeting transcripts, action items, and intelligence from Fireflies',         category:'dashboard', date:'2026-04-18', icon:'🎙️', bg:'#E6F7F7', url:'meeting-dashboard.html' },
+      { id:'deliverables-dashboard',title:'Deliverables Dashboard',                client:'Advisor AI Partners',    desc:'Track all client deliverables and project outputs across engagements',       category:'dashboard', date:'2026-04-17', icon:'📦', bg:'#FDF5DC', url:'deliverables-dashboard.html' },
+      { id:'project-dashboard',     title:'Project Portfolio',                      client:'Advisor AI Partners',    desc:'All active Claude Cowork projects — status, priority, and progress',        category:'dashboard', date:'2026-04-16', icon:'🗂️', bg:'#EEF3FF', url:'project-dashboard.html' },
+      { id:'productivity-index',    title:'AIOS Pulse',                             client:'Advisor AI Partners',    desc:"David's productivity index — daily output tracking and momentum metrics",  category:'dashboard', date:'2026-04-22', icon:'⚡', bg:'#E6F7F7', url:'productivity-index.html' },
+      { id:'gtd-dashboard',         title:'GTD Command Center',                    client:'Advisor AI Partners',    desc:'Daily operating system — Inbox, Today, Waiting For, Someday',               category:'dashboard', date:'2026-04-15', icon:'✅', bg:'#E6F7F7', url:'gtd-dashboard.html' },
+      { id:'task-audit-dashboard',  title:'Task Audit Dashboard',                  client:'Advisor AI Partners',    desc:'73 mapped tasks scored for automation potential — bandwidth recovery',        category:'dashboard', date:'2026-04-14', icon:'🤖', bg:'#EEF3FF', url:'task-audit-dashboard.html' },
 
       // Sales & Proposals
-      { id:'deal-tracker',          title:'Deal Tracker',                          desc:'Pipeline kanban — Proposal Sent through Closed Won, with revenue rollup',   category:'sales', date:'2026-04-21', icon:'💰', bg:'#FDF5DC', url:'deal-tracker.html' },
-      { id:'aios-proposal-founders',title:'AIOS Founders Proposal',               desc:'Full AIOS proposal deck for founder prospects — polished and demo-ready',   category:'sales', date:'2026-04-13', icon:'📄', bg:'#FFF0F0', url:'aios-proposal-founders.html' },
-      { id:'ss-proposal-engine',    title:'Supporting Strategies — Proposal Engine',desc:'Proposal builder for Supporting Strategies engagements',                 category:'sales', date:'2026-04-10', icon:'🧾', bg:'#FFF0F0', url:'ss-proposal-engine.html' },
-      { id:'ss-client-intelligence',title:'Client Intelligence Hub',              desc:'Supporting Strategies client profiles, firmographics, and engagement intel', category:'sales', date:'2026-04-09', icon:'🔍', bg:'#E6F7F7', url:'ss-client-intelligence.html' },
-      { id:'morris-center',         title:'Morris Center — AI Integration Analysis',desc:'Prospect-specific AI integration analysis and AIOS roadmap',             category:'sales', date:'2026-04-08', icon:'🏥', bg:'#FFF4E6', url:'pages/morris-center.html' },
-      { id:'aios-landing-page',     title:'AIOS Landing Page',                    desc:'Public-facing landing page for the AI Operating System offer',               category:'sales', date:'2026-04-07', icon:'🚀', bg:'#EDFFF5', url:'pages/aios-landing-page.html' },
-      { id:'five-pillars',          title:'Five Pillars Page',                    desc:'Five Pillars of Business Growth — positioning and service overview',         category:'sales', date:'2026-04-06', icon:'🏛️', bg:'#FDF5DC', url:'pages/five-pillars.html' },
-      { id:'supporting-strategies', title:'Supporting Strategies — Running on AI',desc:'Overview of how Supporting Strategies operates using the AIOS stack',       category:'sales', date:'2026-04-04', icon:'🤝', bg:'#E6F7F7', url:'supporting-strategies.html' },
+      { id:'deal-tracker',          title:'Deal Tracker',                           client:'Advisor AI Partners',    desc:'Pipeline kanban — Proposal Sent through Closed Won, with revenue rollup',   category:'sales', date:'2026-04-21', icon:'💰', bg:'#FDF5DC', url:'deal-tracker.html' },
+      { id:'aios-proposal-founders',title:'AIOS Founders Proposal',                client:'Advisor AI Partners',    desc:'Full AIOS proposal deck for founder prospects — polished and demo-ready',   category:'sales', date:'2026-04-13', icon:'📄', bg:'#FFF0F0', url:'aios-proposal-founders.html' },
+      { id:'ss-proposal-engine',    title:'Proposal Engine',                        client:'Supporting Strategies',  desc:'Proposal builder for Supporting Strategies engagements',                    category:'sales', date:'2026-04-10', icon:'🧾', bg:'#FFF0F0', url:'ss-proposal-engine.html' },
+      { id:'ss-client-intelligence',title:'Client Intelligence Hub',               client:'Supporting Strategies',  desc:'Client profiles, firmographics, and engagement intelligence',               category:'sales', date:'2026-04-09', icon:'🔍', bg:'#E6F7F7', url:'ss-client-intelligence.html' },
+      { id:'morris-center',         title:'AI Integration Analysis',               client:'The Morris Center',       desc:'Prospect-specific AI integration analysis and AIOS roadmap',               category:'sales', date:'2026-04-08', icon:'🏥', bg:'#FFF4E6', url:'pages/morris-center.html' },
+      { id:'aios-landing-page',     title:'AIOS Landing Page',                     client:'Advisor AI Partners',    desc:'Public-facing landing page for the AI Operating System offer',               category:'sales', date:'2026-04-07', icon:'🚀', bg:'#EDFFF5', url:'pages/aios-landing-page.html' },
+      { id:'five-pillars',          title:'Five Pillars Page',                     client:'Advisor AI Partners',    desc:'Five Pillars of Business Growth — positioning and service overview',         category:'sales', date:'2026-04-06', icon:'🏛️', bg:'#FDF5DC', url:'pages/five-pillars.html' },
+      { id:'supporting-strategies', title:'Running on AI',                          client:'Supporting Strategies',  desc:'Overview of how Supporting Strategies operates using the AIOS stack',       category:'sales', date:'2026-04-04', icon:'🤝', bg:'#E6F7F7', url:'supporting-strategies.html' },
 
       // Operations
-      { id:'linkedin-content-system',title:'LinkedIn Content System',             desc:'Content calendar, post templates, and publishing system for outbound',       category:'ops', date:'2026-04-20', icon:'✍️', bg:'#F0EEFF', url:'linkedin-content-system.html' },
-      { id:'emyth-blueprint',       title:'AIOS E-Myth Blueprint',               desc:'E-Myth framework mapped to AIOS — technician to entrepreneur transition',    category:'ops', date:'2026-04-03', icon:'🏗️', bg:'#FDF5DC', url:'emyth-blueprint.html' },
-      { id:'twinkle-knights-audit', title:'Twinkle Knights Audit',               desc:'AI integration audit for Twinkle Knights',                                   category:'ops', date:'2026-04-02', icon:'⭐', bg:'#FFF4E6', url:'twinkle-knights-audit.html' },
-      { id:'ss-inbox-triage',       title:'Inbox Triage System',                 desc:'AI-powered inbox triage workflow for Supporting Strategies',                  category:'ops', date:'2026-04-01', icon:'📥', bg:'#E6F7F7', url:'ss-inbox-triage.html' },
+      { id:'linkedin-content-system',title:'LinkedIn Content System',              client:'Advisor AI Partners',    desc:'Content calendar, post templates, and publishing system for outbound',       category:'ops', date:'2026-04-20', icon:'✍️', bg:'#F0EEFF', url:'linkedin-content-system.html' },
+      { id:'emyth-blueprint',       title:'AIOS E-Myth Blueprint',                client:'Advisor AI Partners',    desc:'E-Myth framework mapped to AIOS — technician to entrepreneur transition',    category:'ops', date:'2026-04-03', icon:'🏗️', bg:'#FDF5DC', url:'emyth-blueprint.html' },
+      { id:'twinkle-knights-audit', title:'AI Integration Audit',                  client:'Twinkle Knights',        desc:'AI integration audit and automation opportunity map',                       category:'ops', date:'2026-04-02', icon:'⭐', bg:'#FFF4E6', url:'twinkle-knights-audit.html' },
+      { id:'ss-inbox-triage',       title:'Inbox Triage System',                  client:'Supporting Strategies',  desc:'AI-powered inbox triage workflow',                                          category:'ops', date:'2026-04-01', icon:'📥', bg:'#E6F7F7', url:'ss-inbox-triage.html' },
 
       // Emails
-      { id:'email-thomas-close',    title:'Thomas — Closing Email',              desc:'Polished closing email for the Thomas proposal — ready to send',             category:'email', date:'2026-04-22', icon:'✉️', bg:'#FDF5DC', url:'email-thomas-close.html' },
-      { id:'email-diane-denholm',   title:'Diane Denholm — Email',              desc:'Personalized outreach email for Diane Denholm — Michael New intro',          category:'email', date:'2026-04-21', icon:'📧', bg:'#FFF0F0', url:'aios-email-diane-denholm.html' },
+      { id:'email-thomas-close',    title:'Closing Email',                         client:'Thomas',                 desc:'Polished closing email for the Thomas proposal — ready to send',            category:'email', date:'2026-04-22', icon:'✉️', bg:'#FDF5DC', url:'email-thomas-close.html' },
+      { id:'email-diane-denholm',   title:'Intro Outreach Email',                  client:'Diane Denholm',          desc:'Personalized outreach email — Michael New intro',                           category:'email', date:'2026-04-21', icon:'📧', bg:'#FFF0F0', url:'aios-email-diane-denholm.html' },
 
       // Daily Briefs
-      { id:'brief-0422', title:'Daily Brief — Apr 22', desc:'Daily operating brief for April 22, 2026', category:'brief', date:'2026-04-22', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-22.html' },
-      { id:'brief-0421', title:'Daily Brief — Apr 21', desc:'Daily operating brief for April 21, 2026', category:'brief', date:'2026-04-21', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-21.html' },
-      { id:'brief-0420', title:'Daily Brief — Apr 20', desc:'Daily operating brief for April 20, 2026', category:'brief', date:'2026-04-20', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-20.html' },
-      { id:'brief-0418', title:'Daily Brief — Apr 18', desc:'Daily operating brief for April 18, 2026', category:'brief', date:'2026-04-18', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-18.html' },
-      { id:'brief-0417', title:'Daily Brief — Apr 17', desc:'Daily operating brief for April 17, 2026', category:'brief', date:'2026-04-17', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-17.html' },
-      { id:'brief-0416', title:'Daily Brief — Apr 16', desc:'Daily operating brief for April 16, 2026', category:'brief', date:'2026-04-16', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-16.html' },
-      { id:'brief-0415', title:'Daily Brief — Apr 15', desc:'Daily operating brief for April 15, 2026', category:'brief', date:'2026-04-15', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-15.html' },
-      { id:'brief-0414', title:'Daily Brief — Apr 14', desc:'Daily operating brief for April 14, 2026', category:'brief', date:'2026-04-14', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-14.html' },
-      { id:'brief-0413', title:'Daily Brief — Apr 13', desc:'Daily operating brief for April 13, 2026', category:'brief', date:'2026-04-13', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-13.html' },
-      { id:'brief-0410', title:'Daily Brief — Apr 10', desc:'Daily operating brief for April 10, 2026', category:'brief', date:'2026-04-10', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-10.html' },
-      { id:'brief-0409', title:'Daily Brief — Apr 9',  desc:'Daily operating brief for April 9, 2026',  category:'brief', date:'2026-04-09', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-09.html' },
-      { id:'brief-0408', title:'Daily Brief — Apr 8',  desc:'Daily operating brief for April 8, 2026',  category:'brief', date:'2026-04-08', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-08.html' },
-      { id:'brief-0407', title:'Daily Brief — Apr 7',  desc:'Daily operating brief for April 7, 2026',  category:'brief', date:'2026-04-07', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-07.html' },
-      { id:'brief-0406', title:'Daily Brief — Apr 6',  desc:'Daily operating brief for April 6, 2026',  category:'brief', date:'2026-04-06', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-06.html' },
-      { id:'brief-0404', title:'Daily Brief — Apr 4',  desc:'Daily operating brief for April 4, 2026',  category:'brief', date:'2026-04-04', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-04.html' },
-      { id:'brief-0403', title:'Daily Brief — Apr 3',  desc:'Daily operating brief for April 3, 2026',  category:'brief', date:'2026-04-03', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-03.html' },
-      { id:'brief-0402', title:'Daily Brief — Apr 2',  desc:'Daily operating brief for April 2, 2026',  category:'brief', date:'2026-04-02', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-02.html' },
-      { id:'brief-0401', title:'Daily Brief — Apr 1',  desc:'Daily operating brief for April 1, 2026',  category:'brief', date:'2026-04-01', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-01.html' },
+      { id:'brief-0422', title:'Daily Brief — Apr 22', client:'Advisor AI Partners', desc:'Daily operating brief for April 22, 2026', category:'brief', date:'2026-04-22', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-22.html' },
+      { id:'brief-0421', title:'Daily Brief — Apr 21', client:'Advisor AI Partners', desc:'Daily operating brief for April 21, 2026', category:'brief', date:'2026-04-21', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-21.html' },
+      { id:'brief-0420', title:'Daily Brief — Apr 20', client:'Advisor AI Partners', desc:'Daily operating brief for April 20, 2026', category:'brief', date:'2026-04-20', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-20.html' },
+      { id:'brief-0418', title:'Daily Brief — Apr 18', client:'Advisor AI Partners', desc:'Daily operating brief for April 18, 2026', category:'brief', date:'2026-04-18', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-18.html' },
+      { id:'brief-0417', title:'Daily Brief — Apr 17', client:'Advisor AI Partners', desc:'Daily operating brief for April 17, 2026', category:'brief', date:'2026-04-17', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-17.html' },
+      { id:'brief-0416', title:'Daily Brief — Apr 16', client:'Advisor AI Partners', desc:'Daily operating brief for April 16, 2026', category:'brief', date:'2026-04-16', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-16.html' },
+      { id:'brief-0415', title:'Daily Brief — Apr 15', client:'Advisor AI Partners', desc:'Daily operating brief for April 15, 2026', category:'brief', date:'2026-04-15', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-15.html' },
+      { id:'brief-0414', title:'Daily Brief — Apr 14', client:'Advisor AI Partners', desc:'Daily operating brief for April 14, 2026', category:'brief', date:'2026-04-14', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-14.html' },
+      { id:'brief-0413', title:'Daily Brief — Apr 13', client:'Advisor AI Partners', desc:'Daily operating brief for April 13, 2026', category:'brief', date:'2026-04-13', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-13.html' },
+      { id:'brief-0410', title:'Daily Brief — Apr 10', client:'Advisor AI Partners', desc:'Daily operating brief for April 10, 2026', category:'brief', date:'2026-04-10', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-10.html' },
+      { id:'brief-0409', title:'Daily Brief — Apr 9',  client:'Advisor AI Partners', desc:'Daily operating brief for April 9, 2026',  category:'brief', date:'2026-04-09', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-09.html' },
+      { id:'brief-0408', title:'Daily Brief — Apr 8',  client:'Advisor AI Partners', desc:'Daily operating brief for April 8, 2026',  category:'brief', date:'2026-04-08', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-08.html' },
+      { id:'brief-0407', title:'Daily Brief — Apr 7',  client:'Advisor AI Partners', desc:'Daily operating brief for April 7, 2026',  category:'brief', date:'2026-04-07', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-07.html' },
+      { id:'brief-0406', title:'Daily Brief — Apr 6',  client:'Advisor AI Partners', desc:'Daily operating brief for April 6, 2026',  category:'brief', date:'2026-04-06', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-06.html' },
+      { id:'brief-0404', title:'Daily Brief — Apr 4',  client:'Advisor AI Partners', desc:'Daily operating brief for April 4, 2026',  category:'brief', date:'2026-04-04', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-04.html' },
+      { id:'brief-0403', title:'Daily Brief — Apr 3',  client:'Advisor AI Partners', desc:'Daily operating brief for April 3, 2026',  category:'brief', date:'2026-04-03', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-03.html' },
+      { id:'brief-0402', title:'Daily Brief — Apr 2',  client:'Advisor AI Partners', desc:'Daily operating brief for April 2, 2026',  category:'brief', date:'2026-04-02', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-02.html' },
+      { id:'brief-0401', title:'Daily Brief — Apr 1',  client:'Advisor AI Partners', desc:'Daily operating brief for April 1, 2026',  category:'brief', date:'2026-04-01', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-01.html' },
     ];
 
     const CAT_LABEL = {
@@ -643,6 +705,17 @@
         document.getElementById('ct-' + cat).textContent = n;
       });
       document.getElementById('ct-all').textContent = PAGES.length;
+
+      // Populate client dropdown with unique sorted clients
+      const clients = [...new Set(PAGES.map(p => p.client))].sort();
+      const sel = document.getElementById('client-select');
+      clients.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        sel.appendChild(opt);
+      });
+
       applyFilters();
     })();
 
@@ -672,14 +745,16 @@
 
     // ── FILTER + SORT ─────────────────────────────────────────────────────
     function applyFilters() {
-      const q    = document.getElementById('search-input').value.trim().toLowerCase();
-      const sort = document.getElementById('sort-select').value;
-      const date = document.getElementById('date-input').value;
+      const q      = document.getElementById('search-input').value.trim().toLowerCase();
+      const sort   = document.getElementById('sort-select').value;
+      const date   = document.getElementById('date-input').value;
+      const client = document.getElementById('client-select').value;
 
       filtered = PAGES.filter(p => {
         if (activeCat !== 'all' && p.category !== activeCat) return false;
-        if (q && !p.title.toLowerCase().includes(q) && !p.desc.toLowerCase().includes(q)) return false;
+        if (q && !p.title.toLowerCase().includes(q) && !p.desc.toLowerCase().includes(q) && !p.client.toLowerCase().includes(q)) return false;
         if (date && p.date !== date) return false;
+        if (client && p.client !== client) return false;
         return true;
       });
 
@@ -742,6 +817,7 @@
           <div class="pi-icon" style="background:${p.bg};">${p.icon}</div>
           <div class="pi-body">
             <div class="pi-title">${p.title}</div>
+            <div class="pi-client">${p.client}</div>
             <div class="pi-date">${fmtDate(p.date)}</div>
           </div>
         </div>`;
@@ -856,6 +932,7 @@
           </div>
           <div class="card-body">
             <div class="card-title">${p.title}</div>
+            <div class="card-client">${p.client}</div>
             <div class="card-meta">
               <span class="card-tag t-${p.category}">${CAT_LABEL[p.category]}</span>
               <span class="card-date">${fmtDate(p.date)}</span>
