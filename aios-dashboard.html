@@ -138,12 +138,12 @@
 
     <!-- FILTER PILLS -->
     <div class="flex flex-wrap gap-2 mb-8" id="filters">
-      <button class="pill on-all" data-f="all" onclick="filter('all',this)">All <span class="n" id="n-all">16</span></button>
-      <button class="pill" data-f="1" onclick="filter('1',this)"><span class="dot d1"></span>Context <span class="n" id="n-1">4</span></button>
-      <button class="pill" data-f="2" onclick="filter('2',this)"><span class="dot d2"></span>Data <span class="n" id="n-2">3</span></button>
-      <button class="pill" data-f="3" onclick="filter('3',this)"><span class="dot d3"></span>Intelligence <span class="n" id="n-3">3</span></button>
-      <button class="pill" data-f="4" onclick="filter('4',this)"><span class="dot d4"></span>Automate <span class="n" id="n-4">2</span></button>
-      <button class="pill" data-f="5" onclick="filter('5',this)"><span class="dot d5"></span>Build <span class="n" id="n-5">4</span></button>
+      <button class="pill on-all" data-f="all">All <span class="n" id="n-all">16</span></button>
+      <button class="pill" data-f="1"><span class="dot d1"></span>Context <span class="n" id="n-1">4</span></button>
+      <button class="pill" data-f="2"><span class="dot d2"></span>Data <span class="n" id="n-2">3</span></button>
+      <button class="pill" data-f="3"><span class="dot d3"></span>Intelligence <span class="n" id="n-3">3</span></button>
+      <button class="pill" data-f="4"><span class="dot d4"></span>Automate <span class="n" id="n-4">2</span></button>
+      <button class="pill" data-f="5"><span class="dot d5"></span>Build <span class="n" id="n-5">4</span></button>
     </div>
 
     <!-- MODULE GRID -->
@@ -473,23 +473,51 @@
   </div>
 
   <script>
-    let active = 'all';
-    function filter(f, btn) {
-      active = f;
-      document.querySelectorAll('.pill').forEach(p => p.className = 'pill');
-      btn.classList.add(f === 'all' ? 'on-all' : 'on-' + f);
-      const mods = document.querySelectorAll('.mod');
-      let visible = 0;
-      mods.forEach(m => {
-        const show = f === 'all' || m.dataset.layer === f;
-        m.classList.toggle('hidden', !show);
-        if (show) visible++;
+    (function () {
+      const mods = Array.from(document.querySelectorAll('.mod'));
+      const pills = Array.from(document.querySelectorAll('#filters .pill'));
+
+      // Count modules per layer and populate pill badges dynamically
+      const counts = {};
+      mods.forEach(function (m) {
+        var l = m.dataset.layer;
+        counts[l] = (counts[l] || 0) + 1;
       });
-      document.getElementById('rcount').textContent = (f === 'all' ? `${visible} MODULES` : `${visible} OF ${mods.length} MODULES`);
-    }
-    const total = document.querySelectorAll('.mod').length;
-    document.getElementById('rcount').textContent = `${total} MODULES`;
-    document.getElementById('n-all').textContent = total;
+      [1,2,3,4,5].forEach(function (i) {
+        var el = document.getElementById('n-' + i);
+        if (el) el.textContent = counts[String(i)] || 0;
+      });
+      var nAll = document.getElementById('n-all');
+      if (nAll) nAll.textContent = mods.length;
+      document.getElementById('rcount').textContent = mods.length + ' MODULES';
+
+      function applyFilter(f) {
+        // Update pill styles
+        pills.forEach(function (p) {
+          p.className = 'pill';
+          if (p.dataset.f === f) {
+            p.classList.add(f === 'all' ? 'on-all' : 'on-' + f);
+          }
+        });
+
+        // Show/hide modules using inline style to avoid Tailwind class conflicts
+        var visible = 0;
+        mods.forEach(function (m) {
+          var show = f === 'all' || m.dataset.layer === f;
+          m.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+
+        document.getElementById('rcount').textContent =
+          f === 'all' ? visible + ' MODULES' : visible + ' OF ' + mods.length + ' MODULES';
+      }
+
+      pills.forEach(function (p) {
+        p.addEventListener('click', function () {
+          applyFilter(p.dataset.f);
+        });
+      });
+    })();
   </script>
 
 </body>
