@@ -9,7 +9,6 @@
 
     :root {
       --blue: #1B4FD8;
-      --blue-dark: #1340B8;
       --teal: #0AADA8;
       --teal-light: #E6F7F7;
       --gold: #D4A017;
@@ -21,306 +20,451 @@
       --gray-600: #5A6478;
       --gray-800: #1E2535;
       --white: #FFFFFF;
+      --sidebar: 288px;
     }
+
+    html, body { height: 100%; overflow: hidden; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--gray-50);
       color: var(--gray-800);
-      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Header */
+    /* ── HEADER ─────────────────────────────────────── */
     header {
+      height: 52px;
       background: var(--white);
       border-bottom: 1px solid var(--gray-200);
-      padding: 0 40px;
-      height: 64px;
+      padding: 0 16px 0 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      flex-shrink: 0;
+      z-index: 200;
     }
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      padding: 0 16px;
+      height: 100%;
+      border-right: 1px solid var(--gray-200);
+      width: var(--sidebar);
+      flex-shrink: 0;
     }
-
     .logo-mark {
-      width: 36px;
-      height: 36px;
+      width: 30px; height: 30px;
       background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
-      border-radius: 10px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 800; font-size: 12px; letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+    .logo-text { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+    .logo-sub  { font-size: 10px; color: var(--gray-400); margin-top: 1px; }
+
+    .header-right {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: -0.5px;
+      gap: 10px;
+      padding-left: 16px;
     }
 
-    .logo-text {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--gray-800);
-      letter-spacing: -0.3px;
+    .view-toggle {
+      display: flex;
+      background: var(--gray-100);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
     }
-
-    .logo-sub {
-      font-size: 12px;
-      color: var(--gray-400);
-      font-weight: 400;
-    }
-
-    .header-date {
-      font-size: 13px;
-      color: var(--gray-400);
-    }
-
-    /* Hero */
-    .hero {
-      background: linear-gradient(135deg, var(--blue) 0%, #1244C8 50%, var(--teal) 100%);
-      padding: 60px 40px 48px;
-      color: white;
-    }
-
-    .hero-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px;
+    .view-btn {
       padding: 5px 14px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
       font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .hero h1 {
-      font-size: 38px;
-      font-weight: 800;
-      letter-spacing: -1px;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .hero p {
-      font-size: 16px;
-      opacity: 0.8;
-      max-width: 500px;
-      line-height: 1.6;
-    }
-
-    .hero-stats {
-      display: flex;
-      gap: 32px;
-      margin-top: 32px;
-    }
-
-    .stat {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .stat-num {
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -1px;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      opacity: 0.7;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* Section */
-    .section {
-      padding: 40px 40px 8px;
-    }
-
-    .section-header {
+      color: var(--gray-600);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
+      gap: 5px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .view-btn.active {
+      background: var(--white);
+      color: var(--blue);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
 
-    .section-title {
-      font-size: 13px;
+    /* ── LAYOUT ─────────────────────────────────────── */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── SIDEBAR ────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar);
+      flex-shrink: 0;
+      background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Category nav */
+    .sidebar-nav {
+      padding: 14px 10px 10px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray-400);
+      padding: 0 8px;
+      margin-bottom: 5px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--gray-600);
+      transition: all 0.12s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-item:hover  { background: var(--gray-50); color: var(--gray-800); }
+    .nav-item.active { background: #EEF3FF; color: var(--blue); font-weight: 600; }
+    .nav-icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+    .nav-count {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--gray-100);
+      color: var(--gray-400);
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+    .nav-item.active .nav-count { background: rgba(27,79,216,0.12); color: var(--blue); }
+
+    /* Filters */
+    .sidebar-filters {
+      padding: 10px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      width: 100%;
+      padding: 7px 10px 7px 28px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 7px;
+      font-size: 12px;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-wrap input:focus { border-color: var(--blue); background: var(--white); }
+    .search-wrap input::placeholder { color: var(--gray-400); }
+    .search-icon {
+      position: absolute;
+      left: 9px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 11px;
+      pointer-events: none;
+    }
+    .filter-row { display: flex; gap: 6px; }
+    select.f-input, input[type="date"].f-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 7px;
+      font-size: 11px;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      min-width: 0;
+    }
+    select.f-input:focus, input[type="date"].f-input:focus {
+      border-color: var(--blue);
+      background: var(--white);
+    }
+    .clear-btn {
+      padding: 6px 10px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 7px;
+      font-size: 11px;
+      color: var(--gray-400);
+      background: var(--gray-50);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.12s;
+      flex-shrink: 0;
+    }
+    .clear-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .filter-count { font-size: 10px; color: var(--gray-400); padding: 0 2px; }
+
+    /* Page list */
+    .page-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px;
+    }
+    .page-list::-webkit-scrollbar { width: 3px; }
+    .page-list::-webkit-scrollbar-track { background: transparent; }
+    .page-list::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 3px; }
+
+    .list-group-label {
+      font-size: 9px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       color: var(--gray-400);
+      padding: 10px 8px 4px;
     }
-
-    .section-badge {
-      font-size: 11px;
-      font-weight: 600;
-      background: var(--gray-100);
-      color: var(--gray-600);
-      padding: 3px 10px;
-      border-radius: 10px;
-    }
-
-    /* Cards Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-      padding: 0 40px 16px;
-    }
-
-    .card {
-      background: var(--white);
-      border: 1.5px solid var(--gray-200);
-      border-radius: 14px;
-      padding: 24px;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      transition: all 0.18s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card:hover {
-      border-color: var(--blue);
-      box-shadow: 0 8px 32px rgba(27, 79, 216, 0.12);
-      transform: translateY(-2px);
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--blue), var(--teal));
-      opacity: 0;
-      transition: opacity 0.18s ease;
-    }
-
-    .card:hover::before {
-      opacity: 1;
-    }
-
-    .card-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+    .page-item {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 22px;
+      gap: 9px;
+      padding: 8px 9px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.12s;
+      border: 1.5px solid transparent;
+      margin-bottom: 1px;
+    }
+    .page-item:hover  { background: var(--gray-50); border-color: var(--gray-200); }
+    .page-item.active { background: #EEF3FF; border-color: var(--blue); }
+    .pi-icon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
       flex-shrink: 0;
     }
-
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .card-arrow {
-      color: var(--gray-400);
-      font-size: 18px;
-      flex-shrink: 0;
-      transition: transform 0.18s;
-    }
-
-    .card:hover .card-arrow {
-      transform: translate(2px, -2px);
-      color: var(--blue);
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
+    .pi-body { flex: 1; min-width: 0; }
+    .pi-title {
+      font-size: 12px;
+      font-weight: 600;
       color: var(--gray-800);
-      letter-spacing: -0.3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       line-height: 1.3;
     }
-
-    .card-desc {
-      font-size: 13px;
-      color: var(--gray-600);
-      line-height: 1.6;
+    .page-item.active .pi-title { color: var(--blue); }
+    .pi-date { font-size: 10px; color: var(--gray-400); margin-top: 1px; }
+    .no-results {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--gray-400);
+      font-size: 12px;
     }
 
-    .card-meta {
+    /* ── CONTENT AREA ───────────────────────────────── */
+    .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Browse / viewer */
+    .viewer-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .viewer-toolbar {
+      height: 44px;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding-top: 6px;
-      border-top: 1px solid var(--gray-100);
+      padding: 0 14px;
+      gap: 10px;
+      flex-shrink: 0;
     }
-
-    .card-tag {
+    .viewer-crumb {
+      font-size: 11px;
+      color: var(--gray-400);
+      flex-shrink: 0;
+    }
+    .viewer-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-800);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .viewer-open {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 7px;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
       font-size: 11px;
       font-weight: 600;
-      padding: 3px 10px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+      color: var(--gray-600);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      flex-shrink: 0;
     }
-
-    .tag-dashboard { background: #EEF3FF; color: var(--blue); }
-    .tag-ops { background: var(--teal-light); color: #087A76; }
-    .tag-sales { background: var(--gold-light); color: #996A00; }
-    .tag-content { background: #F0EEFF; color: #6B3FD4; }
-    .tag-proposal { background: #FFF0F0; color: #C0392B; }
-    .tag-landing { background: #EDFFF5; color: #15803D; }
-
-    .card-date {
-      font-size: 11px;
+    .viewer-open:hover { border-color: var(--blue); color: var(--blue); }
+    .viewer-frame { flex: 1; width: 100%; border: none; }
+    .viewer-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       color: var(--gray-400);
+      gap: 10px;
+      user-select: none;
     }
+    .viewer-empty-icon { font-size: 36px; opacity: 0.4; }
+    .viewer-empty-text { font-size: 13px; }
 
-    .new-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--blue), var(--teal));
-      color: white;
+    /* Gallery */
+    .gallery-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .gallery-panel::-webkit-scrollbar { width: 5px; }
+    .gallery-panel::-webkit-scrollbar-track { background: transparent; }
+    .gallery-panel::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 4px; }
+
+    .gallery-section-title {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.5px;
       text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 6px;
-      margin-left: 8px;
-      vertical-align: middle;
-    }
-
-    /* Featured card */
-    .card.featured {
-      background: linear-gradient(145deg, #F0F5FF 0%, #F5FFFE 100%);
-      border-color: rgba(27, 79, 216, 0.2);
-    }
-
-    /* Footer */
-    footer {
-      padding: 40px;
-      text-align: center;
+      letter-spacing: 0.8px;
       color: var(--gray-400);
-      font-size: 13px;
-      border-top: 1px solid var(--gray-200);
-      margin-top: 24px;
+      margin: 18px 0 10px;
     }
+    .gallery-section-title:first-child { margin-top: 0; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 4px;
+    }
+    .gallery-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-200);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+    .gallery-card:hover {
+      border-color: var(--blue);
+      box-shadow: 0 6px 24px rgba(27,79,216,0.12);
+      transform: translateY(-2px);
+    }
+    .gallery-card.active {
+      border-color: var(--blue);
+      box-shadow: 0 4px 16px rgba(27,79,216,0.14);
+    }
+
+    /* Thumbnail */
+    .card-thumb {
+      width: 100%;
+      height: 168px;
+      overflow: hidden;
+      background: var(--gray-100);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .thumb-scaler {
+      position: absolute;
+      top: 0; left: 0;
+      width: 1280px;
+      height: 800px;
+      transform-origin: top left;
+      pointer-events: none;
+    }
+    .thumb-scaler iframe {
+      width: 1280px;
+      height: 800px;
+      border: none;
+      display: block;
+    }
+    .thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      opacity: 0.5;
+    }
+    .card-open-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 28px; height: 28px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      font-size: 13px;
+      color: var(--gray-800);
+      opacity: 0;
+      transition: opacity 0.15s;
+      backdrop-filter: blur(4px);
+      border: 1px solid var(--gray-200);
+      z-index: 10;
+    }
+    .gallery-card:hover .card-open-btn { opacity: 1; }
+
+    .card-body { padding: 11px 13px; }
+    .card-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--gray-800);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 5px;
+    }
+    .card-meta { display: flex; align-items: center; justify-content: space-between; }
+    .card-tag {
+      font-size: 9.5px; font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .card-date { font-size: 10px; color: var(--gray-400); }
+
+    /* Tag colors */
+    .t-dashboard { background: #EEF3FF; color: var(--blue); }
+    .t-sales     { background: var(--gold-light); color: #996A00; }
+    .t-ops       { background: var(--teal-light); color: #087A76; }
+    .t-email     { background: #FFF0F0; color: #C0392B; }
+    .t-brief     { background: #F0EEFF; color: #6B3FD4; }
   </style>
 </head>
 <body>
@@ -333,237 +477,393 @@
         <div class="logo-sub">AIOS Workspace</div>
       </div>
     </div>
-    <div class="header-date">Last updated: April 16, 2026</div>
+    <div class="header-right">
+      <div class="view-toggle">
+        <button class="view-btn active" id="btn-browse" onclick="setView('browse')">☰ Browse</button>
+        <button class="view-btn" id="btn-gallery" onclick="setView('gallery')">⊞ Gallery</button>
+      </div>
+    </div>
   </header>
 
-  <div class="hero">
-    <div class="hero-label">⚡ AIOS Hub</div>
-    <h1>Everything We've Built</h1>
-    <p>Every dashboard, tool, and deliverable in one place. Click any card to open it instantly — demo-ready at any time.</p>
-    <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num">12</div>
-        <div class="stat-label">Tools Built</div>
+  <div class="main">
+
+    <!-- ── SIDEBAR ── -->
+    <div class="sidebar">
+
+      <div class="sidebar-nav">
+        <div class="nav-label">Categories</div>
+        <button class="nav-item active" id="nav-all"       onclick="setCategory('all')">
+          <span class="nav-icon">🏠</span> All Pages
+          <span class="nav-count" id="ct-all">0</span>
+        </button>
+        <button class="nav-item" id="nav-dashboard" onclick="setCategory('dashboard')">
+          <span class="nav-icon">📊</span> Dashboards
+          <span class="nav-count" id="ct-dashboard">0</span>
+        </button>
+        <button class="nav-item" id="nav-sales" onclick="setCategory('sales')">
+          <span class="nav-icon">💼</span> Sales &amp; Proposals
+          <span class="nav-count" id="ct-sales">0</span>
+        </button>
+        <button class="nav-item" id="nav-ops" onclick="setCategory('ops')">
+          <span class="nav-icon">⚙️</span> Operations
+          <span class="nav-count" id="ct-ops">0</span>
+        </button>
+        <button class="nav-item" id="nav-email" onclick="setCategory('email')">
+          <span class="nav-icon">✉️</span> Emails
+          <span class="nav-count" id="ct-email">0</span>
+        </button>
+        <button class="nav-item" id="nav-brief" onclick="setCategory('brief')">
+          <span class="nav-icon">📅</span> Daily Briefs
+          <span class="nav-count" id="ct-brief">0</span>
+        </button>
       </div>
-      <div class="stat">
-        <div class="stat-num">10</div>
-        <div class="stat-label">Built Yesterday</div>
+
+      <div class="sidebar-filters">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="search-input" placeholder="Search pages…" oninput="applyFilters()">
+        </div>
+        <div class="filter-row">
+          <select class="f-input" id="sort-select" onchange="applyFilters()">
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+            <option value="name-asc">Name A–Z</option>
+            <option value="name-desc">Name Z–A</option>
+          </select>
+        </div>
+        <div class="filter-row">
+          <input type="date" class="f-input" id="date-input" onchange="applyFilters()" title="Filter by date">
+          <button class="clear-btn" onclick="clearDate()">Clear</button>
+        </div>
+        <div class="filter-count" id="filter-count"></div>
       </div>
-      <div class="stat">
-        <div class="stat-num">5</div>
-        <div class="stat-label">Live Dashboards</div>
+
+      <div class="page-list" id="page-list"></div>
+    </div>
+
+    <!-- ── CONTENT ── -->
+    <div class="content">
+
+      <!-- Browse mode -->
+      <div class="viewer-panel" id="viewer-panel">
+        <div class="viewer-toolbar">
+          <span class="viewer-crumb" id="viewer-crumb" style="display:none;">AIOS Hub /</span>
+          <span class="viewer-title" id="viewer-title">Select a page to preview</span>
+          <a class="viewer-open" id="viewer-open" href="#" target="_blank" style="display:none;">↗ Open full page</a>
+        </div>
+        <div class="viewer-empty" id="viewer-empty">
+          <div class="viewer-empty-icon">👈</div>
+          <div class="viewer-empty-text">Select a page from the sidebar to preview it here</div>
+        </div>
+        <iframe class="viewer-frame" id="viewer-frame" src="" style="display:none;"></iframe>
       </div>
+
+      <!-- Gallery mode -->
+      <div class="gallery-panel" id="gallery-panel" style="display:none;">
+        <div id="gallery-content"></div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Yesterday's Builds -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Yesterday's Builds — April 16</div>
-      <div class="section-badge">10 deliverables</div>
-    </div>
-  </div>
+  <script>
+    // ── PAGE REGISTRY ────────────────────────────────────────────────────
 
-  <div class="grid">
+    const PAGES = [
+      // Dashboards
+      { id:'aios-dashboard',        title:'AIOS Dashboard',                       desc:'Main operating view — business metrics, pipeline, and system status',        category:'dashboard', date:'2026-04-20', icon:'📊', bg:'#EEF3FF', url:'aios-dashboard.html' },
+      { id:'meeting-dashboard',     title:'Meeting Intelligence',                  desc:'Meeting transcripts, action items, and intelligence from Fireflies',         category:'dashboard', date:'2026-04-18', icon:'🎙️', bg:'#E6F7F7', url:'meeting-dashboard.html' },
+      { id:'deliverables-dashboard',title:'Deliverables Dashboard',               desc:'Track all client deliverables and project outputs across engagements',       category:'dashboard', date:'2026-04-17', icon:'📦', bg:'#FDF5DC', url:'deliverables-dashboard.html' },
+      { id:'project-dashboard',     title:'Project Portfolio',                     desc:'All active Claude Cowork projects — status, priority, and progress',        category:'dashboard', date:'2026-04-16', icon:'🗂️', bg:'#EEF3FF', url:'project-dashboard.html' },
+      { id:'productivity-index',    title:'AIOS Pulse',                            desc:"David's productivity index — daily output tracking and momentum metrics",  category:'dashboard', date:'2026-04-22', icon:'⚡', bg:'#E6F7F7', url:'productivity-index.html' },
+      { id:'gtd-dashboard',         title:'GTD Command Center',                   desc:'Daily operating system — Inbox, Today, Waiting For, Someday',               category:'dashboard', date:'2026-04-15', icon:'✅', bg:'#E6F7F7', url:'gtd-dashboard.html' },
+      { id:'task-audit-dashboard',  title:'Task Audit Dashboard',                 desc:'73 mapped tasks scored for automation potential — bandwidth recovery',        category:'dashboard', date:'2026-04-14', icon:'🤖', bg:'#EEF3FF', url:'task-audit-dashboard.html' },
 
-    <a class="card featured" href="aios-dashboard.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#EEF3FF;">📊</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">AIOS Dashboard<span class="new-badge">New</span></div>
-        <div class="card-desc">The main operating view for Advisor AI Partners. Business metrics, pipeline, and system status in one place.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-dashboard">Dashboard</span>
-        <span class="card-date">Apr 16 · 10:00 PM</span>
-      </div>
-    </a>
+      // Sales & Proposals
+      { id:'deal-tracker',          title:'Deal Tracker',                          desc:'Pipeline kanban — Proposal Sent through Closed Won, with revenue rollup',   category:'sales', date:'2026-04-21', icon:'💰', bg:'#FDF5DC', url:'deal-tracker.html' },
+      { id:'aios-proposal-founders',title:'AIOS Founders Proposal',               desc:'Full AIOS proposal deck for founder prospects — polished and demo-ready',   category:'sales', date:'2026-04-13', icon:'📄', bg:'#FFF0F0', url:'aios-proposal-founders.html' },
+      { id:'ss-proposal-engine',    title:'Supporting Strategies — Proposal Engine',desc:'Proposal builder for Supporting Strategies engagements',                 category:'sales', date:'2026-04-10', icon:'🧾', bg:'#FFF0F0', url:'ss-proposal-engine.html' },
+      { id:'ss-client-intelligence',title:'Client Intelligence Hub',              desc:'Supporting Strategies client profiles, firmographics, and engagement intel', category:'sales', date:'2026-04-09', icon:'🔍', bg:'#E6F7F7', url:'ss-client-intelligence.html' },
+      { id:'morris-center',         title:'Morris Center — AI Integration Analysis',desc:'Prospect-specific AI integration analysis and AIOS roadmap',             category:'sales', date:'2026-04-08', icon:'🏥', bg:'#FFF4E6', url:'pages/morris-center.html' },
+      { id:'aios-landing-page',     title:'AIOS Landing Page',                    desc:'Public-facing landing page for the AI Operating System offer',               category:'sales', date:'2026-04-07', icon:'🚀', bg:'#EDFFF5', url:'pages/aios-landing-page.html' },
+      { id:'five-pillars',          title:'Five Pillars Page',                    desc:'Five Pillars of Business Growth — positioning and service overview',         category:'sales', date:'2026-04-06', icon:'🏛️', bg:'#FDF5DC', url:'pages/five-pillars.html' },
+      { id:'supporting-strategies', title:'Supporting Strategies — Running on AI',desc:'Overview of how Supporting Strategies operates using the AIOS stack',       category:'sales', date:'2026-04-04', icon:'🤝', bg:'#E6F7F7', url:'supporting-strategies.html' },
 
-    <a class="card" href="meeting-dashboard.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#E6F7F7;">🎙️</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Meeting Intelligence<span class="new-badge">New</span></div>
-        <div class="card-desc">Meeting transcripts, action items, and intelligence synthesized from Fireflies and Notion.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-ops">Intelligence</span>
-        <span class="card-date">Apr 16 · 10:04 PM</span>
-      </div>
-    </a>
+      // Operations
+      { id:'linkedin-content-system',title:'LinkedIn Content System',             desc:'Content calendar, post templates, and publishing system for outbound',       category:'ops', date:'2026-04-20', icon:'✍️', bg:'#F0EEFF', url:'linkedin-content-system.html' },
+      { id:'emyth-blueprint',       title:'AIOS E-Myth Blueprint',               desc:'E-Myth framework mapped to AIOS — technician to entrepreneur transition',    category:'ops', date:'2026-04-03', icon:'🏗️', bg:'#FDF5DC', url:'emyth-blueprint.html' },
+      { id:'twinkle-knights-audit', title:'Twinkle Knights Audit',               desc:'AI integration audit for Twinkle Knights',                                   category:'ops', date:'2026-04-02', icon:'⭐', bg:'#FFF4E6', url:'twinkle-knights-audit.html' },
+      { id:'ss-inbox-triage',       title:'Inbox Triage System',                 desc:'AI-powered inbox triage workflow for Supporting Strategies',                  category:'ops', date:'2026-04-01', icon:'📥', bg:'#E6F7F7', url:'ss-inbox-triage.html' },
 
-    <a class="card" href="deliverables-dashboard.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#FDF5DC;">📦</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Deliverables Dashboard<span class="new-badge">New</span></div>
-        <div class="card-desc">Track all client deliverables, project outputs, and work in progress across active engagements.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-dashboard">Dashboard</span>
-        <span class="card-date">Apr 16 · 10:03 PM</span>
-      </div>
-    </a>
+      // Emails
+      { id:'email-thomas-close',    title:'Thomas — Closing Email',              desc:'Polished closing email for the Thomas proposal — ready to send',             category:'email', date:'2026-04-22', icon:'✉️', bg:'#FDF5DC', url:'email-thomas-close.html' },
+      { id:'email-diane-denholm',   title:'Diane Denholm — Email',              desc:'Personalized outreach email for Diane Denholm — Michael New intro',          category:'email', date:'2026-04-21', icon:'📧', bg:'#FFF0F0', url:'aios-email-diane-denholm.html' },
 
-    <a class="card" href="project-dashboard.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#EEF3FF;">🗂️</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Project Portfolio<span class="new-badge">New</span></div>
-        <div class="card-desc">All 15 active Claude Cowork projects — status, priority, and progress at a glance.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-dashboard">Dashboard</span>
-        <span class="card-date">Apr 16 · 9:46 PM</span>
-      </div>
-    </a>
+      // Daily Briefs
+      { id:'brief-0422', title:'Daily Brief — Apr 22', desc:'Daily operating brief for April 22, 2026', category:'brief', date:'2026-04-22', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-22.html' },
+      { id:'brief-0421', title:'Daily Brief — Apr 21', desc:'Daily operating brief for April 21, 2026', category:'brief', date:'2026-04-21', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-21.html' },
+      { id:'brief-0420', title:'Daily Brief — Apr 20', desc:'Daily operating brief for April 20, 2026', category:'brief', date:'2026-04-20', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-20.html' },
+      { id:'brief-0418', title:'Daily Brief — Apr 18', desc:'Daily operating brief for April 18, 2026', category:'brief', date:'2026-04-18', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-18.html' },
+      { id:'brief-0417', title:'Daily Brief — Apr 17', desc:'Daily operating brief for April 17, 2026', category:'brief', date:'2026-04-17', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-17.html' },
+      { id:'brief-0416', title:'Daily Brief — Apr 16', desc:'Daily operating brief for April 16, 2026', category:'brief', date:'2026-04-16', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-16.html' },
+      { id:'brief-0415', title:'Daily Brief — Apr 15', desc:'Daily operating brief for April 15, 2026', category:'brief', date:'2026-04-15', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-15.html' },
+      { id:'brief-0414', title:'Daily Brief — Apr 14', desc:'Daily operating brief for April 14, 2026', category:'brief', date:'2026-04-14', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-14.html' },
+      { id:'brief-0413', title:'Daily Brief — Apr 13', desc:'Daily operating brief for April 13, 2026', category:'brief', date:'2026-04-13', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-13.html' },
+      { id:'brief-0410', title:'Daily Brief — Apr 10', desc:'Daily operating brief for April 10, 2026', category:'brief', date:'2026-04-10', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-10.html' },
+      { id:'brief-0409', title:'Daily Brief — Apr 9',  desc:'Daily operating brief for April 9, 2026',  category:'brief', date:'2026-04-09', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-09.html' },
+      { id:'brief-0408', title:'Daily Brief — Apr 8',  desc:'Daily operating brief for April 8, 2026',  category:'brief', date:'2026-04-08', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-08.html' },
+      { id:'brief-0407', title:'Daily Brief — Apr 7',  desc:'Daily operating brief for April 7, 2026',  category:'brief', date:'2026-04-07', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-07.html' },
+      { id:'brief-0406', title:'Daily Brief — Apr 6',  desc:'Daily operating brief for April 6, 2026',  category:'brief', date:'2026-04-06', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-06.html' },
+      { id:'brief-0404', title:'Daily Brief — Apr 4',  desc:'Daily operating brief for April 4, 2026',  category:'brief', date:'2026-04-04', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-04.html' },
+      { id:'brief-0403', title:'Daily Brief — Apr 3',  desc:'Daily operating brief for April 3, 2026',  category:'brief', date:'2026-04-03', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-03.html' },
+      { id:'brief-0402', title:'Daily Brief — Apr 2',  desc:'Daily operating brief for April 2, 2026',  category:'brief', date:'2026-04-02', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-02.html' },
+      { id:'brief-0401', title:'Daily Brief — Apr 1',  desc:'Daily operating brief for April 1, 2026',  category:'brief', date:'2026-04-01', icon:'📅', bg:'#F0EEFF', url:'daily-brief/2026-04-01.html' },
+    ];
 
-    <a class="card" href="aios-proposal-founders.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#FFF0F0;">📄</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">AIOS Founders Proposal<span class="new-badge">New</span></div>
-        <div class="card-desc">Full AIOS proposal deck for founder prospects. Demo-ready, polished, and brand-aligned.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-proposal">Proposal</span>
-        <span class="card-date">Apr 16 · 9:36 PM</span>
-      </div>
-    </a>
+    const CAT_LABEL = {
+      dashboard: 'Dashboards',
+      sales:     'Sales & Proposals',
+      ops:       'Operations',
+      email:     'Emails',
+      brief:     'Daily Briefs',
+    };
 
-    <a class="card" href="linkedin-content-system.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#F0EEFF;">✍️</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">LinkedIn Content System<span class="new-badge">New</span></div>
-        <div class="card-desc">Content calendar, post templates, and publishing system for LinkedIn outbound.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-content">Content</span>
-        <span class="card-date">Apr 16 · 7:18 PM</span>
-      </div>
-    </a>
+    const CAT_ORDER = ['dashboard','sales','ops','email','brief'];
 
-    <a class="card" href="deal-tracker.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#FDF5DC;">💰</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Deal Tracker<span class="new-badge">New</span></div>
-        <div class="card-desc">Five Pillars pipeline kanban — Proposal Sent through Closed Won. Revenue rollup included.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-sales">Sales</span>
-        <span class="card-date">Apr 16 · 6:56 PM</span>
-      </div>
-    </a>
+    // ── STATE ─────────────────────────────────────────────────────────────
+    let activeCat  = 'all';
+    let activeView = 'browse';
+    let activePage = null;
+    let filtered   = [];
 
-    <a class="card" href="gtd-dashboard.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#E6F7F7;">✅</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">GTD Command Center<span class="new-badge">New</span></div>
-        <div class="card-desc">Daily operating system — Inbox, Today, Aamish, Waiting For, Someday. Weekly review included.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-ops">Operations</span>
-        <span class="card-date">Apr 16 · 2:17 PM</span>
-      </div>
-    </a>
+    // ── INIT ──────────────────────────────────────────────────────────────
+    (function init() {
+      CAT_ORDER.forEach(cat => {
+        const n = PAGES.filter(p => p.category === cat).length;
+        document.getElementById('ct-' + cat).textContent = n;
+      });
+      document.getElementById('ct-all').textContent = PAGES.length;
+      applyFilters();
+    })();
 
-    <a class="card" href="task-audit-dashboard.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#EEF3FF;">🤖</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Task Audit Dashboard<span class="new-badge">New</span></div>
-        <div class="card-desc">All 73 mapped tasks scored for automation potential. Bandwidth recovery scoreboard.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-ops">AIOS</span>
-        <span class="card-date">Apr 16 · 8:52 AM</span>
-      </div>
-    </a>
+    // ── CATEGORY ──────────────────────────────────────────────────────────
+    function setCategory(cat) {
+      activeCat = cat;
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('nav-' + cat).classList.add('active');
+      applyFilters();
+    }
 
-    <a class="card" href="email-thomas-close.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#FDF5DC;">✉️</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Thomas — Closing Email</div>
-        <div class="card-desc">Polished closing email for the Thomas proposal. Ready to send or demo as an output example.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-sales">Sales</span>
-        <span class="card-date">Apr 16 · 12:09 PM</span>
-      </div>
-    </a>
+    // ── VIEW ──────────────────────────────────────────────────────────────
+    function setView(view) {
+      activeView = view;
+      document.getElementById('btn-browse').classList.toggle('active', view === 'browse');
+      document.getElementById('btn-gallery').classList.toggle('active', view === 'gallery');
+      document.getElementById('viewer-panel').style.display  = view === 'browse'  ? 'flex' : 'none';
+      document.getElementById('gallery-panel').style.display = view === 'gallery' ? 'block' : 'none';
+      if (view === 'gallery') renderGallery();
+    }
 
-  </div>
+    // ── DATE CLEAR ────────────────────────────────────────────────────────
+    function clearDate() {
+      document.getElementById('date-input').value = '';
+      applyFilters();
+    }
 
-  <!-- Earlier Builds -->
-  <div class="section" style="padding-top: 32px;">
-    <div class="section-header">
-      <div class="section-title">April 15 — Landing Pages</div>
-      <div class="section-badge">2 pages</div>
-    </div>
-  </div>
+    // ── FILTER + SORT ─────────────────────────────────────────────────────
+    function applyFilters() {
+      const q    = document.getElementById('search-input').value.trim().toLowerCase();
+      const sort = document.getElementById('sort-select').value;
+      const date = document.getElementById('date-input').value;
 
-  <div class="grid" style="padding-bottom: 40px;">
+      filtered = PAGES.filter(p => {
+        if (activeCat !== 'all' && p.category !== activeCat) return false;
+        if (q && !p.title.toLowerCase().includes(q) && !p.desc.toLowerCase().includes(q)) return false;
+        if (date && p.date !== date) return false;
+        return true;
+      });
 
-    <a class="card" href="pages/aios-landing-page.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#EDFFF5;">🚀</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">AIOS Landing Page</div>
-        <div class="card-desc">Public-facing landing page for the AI Operating System offer. Sales-ready, demo-ready.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-landing">Landing Page</span>
-        <span class="card-date">Apr 15 · 8:26 AM</span>
-      </div>
-    </a>
+      filtered.sort((a, b) => {
+        if (sort === 'date-desc') return b.date.localeCompare(a.date);
+        if (sort === 'date-asc')  return a.date.localeCompare(b.date);
+        if (sort === 'name-asc')  return a.title.localeCompare(b.title);
+        if (sort === 'name-desc') return b.title.localeCompare(a.title);
+        return 0;
+      });
 
-    <a class="card" href="pages/five-pillars.html" target="_blank">
-      <div class="card-top">
-        <div class="card-icon" style="background:#FDF5DC;">🏛️</div>
-        <div class="card-arrow">↗</div>
-      </div>
-      <div>
-        <div class="card-title">Five Pillars Page</div>
-        <div class="card-desc">The Five Pillars of Business Growth framework — positioning and service overview page.</div>
-      </div>
-      <div class="card-meta">
-        <span class="card-tag tag-landing">Landing Page</span>
-        <span class="card-date">Apr 15 · 8:29 AM</span>
-      </div>
-    </a>
+      const n = filtered.length;
+      document.getElementById('filter-count').textContent =
+        n === PAGES.length ? `${n} pages` : `${n} of ${PAGES.length} pages`;
 
-  </div>
+      renderList();
+      if (activeView === 'gallery') renderGallery();
+    }
 
-  <footer>
-    <strong>Advisor AI Partners</strong> &nbsp;·&nbsp; AIOS Workspace &nbsp;·&nbsp; Built with Claude Code<br>
-    <span style="font-size:12px; margin-top: 4px; display:block;">Open <code>outputs/hub.html</code> from your workspace anytime</span>
-  </footer>
+    // ── HELPERS ───────────────────────────────────────────────────────────
+    function fmtDate(s) {
+      const d = new Date(s + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    }
+
+    // ── PAGE LIST ─────────────────────────────────────────────────────────
+    function renderList() {
+      const el = document.getElementById('page-list');
+
+      if (!filtered.length) {
+        el.innerHTML = '<div class="no-results">No pages match your filters</div>';
+        return;
+      }
+
+      let html = '';
+
+      if (activeCat === 'all') {
+        CAT_ORDER.forEach(cat => {
+          const group = filtered.filter(p => p.category === cat);
+          if (!group.length) return;
+          html += `<div class="list-group-label">${CAT_LABEL[cat]}</div>`;
+          group.forEach(p => { html += itemHTML(p); });
+        });
+      } else {
+        filtered.forEach(p => { html += itemHTML(p); });
+      }
+
+      el.innerHTML = html;
+
+      if (activePage) {
+        const row = el.querySelector(`[data-id="${activePage.id}"]`);
+        if (row) row.classList.add('active');
+      }
+    }
+
+    function itemHTML(p) {
+      const active = activePage && activePage.id === p.id ? ' active' : '';
+      return `
+        <div class="page-item${active}" data-id="${p.id}" onclick="selectPage('${p.id}')">
+          <div class="pi-icon" style="background:${p.bg};">${p.icon}</div>
+          <div class="pi-body">
+            <div class="pi-title">${p.title}</div>
+            <div class="pi-date">${fmtDate(p.date)}</div>
+          </div>
+        </div>`;
+    }
+
+    // ── SELECT PAGE ───────────────────────────────────────────────────────
+    function selectPage(id) {
+      const page = PAGES.find(p => p.id === id);
+      if (!page) return;
+      activePage = page;
+
+      // Sidebar highlight
+      document.querySelectorAll('.page-item').forEach(el => el.classList.remove('active'));
+      const row = document.querySelector(`.page-item[data-id="${id}"]`);
+      if (row) row.classList.add('active');
+
+      // Update viewer
+      const title   = document.getElementById('viewer-title');
+      const crumb   = document.getElementById('viewer-crumb');
+      const openBtn = document.getElementById('viewer-open');
+      const frame   = document.getElementById('viewer-frame');
+      const empty   = document.getElementById('viewer-empty');
+
+      title.textContent = page.title;
+      crumb.style.display = 'inline';
+      openBtn.style.display = 'flex';
+      openBtn.href = page.url;
+      frame.src = page.url;
+      frame.style.display = 'block';
+      empty.style.display = 'none';
+
+      // Update gallery active card
+      document.querySelectorAll('.gallery-card').forEach(el => {
+        el.classList.toggle('active', el.dataset.id === id);
+      });
+
+      // Switch to browse
+      if (activeView !== 'browse') setView('browse');
+    }
+
+    // ── GALLERY ───────────────────────────────────────────────────────────
+    function renderGallery() {
+      const container = document.getElementById('gallery-content');
+
+      if (!filtered.length) {
+        container.innerHTML = '<div class="no-results">No pages match your filters</div>';
+        return;
+      }
+
+      let html = '';
+
+      if (activeCat === 'all') {
+        CAT_ORDER.forEach(cat => {
+          const group = filtered.filter(p => p.category === cat);
+          if (!group.length) return;
+          html += `<div class="gallery-section-title">${CAT_LABEL[cat]}</div>`;
+          html += `<div class="gallery-grid">${group.map(p => cardHTML(p)).join('')}</div>`;
+        });
+      } else {
+        html += `<div class="gallery-grid">${filtered.map(p => cardHTML(p)).join('')}</div>`;
+      }
+
+      container.innerHTML = html;
+
+      // Restore active card
+      if (activePage) {
+        const card = container.querySelector(`.gallery-card[data-id="${activePage.id}"]`);
+        if (card) card.classList.add('active');
+      }
+
+      // Lazy-load thumbnails with IntersectionObserver + ResizeObserver
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const scaler = entry.target;
+          const iframe = scaler.querySelector('iframe');
+          if (iframe && !iframe.src) {
+            iframe.src = scaler.dataset.src;
+          }
+          io.unobserve(scaler);
+        });
+      }, { rootMargin: '300px' });
+
+      const ro = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+          const thumb  = entry.target;
+          const scaler = thumb.querySelector('.thumb-scaler');
+          if (scaler) scaler.style.transform = `scale(${thumb.offsetWidth / 1280})`;
+        });
+      });
+
+      container.querySelectorAll('.card-thumb').forEach(thumb => {
+        const scaler = thumb.querySelector('.thumb-scaler');
+        if (scaler) {
+          // Set initial scale
+          scaler.style.transform = `scale(${thumb.offsetWidth / 1280})`;
+          io.observe(scaler);
+        }
+        ro.observe(thumb);
+      });
+    }
+
+    function cardHTML(p) {
+      const active = activePage && activePage.id === p.id ? ' active' : '';
+      return `
+        <div class="gallery-card${active}" data-id="${p.id}" onclick="selectPage('${p.id}')">
+          <div class="card-thumb">
+            <div class="thumb-scaler" data-src="${p.url}">
+              <iframe src="" loading="lazy" title="${p.title}"></iframe>
+            </div>
+            <a class="card-open-btn" href="${p.url}" target="_blank" onclick="event.stopPropagation()" title="Open in new tab">↗</a>
+          </div>
+          <div class="card-body">
+            <div class="card-title">${p.title}</div>
+            <div class="card-meta">
+              <span class="card-tag t-${p.category}">${CAT_LABEL[p.category]}</span>
+              <span class="card-date">${fmtDate(p.date)}</span>
+            </div>
+          </div>
+        </div>`;
+    }
+  </script>
 
 </body>
 </html>
