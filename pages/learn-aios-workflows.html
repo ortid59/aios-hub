@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workflows & Recurring Tasks — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8;   --blue-light:#EFF6FF;  --blue-mid:#BFDBFE;
+      --teal:#0D9488;   --teal-light:#F0FDFA;  --teal-mid:#99F6E4;
+      --gold:#B45309;   --gold-light:#FFFBEB;  --gold-mid:#FDE68A;
+      --green:#15803D;  --green-light:#F0FDF4; --green-mid:#BBF7D0;
+      --emerald:#059669; --em-light:#ECFDF5;   --em-mid:#A7F3D0;
+      --ink:#0F172A;    --ink-dim:#64748B;     --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8;       --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--em-light); color: var(--emerald); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--emerald); border-left-color: var(--emerald); background: var(--em-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--em-light); color: var(--emerald); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--emerald); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.green  { background: var(--em-light);   border-left: 3px solid var(--emerald); }
+    .callout.blue   { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.gold   { background: var(--gold-light);  border-left: 3px solid var(--gold); }
+    .callout.teal   { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Bandwidth visual */
+    .bandwidth-grid { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 0; align-items: center; margin: 24px 0; }
+    .bw-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 18px 16px; }
+    .bw-card.before { border-color: #FECACA; }
+    .bw-card.after  { border-color: var(--em-mid); }
+    .bw-arrow { text-align: center; font-size: 18px; color: var(--ink-faint); }
+    .bw-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+    .bw-card.before .bw-label { color: #DC2626; }
+    .bw-card.after  .bw-label { color: var(--emerald); }
+    .bw-bar { height: 8px; border-radius: 100px; margin-bottom: 4px; }
+    .bar-red  { background: #FECACA; }
+    .bar-wide { width: 85%; background: #FCA5A5; }
+    .bar-narrow { width: 15%; background: var(--em-mid); }
+    .bw-bar.after-in   { width: 20%; background: #BBF7D0; }
+    .bw-bar.after-on   { width: 80%; background: var(--emerald); }
+    .bw-desc { font-size: 11px; color: var(--ink-dim); margin-top: 6px; line-height: 1.5; }
+
+    /* Two workflow types */
+    .wf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .wf-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; }
+    .wf-card.augmented { border-color: var(--blue-mid); }
+    .wf-card.automated { border-color: var(--em-mid); }
+    .wf-icon  { font-size: 24px; margin-bottom: 8px; }
+    .wf-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    .wf-card.augmented .wf-label { color: var(--blue); }
+    .wf-card.automated .wf-label { color: var(--emerald); }
+    .wf-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .wf-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; margin-bottom: 10px; }
+    .wf-how   { font-size: 11px; font-weight: 600; }
+    .wf-card.augmented .wf-how { color: var(--blue); }
+    .wf-card.automated .wf-how { color: var(--emerald); }
+
+    /* Slash command anatomy */
+    .cmd-anatomy { border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .cmd-header { padding: 12px 18px; background: #1E293B; color: #94A3B8; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .cmd-step { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .cmd-step:last-child { border-bottom: none; }
+    .cmd-n { width: 22px; height: 22px; border-radius: 50%; background: var(--blue-light); color: var(--blue); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .cmd-content .cmd-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .cmd-content .cmd-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Skills vs Commands */
+    .sv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .sv-header { grid-column: 1/-1; padding: 12px 20px; background: #1E293B; color: #94A3B8; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .sv-col { background: var(--surface); padding: 18px; }
+    .sv-col.left { border-right: 1px solid var(--border); }
+    .sv-col-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .sv-badge { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .badge-cmd { background: var(--blue-mid);  color: var(--blue); }
+    .badge-skl { background: var(--gold-mid);  color: var(--gold); }
+    .sv-traits { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .sv-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .sv-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .left  .sv-dot { background: var(--blue); }
+    .right .sv-dot { background: var(--gold); }
+
+    /* Automated types */
+    .auto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .auto-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 18px; }
+    .auto-card.cron { border-color: var(--em-mid); }
+    .auto-card.trig { border-color: var(--teal-mid); }
+    .auto-icon { font-size: 22px; margin-bottom: 8px; }
+    .auto-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    .auto-card.cron .auto-label { color: var(--emerald); }
+    .auto-card.trig .auto-label { color: var(--teal); }
+    .auto-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .auto-traits { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .auto-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .auto-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .cron .auto-dot { background: var(--emerald); }
+    .trig .auto-dot { background: var(--teal); }
+
+    /* Cron schedule */
+    .cron-table { border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .cron-head { display: grid; grid-template-columns: 80px 1fr; padding: 10px 18px; background: #1E293B; gap: 16px; }
+    .cron-head-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #64748B; }
+    .cron-row { display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: flex-start; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .cron-row:last-child { border-bottom: none; }
+    .cron-time { font-family: 'SF Mono', monospace; font-size: 12px; font-weight: 700; color: var(--emerald); padding-top: 2px; }
+    .cron-info { }
+    .cron-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .cron-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Explore command */
+    .explore-flow { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .explore-step { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .explore-step:last-child { border-bottom: none; }
+    .explore-n { width: 26px; height: 26px; border-radius: 50%; background: var(--em-light); color: var(--emerald); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .explore-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .explore-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Task audit table */
+    .task-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .task-cat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
+    .task-cat-title { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .task-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .task-item { font-size: 12px; color: var(--ink-dim); display: flex; gap: 6px; line-height: 1.4; }
+    .task-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--ink-faint); flex-shrink: 0; margin-top: 5px; }
+
+    /* Feature list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--emerald); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--emerald); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .wf-grid, .auto-grid, .sv-grid, .bandwidth-grid, .tk-grid, .task-categories, .related-grid { grid-template-columns: 1fr; }
+      .sv-col.left { border-right: none; border-bottom: 1px solid var(--border); }
+      .bw-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Workflows & Recurring Tasks</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"  class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#bandwidth" class="sidebar-link"><span class="sidebar-step">1</span> The Bandwidth Problem</a>
+    <a href="#audit"     class="sidebar-link"><span class="sidebar-step">2</span> The Task Audit</a>
+    <a href="#two-types" class="sidebar-link"><span class="sidebar-step">3</span> Two Types of Workflows</a>
+    <a href="#augmented" class="sidebar-link"><span class="sidebar-step">4</span> Augmented — Slash Commands</a>
+    <a href="#skills-vs" class="sidebar-link"><span class="sidebar-step">5</span> Skills vs. Commands</a>
+    <a href="#automated" class="sidebar-link"><span class="sidebar-step">6</span> Automated — Cron & Triggers</a>
+    <a href="#schedule"  class="sidebar-link"><span class="sidebar-step">7</span> Example Cron Schedule</a>
+    <a href="#explore"   class="sidebar-link"><span class="sidebar-step">8</span> /explore — Build New Automations</a>
+    <a href="#memory"    class="sidebar-link"><span class="sidebar-step">9</span> Memory & Workspace Health</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways" class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+    <a href="#homework"  class="sidebar-link"><span class="sidebar-step">→</span> Homework</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">⚡ Workflows & Automation</div>
+      <h1 class="module-title">Workflows & Recurring Tasks</h1>
+      <p class="module-subtitle">
+        This is where Context OS and Data OS start paying off. You've built the foundation —
+        now you systematically audit what you're doing manually, identify what can be automated,
+        and start freeing up bandwidth to work on the business instead of in it.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~30 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Builds on Setup, Context OS & Data OS</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Real examples from a live system</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — BANDWIDTH -->
+    <section class="section" id="bandwidth">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">The Bandwidth Problem — Working IN vs. ON the Business</h2>
+      <p class="section-body">
+        Most founders are running at 10–20% available bandwidth for strategic work. The rest is consumed
+        by operational tasks — filming, scripting, handling support, writing proposals, taking sales calls,
+        managing deliveries. You're working <em>in</em> the business constantly, and you never have enough time
+        to work <em>on</em> it.
+      </p>
+      <p class="section-body">
+        The cliché is true: spending all your time keeping the flow going means you're not doing anything
+        to actually move forward. And then you wonder why things aren't growing. The goal of everything
+        we're building is to shrink that in-business load down as far as possible.
+      </p>
+
+      <div class="bandwidth-grid">
+        <div class="bw-card before">
+          <div class="bw-label">Before AIOS</div>
+          <div class="bw-bar bar-wide"></div>
+          <div class="bw-desc" style="color:#DC2626;font-weight:600;">80–90% — Working IN the business</div>
+          <div class="bw-bar bar-narrow" style="margin-top:4px;"></div>
+          <div class="bw-desc">10–20% — Working ON the business</div>
+          <div class="bw-desc" style="margin-top:8px;">Content, support, proposals, delivery, admin. Day after day. No room to build.</div>
+        </div>
+        <div class="bw-arrow">→</div>
+        <div class="bw-card after">
+          <div class="bw-label">After AIOS</div>
+          <div class="bw-bar after-in"></div>
+          <div class="bw-desc" style="color:var(--emerald);font-weight:600;">~20% — Minimum unavoidable in-business</div>
+          <div class="bw-bar after-on" style="margin-top:4px;"></div>
+          <div class="bw-desc" style="color:var(--emerald);font-weight:600;">~80% — Working ON the business</div>
+          <div class="bw-desc" style="margin-top:8px;">New channels. New offers. New systems. New hires. The work that actually grows things.</div>
+        </div>
+      </div>
+
+      <div class="callout green">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The real payoff:</strong> When you finally free up this bandwidth, you don't just get time
+          back — you have the most powerful AI business assistant you've ever had, with full context of
+          everything, ready to apply full force to whatever you put in front of it. All that freed time,
+          plus an AI co-CEO that knows your business inside out. That's when the compounding starts.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — TASK AUDIT -->
+    <section class="section" id="audit">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The Task Audit — Map What You Currently Do</h2>
+      <p class="section-body">
+        Before you build a single automation, get everything you currently do out onto paper.
+        Not what you <em>could</em> do, not what you <em>want</em> to do — what you are actually doing
+        right now, day to day, that takes up your time.
+      </p>
+
+      <div class="callout gold">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Scope discipline is critical.</strong> When you do this exercise, you'll get excited and start
+          adding things that aren't on your current plate — "I should build a tool for my sales reps,"
+          "I should set up a new content channel." Stop. Those go on a separate <strong>initiatives list</strong>
+          for when you have freed bandwidth. The audit is only for tasks you are currently doing.
+        </div>
+      </div>
+
+      <p class="section-body">
+        Here's an example of what a real task audit looks like across a business with multiple functions.
+        Map your own version before you decide what to automate:
+      </p>
+
+      <div class="task-categories">
+        <div class="task-cat">
+          <div class="task-cat-title">Content</div>
+          <ul class="task-list">
+            <li class="task-item"><span class="task-dot"></span>Content ideation and planning</li>
+            <li class="task-item"><span class="task-dot"></span>Scripting and filming scheduling</li>
+            <li class="task-item"><span class="task-dot"></span>Repurposing across platforms</li>
+            <li class="task-item"><span class="task-dot"></span>Publishing and distribution</li>
+            <li class="task-item"><span class="task-dot"></span>Performance monitoring</li>
+          </ul>
+        </div>
+        <div class="task-cat">
+          <div class="task-cat-title">Agency / Client Work</div>
+          <ul class="task-list">
+            <li class="task-item"><span class="task-dot"></span>Discovery call prep and follow-up</li>
+            <li class="task-item"><span class="task-dot"></span>Proposal writing and scoping</li>
+            <li class="task-item"><span class="task-dot"></span>Project management and status</li>
+            <li class="task-item"><span class="task-dot"></span>Technical delivery review</li>
+            <li class="task-item"><span class="task-dot"></span>Funnel analytics and reporting</li>
+          </ul>
+        </div>
+        <div class="task-cat">
+          <div class="task-cat-title">Education / Community</div>
+          <ul class="task-list">
+            <li class="task-item"><span class="task-dot"></span>Workshop planning and prep</li>
+            <li class="task-item"><span class="task-dot"></span>Module writing and production</li>
+            <li class="task-item"><span class="task-dot"></span>Community monitoring and response</li>
+            <li class="task-item"><span class="task-dot"></span>Student progress analysis</li>
+          </ul>
+        </div>
+        <div class="task-cat">
+          <div class="task-cat-title">Operations</div>
+          <ul class="task-list">
+            <li class="task-item"><span class="task-dot"></span>Data review and business reporting</li>
+            <li class="task-item"><span class="task-dot"></span>Feature prioritization (SaaS)</li>
+            <li class="task-item"><span class="task-dot"></span>Team communication and strategy</li>
+            <li class="task-item"><span class="task-dot"></span>Sales pipeline management</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="section-body">
+        Once you have your list, sort each task into: <strong>augment</strong> (AI helps me do it faster)
+        or <strong>automate</strong> (AI does it without me). The distinction determines which type
+        of workflow to build.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — TWO TYPES -->
+    <section class="section" id="two-types">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Two Types of Workflows</h2>
+      <p class="section-body">
+        Every task on your list falls into one of two buckets. Most things start as augmented and
+        graduate to automated once you've refined them enough to trust the output without being in the loop.
+      </p>
+
+      <div class="wf-grid">
+        <div class="wf-card augmented">
+          <div class="wf-icon">🤝</div>
+          <div class="wf-label">Type 1</div>
+          <div class="wf-title">Augmented Workflows</div>
+          <div class="wf-desc">
+            You and AI work together — faster and better than you alone. You invoke a slash command,
+            the workflow guides you through a structured process, AI does the heavy lifting, you provide
+            direction and final judgment.
+          </div>
+          <div class="wf-how">→ Built with slash commands</div>
+        </div>
+        <div class="wf-card automated">
+          <div class="wf-icon">⚙️</div>
+          <div class="wf-label">Type 2</div>
+          <div class="wf-title">Automated Workflows</div>
+          <div class="wf-desc">
+            AI runs the task without you — on a schedule or triggered by an event. You review outputs
+            rather than run the process. Works for tasks that are well-defined, low-risk, and where
+            you've already dialed in the quality through augmented use.
+          </div>
+          <div class="wf-how">→ Built with cron jobs or triggers</div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🔄</div>
+        <div class="callout-body">
+          <strong>The natural upgrade path:</strong> Most tasks start as augmented. You run the workflow
+          yourself, refine it, dial in the quality. Once you trust it — once you stop correcting the same
+          things each time — you graduate it to automated. Never try to automate something you haven't
+          first run in augmented mode many times.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — AUGMENTED -->
+    <section class="section" id="augmented">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Augmented Workflows — Slash Commands</h2>
+      <p class="section-body">
+        Augmented workflows live in your <code>.claude/commands/</code> folder as markdown files.
+        You invoke them with a slash prefix. They walk you through a structured process —
+        asking questions, pulling context, doing research, producing outputs — while keeping you in the loop
+        for judgment calls.
+      </p>
+
+      <div class="callout blue">
+        <div class="callout-icon">🏭</div>
+        <div class="callout-body">
+          <strong>Real example — /course-module (built in a single morning):</strong> A workflow for creating
+          new course content. It reads all the accelerator context, pulls from the database,
+          asks whether this should be a mini / standard / full module, analyzes all dumped materials,
+          and walks you through planning the content — turning a month-long manual process into a day.
+        </div>
+      </div>
+
+      <div class="cmd-anatomy">
+        <div class="cmd-header">How a slash command workflow is structured</div>
+        <div class="cmd-step">
+          <div class="cmd-n">1</div>
+          <div class="cmd-content">
+            <div class="cmd-label">Read context</div>
+            <div class="cmd-desc">Load the relevant context files — business context, course content, agent status, any databases relevant to this workflow.</div>
+          </div>
+        </div>
+        <div class="cmd-step">
+          <div class="cmd-n">2</div>
+          <div class="cmd-content">
+            <div class="cmd-label">Pull and analyze materials</div>
+            <div class="cmd-desc">Gather all inputs — workshop transcripts, community questions, YouTube comments, competitor content — whatever feeds this workflow.</div>
+          </div>
+        </div>
+        <div class="cmd-step">
+          <div class="cmd-n">3</div>
+          <div class="cmd-content">
+            <div class="cmd-label">Shape and scope — chat back and forth</div>
+            <div class="cmd-desc">Ask clarifying questions. Is this mini / standard / full? What angle? What audience? Get clear before doing any heavy lifting.</div>
+          </div>
+        </div>
+        <div class="cmd-step">
+          <div class="cmd-n">4</div>
+          <div class="cmd-content">
+            <div class="cmd-label">Execute with your input</div>
+            <div class="cmd-desc">Build the output — draft, plan, analysis, content — with you reviewing and directing at key decision points.</div>
+          </div>
+        </div>
+        <div class="cmd-step">
+          <div class="cmd-n">5</div>
+          <div class="cmd-content">
+            <div class="cmd-label">Output to files</div>
+            <div class="cmd-desc">Save the result to the appropriate folder. Plans to <code>plans/</code>, deliverables to <code>outputs/</code>. Always structured so you can find and reference it later.</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-body">
+        Any task on your audit list that requires your creative input or judgment — content ideation,
+        proposal writing, strategic planning — is a candidate for an augmented slash command.
+        Build the methodology once, run it many times.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — SKILLS VS COMMANDS -->
+    <section class="section" id="skills-vs">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Skills vs. Commands — Which to Use</h2>
+      <p class="section-body">
+        Both are invocable with a slash prefix. The difference is weight and structure.
+        For most workflows, a slash command is the right choice. Skills are for when
+        you need to bundle reference materials, examples, or scripts alongside the workflow itself.
+      </p>
+
+      <div class="sv-grid">
+        <div class="sv-header">When to use each</div>
+        <div class="sv-col left">
+          <div class="sv-col-title">Slash Commands <span class="sv-badge badge-cmd">Lightweight</span></div>
+          <ul class="sv-traits">
+            <li class="sv-trait"><span class="sv-dot"></span>Single markdown file in <code>.claude/commands/</code></li>
+            <li class="sv-trait"><span class="sv-dot"></span>Best for most workflows — structured process, step-by-step instructions</li>
+            <li class="sv-trait"><span class="sv-dot"></span>Can reference scripts and context files already in the workspace</li>
+            <li class="sv-trait"><span class="sv-dot"></span>Quick to build, easy to iterate on</li>
+            <li class="sv-trait"><span class="sv-dot"></span>The default choice — prefer this unless you need more</li>
+          </ul>
+        </div>
+        <div class="sv-col right">
+          <div class="sv-col-title">Skills <span class="sv-badge badge-skl">Heavier</span></div>
+          <ul class="sv-traits">
+            <li class="sv-trait"><span class="sv-dot"></span>Full folder with <code>SKILL.md</code> + references, examples, scripts subdirectories</li>
+            <li class="sv-trait"><span class="sv-dot"></span>Better when the workflow needs bundled reference materials alongside it</li>
+            <li class="sv-trait"><span class="sv-dot"></span>Examples: AIOS visual skill (includes design reference library), funnel generation skill (includes templates)</li>
+            <li class="sv-trait"><span class="sv-dot"></span>Worth the overhead only when you have associated assets to ship with the workflow</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — AUTOMATED -->
+    <section class="section" id="automated">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Automated Workflows — Cron Jobs & Triggers</h2>
+      <p class="section-body">
+        Once a workflow is refined to the point where you trust the output without being in the loop,
+        you disconnect yourself from it. It runs on a schedule or fires on an event. You review results.
+        Two mechanisms to know:
+      </p>
+
+      <div class="auto-grid">
+        <div class="auto-card cron">
+          <div class="auto-icon">⏰</div>
+          <div class="auto-label">Type A</div>
+          <div class="auto-title">Cron Jobs — Time-based</div>
+          <ul class="auto-traits">
+            <li class="auto-trait"><span class="auto-dot"></span>Run at a fixed time — daily, weekly, hourly</li>
+            <li class="auto-trait"><span class="auto-dot"></span>macOS: use Launch daemon (<code>launchd</code>) for reliable scheduling even after restarts</li>
+            <li class="auto-trait"><span class="auto-dot"></span>Keep laptop plugged in and open overnight so jobs run as scheduled</li>
+            <li class="auto-trait"><span class="auto-dot"></span>More deterministic and controlled than OpenClaude-style setups</li>
+            <li class="auto-trait"><span class="auto-dot"></span>Best for: data collection, daily brief, regular audits, weekly planning</li>
+          </ul>
+        </div>
+        <div class="auto-card trig">
+          <div class="auto-icon">⚡</div>
+          <div class="auto-label">Type B</div>
+          <div class="auto-title">Trigger-based — Event-driven</div>
+          <ul class="auto-traits">
+            <li class="auto-trait"><span class="auto-dot"></span><strong>Instant trigger:</strong> Something happens → do X immediately (e.g., Telegram message received → process it now)</li>
+            <li class="auto-trait"><span class="auto-dot"></span><strong>Polling trigger:</strong> Check every 15 minutes if something changed — good for non-urgent events like voice memo processing</li>
+            <li class="auto-trait"><span class="auto-dot"></span>Choose instant when timing matters; polling when eventual processing is fine</li>
+            <li class="auto-trait"><span class="auto-dot"></span>Best for: file watchers, inbound messages, status changes in external systems</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout green">
+        <div class="callout-icon">🔧</div>
+        <div class="callout-body">
+          <strong>How to set up a cron job:</strong> Just ask Claude Code — "I want to set up a cron job
+          at 6 AM that runs my data collection script." It will configure macOS <code>launchd</code>,
+          write the necessary plist file, and walk you through testing it. You don't need to know
+          launchd syntax. The workflow is: build the slash command first, refine it through augmented use,
+          then wire it to a cron when you're ready to step back.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — EXAMPLE SCHEDULE -->
+    <section class="section" id="schedule">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">A Real Cron Schedule — What's Actually Running</h2>
+      <p class="section-body">
+        Here's the actual automated schedule running inside a live business. This is what
+        "work happens while you sleep" looks like in practice. Each job was built as an augmented
+        workflow first, refined over many runs, then wired to a cron.
+      </p>
+
+      <div class="cron-table">
+        <div class="cron-head">
+          <div class="cron-head-label">Time</div>
+          <div class="cron-head-label">Job</div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">05:30</div>
+          <div class="cron-info">
+            <div class="cron-name">Data Collection</div>
+            <div class="cron-desc">Scripts pull from all APIs — YouTube, Google Analytics, Bitly, Stripe, Calendly, Google Sheets. Takes daily snapshots, writes to local database. The Data OS layer running automatically.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">06:00</div>
+          <div class="cron-info">
+            <div class="cron-name">AI Model Tracker (AI Doc Scan)</div>
+            <div class="cron-desc">Pings LM Arena API, compares top models against current workspace docs. If something changed: researches the new model (API docs, use cases, integration snippets), updates the AI reference docs so Claude Code always knows the best model for every task.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">06:30</div>
+          <div class="cron-info">
+            <div class="cron-name">Data Audit</div>
+            <div class="cron-desc">AI agent reviews everything collected. Checks for gaps, errors, anomalies. Fixes issues on the spot. Generates a report of what ran, what broke, and suggestions for system improvement. Data quality gatekeeper.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">07:00</div>
+          <div class="cron-info">
+            <div class="cron-name">Daily Digest</div>
+            <div class="cron-desc">Pulls all collected data + Fireflies meeting intelligence from the past day. Assembles a full business brief: what happened, key metrics, anything unusual. Sends to Telegram + saves PDF to outputs/ for reference.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">Sun 08:00</div>
+          <div class="cron-info">
+            <div class="cron-name">Memory Prune</div>
+            <div class="cron-desc">Claude Code accumulates memory during chats that fills token space. Weekly: exports all memory, compares against existing context docs, extracts anything valuable and updates context files, then wipes the memory clean. Keeps context lean for maximum intelligence per session.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">Weekly</div>
+          <div class="cron-info">
+            <div class="cron-name">Workspace Audit (planned)</div>
+            <div class="cron-desc">Check for trash files, archive old plans and outputs, ensure folder structure is clean and findable. Keeps the workspace organized as it grows. The workspace itself needs hygiene maintenance — build this early before it becomes unwieldy.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">📐</div>
+        <div class="callout-body">
+          <strong>The sequencing matters:</strong> Data collection runs first (5:30 AM), then the digest
+          (7:00 AM) can pull from fresh data. The audit (6:30 AM) runs between them — catching data errors
+          before they get summarized into the brief. Order your cron jobs to respect dependencies.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — EXPLORE -->
+    <section class="section" id="explore">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">/explore — From Idea to Built Automation</h2>
+      <p class="section-body">
+        When you have a new automation idea but aren't sure how to build it or what's technically
+        feasible, <code>/explore</code> is your starting point. It takes you from a rough description
+        through a structured discovery process — producing a full exploration document you can then
+        hand to a fresh implementation agent.
+      </p>
+
+      <div class="explore-flow">
+        <div class="explore-step">
+          <div class="explore-n">1</div>
+          <div>
+            <div class="explore-label">Discovery — get clear on what you want</div>
+            <div class="explore-desc">Describe the idea. The command asks clarifying questions: what's the trigger, what's the output, who reviews it, what data does it need? Sharpens the vague idea into a concrete scope.</div>
+          </div>
+        </div>
+        <div class="explore-step">
+          <div class="explore-n">2</div>
+          <div>
+            <div class="explore-label">Research — find the best technical approach</div>
+            <div class="explore-desc">Searches the web and your existing workspace. Finds APIs, libraries, patterns that can be used. Checks what you've already built that could be reused. Surfaces options you wouldn't have known to look for.</div>
+          </div>
+        </div>
+        <div class="explore-step">
+          <div class="explore-n">3</div>
+          <div>
+            <div class="explore-label">Shaping — define and confirm the feature</div>
+            <div class="explore-desc">Chat back and forth until it's super clear. Confirms the scope, the data sources, the output format, the delivery mechanism (Telegram, file, dashboard, etc.). No surprises in implementation.</div>
+          </div>
+        </div>
+        <div class="explore-step">
+          <div class="explore-n">4</div>
+          <div>
+            <div class="explore-label">Full exploration document generated</div>
+            <div class="explore-desc">Produces a complete spec doc — architecture, data flow, technical approach, edge cases, implementation steps. Hand this directly to a fresh primed agent with <code>/implement</code>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout green">
+        <div class="callout-icon">🎙</div>
+        <div class="callout-body">
+          <strong>Voice + /explore = maximum speed.</strong> Turn on voice input (Whisper Flow or any voice-to-text),
+          run <code>/explore</code>, and talk through the idea. The discovery phase handles the back-and-forth.
+          You don't need to type out a specification — just describe what you want to build in plain English
+          and let the command structure it into something buildable.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 9 — MEMORY -->
+    <section class="section" id="memory">
+      <div class="section-number">Section 09</div>
+      <h2 class="section-title">Memory & Workspace Health</h2>
+      <p class="section-body">
+        Two things that become important as your workspace grows: Claude's memory filling up
+        (costing you token space and intelligence per session), and your workspace structure drifting
+        into disorganized territory (making it hard to find things). Both need ongoing maintenance.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Claude's memory fills token space.</strong> When you run <code>/context</code>, you'll see how many tokens are used by memory vs. tools vs. system. If memory files are bloated, you're giving up intelligence capacity every session. The Sunday memory prune automates the cleanup.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Memory prune workflow:</strong> Export all Claude memory → compare against existing context docs → extract anything valuable and update the context files → wipe memory clean. Result: fresh memory space, no lost learnings, context docs get richer over time.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Workspace audit:</strong> As you ship new commands, plans, and outputs, the workspace accumulates clutter — old plans that were superseded, outputs that should be archived, scripts that are no longer used. A weekly workspace audit cron checks for trash, archives stale files, and confirms the structure is still navigable.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Keep CLAUDE.md in sync.</strong> Every time you add a new command, script, or structural change, the workspace can drift from what CLAUDE.md documents. The implement command should include a documentation step — but spot-check CLAUDE.md regularly to ensure it still reflects reality.</span>
+        </li>
+      </ul>
+
+      <div class="callout gold">
+        <div class="callout-icon">🧹</div>
+        <div class="callout-body">
+          <strong>A workspace that runs your business needs to be maintainable.</strong> The more you add,
+          the more important hygiene becomes. Build the workspace audit and memory prune early —
+          before the workspace grows to the point where finding anything requires a search.
+          These are small automations with large quality-of-life payoffs.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">Scope the audit to what you currently do</div>
+          <div class="tk-desc">Write down existing tasks only. Not what you wish you did or could do — what you actually do every day. Everything else is an initiative for later.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Augmented first, automated later</div>
+          <div class="tk-desc">Every automation starts as an augmented slash command. Run it yourself. Refine it. Only graduate to automated when you trust the output without being in the loop.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">Cron and triggers serve different needs</div>
+          <div class="tk-desc">Time-based (cron): data collection, daily brief, weekly audits. Event-based (trigger): inbound messages, file changes, status updates. Choose based on whether timing matters or eventual processing is fine.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Keep the machine running overnight</div>
+          <div class="tk-desc">Your cron jobs run while you sleep — but only if the machine stays on. Laptop plugged in, lid open, sleep disabled. Eventually move to a Mac Mini or VPS for always-on reliability.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">/explore turns ideas into specs</div>
+          <div class="tk-desc">Don't try to spec new automations in your head. Use /explore with voice input to go from rough idea → discovery → research → shaped spec → implementation-ready document. Pair with a fresh /implement agent.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">Memory prune and workspace audit are non-optional maintenance</div>
+          <div class="tk-desc">Claude's memory fills up and costs token space. Your workspace accumulates clutter. Both degrade performance over time. Automate the cleanup from day one — don't wait until things feel broken.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- HOMEWORK -->
+    <section class="section" id="homework">
+      <div class="section-number">Homework</div>
+      <h2 class="section-title">Do This Before the Next Session</h2>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Write your task audit.</strong> Get everything you currently do on paper. Every business function, every recurring task, every daily thing that takes time. Don't filter — just list. Aim for 20–40 items. This is your automation backlog.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Separate tasks from initiatives.</strong> Go through your list and mark each as: "I currently do this" (task → automate) or "I wish I could do this" (initiative → defer). Move all initiatives to a separate list to tackle when you have freed bandwidth.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Pick your first augmented slash command.</strong> Find the most repetitive task on your list that involves creative input. Use <code>/explore</code> (or <code>/create-plan</code>) to map out what the workflow would look like. Build it. Run it 5 times this week.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Wire your data collection to a cron (if you haven't).</strong> If you set up data OS connectors from the previous session, get them on a 5:30 AM schedule. Start the snapshot clock now. Every day without it is data you'll never have.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Set up the memory prune cron.</strong> Ask Claude Code to set up a weekly Sunday memory prune. It will write the workflow and configure the cron. This is a small thing with compounding returns — a clean, lean context every week.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-data-os.html" class="related-card">
+          <div class="rc-tag">Prerequisite</div>
+          <div class="rc-title">Data OS</div>
+          <div class="rc-sub">The data collection cron jobs covered here depend on the connectors and database built in Data OS.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="rc-tag">Building blocks</div>
+          <div class="rc-title">AIOS Automation Primitives</div>
+          <div class="rc-sub">Slash commands are Workflows. Cron scripts are Scripts. Capabilities power them both. Understand the architecture.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-builder-mindset.html" class="related-card">
+          <div class="rc-tag">Strategy</div>
+          <div class="rc-title">Thinking Like an AIOS Builder</div>
+          <div class="rc-sub">The task audit → automation → initiative cycle is covered in depth in the builder mindset module.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

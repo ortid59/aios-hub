@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIOS Mastermind Recap — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8;   --blue-light:#EFF6FF;  --blue-mid:#BFDBFE;
+      --teal:#0D9488;   --teal-light:#F0FDFA;  --teal-mid:#99F6E4;
+      --gold:#B45309;   --gold-light:#FFFBEB;  --gold-mid:#FDE68A;
+      --rose:#E11D48;   --rose-light:#FFF1F2;  --rose-mid:#FECDD3;
+      --slate:#334155;  --slate-light:#F1F5F9; --slate-mid:#CBD5E1;
+      --ink:#0F172A;    --ink-dim:#64748B;     --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8;       --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--rose-light); color: var(--rose); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--rose); border-left-color: var(--rose); background: var(--rose-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--rose); border-color: var(--rose); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--rose-light); color: var(--rose); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rose); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.rose   { background: var(--rose-light);  border-left: 3px solid var(--rose); }
+    .callout.teal   { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout.blue   { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.gold   { background: var(--gold-light);  border-left: 3px solid var(--gold); }
+    .callout.slate  { background: var(--slate-light); border-left: 3px solid var(--slate); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Attendees */
+    .attendees-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 20px 0; }
+    .attendee-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
+    .att-name  { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .att-biz   { font-size: 12px; color: var(--ink-dim); margin-bottom: 4px; }
+    .att-level { display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .level-0 { background: var(--slate-light); color: var(--slate); }
+    .level-1 { background: var(--blue-light);  color: var(--blue); }
+    .level-2 { background: var(--teal-light);  color: var(--teal); }
+
+    /* Automation spectrum */
+    .spectrum-bar { display: flex; gap: 2px; margin: 20px 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .spec-col { flex: 1; padding: 16px 14px; background: var(--surface); border-right: 1px solid var(--border); }
+    .spec-col:last-child { border-right: none; }
+    .spec-pct { font-size: 22px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 4px; }
+    .s0 .spec-pct { color: var(--ink-faint); }
+    .s1 .spec-pct { color: var(--blue); }
+    .s2 .spec-pct { color: var(--teal); }
+    .s3 .spec-pct { color: var(--gold); }
+    .s4 .spec-pct { color: var(--rose); }
+    .spec-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .spec-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+    .spec-tool  { margin-top: 8px; font-size: 10px; font-weight: 600; color: var(--ink-faint); }
+    .s0 .spec-tool { color: var(--slate); }
+    .s1 .spec-tool { color: var(--blue); }
+    .s2 .spec-tool { color: var(--teal); }
+    .s3 .spec-tool { color: var(--gold); }
+    .s4 .spec-tool { color: var(--rose); }
+
+    /* Risk dimension */
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .risk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .risk-card.high { border-color: var(--rose-mid); }
+    .risk-card.low  { border-color: var(--teal-mid); }
+    .risk-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    .risk-card.high .risk-label { color: var(--rose); }
+    .risk-card.low  .risk-label { color: var(--teal); }
+    .risk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .risk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Skills taxonomy */
+    .taxonomy { border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .tax-header { padding: 12px 18px; background: #1E293B; color: #94A3B8; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .tax-row { display: grid; grid-template-columns: 140px 1fr; gap: 14px; align-items: flex-start; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .tax-row:last-child { border-bottom: none; }
+    .tax-type { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 100px; text-align: center; white-space: nowrap; }
+    .type-capability { background: var(--blue-light);  color: var(--blue); }
+    .type-command    { background: var(--gold-light);  color: var(--gold); }
+    .type-skill      { background: var(--teal-light);  color: var(--teal); }
+    .tax-content .tax-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .tax-content .tax-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .tax-content .tax-key  { margin-top: 4px; font-size: 11px; color: var(--ink-faint); }
+
+    /* Workflow anatomy */
+    .workflow-steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .wf-step { display: flex; align-items: flex-start; gap: 14px; padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .wf-step:last-child { border-bottom: none; }
+    .wf-n { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; }
+    .n-manual { background: var(--slate-light); color: var(--slate); }
+    .n-aug    { background: var(--blue-light);  color: var(--blue); }
+    .n-auto   { background: var(--teal-light);  color: var(--teal); }
+    .wf-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .wf-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.55; }
+    .wf-who   { font-size: 10px; font-weight: 600; margin-top: 4px; }
+    .wf-step.manual  .wf-who { color: var(--slate); }
+    .wf-step.augment .wf-who { color: var(--blue); }
+    .wf-step.automate .wf-who { color: var(--teal); }
+
+    /* Code + natural language */
+    .hybrid-visual { background: #1E293B; border-radius: var(--radius-xl); padding: 20px; margin: 20px 0; }
+    .hv-row { display: grid; grid-template-columns: 1fr 24px 1fr; gap: 12px; align-items: center; margin-bottom: 12px; }
+    .hv-row:last-child { margin-bottom: 0; }
+    .hv-block { padding: 10px 14px; border-radius: var(--radius-md); font-size: 12px; line-height: 1.55; }
+    .hv-code { background: #0F172A; color: #7DD3FC; font-family: 'SF Mono', monospace; }
+    .hv-lang { background: rgba(13,148,136,.15); color: #5EEAD4; }
+    .hv-arrow { text-align: center; color: #475569; font-size: 16px; }
+    .hv-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #64748B; margin-bottom: 6px; }
+
+    /* Feat list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--rose); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--rose); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .attendees-grid, .risk-grid, .tk-grid, .related-grid { grid-template-columns: 1fr; }
+      .spectrum-bar { flex-direction: column; }
+      .spec-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .hv-row { grid-template-columns: 1fr; }
+      .hv-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Mastermind Recap</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"   class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#the-room"   class="sidebar-link"><span class="sidebar-step">1</span> Who Was in the Room</a>
+    <a href="#spectrum"   class="sidebar-link"><span class="sidebar-step">2</span> The Expanded Spectrum</a>
+    <a href="#risk"       class="sidebar-link"><span class="sidebar-step">3</span> The Risk Dimension</a>
+    <a href="#taxonomy"   class="sidebar-link"><span class="sidebar-step">4</span> Skills vs. Commands — Crystallized</a>
+    <a href="#workflow"   class="sidebar-link"><span class="sidebar-step">5</span> Workflow Walk-Through</a>
+    <a href="#hybrid"     class="sidebar-link"><span class="sidebar-step">6</span> Code + Natural Language</a>
+    <a href="#scoring"    class="sidebar-link"><span class="sidebar-step">7</span> Prioritization Heat Map</a>
+    <a href="#team"       class="sidebar-link"><span class="sidebar-step">8</span> Team Sharing via GitHub</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways"  class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🔴 Field Report</div>
+      <h1 class="module-title">AIOS Mastermind Recap &amp; Learnings:<br>My First AIOS-as-a-Service</h1>
+      <p class="module-subtitle">
+        A debrief from a full-day in-person AIOS mastermind with 5 business owners in Cape Town —
+        the first real-world delivery of AIOS as a service. What crystallized: a refined automation spectrum
+        with a new "Supervised" stage, the definitive skills vs. commands taxonomy, and how to walk
+        a complete workflow from manual to automated.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Debrief recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~25 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Field learnings — raw and honest</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">New framework clarifications</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — THE ROOM -->
+    <section class="section" id="the-room">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">Who Was in the Room — Why the Mix Mattered</h2>
+      <p class="section-body">
+        The mastermind was deliberately assembled to include a range of business types, sizes,
+        and AI literacy levels. That mix made the delivery hard — and the learnings rich.
+        Seeing where people got stuck, where they lit up, where the framing needed work —
+        all of that comes from the diversity in the room, not from a homogeneous group.
+      </p>
+
+      <div class="attendees-grid">
+        <div class="attendee-card">
+          <div class="att-name">Richard</div>
+          <div class="att-biz">eLearning platform — corporate training, mid-to-large companies in South Africa. Moving into AI certifications.</div>
+          <div class="att-level level-1">AI user — not yet on Claude Code</div>
+        </div>
+        <div class="attendee-card">
+          <div class="att-name">Brian</div>
+          <div class="att-biz">Venture studio — portfolio of 6–8 ecommerce companies, significant combined turnover. Wife had watched YouTube videos and attended event.</div>
+          <div class="att-level level-1">Basic Claude Code familiarity (wife)</div>
+        </div>
+        <div class="attendee-card">
+          <div class="att-name">Sybil</div>
+          <div class="att-biz">Civil Holiday Brokers — premium travel and holiday property brokerage.</div>
+          <div class="att-level level-0">Occasional ChatGPT user only</div>
+        </div>
+        <div class="attendee-card">
+          <div class="att-name">Linus</div>
+          <div class="att-biz">AI SaaS + voice AI agency — got agency clients through SaaS partnerships without marketing.</div>
+          <div class="att-level level-2">AI fluent — was using CoWork</div>
+        </div>
+        <div class="attendee-card">
+          <div class="att-name">Adrian</div>
+          <div class="att-biz">AI content and training business. Highly AI fluent.</div>
+          <div class="att-level level-2">AI fluent — not yet on Claude Code</div>
+        </div>
+        <div class="attendee-card">
+          <div class="att-name">The exit (special guest)</div>
+          <div class="att-biz">Previously ran an influencer marketing agency — sold for ~£30M. Now advising on next chapter for the Morningside Group.</div>
+          <div class="att-level level-1">Strategic — not a builder</div>
+        </div>
+      </div>
+
+      <div class="callout rose">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The key insight from running this room:</strong> Everyone wanted full automation immediately.
+          Every single person. The job of the session was partly content delivery and partly expectation management —
+          helping them understand that the path to automation runs through augmented, then supervised,
+          before you get to automated. And that this isn't a failure — it's the process.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — EXPANDED SPECTRUM -->
+    <section class="section" id="spectrum">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The Expanded Automation Spectrum — "Supervised" Is New</h2>
+      <p class="section-body">
+        Through the process of teaching this in person, the automation spectrum got refined.
+        A new stage — <strong>Supervised</strong> — crystallized between Augmented and Automated.
+        It's distinct enough to deserve its own name, because the business implications are different.
+      </p>
+
+      <div class="spectrum-bar">
+        <div class="spec-col s0">
+          <div class="spec-pct">0%</div>
+          <div class="spec-label">Manual</div>
+          <div class="spec-desc">Human does every step. May have SOPs or may be ad hoc each time.</div>
+          <div class="spec-tool">SOP or random</div>
+        </div>
+        <div class="spec-col s1">
+          <div class="spec-pct">80%</div>
+          <div class="spec-label">Augmented</div>
+          <div class="spec-desc">You invoke the workflow. AI does 80% of the work. You guide key decision points.</div>
+          <div class="spec-tool">→ Slash commands</div>
+        </div>
+        <div class="spec-col s2">
+          <div class="spec-pct">96%</div>
+          <div class="spec-label">Supervised ← NEW</div>
+          <div class="spec-desc">Runs on a schedule or trigger. You don't initiate it — you just review the outputs afterward.</div>
+          <div class="spec-tool">→ Cron + output review</div>
+        </div>
+        <div class="spec-col s3">
+          <div class="spec-pct">100%</div>
+          <div class="spec-label">Automated</div>
+          <div class="spec-desc">Fully autonomous. Runs, acts, and publishes without any human review loop.</div>
+          <div class="spec-tool">→ Cron + auto-publish</div>
+        </div>
+      </div>
+
+      <p class="section-body">
+        The key distinction between <strong>Supervised</strong> and <strong>Augmented</strong>:
+        Augmented means you invoke it and you're in the loop. Supervised means it runs without
+        you, but you check the batch of outputs before anything ships. It's 96% off your plate
+        mentally — you're not running the process, you're reviewing results.
+      </p>
+
+      <div class="callout teal">
+        <div class="callout-icon">🧠</div>
+        <div class="callout-body">
+          <strong>The mental bandwidth unlock of Supervised:</strong> When a workflow is augmented,
+          it still occupies mental space — you know you have to do it. When it's supervised,
+          it's handled. It runs on Sunday, it produces outputs, you review them Monday.
+          That's a completely different psychological experience of running a business.
+          Freeing mental bandwidth is as valuable as freeing time.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — RISK DIMENSION -->
+    <section class="section" id="risk">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">The Risk Dimension — Picking the Right Level</h2>
+      <p class="section-body">
+        The automation spectrum has a second axis: <strong>business value × business risk</strong>.
+        The right level of automation for any task isn't just about what's technically possible —
+        it's about whether the output going wrong has meaningful consequences.
+      </p>
+
+      <div class="risk-grid">
+        <div class="risk-card low">
+          <div class="risk-label">✓ Safe to fully automate</div>
+          <div class="risk-title">Low value, low risk tasks</div>
+          <div class="risk-desc">
+            Data collection, funnel analytics reports, AI doc scans, status checks, discovery call prep, system pings. If these are wrong or delayed, the consequence is minimal. Full automation is appropriate here — it runs in the background, you don't need to see every output.
+          </div>
+        </div>
+        <div class="risk-card high">
+          <div class="risk-label">⚠ Keep at Supervised or Augmented</div>
+          <div class="risk-title">High value, high visibility tasks</div>
+          <div class="risk-desc">
+            Client-facing content, course material, proposals, strategic decisions, emails to important contacts. If these are wrong, the business consequence is real. These belong at Augmented or Supervised — never fully automated — until you've had extensive, proven output quality across many runs.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>The prioritization question isn't just "can I automate this?" — it's "what's the cost if it goes wrong?"</strong>
+          Scoring tasks on both axes (time saved × cost of error) gives you a heat map of where to focus.
+          High time savings + low error cost = automate first. High time savings + high error cost = augment first,
+          then supervise when you trust it, then evaluate if full automation ever makes sense.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — TAXONOMY -->
+    <section class="section" id="taxonomy">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Skills vs. Commands — The Definitive Taxonomy</h2>
+      <p class="section-body">
+        This is the clarification that finally crystallized through the act of teaching it in person.
+        The terminology of "skills" had been doing too much work — covering things that are
+        fundamentally different. Here's the clean breakdown.
+      </p>
+
+      <div class="taxonomy">
+        <div class="tax-header">Three distinct types — each with a specific role</div>
+        <div class="tax-row">
+          <div class="tax-type type-capability">Capabilities</div>
+          <div class="tax-content">
+            <div class="tax-name">Always-on, non-invocable context skills</div>
+            <div class="tax-desc">Skills with <code>user_invocable: false</code>. Their description stub is injected into every session automatically. The AI sees them at startup and knows when to reach for them — you never call them explicitly. Examples: SuperData (transcripts), Circle API integration, writing style guide.</div>
+            <div class="tax-key">Key signal: you can't slash-invoke them. They just activate when relevant.</div>
+          </div>
+        </div>
+        <div class="tax-row">
+          <div class="tax-type type-command">Commands</div>
+          <div class="tax-content">
+            <div class="tax-name">User-invocable, lightweight, no context injection</div>
+            <div class="tax-desc">Markdown files in <code>.claude/commands/</code>. You invoke them with a slash prefix. Their name appears in the context, but not a full description — so the AI knows they exist but doesn't carry their content in every session. Good for structured step-by-step workflows you run on demand. Example: /create-plan, /prime, /course-module.</div>
+            <div class="tax-key">Key signal: slash-invocable. Description is NOT in the running context by default.</div>
+          </div>
+        </div>
+        <div class="tax-row">
+          <div class="tax-type type-skill">Skills (invocable)</div>
+          <div class="tax-content">
+            <div class="tax-name">User-invocable, with SKILL.md description injected into context</div>
+            <div class="tax-desc">A folder with a <code>SKILL.md</code> entry file. The description stub IS injected into context — the AI always knows what this skill can do and triggers on it when relevant, even if you don't invoke it. Can have sub-folders with examples, references, and scripts. Heavier than commands but expandable. Examples: front-end design skill, thumbnail gen skill.</div>
+            <div class="tax-key">Key signal: SKILL.md description is always in context. Expandable with folders.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">🔑</div>
+        <div class="callout-body">
+          <strong>The core distinction:</strong> Capabilities give the AI always-on awareness of a tool —
+          it reaches for them automatically. Commands are prompt templates you manually trigger —
+          pure step-by-step instructions, name only in context. Skills are the middle ground —
+          invocable like commands, but their description is always in context so the AI can also
+          trigger them autonomously when the situation calls for it.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — WORKFLOW WALK-THROUGH -->
+    <section class="section" id="workflow">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Workflow Walk-Through — Course Module Factory</h2>
+      <p class="section-body">
+        The course module creation workflow was used as the live example to show how a long manual
+        process moves through augmented → supervised. This is also a worked example of how to think
+        through automation planning for any multi-step process.
+      </p>
+
+      <div class="workflow-steps">
+        <div class="wf-step manual">
+          <div class="wf-n n-manual">1</div>
+          <div>
+            <div class="wf-label">Research</div>
+            <div class="wf-desc">Scrape community questions, YouTube comments, competitor content. Identify gaps.</div>
+            <div class="wf-who">Augmented: AI does research → you confirm direction</div>
+          </div>
+        </div>
+        <div class="wf-step augment">
+          <div class="wf-n n-aug">2</div>
+          <div>
+            <div class="wf-label">Ideate</div>
+            <div class="wf-desc">Generate module ideas, topic angles, format decisions (tutorial vs whiteboard vs talking head).</div>
+            <div class="wf-who">Augmented: AI generates → you select + refine</div>
+          </div>
+        </div>
+        <div class="wf-step augment">
+          <div class="wf-n n-aug">3</div>
+          <div>
+            <div class="wf-label">Plan</div>
+            <div class="wf-desc">Structure the module, decide what goes in, what order, what level of depth.</div>
+            <div class="wf-who">Augmented: chat back and forth until clear</div>
+          </div>
+        </div>
+        <div class="wf-step augment">
+          <div class="wf-n n-aug">4</div>
+          <div>
+            <div class="wf-label">Write</div>
+            <div class="wf-desc">Script or outline the content. For talking head / concept content, agent avatar can handle fully.</div>
+            <div class="wf-who">Augmented → Supervised for theory content</div>
+          </div>
+        </div>
+        <div class="wf-step manual">
+          <div class="wf-n n-manual">5</div>
+          <div>
+            <div class="wf-label">Review</div>
+            <div class="wf-desc">Quality check before production. Could eventually pass to team.</div>
+            <div class="wf-who">Manual — or delegated to team</div>
+          </div>
+        </div>
+        <div class="wf-step manual">
+          <div class="wf-n n-manual">6</div>
+          <div>
+            <div class="wf-label">Film</div>
+            <div class="wf-desc">Tutorial content requires on-camera presence. Not automatable for now.</div>
+            <div class="wf-who">Manual (human required)</div>
+          </div>
+        </div>
+        <div class="wf-step augment">
+          <div class="wf-n n-aug">7</div>
+          <div>
+            <div class="wf-label">Edit</div>
+            <div class="wf-desc">Rough cut automation exists. Full editing pipeline is complex but worth pursuing eventually.</div>
+            <div class="wf-who">Augmented (rough cut) → eventual supervised</div>
+          </div>
+        </div>
+        <div class="wf-step automate">
+          <div class="wf-n n-auto">8</div>
+          <div>
+            <div class="wf-label">Publish</div>
+            <div class="wf-desc">Automated publishing to platforms. Low risk, high repeatability — prime candidate for full automation.</div>
+            <div class="wf-who">Automated → full autonomous</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-body">
+        The <strong>Supervised upgrade</strong> for this workflow: every Sunday, the system scrapes
+        community questions, runs the research → ideate → write pipeline autonomously, and delivers
+        5 fully drafted module options. You review and pick on Monday. The mental load of "I need to
+        make course content" disappears from your weekly plate — it's already handled.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — CODE + NATURAL LANGUAGE -->
+    <section class="section" id="hybrid">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Code + Natural Language — Why This Changes Everything</h2>
+      <p class="section-body">
+        The deepest insight from the mastermind: explaining why AIOS-style automation is fundamentally
+        different from everything that came before it. The magic is in wrapping deterministic code
+        with natural language orchestration — what was called the "gooey soft wrapper."
+      </p>
+
+      <div class="hybrid-visual">
+        <div class="hv-label">The old way (Zapier / Make)</div>
+        <div class="hv-row">
+          <div class="hv-block hv-code">Step 1: Load business context<br>Pull doc from Drive v3.2<br>Pull another doc...<br>If condition A → branch X<br>Else → branch Y<br>Node 12 of 40...</div>
+          <div class="hv-arrow">→</div>
+          <div class="hv-block hv-code">Rigid. Brittle. Every edge case = a new node. Error = complete failure. Non-experts can't read or modify it.</div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="hv-label">The AIOS way (code + natural language)</div>
+        <div class="hv-row">
+          <div class="hv-block hv-code">Python script: pull_context.py<br>Python script: fetch_data.py<br>Python script: post_to_platform.py</div>
+          <div class="hv-arrow">+</div>
+          <div class="hv-block hv-lang">"Load the business context, then fetch the latest data. If there's a discrepancy, flag it and continue. Run the analysis and produce 5 options. If anything fails, note it and move to the next step."</div>
+        </div>
+      </div>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Scripts provide the reliability floor.</strong> Deterministic Python/shell scripts that always do the same thing — fetch this data, call this API, write to this file. These are the hard parts that must be exact.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Natural language provides the flexibility ceiling.</strong> The LLM orchestrates when to call which scripts, handles the if/then logic in plain English, reasons through edge cases, and adapts to unexpected situations without needing a new node.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Self-correcting by design.</strong> When something fails, the natural language layer can reason about the failure, try alternatives, log what happened, and continue — all without rigid error-handling code. This is what makes AIOS-style automation so much more robust than n8n flows.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Easily editable by non-engineers.</strong> Changing the workflow is editing a markdown file in plain English, not rewiring a 40-node Zapier diagram. The entire team can read, understand, and propose changes to the automation logic.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — SCORING -->
+    <section class="section" id="scoring">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">The Prioritization Heat Map — What to Build First</h2>
+      <p class="section-body">
+        When you have a task audit with 20–50 items, you need a framework to decide what to automate
+        first. The heat map framework plots each task on two axes. The top-right quadrant is where
+        you start.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Axis 1 — Automation Potential (AP):</strong> How straightforward is this to automate? Is it a repeatable, well-defined process? Does it have clear inputs and outputs? Or is it highly contextual, creative, and judgment-heavy?</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Axis 2 — Expected Value (EV):</strong> How much time and mental bandwidth does this currently consume? What's the business impact if it goes faster or happens automatically? What's the risk if it's wrong?</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Top-right (High AP × High EV) = automate first.</strong> These are your quick wins AND big wins simultaneously. Data collection, daily reports, funnel analytics, research tasks — high value, high repeatability.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Top-left (Low AP × High EV) = augment, not automate.</strong> High value but requires judgment — client proposals, strategic decisions, creative content. Start augmented; move to supervised only when output quality is consistently proven.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>As a practitioner delivering this for clients: you should know this heat map.</strong> A business owner can't evaluate automation feasibility — they don't know what's technically hard. Your job is to look at the task audit, score each item, and tell them where the quick wins and big swings are.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — TEAM SHARING -->
+    <section class="section" id="team">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Team Sharing via GitHub — The Current Best Approach</h2>
+      <p class="section-body">
+        Multiple people on separate AIOS instances who need to share context is still unsolved cleanly.
+        The best current approach uses GitHub as the sync layer. Still rough — but workable for
+        business partners. More dangerous for full team rollouts.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Each person has their own repo.</strong> Your workspace stays yours. Context files, commands, and personal preferences all private. No one touches your machine's files directly.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>A shared repo holds the shared context.</strong> A third GitHub repo that both parties have access to. Contains the shared business strategy, shared data, shared modules that both need to be aware of. A <code>/pull-shared</code> command syncs it down on demand.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Commit flows: each party pushes to their own repo.</strong> Anything that should be shared gets committed to the shared folder. Both can pull it down whenever they need the latest. Git pull = sync.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Business partners = manageable. Team members = dangerous.</strong> When your partner has full git access, you trust them to not break things. When a non-technical team member has write access to your AIOS files — API keys, scripts, context — that's a security and stability risk. Solve permissions before scaling to teams.</span></li>
+      </ul>
+
+      <div class="callout slate">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>This is still being worked out.</strong> Full team sync — where multiple non-technical employees
+          each have a scoped AIOS instance that pulls shared context and stays up to date —
+          is not yet a solved problem. Stay focused on founder-first delivery until a clean
+          methodology exists for team rollouts.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What Crystallized from the Room</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">Everyone wants automation; the path runs through Supervised</div>
+          <div class="tk-desc">In the room, every single business owner wanted full automation on day one. Teaching the spectrum — and why Supervised is the real win before Automated — is as much a mindset shift as a technical education.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Supervised is a distinct and valuable stage</div>
+          <div class="tk-desc">It's not a step toward automated — it's often the right destination. Runs without you, you review outputs, mental bandwidth freed. For high-value tasks with meaningful error risk, Supervised may be the permanent answer.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">Capabilities / Commands / Skills — now clearly defined</div>
+          <div class="tk-desc">Capabilities = always-on, non-invocable, context-injected. Commands = user-invoked, lightweight, no context injection. Skills = user-invocable or AI-triggered, SKILL.md description always in context. Three different tools for three different jobs.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">The "gooey wrapper" is why this beats n8n</div>
+          <div class="tk-desc">Hard scripts for the deterministic parts. Natural language for orchestration, edge cases, and error handling. Self-correcting. Human-readable and editable. What used to be a 40-node diagram is now a markdown file.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">Use the heat map to prioritize delivery</div>
+          <div class="tk-desc">Automation Potential × Expected Value. High AP + High EV = automate first. High EV + Low AP = augment first. As the practitioner, you can read this heat map from the task audit. Your client cannot — that judgment is the value you bring.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">In-person delivery surfaces things you can't see online</div>
+          <div class="tk-desc">The gaps in the framing, the points that confused people, the moments that lit them up — all invisible until you're sitting at a table together. If you can do in-person delivery, do it early and often. The learnings are worth the travel.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="rc-tag">Architecture</div>
+          <div class="rc-title">AIOS Automation Primitives</div>
+          <div class="rc-sub">The original framing of Capabilities, Scripts, and Workflows — now further clarified by this mastermind session.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-workflows.html" class="related-card">
+          <div class="rc-tag">Workflows</div>
+          <div class="rc-title">Workflows &amp; Recurring Tasks</div>
+          <div class="rc-sub">The task audit, augmented vs automated, and cron schedule — the foundation the mastermind built on.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-delivery-spectrum.html" class="related-card">
+          <div class="rc-tag">Delivery</div>
+          <div class="rc-title">The AIOS Delivery Spectrum</div>
+          <div class="rc-sub">Teach / Show / Give packaging, audit methodologies, and the autonomous dev pipeline — the companion session.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

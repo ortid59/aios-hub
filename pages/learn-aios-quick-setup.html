@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Setup with Plug & Play Modules — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8; --blue-light:#EFF6FF; --blue-mid:#BFDBFE;
+      --teal:#0D9488; --teal-light:#F0FDFA; --teal-mid:#99F6E4;
+      --gold:#B45309; --gold-light:#FFFBEB; --gold-mid:#FDE68A;
+      --violet:#7C3AED; --violet-light:#F5F3FF; --violet-mid:#DDD6FE;
+      --ink:#0F172A; --ink-dim:#64748B; --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8; --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--violet-light); color: var(--violet); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--violet); border-left-color: var(--violet); background: var(--violet-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--violet); border-color: var(--violet); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--violet-light); color: var(--violet); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--violet); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.violet { background: var(--violet-light); border-left: 3px solid var(--violet); }
+    .callout.blue   { background: var(--blue-light);   border-left: 3px solid var(--blue); }
+    .callout.teal   { background: var(--teal-light);   border-left: 3px solid var(--teal); }
+    .callout.gold   { background: var(--gold-light);   border-left: 3px solid var(--gold); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Path comparison */
+    .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .path-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; }
+    .path-card.desktop { border-color: var(--teal-mid); }
+    .path-card.vscode  { border-color: var(--blue-mid); }
+    .path-icon { font-size: 24px; margin-bottom: 8px; }
+    .path-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    .desktop .path-label { color: var(--teal); }
+    .vscode  .path-label { color: var(--blue); }
+    .path-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .path-traits { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .path-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .path-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .desktop .path-dot { background: var(--teal); }
+    .vscode  .path-dot { background: var(--blue); }
+
+    /* Desktop steps */
+    .steps-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .step-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .step-row:last-child { border-bottom: none; }
+    .step-n { width: 26px; height: 26px; border-radius: 50%; background: var(--violet-light); color: var(--violet); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-content .step-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .step-content .step-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .step-content .step-cmd   { margin-top: 8px; padding: 6px 12px; background: #1E293B; border-radius: var(--radius-md); font-family: 'SF Mono', monospace; font-size: 11px; color: #7DD3FC; display: inline-block; }
+
+    /* Module library */
+    .module-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 20px 0; }
+    .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
+    .module-order { width: 22px; height: 22px; border-radius: 50%; background: var(--violet-light); color: var(--violet); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .module-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .module-desc { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+    .module-tag-pill { display: inline-block; margin-top: 6px; padding: 1px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; background: var(--violet-light); color: var(--violet); }
+
+    /* Install flow */
+    .install-flow { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .if-step { flex: 1; padding: 16px 14px; background: var(--surface); border-right: 1px solid var(--border); }
+    .if-step:last-child { border-right: none; }
+    .if-num { width: 22px; height: 22px; border-radius: 50%; background: var(--violet-light); color: var(--violet); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .if-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .if-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.55; }
+    .if-cmd   { margin-top: 6px; font-family: 'SF Mono', monospace; font-size: 10px; color: var(--violet); font-weight: 600; }
+
+    /* Context import options */
+    .import-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+    .import-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; text-align: center; }
+    .import-icon { font-size: 20px; margin-bottom: 6px; }
+    .import-title { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .import-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+
+    /* Telegram section */
+    .tg-features { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .tg-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .tg-row:last-child { border-bottom: none; }
+    .tg-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .tg-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .tg-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .tg-cmd   { font-family: 'SF Mono', monospace; font-size: 11px; color: var(--teal); font-weight: 600; }
+
+    /* Why /prime section */
+    .prime-layers { display: flex; flex-direction: column; gap: 3px; margin: 20px 0; }
+    .prime-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); }
+    .prime-row.p1 { background: var(--violet-light); border: 1px solid var(--violet-mid); }
+    .prime-row.p2 { background: var(--blue-light);   border: 1px solid var(--blue-mid); }
+    .prime-row.p3 { background: var(--teal-light);   border: 1px solid var(--teal-mid); }
+    .prime-row.p4 { background: var(--gold-light);   border: 1px solid var(--gold-mid); }
+    .prime-file { font-family: 'SF Mono', monospace; font-size: 11px; font-weight: 700; flex-shrink: 0; min-width: 200px; }
+    .p1 .prime-file { color: var(--violet); }
+    .p2 .prime-file { color: var(--blue); }
+    .p3 .prime-file { color: var(--teal); }
+    .p4 .prime-file { color: var(--gold); }
+    .prime-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+
+    /* Feat list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--violet); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--violet); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--violet); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .path-grid, .module-grid, .tk-grid, .import-options, .related-grid { grid-template-columns: 1fr; }
+      .install-flow { flex-direction: column; }
+      .if-step { border-right: none; border-bottom: 1px solid var(--border); }
+      .if-step:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Quick Setup</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"  class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#two-paths" class="sidebar-link"><span class="sidebar-step">1</span> Two Setup Paths</a>
+    <a href="#desktop"   class="sidebar-link"><span class="sidebar-step">2</span> Desktop App Setup</a>
+    <a href="#modules"   class="sidebar-link"><span class="sidebar-step">3</span> The Module Library</a>
+    <a href="#install"   class="sidebar-link"><span class="sidebar-step">4</span> The /install Command</a>
+    <a href="#context"   class="sidebar-link"><span class="sidebar-step">5</span> Loading Your Context</a>
+    <a href="#telegram"  class="sidebar-link"><span class="sidebar-step">6</span> Telegram as Command Layer</a>
+    <a href="#prime"     class="sidebar-link"><span class="sidebar-step">7</span> Why /prime Matters</a>
+    <a href="#parallel"  class="sidebar-link"><span class="sidebar-step">8</span> Running in Parallel</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways" class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+    <a href="#next"      class="sidebar-link"><span class="sidebar-step">→</span> Next Steps</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🚀 Quick Setup</div>
+      <h1 class="module-title">Quick Setup with Plug &amp; Play Modules</h1>
+      <p class="module-subtitle">
+        A beginner-friendly setup path using the Claude Desktop App and pre-built modules you install
+        with a single command. No terminal required to get started — just download, drop in, and run
+        <code>/install</code>.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~20 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Non-technical friendly</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Desktop App + VS Code paths covered</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- TWO PATHS -->
+    <section class="section" id="two-paths">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">Two Paths to the Same Destination</h2>
+      <p class="section-body">
+        The plug and play modules work the same way regardless of how you run Claude Code.
+        The difference is the interface — not the capabilities. Pick the path that matches
+        your comfort level. You can always switch later.
+      </p>
+
+      <div class="path-grid">
+        <div class="path-card desktop">
+          <div class="path-icon">🖥</div>
+          <div class="path-label">Beginner Path</div>
+          <div class="path-title">Claude Desktop App</div>
+          <ul class="path-traits">
+            <li class="path-trait"><span class="path-dot"></span>Download and open Claude — no CLI install needed</li>
+            <li class="path-trait"><span class="path-dot"></span>Click the Code tab, choose your workspace folder</li>
+            <li class="path-trait"><span class="path-dot"></span>Friendly interface, lower intimidation factor</li>
+            <li class="path-trait"><span class="path-dot"></span>Tabs for running multiple sessions side-by-side</li>
+            <li class="path-trait"><span class="path-dot"></span>Limitation: must manually run <code>/prime</code> each new session — no auto-prime on startup</li>
+            <li class="path-trait"><span class="path-dot"></span>Same modules, same commands, same results</li>
+          </ul>
+        </div>
+        <div class="path-card vscode">
+          <div class="path-icon">⚡</div>
+          <div class="path-label">Technical Path</div>
+          <div class="path-title">VS Code / Cursor + CLI</div>
+          <ul class="path-traits">
+            <li class="path-trait"><span class="path-dot"></span>Install Claude Code CLI, open terminal in your IDE</li>
+            <li class="path-trait"><span class="path-dot"></span>Shell alias <code>cr</code> = new session + auto-prime + YOLO mode</li>
+            <li class="path-trait"><span class="path-dot"></span>Multiple terminals = multiple parallel sessions</li>
+            <li class="path-trait"><span class="path-dot"></span>Cron jobs and background scripts run reliably</li>
+            <li class="path-trait"><span class="path-dot"></span>IDE choice doesn't matter — Cursor, VS Code, Windsurf all identical</li>
+            <li class="path-trait"><span class="path-dot"></span>More power and flexibility for serious builds</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout violet">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The IDE is just a file viewer.</strong> When people debate VS Code vs Cursor vs Windsurf —
+          it doesn't actually matter for Claude Code. All the IDE does is give you a terminal to run Claude Code
+          in, and a file browser to see your workspace beside it. Pick whichever you're comfortable with.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- DESKTOP SETUP -->
+    <section class="section" id="desktop">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">Getting Started with Claude Desktop</h2>
+      <p class="section-body">
+        The fastest way to get up and running. Skip the CLI install entirely —
+        just download Claude, open the Code section, and point it at your workspace folder.
+      </p>
+
+      <div class="steps-list">
+        <div class="step-row">
+          <div class="step-n">1</div>
+          <div class="step-content">
+            <div class="step-title">Download Claude desktop</div>
+            <div class="step-desc">Get the Claude desktop app (claude.ai/download). You need an active subscription — Max plan recommended for heavy use, Pro plan works to start.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-n">2</div>
+          <div class="step-content">
+            <div class="step-title">Download and unzip the starter template</div>
+            <div class="step-desc">Get the starter template ZIP from the course materials. Double-click to unzip. Rename the folder to something that represents your workspace (e.g., <code>myagency-workspace</code>). Remember: press Cmd+Shift+Period on Mac to reveal hidden files if the <code>.claude/</code> folder seems missing.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-n">3</div>
+          <div class="step-content">
+            <div class="step-title">Open the Code section and choose your folder</div>
+            <div class="step-desc">In Claude desktop, click the Code tab at the top. Click "Choose a different folder" and navigate to your unzipped workspace folder. Set bypass permissions so Claude can work without constant confirmation prompts.</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-n">4</div>
+          <div class="step-content">
+            <div class="step-title">Run /prime to initialize</div>
+            <div class="step-desc">Type <code>/prime</code> in the Claude Code chat to load your context and orient Claude for the session. Unlike the CLI path, you need to do this manually each time you open a new session in the desktop app.</div>
+            <div class="step-cmd">/prime</div>
+          </div>
+        </div>
+        <div class="step-row">
+          <div class="step-n">5</div>
+          <div class="step-content">
+            <div class="step-title">Install your first module</div>
+            <div class="step-desc">Drop a module ZIP into your <code>module-installs/</code> folder, then run the install command pointing at it. Claude walks you through the full setup — no manual configuration.</div>
+            <div class="step-cmd">/install @module-installs/context-os.zip</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- MODULE LIBRARY -->
+    <section class="section" id="modules">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">The Plug &amp; Play Module Library</h2>
+      <p class="section-body">
+        Each module is a pre-built ZIP you download from the course, drop into your
+        <code>module-installs/</code> folder, and install with a single command.
+        The modules are designed to be installed in order — each one builds on the previous.
+      </p>
+
+      <div class="module-grid">
+        <div class="module-card">
+          <div class="module-order">1</div>
+          <div>
+            <div class="module-name">Context OS</div>
+            <div class="module-desc">Foundation layer. Sets up your context files, CLAUDE.md, and /prime command. Everything else builds on this.</div>
+            <div class="module-tag-pill">Install first</div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-order">2</div>
+          <div>
+            <div class="module-name">Infra OS</div>
+            <div class="module-desc">Infrastructure layer — GitHub setup, remote repo, system reliability. Enables your workspace to be version-controlled and portable.</div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-order">3</div>
+          <div>
+            <div class="module-name">Data OS</div>
+            <div class="module-desc">Data pipeline setup. Scopes your funnel, identifies API connections, builds your local database, and sets up daily data collection cron.</div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-order">4</div>
+          <div>
+            <div class="module-name">Intel OS</div>
+            <div class="module-desc">AI intelligence layer. Includes the AI model tracker — daily scan of leaderboards, updates workspace docs with the latest best models for each use case.</div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-order">5</div>
+          <div>
+            <div class="module-name">Command OS (Telegram)</div>
+            <div class="module-desc">Telegram as your mobile command interface. /new opus, /name, voice note transcription, daily brief delivery. Spin up new Claude sessions from your phone.</div>
+            <div class="module-tag-pill">Includes voice notes</div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-order">6</div>
+          <div>
+            <div class="module-name">Daily Brief</div>
+            <div class="module-desc">Morning intelligence report. Pulls from all data sources + Fireflies meeting intel. Sends Telegram summary + saves PDF to outputs/. Runs at 7 AM.</div>
+          </div>
+        </div>
+        <div class="module-card">
+          <div class="module-order">7</div>
+          <div>
+            <div class="module-name">Productivity OS</div>
+            <div class="module-desc">Task management, GTD integration, daily planning workflows. Turns your AIOS into a personal productivity system alongside your business OS.</div>
+          </div>
+        </div>
+        <div class="module-card" style="border-style: dashed;">
+          <div class="module-order" style="background:var(--base);color:var(--ink-faint);">+</div>
+          <div>
+            <div class="module-name" style="color:var(--ink-faint);">More modules coming</div>
+            <div class="module-desc">Each module is versioned — you'll see when updates are available. Modules for meeting intelligence, warm outreach CRM, content pipeline, and more in development.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">📦</div>
+        <div class="callout-body">
+          <strong>Versioned and updatable.</strong> Each module has a version number. When an improved version
+          ships, you'll see it — download the new ZIP, drop it in, run <code>/install</code> again.
+          The install command handles the update. Your customizations are preserved.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- THE /INSTALL COMMAND -->
+    <section class="section" id="install">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">The /install Command — How It Works</h2>
+      <p class="section-body">
+        <code>/install</code> is a command built into the starter template. You point it at a module ZIP,
+        and it handles everything: unzips, reads the <code>install.md</code>, and walks you through
+        setup step by step — asking questions, identifying what API keys you need, configuring
+        what's relevant for your business.
+      </p>
+
+      <div class="install-flow">
+        <div class="if-step">
+          <div class="if-num">1</div>
+          <div class="if-label">Download ZIP</div>
+          <div class="if-desc">Get the module ZIP from the course materials library.</div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">2</div>
+          <div class="if-label">Drop into folder</div>
+          <div class="if-desc">Drag the ZIP into your <code>module-installs/</code> folder.</div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">3</div>
+          <div class="if-label">Run /install</div>
+          <div class="if-desc">Reference the ZIP in your Claude Code session.</div>
+          <div class="if-cmd">/install @module-installs/data-os.zip</div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">4</div>
+          <div class="if-label">Claude guides you</div>
+          <div class="if-desc">Reads install.md, walks through every step, asks questions, configures for your business.</div>
+        </div>
+        <div class="if-step">
+          <div class="if-num">5</div>
+          <div class="if-label">Module active</div>
+          <div class="if-desc">New commands available, context updated, everything integrated into your workspace.</div>
+        </div>
+      </div>
+
+      <div class="callout violet">
+        <div class="callout-icon">📋</div>
+        <div class="callout-body">
+          <strong>What's inside a module ZIP:</strong> Every module has a standard structure — an
+          <code>install.md</code> (the guided setup instructions Claude follows), a <code>README.md</code>
+          for humans, any scripts or reference files needed, and an <code>env.example</code> showing
+          which API keys are required. The install command reads all of this and orchestrates the setup.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- LOADING CONTEXT -->
+    <section class="section" id="context">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Loading Your Context — Three Ways In</h2>
+      <p class="section-body">
+        When the Context OS module installs, it needs to know about you and your business
+        to fill in your context files. You can approach this however fits your situation —
+        there's no single right method.
+      </p>
+
+      <div class="import-options">
+        <div class="import-card">
+          <div class="import-icon">📁</div>
+          <div class="import-title">Drop files in import/</div>
+          <div class="import-desc">Drag any existing documents into <code>context/import/</code> — website copy, LinkedIn profile, past proposals, company overview docs. Claude extracts and synthesizes.</div>
+        </div>
+        <div class="import-card">
+          <div class="import-icon">💬</div>
+          <div class="import-title">Chat interview</div>
+          <div class="import-desc">Claude asks you questions directly. Great if you don't have existing docs or want to think through your context fresh. Takes 10–15 minutes of back-and-forth.</div>
+        </div>
+        <div class="import-card">
+          <div class="import-icon">📋</div>
+          <div class="import-title">Paste text</div>
+          <div class="import-desc">Copy-paste content from ChatGPT exports, Google Docs, Notion pages, or anywhere else. Claude processes whatever you give it and builds the context files.</div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">🔁</div>
+        <div class="callout-body">
+          <strong>Context accumulates over time.</strong> You don't have to get it perfect on day one.
+          Start with whatever you have — even rough, incomplete notes are dramatically better than nothing.
+          As you use the workspace, Claude learns more about your business and you can update the context
+          files anytime. The files get richer with every session.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TELEGRAM -->
+    <section class="section" id="telegram">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Telegram — Your Mobile Command Layer</h2>
+      <p class="section-body">
+        The Command OS module sets up Telegram as a mobile interface to your AIOS. Telegram's
+        programmatic slash commands make it uniquely well-suited for this — you can spin up
+        new Claude sessions, name them, send voice notes, and receive your daily brief,
+        all from your phone.
+      </p>
+
+      <div class="tg-features">
+        <div class="tg-row">
+          <div class="tg-icon">⚡</div>
+          <div>
+            <div class="tg-label">/new opus — Spin up a new session</div>
+            <div class="tg-desc">Creates a new topic in your Telegram group and automatically spins up a new Claude Code instance. Auto-primes it. Mirrors exactly what <code>cr</code> does in the terminal — new session, primed, YOLO mode ready.</div>
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-icon">🏷</div>
+          <div>
+            <div class="tg-label">/name — Label your session</div>
+            <div class="tg-desc">Renames the current Telegram topic and adds an emoji. Keeps your sessions organized when you have multiple running. Fires automatically after /new opus to label the context.</div>
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-icon">🎙</div>
+          <div>
+            <div class="tg-label">Voice note transcription — Built in</div>
+            <div class="tg-desc">Send a voice message to your Telegram group. The Command OS module picks it up, transcribes it, and processes it — adds it to your ideas database, queues it as a task, or routes it to the right workflow. On the go becomes just as powerful as at your desk.</div>
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-icon">📊</div>
+          <div>
+            <div class="tg-label">Daily brief delivery</div>
+            <div class="tg-desc">The daily digest arrives in your Telegram every morning — business metrics, meeting summaries, model updates, anything your cron jobs generated overnight. Read it before you open your laptop.</div>
+          </div>
+        </div>
+        <div class="tg-row">
+          <div class="tg-icon">🗂</div>
+          <div>
+            <div class="tg-label">Topics = organized sessions</div>
+            <div class="tg-desc">Each Telegram topic is a separate session. Your content session stays separate from your client session from your data session. Organized without any manual filing.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">📱</div>
+        <div class="callout-body">
+          <strong>Why Telegram over Slack:</strong> Telegram's slash commands work natively in a
+          programmatic way that Slack doesn't replicate as cleanly. Topics within groups map
+          directly to separate Claude sessions. Voice notes are first-class. Slack can work —
+          but it has friction that Telegram doesn't.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- WHY /PRIME -->
+    <section class="section" id="prime">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">Why /prime Matters — More Than Just Loading Context</h2>
+      <p class="section-body">
+        CLAUDE.md loads automatically every session — so why do you need /prime? Because CLAUDE.md
+        is intentionally kept lean (workspace structure, commands, rules), while /prime does the
+        deeper loading: it reads your context files, pulls current metrics, loads the operational
+        index, and confirms what everything is before you start work.
+      </p>
+      <p class="section-body">
+        As your workspace grows in complexity, /prime becomes the mechanism that keeps it all navigable.
+        Here's what a mature prime command reads:
+      </p>
+
+      <div class="prime-layers">
+        <div class="prime-row p1">
+          <div class="prime-file">context/business-info.md</div>
+          <div class="prime-desc">What this business is, who it serves, what it sells — the organizational stage.</div>
+        </div>
+        <div class="prime-row p2">
+          <div class="prime-file">context/strategy.md</div>
+          <div class="prime-desc">Current strategic priorities and goals — what we're trying to achieve right now.</div>
+        </div>
+        <div class="prime-row p3">
+          <div class="prime-file">context/current-data.md</div>
+          <div class="prime-desc">Latest metrics — where things actually stand relative to goals.</div>
+        </div>
+        <div class="prime-row p4">
+          <div class="prime-file">context/index.md (advanced)</div>
+          <div class="prime-desc">A documentation index — reads a summary and tells Claude where to go for deeper information when a task requires it. Keeps prime fast while preserving access to depth.</div>
+        </div>
+      </div>
+
+      <div class="callout violet">
+        <div class="callout-icon">🔧</div>
+        <div class="callout-body">
+          <strong>The advanced pattern:</strong> The index document tells Claude "these files are not needed
+          for prime, but load them when a task requires full deep detail." This keeps your prime command
+          fast and context-window-efficient, while ensuring Claude can always find what it needs when
+          working on a specific task. You can keep adding depth without bloating every session.
+        </div>
+      </div>
+
+      <p class="section-body">
+        You can skip /prime when you're first starting with an empty workspace and nothing to load.
+        But once you've built a meaningful system — real context files, real data, real commands —
+        skipping prime means Claude walks into the session blind. Don't skip it.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- PARALLEL SESSIONS -->
+    <section class="section" id="parallel">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Running Multiple Sessions in Parallel</h2>
+      <p class="section-body">
+        One of the biggest productivity unlocks in AIOS is running multiple Claude sessions
+        simultaneously — one doing research, one building a command, one analyzing data —
+        while you manage and direct them all. Here's how it works across both paths.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Desktop app:</strong> Open multiple tabs within the Code section. Each tab is a separate Claude session running against the same workspace folder. Good for 2–3 parallel sessions before it gets unwieldy.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>VS Code / CLI:</strong> Open multiple terminal panes. Run <code>cr</code> (or <code>claude</code> + <code>/prime</code>) in each. Easier to manage 4–6 parallel sessions — each one visible in its own terminal window.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Same workspace, different tasks:</strong> Multiple sessions running on the same folder works well for AIOS — you're usually doing different things (researching in one, building in another) rather than editing the same file simultaneously.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Watch for conflicts:</strong> If two sessions try to edit the same file at the same time, you'll get conflicts. Avoid having two sessions working on the same command or context file simultaneously.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Mac Mini for always-on:</strong> If you want cron jobs running 24/7 without leaving your laptop open, set up a Mac Mini with screen sharing. Take your laptop anywhere — AIOS keeps running on the Mini. This is the eventual architecture for serious use.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">Both paths use the same modules</div>
+          <div class="tk-desc">Desktop app or VS Code — the plug and play modules, the context files, the slash commands are all identical. Pick your interface, not a different system.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Install in order</div>
+          <div class="tk-desc">Context OS first. Then Infra OS. Then Data OS. Then Intel and Command OS. Each module assumes the previous is in place. Don't skip ahead.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">/install handles all the complexity</div>
+          <div class="tk-desc">You don't need to understand what's inside a module to install it. Drop the ZIP in, run /install, answer Claude's questions, done. The module does the rest.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Context can come from anywhere</div>
+          <div class="tk-desc">Files, pasted text, a chat interview — whatever you have. Even rough is better than nothing. The context files get richer over time as you use the system.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">Telegram is your mobile cockpit</div>
+          <div class="tk-desc">Once Command OS is installed, your AIOS travels with you. Spin up sessions, send voice notes, get your morning brief — all from your phone, no laptop required.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">Run /prime every session — without exception</div>
+          <div class="tk-desc">CLAUDE.md loads automatically but doesn't load your context, data, or strategy. /prime is what makes the AI business-aware. Skip it and you're working with a blank slate.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- NEXT STEPS -->
+    <section class="section" id="next">
+      <div class="section-number">Get Moving</div>
+      <h2 class="section-title">What to Do Right Now</h2>
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Download Claude desktop or install the CLI</strong> — whichever path you're taking. Get it open and pointed at your workspace folder today.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Install Context OS first.</strong> Drop the ZIP in module-installs/, run /install, answer the questions. Get your four context files populated — even roughly.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Run /prime and confirm it reads your context back correctly.</strong> If Claude summarizes your business accurately, the foundation is set. Move on to Infra OS next.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Install modules in order.</strong> Context → Infra → Data → Intel → Command OS. Don't rush. Each one builds on what's already there.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Set up Telegram once Command OS is installed.</strong> This is the quality-of-life upgrade that makes everything feel like a real operating system rather than a desktop tool.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-setup.html" class="related-card">
+          <div class="rc-tag">Technical Path</div>
+          <div class="rc-title">Setup & Context OS</div>
+          <div class="rc-sub">The VS Code + CLI setup path with full context OS walkthrough.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-data-os.html" class="related-card">
+          <div class="rc-tag">Module 3</div>
+          <div class="rc-title">Data OS</div>
+          <div class="rc-sub">Deep dive on the Data OS module — funnels, APIs, snapshots, and the dashboard.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-workflows.html" class="related-card">
+          <div class="rc-tag">After setup</div>
+          <div class="rc-title">Workflows & Recurring Tasks</div>
+          <div class="rc-sub">Once modules are installed, this is how you build automations on top.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

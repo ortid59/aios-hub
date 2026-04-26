@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIOS Automation Primitives — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #1D4ED8;
+      --blue-light:  #EFF6FF;
+      --blue-mid:    #BFDBFE;
+      --teal:        #0D9488;
+      --teal-light:  #F0FDFA;
+      --teal-mid:    #99F6E4;
+      --gold:        #B45309;
+      --gold-light:  #FFFBEB;
+      --gold-mid:    #FDE68A;
+      --ink:         #0F172A;
+      --ink-dim:     #64748B;
+      --ink-faint:   #94A3B8;
+      --surface:     #FFFFFF;
+      --base:        #F0F4F8;
+      --border:      rgba(15,23,42,0.08);
+      --radius-sm:   6px;
+      --radius-md:   8px;
+      --radius-lg:   12px;
+      --radius-xl:   16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--base);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── TOP NAV ─────────────────────────────── */
+    .topnav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 11px; letter-spacing: -0.5px;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--ink-dim);
+    }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+
+    .topnav-right { display: flex; align-items: center; gap: 8px; }
+    .badge-workshop {
+      padding: 3px 10px;
+      background: var(--teal-light);
+      color: var(--teal);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── LAYOUT ──────────────────────────────── */
+    .page-layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* ── SIDEBAR NAV ─────────────────────────── */
+    .sidebar {
+      padding: 32px 0;
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      padding: 0 20px 8px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--ink-dim);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.15s ease;
+    }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active {
+      color: var(--blue);
+      border-left-color: var(--blue);
+      background: var(--blue-light);
+      font-weight: 500;
+    }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--base);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+    .sidebar-link.active .sidebar-step {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+    }
+
+    /* ── MAIN CONTENT ────────────────────────── */
+    .main {
+      padding: 40px 48px;
+      max-width: 840px;
+    }
+
+    /* Module hero */
+    .module-hero {
+      margin-bottom: 40px;
+    }
+    .module-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--blue-light);
+      color: var(--blue);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .module-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .module-subtitle {
+      font-size: 16px;
+      color: var(--ink-dim);
+      line-height: 1.6;
+      max-width: 620px;
+    }
+    .module-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--ink-dim);
+    }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    /* Section */
+    .section {
+      margin-bottom: 48px;
+      scroll-margin-top: 72px;
+    }
+    .section-number {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .section-body {
+      font-size: 14px;
+      color: var(--ink-dim);
+      line-height: 1.75;
+      margin-bottom: 20px;
+    }
+    .section-body + .section-body { margin-top: -8px; }
+
+    /* Automation Spectrum */
+    .spectrum {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    .spectrum-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .spectrum-header-title { font-size: 12px; font-weight: 600; color: var(--ink); }
+    .spectrum-header-sub { font-size: 11px; color: var(--ink-faint); }
+    .spectrum-track {
+      padding: 24px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .spectrum-step {
+      padding: 16px;
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+    .spectrum-step.manual   { background: #F8FAFC; }
+    .spectrum-step.assisted { background: var(--blue-light); }
+    .spectrum-step.delegated{ background: var(--teal-light); }
+    .spectrum-step.automated{ background: var(--gold-light); }
+
+    .step-pct {
+      font-size: 28px; font-weight: 800; letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .spectrum-step.manual    .step-pct { color: var(--ink-faint); }
+    .spectrum-step.assisted  .step-pct { color: var(--blue); }
+    .spectrum-step.delegated .step-pct { color: var(--teal); }
+    .spectrum-step.automated .step-pct { color: var(--gold); }
+
+    .step-label {
+      font-size: 12px; font-weight: 700; color: var(--ink);
+      margin-bottom: 6px; letter-spacing: -0.01em;
+    }
+    .step-desc { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+    .step-tag {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 10px; font-weight: 600;
+    }
+    .spectrum-step.manual    .step-tag { background: #E2E8F0; color: var(--ink-dim); }
+    .spectrum-step.assisted  .step-tag { background: var(--blue-mid); color: var(--blue); }
+    .spectrum-step.delegated .step-tag { background: var(--teal-mid); color: var(--teal); }
+    .spectrum-step.automated .step-tag { background: var(--gold-mid); color: var(--gold); }
+
+    /* Rule / insight callout */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      margin: 20px 0;
+    }
+    .callout.blue  { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.teal  { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout.gold  { background: var(--gold-light);  border-left: 3px solid var(--gold); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Primitive cards */
+    .primitives-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .primitive-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      transition: box-shadow 0.2s ease;
+    }
+    .primitive-card:hover { box-shadow: 0 8px 32px rgba(15,23,42,0.08); }
+    .primitive-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .primitive-card.cap  .primitive-icon { background: var(--blue-light); }
+    .primitive-card.scr  .primitive-icon { background: var(--gold-light); }
+    .primitive-card.wfl  .primitive-icon { background: var(--teal-light); }
+    .primitive-name {
+      font-size: 14px; font-weight: 700; color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .primitive-tagline {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 8px;
+    }
+    .primitive-card.cap  .primitive-tagline { color: var(--blue); }
+    .primitive-card.scr  .primitive-tagline { color: var(--gold); }
+    .primitive-card.wfl  .primitive-tagline { color: var(--teal); }
+    .primitive-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Deep dive sections with feature rows */
+    .deep-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    .deep-card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .deep-card-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .deep-card.cap .deep-card-icon  { background: var(--blue-light); }
+    .deep-card.scr .deep-card-icon  { background: var(--gold-light); }
+    .deep-card.wfl .deep-card-icon  { background: var(--teal-light); }
+    .deep-card-title { font-size: 16px; font-weight: 700; color: var(--ink); }
+    .deep-card-sub   { font-size: 12px; color: var(--ink-faint); margin-top: 1px; }
+    .deep-card-body  { padding: 20px 24px; }
+    .deep-card-desc  { font-size: 13px; color: var(--ink-dim); line-height: 1.7; margin-bottom: 16px; }
+
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 12px;
+      background: var(--base);
+      border-radius: var(--radius-md);
+    }
+    .feature-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      margin-top: 6px; flex-shrink: 0;
+    }
+    .deep-card.cap .feature-dot { background: var(--blue); }
+    .deep-card.scr .feature-dot { background: var(--gold); }
+    .deep-card.wfl .feature-dot { background: var(--teal); }
+    .feature-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feature-text strong { font-weight: 600; }
+
+    /* Sub-type split */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .split-card {
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--base);
+    }
+    .split-card-title {
+      font-size: 12px; font-weight: 700; color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .split-card-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-size: 10px; font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .badge-noninvocable { background: var(--blue-mid); color: var(--blue); }
+    .badge-invocable    { background: var(--teal-mid); color: var(--teal); }
+    .split-card-desc { font-size: 11px; color: var(--ink-dim); line-height: 1.55; }
+    .split-card-ex {
+      margin-top: 8px; padding-top: 8px;
+      border-top: 1px solid var(--border);
+      font-size: 11px; color: var(--ink-faint);
+    }
+    .split-card-ex strong { color: var(--ink-dim); }
+
+    /* Stack levels */
+    .stack-levels { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+    .stack-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .stack-level-badge {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 12px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+    .stack-level-badge.l1 { background: #F1F5F9; }
+    .stack-level-badge.l2 { background: var(--blue-light); }
+    .stack-level-badge.l3 { background: var(--teal-light); }
+    .stack-level-num {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .l1 .stack-level-num { color: var(--ink-faint); }
+    .l2 .stack-level-num { color: var(--blue); }
+    .l3 .stack-level-num { color: var(--teal); }
+    .stack-level-label { font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
+    .l1 .stack-level-label { color: var(--ink-faint); }
+    .l2 .stack-level-label { color: var(--blue); }
+    .l3 .stack-level-label { color: var(--teal); }
+
+    .stack-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+    }
+    .stack-content-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .stack-content-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .stack-pills {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+    }
+    .stack-pill {
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 10px; font-weight: 600;
+      background: var(--base);
+      color: var(--ink-dim);
+      border: 1px solid var(--border);
+    }
+    .stack-pill.blue  { background: var(--blue-light);  color: var(--blue);  border-color: var(--blue-mid); }
+    .stack-pill.teal  { background: var(--teal-light);  color: var(--teal);  border-color: var(--teal-mid); }
+    .stack-pill.gold  { background: var(--gold-light);  color: var(--gold);  border-color: var(--gold-mid); }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      padding: 16px 20px;
+      font-size: 13px; font-weight: 600; color: var(--ink);
+      cursor: pointer;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+      background: var(--surface);
+      transition: background 0.15s;
+    }
+    .faq-q:hover { background: var(--base); }
+    .faq-chevron { font-size: 12px; color: var(--ink-faint); flex-shrink: 0; margin-top: 2px; transition: transform 0.2s; }
+    .faq-a {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      font-size: 13px; color: var(--ink-dim); line-height: 1.7;
+      background: var(--base);
+      transition: max-height 0.3s ease, padding 0.2s ease;
+    }
+    .faq-item.open .faq-a     { max-height: 300px; padding: 14px 20px; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    /* Takeaways */
+    .takeaways-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .takeaway-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+    }
+    .takeaway-num {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .takeaway-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Next steps checklist */
+    .checklist { display: flex; flex-direction: column; gap: 8px; margin: 20px 0; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .check-box {
+      width: 18px; height: 18px;
+      border: 2px solid var(--blue-mid);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      background: var(--blue-light);
+    }
+    .check-text { font-size: 13px; color: var(--ink); line-height: 1.5; }
+    .check-text small { display: block; font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+
+    /* Related modules */
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .related-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      text-decoration: none;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,0.08); border-color: var(--blue-mid); }
+    .related-card-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px;
+    }
+    .related-card-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .related-card-sub   { font-size: 11px; color: var(--ink-faint); }
+    .related-card-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    /* Divider */
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Code snippet */
+    .code-block {
+      background: #1E293B;
+      color: #94A3B8;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .code-keyword { color: #7DD3FC; }
+    .code-value   { color: #86EFAC; }
+    .code-comment { color: #64748B; }
+    .code-string  { color: #FCA5A5; }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .primitives-grid, .takeaways-grid, .related-grid { grid-template-columns: 1fr; }
+      .spectrum-track { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Automation Primitives</span>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <span class="badge-workshop">Workshop Module</span>
+  </div>
+</nav>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"   class="sidebar-link active">
+      <span class="sidebar-step">0</span> Overview
+    </a>
+    <a href="#spectrum"   class="sidebar-link">
+      <span class="sidebar-step">1</span> Automation Spectrum
+    </a>
+    <a href="#primitives" class="sidebar-link">
+      <span class="sidebar-step">2</span> The Three Primitives
+    </a>
+    <a href="#capabilities" class="sidebar-link">
+      <span class="sidebar-step">3</span> Capabilities Deep Dive
+    </a>
+    <a href="#scripts"    class="sidebar-link">
+      <span class="sidebar-step">4</span> Scripts
+    </a>
+    <a href="#workflows"  class="sidebar-link">
+      <span class="sidebar-step">5</span> Workflows
+    </a>
+    <a href="#stacking"   class="sidebar-link">
+      <span class="sidebar-step">6</span> How They Stack
+    </a>
+    <div class="sidebar-divider"></div>
+    <a href="#faq"        class="sidebar-link">
+      <span class="sidebar-step">Q</span> FAQ
+    </a>
+    <a href="#takeaways"  class="sidebar-link">
+      <span class="sidebar-step">★</span> Key Takeaways
+    </a>
+    <a href="#next"       class="sidebar-link">
+      <span class="sidebar-step">→</span> Next Steps
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🧱 AIOS Foundations</div>
+      <h1 class="module-title">AIOS Automation Primitives</h1>
+      <p class="module-subtitle">
+        Capabilities, Scripts, and Workflows are the three building blocks of every AIOS system.
+        This module gives you the vocabulary and mental model to design, explain, and scale AI automations.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~30 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Foundational</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Part of the Learn AIOS roadmap</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — AUTOMATION SPECTRUM -->
+    <section class="section" id="spectrum">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">The Automation Spectrum</h2>
+      <p class="section-body">
+        Not every task should be fully automated. Before building anything, it's important to understand
+        where a workflow sits on the spectrum — and how to move it forward intentionally.
+      </p>
+      <p class="section-body">
+        The spectrum runs from 0% (fully manual) to 100% (fully automated). But for most business-significant
+        tasks, <strong>Assisted</strong> and <strong>Delegated</strong> are the practical target zones.
+      </p>
+
+      <div class="spectrum">
+        <div class="spectrum-header">
+          <span class="spectrum-header-title">Automation Spectrum</span>
+          <span style="color:var(--ink-faint); font-size:11px; margin-left:8px;">← Start here · Move right deliberately</span>
+        </div>
+        <div class="spectrum-track">
+          <div class="spectrum-step manual">
+            <div class="step-pct">0%</div>
+            <div class="step-label">Manual</div>
+            <div class="step-desc">You do the work. No AI involved. Every task is a human task.</div>
+            <div class="step-tag">Where most start</div>
+          </div>
+          <div class="spectrum-step assisted">
+            <div class="step-pct">80%</div>
+            <div class="step-label">Assisted</div>
+            <div class="step-desc">You invoke an AI workflow. AI handles ~80%, you steer the result.</div>
+            <div class="step-tag">Invocable skill</div>
+          </div>
+          <div class="spectrum-step delegated">
+            <div class="step-pct">95%</div>
+            <div class="step-label">Delegated</div>
+            <div class="step-desc">Trigger or schedule runs the workflow automatically. You review outputs.</div>
+            <div class="step-tag">Triggered / scheduled</div>
+          </div>
+          <div class="spectrum-step automated">
+            <div class="step-pct">100%</div>
+            <div class="step-label">Automated</div>
+            <div class="step-desc">Pure business logic. No AI judgment needed — it just runs.</div>
+            <div class="step-tag">Scripts / cron jobs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The golden rule:</strong> Always start in Assisted mode. Use a workflow yourself — many times —
+          before delegating it. You can't delegate what you haven't refined. Running something 5, 10, or 20 times
+          in Assisted mode is what makes delegation trustworthy.
+        </div>
+      </div>
+
+      <p class="section-body">
+        <strong>Real example:</strong> A thumbnail generation workflow (thumb gen) starts as an Assisted skill you invoke manually.
+        After 20 runs you've dialed in the strategy, tone, and format. At that point, wiring it to a trigger
+        (e.g., "video moves to 'Uploading' in Notion") lets it run delegated — spitting out 50 options for you to pick from.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — THREE PRIMITIVES -->
+    <section class="section" id="primitives">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The Three Core Primitives</h2>
+      <p class="section-body">
+        Every AIOS system — no matter how complex — is built from the same three building blocks.
+        Think of these as the vocabulary for designing, explaining, and scaling automation.
+      </p>
+
+      <div class="primitives-grid">
+        <div class="primitive-card cap">
+          <div class="primitive-icon">🔌</div>
+          <div class="primitive-name">Capabilities</div>
+          <div class="primitive-tagline">Always-on · Non-invocable</div>
+          <div class="primitive-desc">
+            Skills that give your AIOS access to APIs, tools, and external platforms. They activate automatically
+            whenever your AI determines they're needed — you never call them directly.
+          </div>
+        </div>
+        <div class="primitive-card scr">
+          <div class="primitive-icon">⚙️</div>
+          <div class="primitive-name">Scripts</div>
+          <div class="primitive-tagline">Deterministic · Reliable</div>
+          <div class="primitive-desc">
+            Code that does the same thing every time. No AI judgment — just consistent, reliable execution.
+            Used for data movement, triggers, and the mechanical parts of any workflow.
+          </div>
+        </div>
+        <div class="primitive-card wfl">
+          <div class="primitive-icon">🔀</div>
+          <div class="primitive-name">Workflows</div>
+          <div class="primitive-tagline">Invocable · Composed</div>
+          <div class="primitive-desc">
+            The combination layer. A workflow ties together capabilities, scripts, and prompts into
+            a structured AI process you (or a trigger) can invoke to accomplish a real business task.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🧩</div>
+        <div class="callout-body">
+          These primitives <strong>stack</strong>. Capabilities power your AI's reach. Scripts provide the reliability backbone.
+          Workflows combine both into something that can be invoked, refined, and eventually delegated.
+          You can't skip primitives — rushing to build workflows without solid capabilities
+          and scripts results in brittle, inconsistent systems.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — CAPABILITIES -->
+    <section class="section" id="capabilities">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Capabilities — Deep Dive</h2>
+      <p class="section-body">
+        A capability is a skill you give your AIOS that expands what it can do — without you having to think about it.
+        The key characteristic: capabilities are <strong>non-invocable</strong>. They sit in the background,
+        waiting to be triggered by context. When you mention a YouTube video, your AI reaches for the transcript capability.
+        You never had to call it.
+      </p>
+
+      <div class="deep-card cap">
+        <div class="deep-card-header">
+          <div class="deep-card-icon">🔌</div>
+          <div>
+            <div class="deep-card-title">Capabilities</div>
+            <div class="deep-card-sub">Non-invocable · Always-on · Contextually activated</div>
+          </div>
+        </div>
+        <div class="deep-card-body">
+          <div class="deep-card-desc">
+            Capabilities come in two flavors: <strong>General Purpose</strong> (useful across any task) and
+            <strong>Integrations</strong> (specific to a tool in your business stack).
+            A well-configured AIOS ships with a default stack of general purpose capabilities installed —
+            then adds integrations based on your specific tech stack.
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Set user_invocable: false</strong> in the skill file. This is what makes it a capability vs. a workflow — the AI can use it, but users can't slash-invoke it.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Always-on awareness:</strong> The skill description lives in every session context. The AI knows when to reach for it automatically, even if you never mention it explicitly.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>API-connected:</strong> Capabilities teach your AI how to call external APIs — endpoints, auth patterns, and common use cases are all baked into the skill file.</span>
+            </li>
+          </ul>
+
+          <div class="split-grid">
+            <div class="split-card">
+              <div class="split-card-title">General Purpose</div>
+              <div class="split-card-badge badge-noninvocable">Non-invocable</div>
+              <div class="split-card-desc">
+                Useful for any task, any client. These are your "default stack" — install them once and they make your
+                entire AIOS smarter across the board.
+              </div>
+              <div class="split-card-ex">
+                <strong>Examples:</strong> Video transcript API (SuperData), writing style guide, diagram creator,
+                podcast transcript extractor, web research tools.
+              </div>
+            </div>
+            <div class="split-card">
+              <div class="split-card-title">Integrations</div>
+              <div class="split-card-badge badge-noninvocable">Non-invocable</div>
+              <div class="split-card-desc">
+                Specific to your business tools. Install the ones that match your tech stack.
+                Plug in your API keys and your AIOS can operate each platform directly.
+              </div>
+              <div class="split-card-ex">
+                <strong>Examples:</strong> CRM (HubSpot, Close.io), Gmail, community platform (Circle),
+                scheduling tools, project management.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-body" style="margin-top:16px;">
+        The vision for a mature AIOS is: <strong>Context OS + default capabilities + integration capabilities</strong>
+        = an AI that can run your entire business from a single workspace. You tell it what you need,
+        and it knows exactly which APIs and tools to reach for without asking.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — SCRIPTS -->
+    <section class="section" id="scripts">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Scripts — The Reliability Backbone</h2>
+      <p class="section-body">
+        Scripts are the deterministic layer of AIOS — code that does exactly the same thing every time,
+        with no AI judgment involved. Think of them as Zapier or Make replacements, but written as
+        actual code in your workspace, giving you far more flexibility and control.
+      </p>
+
+      <div class="deep-card scr">
+        <div class="deep-card-header">
+          <div class="deep-card-icon">⚙️</div>
+          <div>
+            <div class="deep-card-title">Scripts</div>
+            <div class="deep-card-sub">Deterministic · Consistent · No AI judgment required</div>
+          </div>
+        </div>
+        <div class="deep-card-body">
+          <div class="deep-card-desc">
+            Scripts are where reliability lives. When something needs to happen exactly the same way every time —
+            move this file, log this data, trigger when X happens — that's a script. They form the structural
+            scaffolding that makes AI workflows trustworthy.
+          </div>
+
+          <div class="code-block">
+<span class="code-comment"># Example: data collect script (runs on schedule)</span>
+<span class="code-keyword">def</span> <span class="code-value">collect_daily_data</span>():
+    data = <span class="code-value">fetch_from_crm</span>()          <span class="code-comment"># deterministic API call</span>
+    <span class="code-value">save_to_context_store</span>(data)     <span class="code-comment"># always saves to same location</span>
+    <span class="code-value">trigger_briefing_workflow</span>()       <span class="code-comment"># hands off to AI workflow</span>
+          </div>
+
+          <ul class="feature-list">
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Replaces no-code tools:</strong> Scripts can handle everything a 20-50 node Zapier or Make workflow does — but they're faster, cheaper, and version-controllable in your workspace.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Trigger and schedule aware:</strong> Scripts are how you set up cron jobs and event-based triggers. When something happens in Notion, your CRM, or your calendar — a script catches it and passes it to a workflow.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Feed into workflows:</strong> The most powerful use: scripts handle the mechanical parts (data fetch, file operations, status checks) and then hand control to an AI workflow for the judgment-heavy parts.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>When to use a script vs. a workflow:</strong> If there's no AI judgment needed — just reliable
+          movement or transformation of data — write a script. Scripts are also the right tool for the
+          100% automated end of the spectrum: cron jobs, file watchers, and system-to-system data bridges.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — WORKFLOWS -->
+    <section class="section" id="workflows">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Workflows — Where It All Comes Together</h2>
+      <p class="section-body">
+        Workflows are the invocable layer. They combine capabilities, scripts, and natural language prompts
+        into a structured AI process you can call directly — with a slash command — or wire to a trigger
+        for delegation. Workflows are what you actually <em>use</em> day-to-day.
+      </p>
+
+      <div class="deep-card wfl">
+        <div class="deep-card-header">
+          <div class="deep-card-icon">🔀</div>
+          <div>
+            <div class="deep-card-title">Workflows</div>
+            <div class="deep-card-sub">Invocable · Composed · Refinable · Delegatable</div>
+          </div>
+        </div>
+        <div class="deep-card-body">
+          <div class="deep-card-desc">
+            A workflow is a skill with <code style="background:var(--base);padding:1px 6px;border-radius:4px;font-size:11px;">user_invocable: true</code>.
+            You call it with a slash command, provide inputs, and collaborate with your AI through the process.
+            Over time, as you refine it, you move it toward delegation — eventually wiring it to a trigger
+            so it runs without you initiating it.
+          </div>
+          <ul class="feature-list">
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Invocable by design:</strong> Users can call <code style="background:var(--base);padding:1px 6px;border-radius:4px;font-size:11px;">/thumb-gen</code>, <code style="background:var(--base);padding:1px 6px;border-radius:4px;font-size:11px;">/repurpose-linkedin</code>, or any custom workflow. The skill file walks the AI through the steps.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Combine everything:</strong> A workflow can call scripts (for data), activate capabilities (for APIs), and use natural language prompting — all in sequence, in one coherent process.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Designed to be refined:</strong> Start rough. Run it 5–20 times in Assisted mode, improving each iteration. The workflow gets better as you use it — until it's ready to delegate.</span>
+            </li>
+            <li class="feature-item">
+              <span class="feature-dot"></span>
+              <span class="feature-text"><strong>Delegatable:</strong> Once a workflow is dialed in, wire it to a trigger (Notion status change, new email, cron schedule). It runs in the background and delivers outputs for your review.</span>
+            </li>
+          </ul>
+
+          <div class="split-grid">
+            <div class="split-card">
+              <div class="split-card-title">Assisted Workflow</div>
+              <div class="split-card-badge badge-invocable">You invoke it</div>
+              <div class="split-card-desc">
+                You run <code style="font-size:11px;">/workflow-name</code>. AI does ~80%.
+                You stay in the loop, reviewing and guiding. Best for new or nuanced workflows.
+              </div>
+              <div class="split-card-ex"><strong>Example:</strong> /repurpose-linkedin with a YouTube URL — you pick the format, review drafts, approve.</div>
+            </div>
+            <div class="split-card">
+              <div class="split-card-title">Delegated Workflow</div>
+              <div class="split-card-badge badge-noninvocable">Trigger invokes it</div>
+              <div class="split-card-desc">
+                A trigger or schedule kicks it off. AI does ~95%.
+                You review the batch of outputs — don't run the process.
+              </div>
+              <div class="split-card-ex"><strong>Example:</strong> Video moves to "Uploading" → 5 LinkedIn content pieces appear in a folder for your review.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — HOW THEY STACK -->
+    <section class="section" id="stacking">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">How the Primitives Stack</h2>
+      <p class="section-body">
+        Capabilities, scripts, and workflows aren't used in isolation — they stack into three levels
+        of automation. Each level builds on the previous, giving you an upgrade path from basic to powerful.
+      </p>
+
+      <div class="stack-levels">
+        <div class="stack-row">
+          <div class="stack-level-badge l1">
+            <div class="stack-level-num">L1</div>
+            <div class="stack-level-label">Basic</div>
+          </div>
+          <div class="stack-content">
+            <div class="stack-content-title">Basic Automations (Scripts only)</div>
+            <div class="stack-content-desc">
+              Deterministic code automations. Scripts that run on a trigger or schedule, moving data,
+              syncing systems, or preparing the inputs for a future AI workflow. No AI judgment needed.
+              These replace Zapier and Make for simple, reliable operations.
+            </div>
+            <div class="stack-pills">
+              <span class="stack-pill gold">Scripts</span>
+              <span class="stack-pill">Cron triggers</span>
+              <span class="stack-pill">Data sync</span>
+              <span class="stack-pill">File operations</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-level-badge l2">
+            <div class="stack-level-num">L2</div>
+            <div class="stack-level-label">AI Workflow</div>
+          </div>
+          <div class="stack-content">
+            <div class="stack-content-title">AI Workflows (Capabilities + Scripts + Prompts)</div>
+            <div class="stack-content-desc">
+              You invoke the workflow, the AI does 80%, and you stay in the loop to guide output quality.
+              Capabilities expand what the AI can access. Scripts handle the mechanical steps.
+              Natural language prompting drives the judgment-heavy parts. This is the Assisted zone.
+            </div>
+            <div class="stack-pills">
+              <span class="stack-pill blue">Capabilities</span>
+              <span class="stack-pill gold">Scripts</span>
+              <span class="stack-pill teal">Workflows</span>
+              <span class="stack-pill">Slash commands</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-level-badge l3">
+            <div class="stack-level-num">L3</div>
+            <div class="stack-level-label">AI Automation</div>
+          </div>
+          <div class="stack-content">
+            <div class="stack-content-title">AI Automations (Trigger-driven, Delegated)</div>
+            <div class="stack-content-desc">
+              A refined workflow wired to a trigger. Runs in the background, produces a batch of outputs,
+              and surfaces them for your review. You go from running the workflow to reviewing its results.
+              This is only achievable after extensive refinement in L2 — never jump here first.
+            </div>
+            <div class="stack-pills">
+              <span class="stack-pill blue">Capabilities</span>
+              <span class="stack-pill gold">Scripts</span>
+              <span class="stack-pill teal">Delegated Workflows</span>
+              <span class="stack-pill">Event triggers</span>
+              <span class="stack-pill">Batch outputs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🗺</div>
+        <div class="callout-body">
+          <strong>Your upgrade path:</strong> Start every new process at L2 in Assisted mode.
+          Use your capabilities to give the AI the access it needs. Use scripts for the parts that
+          should never vary. Refine the workflow until you trust it — then connect it to a trigger and
+          move to L3. Never attempt to skip L2.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="section-number">Q&amp;A</div>
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-body">Questions from the live workshop, answered.</p>
+
+      <div class="faq-list">
+        <div class="faq-item open">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            Should background capabilities always be non-invocable?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            Yes — if a capability is meant to activate automatically when relevant context is detected,
+            set <code>user_invocable: false</code>. This prevents users from accidentally triggering it
+            as a workflow and keeps it as a background power-up. Only set invocable to true when you
+            intend for users to explicitly call it with a slash command.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            Which integrations should a business prioritize building first?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            Start with your core business platforms: CRM (GHL, HubSpot, Close), communication (Gmail, Slack),
+            and project management (Notion, ClickUp). These are the platforms you touch every day.
+            Once those capabilities are installed, your AIOS can operate your core business workflow
+            without switching apps. Secondary integrations (social media APIs, analytics, billing) come next.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            How do I create a capability for a new API I want to connect?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            There's a dedicated workflow for this. Ask your AIOS to research the API documentation and
+            generate a capability skill file for you. The skill file should include: the API description,
+            available endpoints, authentication pattern, and a set of common use-case examples.
+            Set <code>user_invocable: false</code> and drop it in your skills folder. Your AI will
+            automatically know how to use it next session.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            How long should I run a workflow in Assisted mode before delegating it?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            Run it until the output quality is consistently good and you've stopped needing to
+            correct the same mistakes. For most workflows, 5–20 runs is a reasonable baseline.
+            High-stakes workflows (client-facing proposals, content publishing) may need more.
+            The signal to delegate: you're no longer actively improving it during each run — you're just reviewing.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            What tasks should never be fully automated?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            Any task with significant business judgment or client-facing stakes: proposals, pricing decisions,
+            complex communications, creative strategy. For these, Delegated (review before publish) is the
+            maximum level of automation. Full automation (L1 scripts) is best reserved for pure data operations,
+            file management, and system-to-system syncs where output format is always predictable.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+            What's the overall promise of AIOS for a business?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-a">
+            A contextual AI assistant that understands your business, has access to all your tools,
+            and can automate tasks across the organization — without you having to switch between
+            a dozen apps. The AIOS becomes the operating layer through which you run your business:
+            a single workspace that knows your clients, your workflows, your voice, and your data.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+
+      <div class="takeaways-grid">
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 01</div>
+          <div class="takeaway-title">Learn the vocabulary first</div>
+          <div class="takeaway-desc">
+            Capabilities, Scripts, and Workflows are the building blocks. Everything you build with AIOS
+            is a combination of these three. Get clear on which is which before you start.
+          </div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 02</div>
+          <div class="takeaway-title">Earn delegation; don't jump to it</div>
+          <div class="takeaway-desc">
+            Assisted mode is not a starting phase to rush through. It's where you build the quality
+            and trust that makes delegation safe. Skip it and your automated workflows will be unreliable.
+          </div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 03</div>
+          <div class="takeaway-title">Capabilities multiply everything</div>
+          <div class="takeaway-desc">
+            Every capability you add makes all your workflows more powerful — because any workflow
+            can now reach for that capability automatically. Build your default stack early.
+          </div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 04</div>
+          <div class="takeaway-title">Scripts provide the reliability floor</div>
+          <div class="takeaway-desc">
+            AI is flexible; scripts are reliable. Use scripts for the parts that must never vary.
+            This makes your AI workflows more consistent and easier to delegate with confidence.
+          </div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 05</div>
+          <div class="takeaway-title">Context OS is the foundation</div>
+          <div class="takeaway-desc">
+            Capabilities and workflows only reach their potential when your AIOS already has deep business context.
+            The starter kit and Context OS come first — primitives build on top.
+          </div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 06</div>
+          <div class="takeaway-title">AIOS is a living system</div>
+          <div class="takeaway-desc">
+            An AIOS isn't configured once and forgotten. You continuously add capabilities,
+            refine workflows, and push promising ones toward delegation as your trust in them grows.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- NEXT STEPS -->
+    <section class="section" id="next">
+      <div class="section-number">Your Roadmap</div>
+      <h2 class="section-title">Next Steps — Deploy Your First Primitives</h2>
+      <p class="section-body">
+        Put this module into practice with these concrete actions. Complete them in order —
+        each one prepares the ground for the next.
+      </p>
+
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text">
+            Audit your current tech stack and list the 3–5 platforms you touch every day.
+            <small>These become your first integration capabilities to build or install.</small>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text">
+            Install the default general-purpose capability stack into your AIOS workspace.
+            <small>Writing style guide, diagram creator, transcript API, and web research tools are good starting points.</small>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text">
+            Pick one recurring task you do manually 3+ times per week. Build an Assisted workflow for it.
+            <small>Don't try to automate it yet — just make it faster with a slash command first.</small>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text">
+            Run that workflow 10 times. Improve it each iteration. Track where you have to correct it.
+            <small>When you stop correcting the same things — it's ready to consider for delegation.</small>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text">
+            Identify one purely mechanical task (data sync, file operation, status check) and script it.
+            <small>This becomes your first L1 automation — reliable, always-on, no AI needed.</small>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"></div>
+          <div class="check-text">
+            Complete the Task Audit module to score and prioritize your automation backlog.
+            <small>Use the framework to decide what to assist, delegate, or fully automate.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue" style="margin-top:24px;">
+        <div class="callout-icon">🚀</div>
+        <div class="callout-body">
+          <strong>The AIOS promise:</strong> When your Context OS, default capabilities, and integration
+          capabilities are all in place, your AI operating system knows your business and can reach
+          every tool you use — from a single workspace. That's the goal. These primitives are how you get there.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- RELATED MODULES -->
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <p class="section-body">These modules connect directly to what you just learned.</p>
+
+      <div class="related-grid">
+        <a href="#" class="related-card">
+          <div class="related-card-tag">Foundation</div>
+          <div class="related-card-title">Setting Up Context OS</div>
+          <div class="related-card-sub">The business intelligence foundation your primitives build on top of.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-card-tag">Strategy</div>
+          <div class="related-card-title">Task Audit &amp; Automation Priority Matrix</div>
+          <div class="related-card-sub">Score and rank your backlog to know what to assist vs. delegate vs. automate.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-card-tag">Advanced</div>
+          <div class="related-card-title">Building Integration Capabilities</div>
+          <div class="related-card-sub">How to research an API and generate a capability skill file for any platform.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Active sidebar link on scroll
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const target = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (target) target.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

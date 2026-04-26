@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Richard Pope — Miami DROP Investment Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --navy: #1B3A6B;
+  --teal: #0097A7;
+  --gold: #C9A84C;
+  --gold-light: #F0DFA0;
+  --navy-light: #EBF0F8;
+  --teal-light: #E0F5F7;
+  --white: #FFFFFF;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-400: #94A3B8;
+  --gray-600: #475569;
+  --gray-800: #1E293B;
+  --red: #DC2626;
+  --red-light: #FEF2F2;
+  --green: #16A34A;
+  --green-light: #F0FDF4;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow: 0 4px 12px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-800);
+  min-height: 100vh;
+}
+
+/* ── TOP NAV ── */
+.topnav {
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.topnav-brand { display: flex; align-items: center; gap: .75rem; }
+.topnav-logo { width: 36px; height: 36px; border-radius: 8px; background: var(--teal); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 1rem; }
+.topnav-name { color: white; font-size: 1rem; font-weight: 600; }
+.topnav-name span { color: var(--gold); }
+.topnav-nav { display: flex; gap: .25rem; }
+.topnav-link {
+  color: rgba(255,255,255,.75);
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 500;
+  padding: .4rem .85rem;
+  border-radius: 6px;
+  transition: all .2s;
+}
+.topnav-link:hover { background: rgba(255,255,255,.1); color: white; }
+.topnav-badge {
+  background: var(--gold);
+  color: var(--navy);
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border-radius: 20px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a4d7a 100%);
+  padding: 3rem 2rem 2.5rem;
+  color: white;
+}
+.hero-inner { max-width: 1200px; margin: 0 auto; }
+.hero-greeting { font-size: .9rem; color: rgba(255,255,255,.65); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .5rem; }
+.hero-title { font-size: 2rem; font-weight: 700; margin-bottom: .4rem; }
+.hero-title span { color: var(--gold); }
+.hero-subtitle { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 2rem; }
+.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.stat-card {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--radius-sm);
+  padding: 1.1rem 1.25rem;
+}
+.stat-label { font-size: .75rem; color: rgba(255,255,255,.55); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .3rem; }
+.stat-value { font-size: 1.5rem; font-weight: 700; color: white; }
+.stat-sub { font-size: .75rem; color: rgba(255,255,255,.5); margin-top: .15rem; }
+
+/* ── MAIN CONTAINER ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+/* ── SECTION TITLES ── */
+.section-head { margin-bottom: 1.5rem; }
+.section-title { font-size: 1.3rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
+.section-sub { font-size: .875rem; color: var(--gray-600); }
+.section-divider { height: 3px; width: 48px; background: var(--teal); border-radius: 2px; margin-top: .5rem; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+}
+.card-body { padding: 1.5rem; }
+
+/* ── PORTFOLIO SELECTOR ── */
+.portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2.5rem; }
+
+.portfolio-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 2px solid var(--gray-200);
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+.portfolio-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gray-200);
+  transition: background .25s;
+}
+.portfolio-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.portfolio-card.selected { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .15), var(--shadow); }
+.portfolio-card.selected::before { background: var(--accent-color); }
+
+.portfolio-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gray-400); margin-bottom: .5rem; }
+.portfolio-name { font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: .15rem; }
+.portfolio-risk { font-size: .8rem; font-weight: 600; margin-bottom: 1.1rem; }
+.portfolio-return { font-size: 2rem; font-weight: 800; margin-bottom: .1rem; }
+.portfolio-return-label { font-size: .75rem; color: var(--gray-400); margin-bottom: 1.25rem; }
+.portfolio-holdings { display: flex; flex-direction: column; gap: .35rem; }
+.holding-row { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--gray-600); }
+.holding-bar-wrap { flex: 1; height: 5px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+.holding-bar { height: 100%; border-radius: 3px; transition: width .4s; }
+.holding-pct { font-weight: 600; color: var(--gray-800); min-width: 32px; text-align: right; }
+.select-badge {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  background: var(--accent-color);
+  color: white;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border-radius: 20px;
+  display: none;
+}
+.portfolio-card.selected .select-badge { display: block; }
+
+/* ── PROJECTIONS ── */
+.projections-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; }
+
+.milestones { display: flex; flex-direction: column; gap: 1rem; }
+.milestone-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+.milestone-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.milestone-label { font-size: .75rem; color: var(--gray-400); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
+.milestone-value { font-size: 1.45rem; font-weight: 800; color: var(--navy); }
+.milestone-note { font-size: .73rem; color: var(--gray-400); }
+
+.chart-card { padding: 1.5rem; }
+.chart-title { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
+.chart-wrap { position: relative; height: 280px; }
+
+/* ── BEAR MARKET SIMULATOR ── */
+.bear-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2.5rem; }
+
+.bear-controls { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.control-group label { display: block; font-size: .8rem; font-weight: 700; color: var(--gray-600); margin-bottom: .4rem; text-transform: uppercase; letter-spacing: .04em; }
+.control-value { font-size: 1.4rem; font-weight: 800; color: var(--navy); display: inline-block; margin-bottom: .4rem; }
+.control-sub { font-size: .72rem; color: var(--gray-400); margin-bottom: .6rem; }
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--gray-200);
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--navy);
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+.bear-result {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .75rem;
+  margin-top: .5rem;
+}
+.bear-result-item {
+  border-radius: var(--radius-sm);
+  padding: .9rem 1rem;
+}
+.bear-result-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .2rem; }
+.bear-result-value { font-size: 1.25rem; font-weight: 800; }
+
+.insight-box {
+  background: var(--teal-light);
+  border: 1px solid var(--teal);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  margin-top: 1rem;
+}
+.insight-box h4 { font-size: .85rem; font-weight: 700; color: var(--teal); margin-bottom: .35rem; }
+.insight-box p { font-size: .78rem; color: #005f6b; line-height: 1.5; }
+
+/* ── FUND LIBRARY ── */
+.fund-filters { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.filter-btn {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 20px;
+  padding: .3rem .9rem;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all .2s;
+}
+.filter-btn:hover { border-color: var(--teal); color: var(--teal); }
+.filter-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
+
+.fund-table { width: 100%; border-collapse: collapse; }
+.fund-table th {
+  text-align: left;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: .7rem 1rem;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+.fund-table td {
+  padding: .85rem 1rem;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: .84rem;
+  vertical-align: middle;
+}
+.fund-table tr:last-child td { border-bottom: none; }
+.fund-table tr:hover td { background: var(--gray-50); }
+.fund-name-cell { font-weight: 600; color: var(--navy); }
+.fund-class-badge {
+  display: inline-block;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-top: .15rem;
+}
+.class-stable { background: #E0F5F7; color: #0097A7; }
+.class-bond { background: #EEF2FF; color: #4F46E5; }
+.class-balanced { background: #FEF9EE; color: #B45309; }
+.class-us { background: #F0FDF4; color: #16A34A; }
+.class-intl { background: #FDF4FF; color: #9333EA; }
+
+.return-cell { font-weight: 700; }
+.positive { color: var(--green); }
+.negative { color: var(--red); }
+.neutral { color: var(--gray-600); }
+
+.risk-dots { display: flex; gap: 2px; }
+.risk-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); }
+.risk-dot.filled { background: var(--navy); }
+
+/* ── DCA EDUCATION ── */
+.dca-explainer {
+  background: linear-gradient(135deg, #1B3A6B 0%, #0097A7 100%);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  color: white;
+}
+.dca-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+.dca-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.dca-item { }
+.dca-item h4 { font-size: .8rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .4rem; }
+.dca-item p { font-size: .83rem; color: rgba(255,255,255,.8); line-height: 1.55; }
+
+/* ── DISCLAIMER ── */
+.disclaimer {
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+  font-size: .73rem;
+  color: var(--gray-400);
+  line-height: 1.5;
+}
+
+/* ── FOOTER ── */
+.portal-footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: .78rem;
+  color: var(--gray-400);
+  border-top: 1px solid var(--gray-200);
+}
+.portal-footer strong { color: var(--teal); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .portfolio-grid { grid-template-columns: 1fr; }
+  .projections-layout { grid-template-columns: 1fr; }
+  .bear-layout { grid-template-columns: 1fr; }
+  .dca-grid { grid-template-columns: 1fr; }
+  .topnav-nav { display: none; }
+}
+@media (max-width: 600px) {
+  .hero { padding: 2rem 1rem 1.5rem; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .main { padding: 1.5rem 1rem; }
+}
+
+.section-mb { margin-bottom: 2.5rem; }
+
+/* Allocation donut */
+.donut-wrap { display: flex; align-items: center; gap: 1.5rem; }
+.donut-canvas { width: 120px !important; height: 120px !important; }
+.donut-legend { flex: 1; }
+.legend-item { display: flex; align-items: center; gap: .5rem; font-size: .76rem; color: var(--gray-600); margin-bottom: .3rem; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { flex: 1; }
+.legend-pct { font-weight: 700; color: var(--gray-800); }
+
+/* Tab content */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-brand">
+    <div class="topnav-logo">AP</div>
+    <div class="topnav-name">Advisor AI Partners &mdash; <span>Richard Pope Portal</span></div>
+  </div>
+  <div class="topnav-nav">
+    <a href="#portfolios" class="topnav-link">Portfolios</a>
+    <a href="#projections" class="topnav-link">Projections</a>
+    <a href="#bear-sim" class="topnav-link">Bear Market Simulator</a>
+    <a href="#fund-library" class="topnav-link">Fund Library</a>
+    <span class="topnav-badge">Miami DROP Plan</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-greeting">Personal Investment Portal</div>
+    <h1 class="hero-title">Welcome, <span>Richard</span></h1>
+    <p class="hero-subtitle">City of Miami GESE DROP · Plan ID 108110 · Prepared by David Ortiz</p>
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-label">Current Balance</div>
+        <div class="stat-value" id="stat-balance">$15,355</div>
+        <div class="stat-sub">Massmutual GIA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Monthly Contribution</div>
+        <div class="stat-value">$7,000</div>
+        <div class="stat-sub">Dollar Cost Averaging</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">3-Year Projected</div>
+        <div class="stat-value" id="stat-3yr">—</div>
+        <div class="stat-sub" id="stat-3yr-lbl">Select a portfolio</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">7-Year Projected</div>
+        <div class="stat-value" id="stat-7yr">—</div>
+        <div class="stat-sub" id="stat-7yr-lbl">Select a portfolio</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SECTION: CHOOSE YOUR PORTFOLIO -->
+  <div id="portfolios" class="section-mb">
+    <div class="section-head">
+      <div class="section-title">Choose Your Portfolio Strategy</div>
+      <div class="section-sub">Three options designed for your $7,000/month dollar cost averaging plan. Target date funds excluded per your preference.</div>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="portfolio-grid">
+
+      <!-- PORTFOLIO A -->
+      <div class="portfolio-card" id="card-A" onclick="selectPortfolio('A')" style="--accent-color:#0097A7;--accent-rgb:0,151,167;">
+        <span class="select-badge">✓ Selected</span>
+        <div class="portfolio-label">Portfolio A</div>
+        <div class="portfolio-name">Steady Growth</div>
+        <div class="portfolio-risk" style="color:#0097A7">● Conservative</div>
+        <div class="portfolio-return" style="color:#0097A7" id="return-A">7.1%</div>
+        <div class="portfolio-return-label">Historical Blended Avg (10-yr)</div>
+        <div class="donut-wrap" style="margin-bottom:1rem;">
+          <canvas class="donut-canvas" id="donut-A"></canvas>
+          <div class="donut-legend" id="legend-A"></div>
+        </div>
+        <div class="portfolio-holdings" id="holdings-A"></div>
+      </div>
+
+      <!-- PORTFOLIO B -->
+      <div class="portfolio-card" id="card-B" onclick="selectPortfolio('B')" style="--accent-color:#1B3A6B;--accent-rgb:27,58,107;">
+        <span class="select-badge">✓ Selected</span>
+        <div class="portfolio-label">Portfolio B</div>
+        <div class="portfolio-name">Balanced Builder</div>
+        <div class="portfolio-risk" style="color:#1B3A6B">● Moderate</div>
+        <div class="portfolio-return" style="color:#1B3A6B" id="return-B">9.0%</div>
+        <div class="portfolio-return-label">Historical Blended Avg (10-yr)</div>
+        <div class="donut-wrap" style="margin-bottom:1rem;">
+          <canvas class="donut-canvas" id="donut-B"></canvas>
+          <div class="donut-legend" id="legend-B"></div>
+        </div>
+        <div class="portfolio-holdings" id="holdings-B"></div>
+      </div>
+
+      <!-- PORTFOLIO C -->
+      <div class="portfolio-card" id="card-C" onclick="selectPortfolio('C')" style="--accent-color:#C9A84C;--accent-rgb:201,168,76;">
+        <span class="select-badge">✓ Selected</span>
+        <div class="portfolio-label">Portfolio C</div>
+        <div class="portfolio-name">Growth Maximizer</div>
+        <div class="portfolio-risk" style="color:#B45309">● Aggressive</div>
+        <div class="portfolio-return" style="color:#C9A84C" id="return-C">11.1%</div>
+        <div class="portfolio-return-label">Historical Blended Avg (10-yr)</div>
+        <div class="donut-wrap" style="margin-bottom:1rem;">
+          <canvas class="donut-canvas" id="donut-C"></canvas>
+          <div class="donut-legend" id="legend-C"></div>
+        </div>
+        <div class="portfolio-holdings" id="holdings-C"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DCA EDUCATION BAR -->
+  <div class="dca-explainer">
+    <div class="dca-title">💡 Why Dollar Cost Averaging Works for You</div>
+    <div class="dca-grid">
+      <div class="dca-item">
+        <h4>Removes Timing Risk</h4>
+        <p>By investing $7,000 every month regardless of market conditions, you automatically buy more shares when prices are low and fewer when prices are high.</p>
+      </div>
+      <div class="dca-item">
+        <h4>Bear Markets = Buying Opportunity</h4>
+        <p>When markets drop, your fixed contribution buys more units at a discount. This lowers your average cost and turbocharges your recovery. See the simulator below.</p>
+      </div>
+      <div class="dca-item">
+        <h4>Discipline Beats Prediction</h4>
+        <p>No one consistently times the market. DCA enforces discipline — you stay invested through ups and downs, letting compounding work uninterrupted over your time horizon.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: GROWTH PROJECTIONS -->
+  <div id="projections" class="section-mb">
+    <div class="section-head">
+      <div class="section-title">Growth Projections</div>
+      <div class="section-sub">Based on your selected portfolio's historical blended return with $7,000/month contributions starting from $15,355.72.</div>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="projections-layout">
+      <div class="card chart-card">
+        <div class="chart-title">Portfolio Value Over Time — <span id="proj-portfolio-label">Select a Portfolio</span></div>
+        <div class="chart-wrap">
+          <canvas id="growthChart"></canvas>
+        </div>
+      </div>
+
+      <div class="milestones">
+        <div class="milestone-card">
+          <div class="milestone-icon" style="background:#E0F5F7;">📅</div>
+          <div>
+            <div class="milestone-label">Year 1</div>
+            <div class="milestone-value" id="milestone-1yr">—</div>
+            <div class="milestone-note">12 months of contributions</div>
+          </div>
+        </div>
+        <div class="milestone-card">
+          <div class="milestone-icon" style="background:#EBF0F8;">📅</div>
+          <div>
+            <div class="milestone-label">Year 3</div>
+            <div class="milestone-value" id="milestone-3yr">—</div>
+            <div class="milestone-note">36 months · age <span id="age-3yr">73</span></div>
+          </div>
+        </div>
+        <div class="milestone-card">
+          <div class="milestone-icon" style="background:#FEF9EE;">📅</div>
+          <div>
+            <div class="milestone-label">Year 5</div>
+            <div class="milestone-value" id="milestone-5yr">—</div>
+            <div class="milestone-note">60 months · age <span id="age-5yr">75</span></div>
+          </div>
+        </div>
+        <div class="milestone-card">
+          <div class="milestone-icon" style="background:#F0FDF4;">📅</div>
+          <div>
+            <div class="milestone-label">Year 7</div>
+            <div class="milestone-value" id="milestone-7yr">—</div>
+            <div class="milestone-note">84 months · age <span id="age-7yr">77</span></div>
+          </div>
+        </div>
+        <div class="card" style="border:2px solid var(--teal); padding:1.1rem 1.25rem;">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--teal);letter-spacing:.04em;margin-bottom:.25rem;">Total Contributions (7yr)</div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--navy);" id="total-contrib">$588,000</div>
+          <div style="font-size:.72rem;color:var(--gray-400);">$7,000 × 84 months</div>
+        </div>
+        <div class="card" style="border:2px solid var(--gold); padding:1.1rem 1.25rem;">
+          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#B45309;letter-spacing:.04em;margin-bottom:.25rem;">Investment Gains (7yr)</div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--navy);" id="total-gains">—</div>
+          <div style="font-size:.72rem;color:var(--gray-400);">Returns earned on contributions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: BEAR MARKET SIMULATOR -->
+  <div id="bear-sim" class="section-mb">
+    <div class="section-head">
+      <div class="section-title">Bear Market Simulator</div>
+      <div class="section-sub">Adjust the sliders to see what happens to Richard's portfolio during a market downturn — and why keeping contributions going makes all the difference.</div>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="bear-layout">
+      <div class="card bear-controls">
+        <div class="control-group">
+          <label>Market Decline</label>
+          <div class="control-value" id="decline-val" style="color:#DC2626;">−30%</div>
+          <div class="control-sub">How far the market drops</div>
+          <input type="range" id="decline-slider" min="10" max="60" value="30" step="5" oninput="updateBear()"/>
+          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400);margin-top:.2rem;"><span>−10%</span><span>−60%</span></div>
+        </div>
+
+        <div class="control-group">
+          <label>Bear Market Duration</label>
+          <div class="control-value" id="duration-val" style="color:#1B3A6B;">18 months</div>
+          <div class="control-sub">How long the downturn lasts</div>
+          <input type="range" id="duration-slider" min="6" max="36" value="18" step="3" oninput="updateBear()"/>
+          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400);margin-top:.2rem;"><span>6 mo</span><span>36 mo</span></div>
+        </div>
+
+        <div class="control-group">
+          <label>Starts at Month</label>
+          <div class="control-value" id="start-val" style="color:#C9A84C;">Month 18</div>
+          <div class="control-sub">When in the timeline the bear hits</div>
+          <input type="range" id="start-slider" min="6" max="48" value="18" step="6" oninput="updateBear()"/>
+          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400);margin-top:.2rem;"><span>Mo 6</span><span>Mo 48</span></div>
+        </div>
+
+        <div class="bear-result">
+          <div class="bear-result-item" style="background:var(--red-light);">
+            <div class="bear-result-label" style="color:#DC2626;">Portfolio Low Point</div>
+            <div class="bear-result-value" style="color:#DC2626;" id="bear-low">—</div>
+          </div>
+          <div class="bear-result-item" style="background:var(--green-light);">
+            <div class="bear-result-label" style="color:#16A34A;">With DCA at 7yr</div>
+            <div class="bear-result-value" style="color:#16A34A;" id="bear-dca-end">—</div>
+          </div>
+          <div class="bear-result-item" style="background:var(--navy-light);">
+            <div class="bear-result-label" style="color:var(--navy);">No Bear Market</div>
+            <div class="bear-result-value" style="color:var(--navy);" id="bear-normal-end">—</div>
+          </div>
+          <div class="bear-result-item" style="background:#FEF9EE;">
+            <div class="bear-result-label" style="color:#B45309;">Stop Investing</div>
+            <div class="bear-result-value" style="color:#B45309;" id="bear-stop-end">—</div>
+          </div>
+        </div>
+
+        <div class="insight-box" id="bear-insight">
+          <h4>💡 Key Insight</h4>
+          <p id="bear-insight-text">Adjust the sliders to see the DCA advantage during market downturns.</p>
+        </div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="chart-title">Bear Market Scenario — 7-Year View</div>
+        <div style="display:flex;gap:1.25rem;margin-bottom:.75rem;flex-wrap:wrap;">
+          <span style="font-size:.75rem;display:flex;align-items:center;gap:.35rem;"><span style="display:inline-block;width:16px;height:3px;background:#1B3A6B;border-radius:2px;"></span>No Bear Market</span>
+          <span style="font-size:.75rem;display:flex;align-items:center;gap:.35rem;"><span style="display:inline-block;width:16px;height:3px;background:#16A34A;border-radius:2px;"></span>Bear Market — Keep DCA-ing ✓</span>
+          <span style="font-size:.75rem;display:flex;align-items:center;gap:.35rem;"><span style="display:inline-block;width:16px;height:3px;background:#DC2626;border-radius:2px;border-style:dashed;"></span>Bear Market — Stop Investing ✗</span>
+        </div>
+        <div class="chart-wrap" style="height:320px;">
+          <canvas id="bearChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION: FUND LIBRARY -->
+  <div id="fund-library" class="section-mb">
+    <div class="section-head">
+      <div class="section-title">Fund Library — All Available Funds</div>
+      <div class="section-sub">Historical returns are approximate 10-year averages as of 2024. Past performance does not guarantee future results.</div>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding-bottom:.5rem;">
+        <div class="fund-filters">
+          <button class="filter-btn active" onclick="filterFunds('all',this)">All Funds</button>
+          <button class="filter-btn" onclick="filterFunds('Stable Value',this)">Stable Value</button>
+          <button class="filter-btn" onclick="filterFunds('Bond',this)">Bond</button>
+          <button class="filter-btn" onclick="filterFunds('Balanced',this)">Balanced</button>
+          <button class="filter-btn" onclick="filterFunds('U.S. Stock',this)">U.S. Stock</button>
+          <button class="filter-btn" onclick="filterFunds('International',this)">International</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="fund-table" id="fund-table">
+          <thead>
+            <tr>
+              <th>Fund Name</th>
+              <th>Asset Class</th>
+              <th style="text-align:right;">1-Year</th>
+              <th style="text-align:right;">3-Year</th>
+              <th style="text-align:right;">5-Year</th>
+              <th style="text-align:right;">10-Year</th>
+              <th>Risk Level</th>
+            </tr>
+          </thead>
+          <tbody id="fund-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <strong>Important Disclosures:</strong> This portal is for educational purposes and is not investment advice. Historical returns shown are approximate annualized figures based on publicly available data as of 2024–2025 and are not guarantees of future performance. All projections are hypothetical and assume consistent monthly contributions and steady compounding. Actual results will vary. Richard Pope's portfolio decisions should be made in consultation with a licensed financial advisor. This portal was prepared by David Ortiz, Advisor AI Partners.
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="portal-footer">
+  Prepared for <strong>Richard A. Pope</strong> · City of Miami GESE DROP Plan · By <strong>Advisor AI Partners</strong> · David Ortiz &nbsp;|&nbsp; <a href="https://meetings.advisoraipartners.com" style="color:var(--teal);text-decoration:none;">Schedule a Meeting</a>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════
+const START_BALANCE = 15355.72;
+const MONTHLY_CONTRIB = 7000;
+const CURRENT_AGE = 70;
+
+const ALL_FUNDS = [
+  { id: 'massmutual_gia',     name: 'Massmutual Guaranteed Interest Account', shortName: 'Massmutual GIA',       cls: 'Stable Value',        r1: 3.1,  r3: 3.0,  r5: 2.9,  r10: 3.1,  risk: 1 },
+  { id: 'fidelity_contrafund',name: 'Fidelity Contrafund K',                  shortName: 'Fidelity Contrafund K',cls: 'U.S. Stock',           r1: 14.2, r3: 8.5,  r5: 13.8, r10: 12.5, risk: 4 },
+  { id: 'jpmorgan_us',        name: 'JPMorgan US Equity R6',                  shortName: 'JPMorgan US Equity',   cls: 'U.S. Stock',           r1: 12.8, r3: 9.2,  r5: 12.1, r10: 11.8, risk: 4 },
+  { id: 'ms_aggressive',      name: 'MissionSquare Aggressive Opportun R10',  shortName: 'MS Aggressive Opp.',   cls: 'U.S. Stock',           r1: 11.5, r3: 7.8,  r5: 11.2, r10: 10.3, risk: 5 },
+  { id: 'ms_conservative',    name: 'MissionSquare MP Conservative Growth R10',shortName:'MS Conservative Gr.',  cls: 'Balanced',             r1: 6.2,  r3: 4.1,  r5: 5.8,  r10: 5.8,  risk: 2 },
+  { id: 'ms_longterm',        name: 'MissionSquare MP Long-Term Growth R10',  shortName: 'MS Long-Term Gr.',     cls: 'Balanced',             r1: 9.4,  r3: 6.5,  r5: 9.1,  r10: 8.5,  risk: 3 },
+  { id: 'pgim_jennison',      name: 'PGIM Jennison Small Company R6',         shortName: 'PGIM Jennison Sm.',    cls: 'U.S. Stock',           r1: 9.8,  r3: 5.2,  r5: 8.9,  r10: 7.9,  risk: 5 },
+  { id: 'vanguard_500',       name: 'Vanguard 500 Index Admiral',             shortName: 'Vanguard 500 Index',   cls: 'U.S. Stock',           r1: 24.1, r3: 11.0, r5: 15.5, r10: 13.1, risk: 4 },
+  { id: 'vanguard_explorer',  name: 'Vanguard Explorer Value Investor',       shortName: 'Vanguard Explorer Val',cls: 'U.S. Stock',           r1: 8.9,  r3: 5.8,  r5: 8.2,  r10: 8.1,  risk: 4 },
+  { id: 'vanguard_selected',  name: 'Vanguard Selected Value Investor',       shortName: 'Vanguard Selected Val',cls: 'U.S. Stock',           r1: 9.2,  r3: 5.5,  r5: 8.1,  r10: 7.8,  risk: 4 },
+  { id: 'vanguard_smallcap',  name: 'Vanguard Small-Cap Index Admiral',       shortName: 'Vanguard Small-Cap',   cls: 'U.S. Stock',           r1: 10.8, r3: 4.9,  r5: 9.8,  r10: 9.2,  risk: 5 },
+  { id: 'vanguard_strategic', name: 'Vanguard Strategic Equity Investor',     shortName: 'Vanguard Strategic Eq',cls: 'U.S. Stock',           r1: 12.4, r3: 7.9,  r5: 11.8, r10: 10.5, risk: 4 },
+  { id: 'vanguard_bond',      name: 'Vanguard Total Bond Market Index ADM',   shortName: 'Vanguard Total Bond',  cls: 'Bond',                 r1: 1.2,  r3: -2.1, r5: 0.4,  r10: 1.8,  risk: 1 },
+  { id: 'vanguard_intl',      name: 'Vanguard Total Intl Stock Index Admiral',shortName: 'Vanguard Intl Stock',  cls: 'International Stock',  r1: 8.5,  r3: 4.2,  r5: 6.8,  r10: 5.6,  risk: 4 },
+  { id: 'vanguard_wellington',name: 'Vanguard Wellington Admiral',            shortName: 'Vanguard Wellington',  cls: 'Balanced',             r1: 10.8, r3: 6.2,  r5: 9.5,  r10: 8.9,  risk: 3 },
+  { id: 'vanguard_windsor2',  name: 'Vanguard Windsor II Admiral',            shortName: 'Vanguard Windsor II',  cls: 'U.S. Stock',           r1: 9.5,  r3: 6.8,  r5: 9.2,  r10: 8.4,  risk: 4 },
+  { id: 'victory_rs',         name: 'Victory RS Partners R6',                 shortName: 'Victory RS Partners',  cls: 'U.S. Stock',           r1: 11.2, r3: 7.5,  r5: 10.8, r10: 9.1,  risk: 4 },
+];
+
+const FUND_MAP = {};
+ALL_FUNDS.forEach(f => FUND_MAP[f.id] = f);
+
+const PORTFOLIOS = {
+  A: {
+    name: 'Steady Growth',
+    annualReturn: 7.1,
+    color: '#0097A7',
+    donutColors: ['#0097A7','#4FC3CA','#1B3A6B','#EBF0F8'],
+    holdings: [
+      { id: 'massmutual_gia',     alloc: 25 },
+      { id: 'vanguard_bond',      alloc: 20 },
+      { id: 'vanguard_wellington',alloc: 30 },
+      { id: 'vanguard_500',       alloc: 25 },
+    ]
+  },
+  B: {
+    name: 'Balanced Builder',
+    annualReturn: 9.0,
+    color: '#1B3A6B',
+    donutColors: ['#1B3A6B','#2E5FA3','#0097A7','#4FC3CA','#94A3B8'],
+    holdings: [
+      { id: 'vanguard_500',       alloc: 40 },
+      { id: 'vanguard_wellington',alloc: 20 },
+      { id: 'vanguard_intl',      alloc: 15 },
+      { id: 'vanguard_bond',      alloc: 15 },
+      { id: 'vanguard_windsor2',  alloc: 10 },
+    ]
+  },
+  C: {
+    name: 'Growth Maximizer',
+    annualReturn: 11.1,
+    color: '#C9A84C',
+    donutColors: ['#C9A84C','#1B3A6B','#0097A7','#E67E22','#8B5CF6'],
+    holdings: [
+      { id: 'vanguard_500',        alloc: 35 },
+      { id: 'fidelity_contrafund', alloc: 20 },
+      { id: 'jpmorgan_us',         alloc: 15 },
+      { id: 'vanguard_smallcap',   alloc: 15 },
+      { id: 'vanguard_intl',       alloc: 15 },
+    ]
+  }
+};
+
+// ════════════════════════════════════════════════════════
+// UTILITY
+// ════════════════════════════════════════════════════════
+function fmt(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+function calcGrowth(annualReturn, months, startBal, monthlyC) {
+  const r = annualReturn / 100 / 12;
+  const data = [];
+  let bal = startBal;
+  for (let m = 0; m <= months; m++) {
+    data.push(bal);
+    bal = bal * (1 + r) + monthlyC;
+  }
+  return data;
+}
+
+// ════════════════════════════════════════════════════════
+// PORTFOLIO CARDS RENDER
+// ════════════════════════════════════════════════════════
+const donutCharts = {};
+
+function renderPortfolioCards() {
+  ['A','B','C'].forEach(key => {
+    const p = PORTFOLIOS[key];
+    const holdEl = document.getElementById('holdings-' + key);
+    const legendEl = document.getElementById('legend-' + key);
+    holdEl.innerHTML = '';
+    legendEl.innerHTML = '';
+
+    p.holdings.forEach((h, i) => {
+      const fund = FUND_MAP[h.id];
+      const color = p.donutColors[i] || '#94A3B8';
+
+      // holding bar row
+      const row = document.createElement('div');
+      row.className = 'holding-row';
+      row.innerHTML = `
+        <span style="flex:0 0 110px;font-size:.75rem;">${fund.shortName}</span>
+        <div class="holding-bar-wrap"><div class="holding-bar" style="width:${h.alloc}%;background:${color};"></div></div>
+        <span class="holding-pct">${h.alloc}%</span>
+      `;
+      holdEl.appendChild(row);
+
+      // legend
+      const li = document.createElement('div');
+      li.className = 'legend-item';
+      li.innerHTML = `<span class="legend-dot" style="background:${color};"></span><span class="legend-label">${fund.shortName}</span><span class="legend-pct">${h.alloc}%</span>`;
+      legendEl.appendChild(li);
+    });
+
+    // donut chart
+    const ctx = document.getElementById('donut-' + key).getContext('2d');
+    if (donutCharts[key]) donutCharts[key].destroy();
+    donutCharts[key] = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: p.holdings.map(h => FUND_MAP[h.id].shortName),
+        datasets: [{ data: p.holdings.map(h => h.alloc), backgroundColor: p.donutColors, borderWidth: 2, borderColor: '#fff' }]
+      },
+      options: {
+        responsive: false,
+        cutout: '65%',
+        plugins: { legend: { display: false }, tooltip: { enabled: true } },
+        animation: { animateRotate: true, duration: 600 }
+      }
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// PORTFOLIO SELECTION
+// ════════════════════════════════════════════════════════
+let selectedPortfolio = null;
+let growthChart = null;
+
+function selectPortfolio(key) {
+  if (selectedPortfolio === key) return;
+  selectedPortfolio = key;
+
+  ['A','B','C'].forEach(k => {
+    document.getElementById('card-' + k).classList.toggle('selected', k === key);
+  });
+
+  const p = PORTFOLIOS[key];
+  document.getElementById('proj-portfolio-label').textContent = `Portfolio ${key} — ${p.name}`;
+  updateGrowthChart();
+  updateMilestones();
+  updateBear();
+}
+
+function updateMilestones() {
+  const p = PORTFOLIOS[selectedPortfolio];
+  const r = p.annualReturn;
+  const data = calcGrowth(r, 84, START_BALANCE, MONTHLY_CONTRIB);
+
+  const v1 = data[12];
+  const v3 = data[36];
+  const v5 = data[60];
+  const v7 = data[84];
+  const totalContribs = MONTHLY_CONTRIB * 84 + START_BALANCE;
+  const gains = v7 - totalContribs;
+
+  document.getElementById('milestone-1yr').textContent = fmt(v1);
+  document.getElementById('milestone-3yr').textContent = fmt(v3);
+  document.getElementById('milestone-5yr').textContent = fmt(v5);
+  document.getElementById('milestone-7yr').textContent = fmt(v7);
+  document.getElementById('total-gains').textContent = fmt(gains);
+
+  document.getElementById('stat-3yr').textContent = fmt(v3);
+  document.getElementById('stat-7yr').textContent = fmt(v7);
+  document.getElementById('stat-3yr-lbl').textContent = `Portfolio ${selectedPortfolio} at 3 years`;
+  document.getElementById('stat-7yr-lbl').textContent = `Portfolio ${selectedPortfolio} at 7 years`;
+}
+
+function updateGrowthChart() {
+  const p = PORTFOLIOS[selectedPortfolio];
+  const months = 84;
+  const labels = [];
+  for (let m = 0; m <= months; m++) {
+    if (m % 6 === 0) labels.push(m === 0 ? 'Start' : `Mo ${m}`);
+    else labels.push('');
+  }
+
+  const data = calcGrowth(p.annualReturn, months, START_BALANCE, MONTHLY_CONTRIB);
+  const contribLine = [];
+  for (let m = 0; m <= months; m++) {
+    contribLine.push(START_BALANCE + MONTHLY_CONTRIB * m);
+  }
+
+  const ctx = document.getElementById('growthChart');
+  if (growthChart) growthChart.destroy();
+  growthChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: `Portfolio ${selectedPortfolio} Growth`,
+          data,
+          borderColor: p.color,
+          backgroundColor: hexToRgba(p.color, 0.08),
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+        },
+        {
+          label: 'Contributions Only',
+          data: contribLine,
+          borderColor: '#94A3B8',
+          borderWidth: 1.5,
+          borderDash: [4, 4],
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
+        y: {
+          grid: { color: '#F1F5F9' },
+          ticks: {
+            font: { size: 10 }, color: '#94A3B8',
+            callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'K')
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`
+          }
+        },
+        annotation: {}
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// BEAR MARKET SIMULATOR
+// ════════════════════════════════════════════════════════
+let bearChart = null;
+
+function updateBear() {
+  const decline = parseInt(document.getElementById('decline-slider').value);
+  const duration = parseInt(document.getElementById('duration-slider').value);
+  const bearStart = parseInt(document.getElementById('start-slider').value);
+
+  document.getElementById('decline-val').textContent = `−${decline}%`;
+  document.getElementById('duration-val').textContent = `${duration} months`;
+  document.getElementById('start-val').textContent = `Month ${bearStart}`;
+
+  const annualReturn = selectedPortfolio ? PORTFOLIOS[selectedPortfolio].annualReturn : 9.0;
+  const portfolioColor = selectedPortfolio ? PORTFOLIOS[selectedPortfolio].color : '#1B3A6B';
+  const months = 84;
+  const r = annualReturn / 100 / 12;
+
+  // Monthly decline rate over duration
+  const bearMonthlyReturn = Math.pow(1 - decline / 100, 1 / duration) - 1;
+  const recoveryDuration = Math.round(duration * 1.2); // recovery takes a bit longer
+  const peakFactor = 1 / (1 - decline / 100);
+  const recoveryMonthlyReturn = Math.pow(peakFactor, 1 / recoveryDuration) - 1;
+
+  const normalData = [];
+  const dcaData = [];
+  const stopData = [];
+
+  let bNorm = START_BALANCE;
+  let bDca = START_BALANCE;
+  let bStop = START_BALANCE;
+  let bearLow = Infinity;
+
+  for (let m = 0; m <= months; m++) {
+    normalData.push(bNorm);
+    dcaData.push(bDca);
+    stopData.push(bStop);
+
+    // Track low point for DCA portfolio
+    if (m >= bearStart && m < bearStart + duration) {
+      bearLow = Math.min(bearLow, bDca);
+    }
+
+    const inBear = m >= bearStart && m < bearStart + duration;
+    const inRecovery = m >= bearStart + duration && m < bearStart + duration + recoveryDuration;
+    const mr = inBear ? bearMonthlyReturn : inRecovery ? recoveryMonthlyReturn : r;
+
+    bNorm = bNorm * (1 + r) + MONTHLY_CONTRIB;
+    bDca = bDca * (1 + mr) + MONTHLY_CONTRIB;
+    // Stop investing: no contribution during bear AND recovery
+    const stoppedInvesting = m >= bearStart && m < bearStart + duration + recoveryDuration;
+    bStop = bStop * (1 + mr) + (stoppedInvesting ? 0 : MONTHLY_CONTRIB);
+  }
+
+  const labels = [];
+  for (let m = 0; m <= months; m++) {
+    labels.push(m % 12 === 0 ? `Yr ${m/12}` : '');
+  }
+
+  // Update stats
+  document.getElementById('bear-low').textContent = fmt(bearLow === Infinity ? null : bearLow);
+  document.getElementById('bear-dca-end').textContent = fmt(dcaData[months]);
+  document.getElementById('bear-normal-end').textContent = fmt(normalData[months]);
+  document.getElementById('bear-stop-end').textContent = fmt(stopData[months]);
+
+  // Insight text
+  const dcaVsStop = dcaData[months] - stopData[months];
+  const dcaVsNormal = dcaData[months] - normalData[months];
+  let insight = `By continuing to invest $7,000/month through a −${decline}% bear market lasting ${duration} months, Richard's portfolio ends at ${fmt(dcaData[months])} — `;
+  if (dcaVsStop > 0) {
+    insight += `<strong>$${Math.round(dcaVsStop).toLocaleString()} more</strong> than if he had stopped investing during the downturn. `;
+  }
+  insight += `Buying at lower prices during the dip accelerates recovery and long-term growth. This is the power of dollar cost averaging.`;
+  document.getElementById('bear-insight-text').innerHTML = insight;
+
+  const ctx = document.getElementById('bearChart');
+  if (bearChart) bearChart.destroy();
+  bearChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'No Bear Market',
+          data: normalData,
+          borderColor: '#1B3A6B',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          tension: 0.4,
+          pointRadius: 0,
+        },
+        {
+          label: 'Bear Market — Keep DCA',
+          data: dcaData,
+          borderColor: '#16A34A',
+          backgroundColor: hexToRgba('#16A34A', 0.06),
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 0,
+        },
+        {
+          label: 'Bear Market — Stop Investing',
+          data: stopData,
+          borderColor: '#DC2626',
+          backgroundColor: 'transparent',
+          borderWidth: 2,
+          borderDash: [5, 5],
+          tension: 0.4,
+          pointRadius: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
+        y: {
+          grid: { color: '#F1F5F9' },
+          ticks: {
+            font: { size: 10 }, color: '#94A3B8',
+            callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'K')
+          }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`
+          }
+        }
+      }
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// FUND TABLE
+// ════════════════════════════════════════════════════════
+const CLASS_STYLE = {
+  'Stable Value':       'class-stable',
+  'Bond':               'class-bond',
+  'Balanced':           'class-balanced',
+  'U.S. Stock':         'class-us',
+  'International Stock':'class-intl',
+};
+
+function returnCell(v) {
+  if (v === null || v === undefined) return '<td style="text-align:right;">—</td>';
+  const cls = v > 0 ? 'positive' : v < 0 ? 'negative' : 'neutral';
+  return `<td class="return-cell ${cls}" style="text-align:right;">${v > 0 ? '+' : ''}${v.toFixed(1)}%</td>`;
+}
+
+function riskDots(r) {
+  let html = '<div class="risk-dots">';
+  for (let i = 1; i <= 5; i++) {
+    html += `<div class="risk-dot${i <= r ? ' filled' : ''}"></div>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+let currentFilter = 'all';
+
+function filterFunds(cls, btn) {
+  currentFilter = cls;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFundTable();
+}
+
+function renderFundTable() {
+  const tbody = document.getElementById('fund-tbody');
+  tbody.innerHTML = '';
+  const funds = currentFilter === 'all'
+    ? ALL_FUNDS
+    : ALL_FUNDS.filter(f => {
+        if (currentFilter === 'International') return f.cls.startsWith('International');
+        return f.cls === currentFilter;
+      });
+
+  funds.forEach(f => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="fund-name-cell">${f.name}</div>
+        <span class="fund-class-badge ${CLASS_STYLE[f.cls] || 'class-us'}">${f.cls}</span>
+      </td>
+      <td>${f.cls}</td>
+      ${returnCell(f.r1)}
+      ${returnCell(f.r3)}
+      ${returnCell(f.r5)}
+      ${returnCell(f.r10)}
+      <td>${riskDots(f.risk)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1,3), 16);
+  const g = parseInt(hex.slice(3,5), 16);
+  const b = parseInt(hex.slice(5,7), 16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderPortfolioCards();
+  renderFundTable();
+  // Default: select portfolio B
+  selectPortfolio('B');
+});
+</script>
+</body>
+</html>

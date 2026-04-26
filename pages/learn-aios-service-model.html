@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The $30,000+ AIOS Service Model — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8; --blue-light:#EFF6FF; --blue-mid:#BFDBFE;
+      --teal:#0D9488; --teal-light:#F0FDFA; --teal-mid:#99F6E4;
+      --amber:#D97706; --amber-light:#FFFBEB; --amber-mid:#FDE68A;
+      --gold:#B45309; --gold-light:#FFFBEB; --gold-mid:#FDE68A;
+      --green:#15803D; --green-light:#F0FDF4; --green-mid:#BBF7D0;
+      --slate:#334155; --slate-light:#F1F5F9; --slate-mid:#CBD5E1;
+      --ink:#0F172A; --ink-dim:#64748B; --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8; --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--amber-light); color: var(--amber); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--amber); border-left-color: var(--amber); background: var(--amber-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--amber); border-color: var(--amber); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--amber-light); color: var(--amber); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.amber  { background: var(--amber-light); border-left: 3px solid var(--amber); }
+    .callout.blue   { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.green  { background: var(--green-light); border-left: 3px solid var(--green); }
+    .callout.teal   { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout.slate  { background: var(--slate-light); border-left: 3px solid var(--slate); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Offer flow */
+    .offer-flow { display: flex; flex-direction: column; gap: 3px; margin: 24px 0; }
+    .offer-row { display: grid; grid-template-columns: 120px 1fr auto; gap: 16px; align-items: stretch; }
+    .offer-badge { border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px 8px; text-align: center; flex-shrink: 0; }
+    .ob1 { background: var(--blue-light); }
+    .ob2 { background: var(--teal-light); }
+    .ob3 { background: var(--amber-light); }
+    .ob4 { background: var(--green-light); }
+    .ob5 { background: var(--slate-light); }
+    .offer-step-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .ob1 .offer-step-label { color: var(--blue); }
+    .ob2 .offer-step-label { color: var(--teal); }
+    .ob3 .offer-step-label { color: var(--amber); }
+    .ob4 .offer-step-label { color: var(--green); }
+    .ob5 .offer-step-label { color: var(--slate); }
+    .offer-step-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-top: 3px; }
+    .offer-content { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; flex: 1; }
+    .offer-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .offer-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .offer-price { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; min-width: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex-shrink: 0; }
+    .price-val  { font-size: 16px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+    .price-note { font-size: 10px; color: var(--ink-faint); margin-top: 2px; }
+
+    /* Pricing models */
+    .pricing-models { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+    .pricing-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; }
+    .pricing-card.featured { border-color: var(--amber-mid); }
+    .pm-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+    .pm-price { font-size: 28px; font-weight: 800; letter-spacing: -.04em; color: var(--ink); margin-bottom: 4px; }
+    .pricing-card.featured .pm-price { color: var(--amber); }
+    .pm-name  { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .pm-items { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .pm-item  { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .pm-dot   { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; background: var(--amber); }
+
+    /* IRL table */
+    .irl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .irl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .irl-card.online  { border-color: var(--blue-mid); }
+    .irl-card.inperson { border-color: var(--amber-mid); }
+    .irl-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .irl-card.online   .irl-label { color: var(--blue); }
+    .irl-card.inperson .irl-label { color: var(--amber); }
+    .irl-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .irl-traits { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .irl-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .irl-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .online   .irl-dot { background: var(--blue); }
+    .inperson .irl-dot { background: var(--amber); }
+
+    /* Digital employees */
+    .employee-cards { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .employee-card { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .emp-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .emp-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .emp-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; flex: 1; }
+    .emp-price { font-size: 13px; font-weight: 800; color: var(--amber); flex-shrink: 0; white-space: nowrap; padding-top: 2px; }
+
+    /* Revenue models */
+    .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+    .rev-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .rev-icon { font-size: 20px; margin-bottom: 6px; }
+    .rev-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .rev-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.55; }
+    .rev-when  { margin-top: 8px; font-size: 10px; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* Scale questions */
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .q-card.fish { border-color: var(--teal-mid); }
+    .q-card.give { border-color: var(--blue-mid); }
+    .q-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+    .q-card.fish .q-label { color: var(--teal); }
+    .q-card.give .q-label { color: var(--blue); }
+    .q-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .q-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Feat list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--amber); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .pricing-models, .irl-grid, .q-grid, .rev-grid, .tk-grid, .related-grid { grid-template-columns: 1fr; }
+      .offer-row { grid-template-columns: 1fr; }
+      .offer-price { flex-direction: row; justify-content: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">AIOS Service Model</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"   class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#prerequisite" class="sidebar-link"><span class="sidebar-step">1</span> Build Yours First</a>
+    <a href="#offer"      class="sidebar-link"><span class="sidebar-step">2</span> The Offer Structure</a>
+    <a href="#pricing"    class="sidebar-link"><span class="sidebar-step">3</span> Pricing Tiers</a>
+    <a href="#irl"        class="sidebar-link"><span class="sidebar-step">4</span> Online vs. In-Person</a>
+    <a href="#employees"  class="sidebar-link"><span class="sidebar-step">5</span> Digital Employees as Upsell</a>
+    <a href="#revenue"    class="sidebar-link"><span class="sidebar-step">6</span> Revenue Models</a>
+    <a href="#clients"    class="sidebar-link"><span class="sidebar-step">7</span> Target Clients</a>
+    <a href="#scaling"    class="sidebar-link"><span class="sidebar-step">8</span> Scaling to Teams</a>
+    <a href="#ecosystem"  class="sidebar-link"><span class="sidebar-step">9</span> The Ecosystem Play</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways"  class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">💰 Service Model</div>
+      <h1 class="module-title">The $30,000+ AIOS Service Model</h1>
+      <p class="module-subtitle">
+        How to package and price building AI Operating Systems for clients — from the free audit entry point
+        through $15k remote setups to $30k+ in-person engagements. Covers offer structure, delivery,
+        pricing psychology, digital employees as upsells, and the ecosystem model.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop session</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~25 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Open brainstorm format</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Pricing still being tested in market</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- PREREQUISITE -->
+    <section class="section" id="prerequisite">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">Build Yours First — Non-Negotiable</h2>
+      <p class="section-body">
+        Before you pitch this to a single client, you need to have run this process on your own business.
+        Not because of some "practice what you preach" principle — because you literally cannot explain,
+        scope, or deliver something you haven't lived through. The nuances only become visible in practice.
+      </p>
+
+      <div class="callout amber">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>"Do the thing before you sell the thing."</strong> People in the room had already pitched
+          AIOS to 4 businesses on day one. That's fine for initial conversations — but you need to
+          have your own system working before you can actually deliver for a client.
+          Your own AIOS is your best case study, your best proof of concept, and your best training ground.
+        </div>
+      </div>
+
+      <p class="section-body">
+        Specifically: you need to have gone through Context OS setup, at least started Data OS,
+        run the task audit on yourself, and built at least a few workflows. That hands-on experience
+        is what lets you scope a client engagement accurately and set realistic expectations.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- OFFER STRUCTURE -->
+    <section class="section" id="offer">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The Offer Structure — Five Phases</h2>
+      <p class="section-body">
+        The AIOS service has a natural delivery sequence. Each phase delivers standalone value,
+        which means you can stop at different points depending on what the client needs and what
+        you're ready to deliver. Don't feel obligated to scope everything upfront.
+      </p>
+
+      <div class="offer-flow">
+        <div class="offer-row">
+          <div class="offer-badge ob1">
+            <div class="offer-step-label">Phase 1</div>
+            <div class="offer-step-name">Audit</div>
+          </div>
+          <div class="offer-content">
+            <div class="offer-title">Task Audit & Discovery</div>
+            <div class="offer-desc">Map every task the founder/CEO currently does. Score by time, value, and automation potential. Identify top 10–20 automation candidates. Produces the roadmap for everything that follows.</div>
+          </div>
+          <div class="offer-price">
+            <div class="price-val">Free–$3k</div>
+            <div class="price-note">Deductible from package</div>
+          </div>
+        </div>
+        <div class="offer-row">
+          <div class="offer-badge ob2">
+            <div class="offer-step-label">Phase 2</div>
+            <div class="offer-step-name">Core OS</div>
+          </div>
+          <div class="offer-content">
+            <div class="offer-title">AIOS Core Setup</div>
+            <div class="offer-desc">Context OS, Data OS, Core modules installed. Founder and up to 3–5 C-suite members set up on their own primed workspace. The foundation all other work sits on.</div>
+          </div>
+          <div class="offer-price">
+            <div class="price-val">~$12k</div>
+            <div class="price-note">Included in full package</div>
+          </div>
+        </div>
+        <div class="offer-row">
+          <div class="offer-badge ob3">
+            <div class="offer-step-label">Phase 3</div>
+            <div class="offer-step-name">Modules</div>
+          </div>
+          <div class="offer-content">
+            <div class="offer-title">Plug & Play Module Installation</div>
+            <div class="offer-desc">Install as many pre-built modules as apply to the client's task audit. Cold email, SDR, content pipeline, meeting intel — any module that addresses a task on their list. Speed increases with each client as your library grows.</div>
+          </div>
+          <div class="offer-price">
+            <div class="price-val">Bundled</div>
+            <div class="price-note">Per module or package</div>
+          </div>
+        </div>
+        <div class="offer-row">
+          <div class="offer-badge ob4">
+            <div class="offer-step-label">Phase 4</div>
+            <div class="offer-step-name">Training</div>
+          </div>
+          <div class="offer-content">
+            <div class="offer-title">Training & Handoff</div>
+            <div class="offer-desc">Walk the client through using the system themselves. Do the task audit with them, show them how to run slash commands, explain the data flow. The "teach to fish" phase — or the start of ongoing dependency.</div>
+          </div>
+          <div class="offer-price">
+            <div class="price-val">Included</div>
+            <div class="price-note">Or retainer</div>
+          </div>
+        </div>
+        <div class="offer-row">
+          <div class="offer-badge ob5">
+            <div class="offer-step-label">Phase 5</div>
+            <div class="offer-step-name">Ongoing</div>
+          </div>
+          <div class="offer-content">
+            <div class="offer-title">Ongoing Support & Expansion</div>
+            <div class="offer-desc">New modules as they're released. Custom modules for repeatable client-specific workflows (that you then add to your library). Team scaling when they're ready. Monthly retainer or per-module fees.</div>
+          </div>
+          <div class="offer-price">
+            <div class="price-val">MRR</div>
+            <div class="price-note">Retainer model</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Stop points create flexible scoping.</strong> You can pitch Phase 1+2 only, or 1+2+3,
+          or the full engagement. The audit always comes first and is always the entry point.
+          The value at each phase is clear enough that you can explain exactly what the client gets
+          at every budget level.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- PRICING -->
+    <section class="section" id="pricing">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Pricing Tiers — What to Charge</h2>
+      <p class="section-body">
+        These numbers are directional — the market is still being tested. Start lower if you don't
+        have delivery confidence yet. The pricing logic is: your cost to deliver drops with each
+        engagement as your module library grows, so you can raise prices while reducing time spent.
+      </p>
+
+      <div class="pricing-models">
+        <div class="pricing-card">
+          <div class="pm-label">Entry point</div>
+          <div class="pm-price">Free → $3k</div>
+          <div class="pm-name">Audit Only</div>
+          <ul class="pm-items">
+            <li class="pm-item"><span class="pm-dot"></span>Offer free to get in the door with promising leads</li>
+            <li class="pm-item"><span class="pm-dot"></span>Or charge $3k — deductible if they proceed to full package</li>
+            <li class="pm-item"><span class="pm-dot"></span>Deliverable: full task audit, ranked by automation potential</li>
+            <li class="pm-item"><span class="pm-dot"></span>Even if they don't proceed, you've done a useful exercise with them</li>
+          </ul>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pm-label">Core offer</div>
+          <div class="pm-price">~$15k</div>
+          <div class="pm-name">Full Remote Package</div>
+          <ul class="pm-items">
+            <li class="pm-item"><span class="pm-dot"></span>Audit + Core OS setup + module installation + training</li>
+            <li class="pm-item"><span class="pm-dot"></span>Founder + up to C-suite workspaces configured</li>
+            <li class="pm-item"><span class="pm-dot"></span>Delivered online via screen share sessions</li>
+            <li class="pm-item"><span class="pm-dot"></span>Includes: $3k audit value already counted if deductible structure used</li>
+          </ul>
+        </div>
+        <div class="pricing-card">
+          <div class="pm-label">Custom module</div>
+          <div class="pm-price">$3k–$10k</div>
+          <div class="pm-name">Per Custom Module</div>
+          <ul class="pm-items">
+            <li class="pm-item"><span class="pm-dot"></span>For workflows not covered by existing plug & play modules</li>
+            <li class="pm-item"><span class="pm-dot"></span>Build once for this client, add to your library</li>
+            <li class="pm-item"><span class="pm-dot"></span>Second client gets it cheaper — you've already built it</li>
+            <li class="pm-item"><span class="pm-dot"></span>Avoid custom work early — keep scope to existing modules first</li>
+          </ul>
+        </div>
+        <div class="pricing-card featured">
+          <div class="pm-label">Premium tier</div>
+          <div class="pm-price">$30k–$70k+</div>
+          <div class="pm-name">In-Person Engagement</div>
+          <ul class="pm-items">
+            <li class="pm-item"><span class="pm-dot"></span>Fly to the client. Work on-site 2–3 days.</li>
+            <li class="pm-item"><span class="pm-dot"></span>Consultant + developer pair (the Palantir model)</li>
+            <li class="pm-item"><span class="pm-dot"></span>Higher price justified by speed, focus, and proximity to their systems</li>
+            <li class="pm-item"><span class="pm-dot"></span>Travel and accommodation added on top. Include in quote explicitly.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout amber">
+        <div class="callout-icon">📊</div>
+        <div class="callout-body">
+          <strong>Pricing reality check:</strong> These are early-market numbers being tested in real engagements.
+          The key is to start at a price where, if delivery takes twice as long as expected, you're still okay.
+          Build delivery confidence first, then raise prices. The module library is what lets you
+          eventually charge premium while spending less time — your second delivery in a niche costs a fraction of the first.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- IRL -->
+    <section class="section" id="irl">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Online vs. In-Person — Two Delivery Models</h2>
+      <p class="section-body">
+        Both paths work. The in-person model is more expensive for the client and more logistically
+        complex for you — but it gets things done faster, creates stronger relationships, and commands
+        a significant price premium. The online model is the default; in-person is the upsell.
+      </p>
+
+      <div class="irl-grid">
+        <div class="irl-card online">
+          <div class="irl-label">Standard</div>
+          <div class="irl-title">Online / Remote Delivery</div>
+          <ul class="irl-traits">
+            <li class="irl-trait"><span class="irl-dot"></span>Screen share sessions over 1–3 weeks</li>
+            <li class="irl-trait"><span class="irl-dot"></span>More back-and-forth, slower momentum</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Easier to schedule, no travel overhead</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Works well for non-technical business owners who are motivated</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Best for: most clients under $15k package</li>
+          </ul>
+        </div>
+        <div class="irl-card inperson">
+          <div class="irl-label">Premium</div>
+          <div class="irl-title">In-Person (IRL) Engagement</div>
+          <ul class="irl-traits">
+            <li class="irl-trait"><span class="irl-dot"></span>Fly to client site. 2–3 days focused work.</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Consultant + developer pair — "Palantir squads" model</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Travel, accommodation, and per diem added to quote</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Faster decisions, direct system access, higher client buy-in</li>
+            <li class="irl-trait"><span class="irl-dot"></span>Only after you've delivered 2–3 online engagements successfully</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">✈️</div>
+        <div class="callout-body">
+          <strong>How to quote the in-person package:</strong> Base engagement fee ($30k–$70k) +
+          travel costs (flights, hotel, ground transport) + daily rate for additional days beyond the included scope.
+          Be explicit about what's included in the base vs. what's billed separately. Clients buying
+          this tier understand the value of dedicated, on-site execution time.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- DIGITAL EMPLOYEES -->
+    <section class="section" id="employees">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Digital Employees as an Upsell</h2>
+      <p class="section-body">
+        Beyond the Core OS setup and plug & play modules, there's a second product layer:
+        autonomous AI agents (like OpenClaude) that function as dedicated "digital employees" —
+        each specialized in one role, running 24/7 without the client needing to manage them.
+        These are priced separately, per employee.
+      </p>
+
+      <div class="callout amber">
+        <div class="callout-icon">🤖</div>
+        <div class="callout-body">
+          <strong>The key distinction:</strong> The Core OS and Claude Code workspace is the client's cockpit —
+          where they do work, make decisions, and direct things. A digital employee (OpenClaude-style agent)
+          is a crew member that runs autonomously on a dedicated machine (Mac Mini or VPS), doing a
+          specific job without them being in the loop. Two different products that work together.
+        </div>
+      </div>
+
+      <div class="employee-cards">
+        <div class="employee-card">
+          <div class="emp-icon">🎨</div>
+          <div>
+            <div class="emp-name">Thumbnail Designer Agent</div>
+            <div class="emp-desc">Monitors the content calendar, pulls transcripts, researches competitors, generates batches of thumbnails, self-scores and improves its own method over time.</div>
+          </div>
+          <div class="emp-price">~$3k/setup</div>
+        </div>
+        <div class="employee-card">
+          <div class="emp-icon">📧</div>
+          <div>
+            <div class="emp-name">SDR / Outreach Agent</div>
+            <div class="emp-desc">Manages a CRM database, batches daily outreach, tracks reply status, sequences follow-ups, updates pipeline. Frees the founder from repetitive prospecting.</div>
+          </div>
+          <div class="emp-price">~$3k/setup</div>
+        </div>
+        <div class="employee-card">
+          <div class="emp-icon">📱</div>
+          <div>
+            <div class="emp-name">Content Repurposing Agent</div>
+            <div class="emp-desc">Monitors the YouTube channel, processes new videos, generates platform-specific content variants (LinkedIn, Twitter, newsletter snippets), queues for review.</div>
+          </div>
+          <div class="emp-price">~$3k/setup</div>
+        </div>
+      </div>
+
+      <p class="section-body">
+        The pricing justification: you've refined this agent across 5–6 previous client engagements.
+        It has proven output quality. The client pays for the setup, the documentation, and the
+        institutional knowledge baked in — not just the code. Each subsequent client costs less to
+        deliver because the methodology is already dialed.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Hardware requirement:</strong> Each digital employee needs a dedicated machine — Mac Mini (~$600) or VPS (~$20–50/month). This is either a one-time cost to the client or included in your setup fee.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Self-improving loops:</strong> Unlike a static workflow, a properly configured digital employee improves its own method over time — using scoring criteria, comparing outputs, updating its approach based on what works.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Transferable:</strong> Because it runs on a dedicated machine with a defined scope, it can be handed off to a new operator or upgraded without disrupting the client's main workspace.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- REVENUE MODELS -->
+    <section class="section" id="revenue">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Revenue Models — Three Ways to Structure It</h2>
+
+      <div class="rev-grid">
+        <div class="rev-card">
+          <div class="rev-icon">💵</div>
+          <div class="rev-title">Fixed Package + Retainer</div>
+          <div class="rev-desc">One-time setup fee for Core OS + modules. Monthly retainer for support, new module installs, and system maintenance. Clean, predictable, easiest to scope.</div>
+          <div class="rev-when">Best starting model</div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-icon">🔧</div>
+          <div class="rev-title">Setup + Per Module</div>
+          <div class="rev-desc">Base setup fee for Core OS. Additional fee per module installed (from your library or custom-built). Client only pays for what they actually use. Good for discovery-stage clients.</div>
+          <div class="rev-when">Flexible scoping</div>
+        </div>
+        <div class="rev-card">
+          <div class="rev-icon">📈</div>
+          <div class="rev-title">Performance / Revenue Share</div>
+          <div class="rev-desc">Go in free. Take a percentage of revenue above a baseline. e.g., if they're at $100k/month, take X% of everything above $150k. Highest risk, highest alignment.</div>
+          <div class="rev-when">Only when results are predictable</div>
+        </div>
+      </div>
+
+      <div class="callout amber">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>On performance-based pricing:</strong> Don't jump here first. You need delivery reps, proven outcomes,
+          and a niche where you can confidently predict the uplift before you trade setup fees for
+          equity-in-outcomes. But when you have a repeatable niche playbook and can say "businesses like you
+          typically see X% revenue increase in Y months" — the performance model becomes very compelling to clients.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TARGET CLIENTS -->
+    <section class="section" id="clients">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">Target Clients — Who to Go After Now</h2>
+      <p class="section-body">
+        The market for AIOS as a service is wide, but your early delivery experience should be narrow.
+        Starting small lets you learn what actually takes time, where the friction is, and what your
+        niche playbook should look like — before you're in front of a demanding enterprise client.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Solo founders and 1-person operations:</strong> Maximum decision-making speed. The person you're setting up is the person you're talking to. No internal politics. Best for learning delivery.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Small businesses, 1–50 people:</strong> Set up the founder/CEO first. Optionally extend to 3–5 C-suite members. This is the sweet spot — big enough to have real operational pain, small enough to be set up in days rather than months.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Early adopter business owners:</strong> Clients who are already AI-curious are dramatically easier to deliver for. They understand what you're building, they tolerate the rough edges, and they actually use what you set up.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Not yet: large teams (100+):</strong> Team scaling is still an open problem. Until there's a clear methodology for rolling AIOS out to non-technical employees at scale, don't take on a client where the whole team needs it.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Not yet: fully non-technical, AI-resistant:</strong> If the client isn't even curious about AI and you have to convince them it's worth trying, they'll fight you at every step of implementation. Save those clients for when you have a frictionless onboarding path.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SCALING TO TEAMS -->
+    <section class="section" id="scaling">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Scaling to Teams — The Unsolved Problem</h2>
+      <p class="section-body">
+        The hardest open question in the AIOS service model: what do you do after the founder is set up
+        and wants to roll it out to their team? Two competing approaches, each with trade-offs.
+      </p>
+
+      <div class="q-grid">
+        <div class="q-card fish">
+          <div class="q-label">Option A</div>
+          <div class="q-title">Teach them to fish</div>
+          <div class="q-desc">Train the team to run their own AIOS. Walk them through the methodology, teach them to build and iterate their own workflows. Sustainable, but hard for non-technical people. Requires significant time investment from you and from them.</div>
+        </div>
+        <div class="q-card give">
+          <div class="q-label">Option B</div>
+          <div class="q-title">Give them the fish</div>
+          <div class="q-desc">Set up their workspace for them, maintain it for them, be their ongoing AIOS operator. Simpler for them, creates retainer dependency. The risk: they don't really understand what's running, and if you leave they're stuck.</div>
+        </div>
+      </div>
+
+      <p class="section-body">
+        The likely answer is a hybrid — set up the Core OS and modules (give the fish), then do a
+        structured training series so they understand enough to maintain and extend it themselves (teach to fish).
+        The team members who need access but don't need full power should get a scoped-down version
+        on Claude Desktop, not the full CLI setup.
+      </p>
+
+      <div class="callout slate">
+        <div class="callout-icon">🔐</div>
+        <div class="callout-body">
+          <strong>Security concern for team rollouts:</strong> When you give a non-technical employee
+          full API access to company systems, you create real risk. Lock down API keys to read-only
+          where possible. Use settings.json permissions to scope what each user's workspace can do.
+          Don't give write access to anyone who doesn't understand the implications.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ECOSYSTEM -->
+    <section class="section" id="ecosystem">
+      <div class="section-number">Section 09</div>
+      <h2 class="section-title">The Long Game — Niche Specialization & the Ecosystem</h2>
+      <p class="section-body">
+        The biggest leverage in this model isn't any individual client engagement — it's the
+        accumulation of niche expertise and a reusable module library. Here's what that looks like at scale.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Pick a niche and go deep.</strong> Local services, SMMAs, fitness coaches, industrial automation, real estate. Once you've done 3–5 setups in one niche, you know exactly which modules they need, what their funnel looks like, and how long delivery takes. Your second engagement costs a fraction of your first.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Every custom module becomes a library asset.</strong> When you build something custom for a client, that work is only expensive once. The next client in the same niche gets it at low marginal cost. Your library is the moat.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Specialist referral network.</strong> As the accelerator community grows, business owners get matched to the specialist best suited to their type of business. Being the person known for fitness coaches, or SMMAs, or roofing companies, is what makes inbound referrals possible.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>The ecosystem play.</strong> The funnel is: business owners learn about AIOS → they want help implementing it → they get connected to a specialist in their niche → the specialist gets a warm, pre-educated lead. Both sides win when specialists and business owners are in the same network.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Scalability is in repeatability.</strong> The goal isn't to customize everything for every client. It's to build a module library that covers 80% of any niche client's needs out of the box, with minimal custom work required. That's when delivery becomes highly profitable.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">The audit is always the entry point</div>
+          <div class="tk-desc">Every engagement starts with the task audit. Free or $3k, it's deductible from the package. It creates the roadmap and gives you and the client a clear shared picture of what's being automated.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Price ranges from $3k to $70k+</div>
+          <div class="tk-desc">Audit only ($3k) → remote full package (~$15k) → custom modules ($3k–$10k each) → in-person engagement ($30k–$70k+). These are ranges being tested in the market, not locked prices.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">In-person commands premium pricing</div>
+          <div class="tk-desc">Flying to a client, working on-site 2–3 days with a consultant + developer pair, justifies $30k–$70k. Add travel on top. Don't attempt this before you've delivered 2–3 remote engagements successfully.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Digital employees are a separate upsell</div>
+          <div class="tk-desc">Autonomous agents (thumbnail designer, SDR, content repurposer) are priced per employee — ~$3k each after you've refined them across clients. These run on dedicated hardware, not the client's main workspace.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">Start with 1–50 person businesses</div>
+          <div class="tk-desc">Solo founders and small businesses are the right early clients. Fast decisions, clear scope, high motivation. Don't go after large teams or fully non-technical clients until you have a proven delivery playbook.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">Niche specialization is the moat</div>
+          <div class="tk-desc">Three to five engagements in one niche builds a reusable module library, a predictable delivery timeline, and a referral reputation. Generic AIOS consulting has no moat. Niche AIOS consulting compounds.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-builder-mindset.html" class="related-card">
+          <div class="rc-tag">Methodology</div>
+          <div class="rc-title">Thinking Like an AIOS Builder</div>
+          <div class="rc-sub">The 5 principles, task audit process, and strategic mindset behind building and selling AIOS.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-quick-setup.html" class="related-card">
+          <div class="rc-tag">Delivery</div>
+          <div class="rc-title">Quick Setup with Plug & Play Modules</div>
+          <div class="rc-sub">The actual delivery mechanics — how modules install, what the client experience looks like.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-security.html" class="related-card">
+          <div class="rc-tag">Client safety</div>
+          <div class="rc-title">Claude Code Security Basics</div>
+          <div class="rc-sub">What you need to lock down before any client data enters the system.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

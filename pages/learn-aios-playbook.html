@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The AIOS Playbook — Advisor AI Partners</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:    #1B4FD8;  --blue-light:  #EFF6FF;  --blue-mid:    #BFDBFE;
+      --teal:    #0D9488;  --teal-light:  #F0FDFA;  --teal-mid:    #99F6E4;
+      --gold:    #B45309;  --gold-light:  #FFFBEB;  --gold-mid:    #FDE68A;
+      --green:   #059669;  --green-light: #ECFDF5;  --green-mid:   #A7F3D0;
+      --red:     #DC2626;  --red-light:   #FEF2F2;  --red-mid:     #FECACA;
+      --ink:     #0F172A;  --ink-dim:     #475569;  --ink-faint:   #94A3B8;
+      --surface: #FFFFFF;  --base:        #F8FAFC;  --border:      #E2E8F0;
+      --sidebar-w: 220px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--base);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      justify-content: space-between;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-logo {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue), var(--teal));
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 11px;
+    }
+    .topbar-brand { font-size: 13px; font-weight: 700; color: var(--ink); }
+    .topbar-sep { width: 1px; height: 16px; background: var(--border); }
+    .topbar-title { font-size: 13px; color: var(--ink-faint); }
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+    .topbar-btn {
+      padding: 6px 14px;
+      border-radius: 7px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-dim);
+      text-decoration: none;
+      transition: all .15s;
+    }
+    .topbar-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── LAYOUT ── */
+    .layout { display: grid; grid-template-columns: var(--sidebar-w) 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+
+    /* ── STICKY SIDEBAR NAV ── */
+    .sidenav {
+      position: sticky;
+      top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      padding: 28px 0;
+      border-right: 1px solid var(--border);
+    }
+    .sidenav::-webkit-scrollbar { width: 0; }
+    .sn-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      padding: 0 20px 8px;
+    }
+    .sn-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-dim);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all .12s;
+    }
+    .sn-item:hover { color: var(--ink); background: rgba(0,0,0,.03); }
+    .sn-item.active { color: var(--blue); border-left-color: var(--blue); background: var(--blue-light); font-weight: 600; }
+    .sn-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--base); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; color: var(--ink-faint);
+      flex-shrink: 0;
+    }
+    .sn-item.active .sn-num { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .sn-divider { height: 1px; background: var(--border); margin: 10px 20px; }
+    .sn-ref {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 11.5px;
+      color: var(--ink-faint);
+      text-decoration: none;
+      transition: color .12s;
+    }
+    .sn-ref:hover { color: var(--blue); }
+
+    /* ── MAIN CONTENT ── */
+    .content { padding: 0 48px 80px; }
+
+    /* ── HERO ── */
+    .hero { padding: 56px 0 48px; border-bottom: 1px solid var(--border); }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 16px;
+    }
+    .hero-eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 640px;
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: var(--ink-dim);
+      line-height: 1.65;
+      max-width: 560px;
+      margin-bottom: 32px;
+    }
+
+    /* Process overview pills */
+    .process-strip {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+      row-gap: 8px;
+    }
+    .process-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 0;
+      font-size: 11.5px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-right: none;
+      background: var(--surface);
+      color: var(--ink-dim);
+      white-space: nowrap;
+    }
+    .process-pill:first-child { border-radius: 8px 0 0 8px; }
+    .process-pill:last-child  { border-radius: 0 8px 8px 0; border-right: 1px solid var(--border); }
+    .process-pill .pp-num {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 800; color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 32px;
+      padding: 20px 0 0;
+      border-top: 1px solid var(--border);
+      margin-top: 32px;
+    }
+    .stat-item {}
+    .stat-val { font-size: 20px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+    .stat-label { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+
+    /* ── PART SECTION ── */
+    .part-section { padding: 52px 0 0; scroll-margin-top: 72px; }
+    .part-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .part-num-block {
+      flex-shrink: 0;
+      text-align: center;
+      padding-top: 3px;
+    }
+    .part-num {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .part-num-big {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      line-height: 1;
+    }
+    .part-info { flex: 1; }
+    .part-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .part-desc { font-size: 14px; color: var(--ink-dim); line-height: 1.65; max-width: 560px; }
+    .part-milestone {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ── MODULE CARDS ── */
+    .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0; }
+    .module-grid.single { grid-template-columns: 1fr; }
+
+    .module-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow .18s, transform .18s, border-color .18s;
+      position: relative;
+    }
+    .module-card:hover {
+      box-shadow: 0 8px 32px rgba(15,23,42,.1);
+      transform: translateY(-2px);
+    }
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .card-top { padding: 20px 20px 16px; flex: 1; }
+    .card-icon-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .card-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .card-seq {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--ink-dim);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .card-topics { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0; }
+    .card-topic {
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 600;
+      background: var(--base);
+      border: 1px solid var(--border);
+      color: var(--ink-dim);
+    }
+
+    .card-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--base);
+    }
+    .card-foot-label { font-size: 11px; color: var(--ink-faint); }
+    .card-open {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: gap .12s;
+    }
+    .card-open:hover { gap: 8px; }
+
+    /* Part-specific colors */
+    /* Part 1 — Mental Model */
+    .p1 .module-card::before { background: var(--blue); }
+    .p1 .card-open { color: var(--blue); }
+    .p1 .part-num-big { color: var(--blue); }
+    .p1 .part-milestone { background: var(--blue-light); color: var(--blue); }
+
+    /* Part 2 — Get Set Up */
+    .p2 .module-card::before { background: var(--teal); }
+    .p2 .card-open { color: var(--teal); }
+    .p2 .part-num-big { color: var(--teal); }
+    .p2 .part-milestone { background: var(--teal-light); color: var(--teal); }
+
+    /* Part 3 — Add Intelligence */
+    .p3 .module-card::before { background: var(--gold); }
+    .p3 .card-open { color: var(--gold); }
+    .p3 .part-num-big { color: var(--gold); }
+    .p3 .part-milestone { background: var(--gold-light); color: var(--gold); }
+
+    /* Part 4 — Build Automation */
+    .p4 .module-card::before { background: var(--green); }
+    .p4 .card-open { color: var(--green); }
+    .p4 .part-num-big { color: var(--green); }
+    .p4 .part-milestone { background: var(--green-light); color: var(--green); }
+
+    /* Part 5 — Operate Right */
+    .p5 .module-card::before { background: var(--red); }
+    .p5 .card-open { color: var(--red); }
+    .p5 .part-num-big { color: var(--red); }
+    .p5 .part-milestone { background: var(--red-light); color: var(--red); }
+
+    /* ── CONNECTOR ── */
+    .part-connector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 0;
+      color: var(--ink-faint);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .connector-line { flex: 1; height: 1px; background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 6px, transparent 6px, transparent 12px); }
+    .connector-arrow { font-size: 14px; }
+
+    /* ── REFERENCE SECTION ── */
+    .reference-section {
+      margin-top: 60px;
+      padding-top: 48px;
+      border-top: 2px solid var(--border);
+      scroll-margin-top: 72px;
+    }
+    .ref-header { margin-bottom: 28px; }
+    .ref-title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); margin-bottom: 6px; }
+    .ref-sub { font-size: 14px; color: var(--ink-dim); }
+
+    .glossary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .glossary-item {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .glossary-term { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; font-family: 'SF Mono', monospace; }
+    .glossary-def  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .glossary-tag  {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--base);
+      color: var(--ink-faint);
+      border: 1px solid var(--border);
+    }
+
+    /* ── FOOTER CTA ── */
+    .footer-cta {
+      margin-top: 60px;
+      padding: 40px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .footer-cta-text {}
+    .footer-cta-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -.01em; }
+    .footer-cta-sub   { font-size: 14px; color: rgba(255,255,255,.75); }
+    .footer-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: rgba(255,255,255,.15);
+      border: 1.5px solid rgba(255,255,255,.35);
+      border-radius: 9px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all .15s;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+    }
+    .footer-cta-btn:hover { background: rgba(255,255,255,.25); }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidenav { display: none; }
+      .content { padding: 0 24px 60px; }
+      .module-grid { grid-template-columns: 1fr; }
+      .glossary-grid { grid-template-columns: 1fr; }
+      .footer-cta { flex-direction: column; }
+      .process-strip { flex-direction: column; }
+      .process-pill { border-radius: 8px !important; border-right: 1px solid var(--border) !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">AA</div>
+    <span class="topbar-brand">Advisor AI Partners</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-title">The AIOS Playbook</span>
+  </div>
+  <div class="topbar-right">
+    <a href="learn-aios-guide.html" class="topbar-btn">📚 Browse Hub →</a>
+    <a href="learn-aios-agency.html" class="topbar-btn">🏢 Agency Guide →</a>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="sidenav">
+    <div class="sn-label">In this guide</div>
+    <a href="#overview" class="sn-item active"><span class="sn-num">→</span> Overview</a>
+    <a href="#part1" class="sn-item"><span class="sn-num">1</span> The Mental Model</a>
+    <a href="#part2" class="sn-item"><span class="sn-num">2</span> Get Set Up</a>
+    <a href="#part3" class="sn-item"><span class="sn-num">3</span> Add Intelligence</a>
+    <a href="#part4" class="sn-item"><span class="sn-num">4</span> Build Automation</a>
+    <a href="#part5" class="sn-item"><span class="sn-num">5</span> Operate Right</a>
+    <div class="sn-divider"></div>
+    <div class="sn-label">Reference</div>
+    <a href="#glossary" class="sn-item"><span class="sn-num">G</span> Key Concepts</a>
+    <div class="sn-divider"></div>
+    <a href="learn-aios-agency.html" class="sn-ref">🏢 Agency Owner Guide →</a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="content">
+
+    <!-- ── HERO ── -->
+    <section class="hero" id="overview">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-dot"></span>
+        AIOS Implementation Playbook
+      </div>
+      <h1 class="hero-title">Build Your AI Operating System</h1>
+      <p class="hero-sub">
+        A structured implementation guide for building an AIOS that runs your business, frees your bandwidth,
+        and scales without adding headcount. Follow the five parts in order. Each one builds on the last.
+      </p>
+
+      <!-- Process strip -->
+      <div class="process-strip">
+        <div class="process-pill">
+          <span class="pp-num" style="background:var(--blue)">1</span>
+          Mental Model
+        </div>
+        <div class="process-pill">
+          <span class="pp-num" style="background:var(--teal)">2</span>
+          Get Set Up
+        </div>
+        <div class="process-pill">
+          <span class="pp-num" style="background:var(--gold)">3</span>
+          Add Intelligence
+        </div>
+        <div class="process-pill">
+          <span class="pp-num" style="background:var(--green)">4</span>
+          Build Automation
+        </div>
+        <div class="process-pill">
+          <span class="pp-num" style="background:var(--red)">5</span>
+          Operate Right
+        </div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-val">8</div>
+          <div class="stat-label">Modules</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">5</div>
+          <div class="stat-label">Implementation phases</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">~7h</div>
+          <div class="stat-label">Total reading time</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">90 min</div>
+          <div class="stat-label">To first working setup</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- PART 1 — THE MENTAL MODEL -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="part-section p1" id="part1">
+      <div class="part-header">
+        <div class="part-num-block">
+          <span class="part-num">Part</span>
+          <span class="part-num-big">01</span>
+        </div>
+        <div class="part-info">
+          <div class="part-name">The Mental Model</div>
+          <p class="part-desc">
+            Before touching a terminal, understand the vocabulary and the framework.
+            Every decision you make about what to build, in what order, at what level of automation
+            — it all flows from this foundation.
+          </p>
+          <div class="part-milestone">📍 Outcome: You can explain Capabilities, Scripts, and Workflows — and where any task sits on the automation spectrum.</div>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="learn-aios-primitives.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#EEF3FF">🧱</div>
+              <span class="card-seq">Module 01</span>
+            </div>
+            <div class="card-title">Automation Primitives</div>
+            <p class="card-desc">The three building blocks of every AIOS system. Understand these before you build anything — they determine the vocabulary you'll use to design, explain, and scale all automation.</p>
+            <div class="card-topics">
+              <span class="card-topic">Capabilities</span>
+              <span class="card-topic">Scripts</span>
+              <span class="card-topic">Workflows</span>
+              <span class="card-topic">Automation spectrum</span>
+              <span class="card-topic">Invocable vs. always-on</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">Start here — required reading</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="part-connector">
+      <div class="connector-line"></div>
+      <span class="connector-arrow">↓</span>
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- PART 2 — GET SET UP -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="part-section p2" id="part2">
+      <div class="part-header">
+        <div class="part-num-block">
+          <span class="part-num">Part</span>
+          <span class="part-num-big">02</span>
+        </div>
+        <div class="part-info">
+          <div class="part-name">Get Set Up</div>
+          <p class="part-desc">
+            Two paths to the same destination — choose the one that fits your comfort level.
+            Both result in a working workspace with a primed CLAUDE.md and your four context files populated.
+            This is the foundation everything else builds on.
+          </p>
+          <div class="part-milestone">📍 Outcome: A working AIOS workspace with /prime loading your business context on every session.</div>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="learn-aios-setup.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#E6F7F7">⚙️</div>
+              <span class="card-seq">Module 02A · Technical Path</span>
+            </div>
+            <div class="card-title">Setup & Context OS</div>
+            <p class="card-desc">VS Code or Cursor with the Claude Code CLI. Full control, parallel sessions, and auto-prime via shell alias. The path with the highest ceiling.</p>
+            <div class="card-topics">
+              <span class="card-topic">Template structure</span>
+              <span class="card-topic">CLAUDE.md</span>
+              <span class="card-topic">/prime command</span>
+              <span class="card-topic">Context files</span>
+              <span class="card-topic">Session workflow</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">VS Code / Cursor / CLI</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+        <a href="learn-aios-quick-setup.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#F0EEFF">🚀</div>
+              <span class="card-seq">Module 02B · Non-technical Path</span>
+            </div>
+            <div class="card-title">Quick Setup with Plug & Play Modules</div>
+            <p class="card-desc">Claude Desktop App with pre-built modules. Download a ZIP, run /install, Claude walks you through everything. No terminal required to get started.</p>
+            <div class="card-topics">
+              <span class="card-topic">Desktop App</span>
+              <span class="card-topic">/install command</span>
+              <span class="card-topic">Module library</span>
+              <span class="card-topic">Telegram interface</span>
+              <span class="card-topic">Context loading</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">Claude Desktop App</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="part-connector">
+      <div class="connector-line"></div>
+      <span class="connector-arrow">↓</span>
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- PART 3 — ADD INTELLIGENCE -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="part-section p3" id="part3">
+      <div class="part-header">
+        <div class="part-num-block">
+          <span class="part-num">Part</span>
+          <span class="part-num-big">03</span>
+        </div>
+        <div class="part-info">
+          <div class="part-name">Add Intelligence</div>
+          <p class="part-desc">
+            Context alone isn't enough. This phase connects your real business data and packages your
+            repeatable processes into reusable skills — transforming the AIOS from a smart assistant
+            into a genuine business intelligence layer.
+          </p>
+          <div class="part-milestone">📍 Outcome: Live business data flowing in daily. Key processes packaged as skills that run consistently every time.</div>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="learn-aios-data-os.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#EEF3FF">📊</div>
+              <span class="card-seq">Module 03A</span>
+            </div>
+            <div class="card-title">Data OS</div>
+            <p class="card-desc">Map your business funnel, build a local SQLite database, hook into every API you use, take daily snapshots, run a data audit, and get a mission control dashboard.</p>
+            <div class="card-topics">
+              <span class="card-topic">Funnel mapping</span>
+              <span class="card-topic">SQLite local DB</span>
+              <span class="card-topic">API connectors</span>
+              <span class="card-topic">Snapshot methodology</span>
+              <span class="card-topic">Dashboard</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">Connects: YouTube · Stripe · Calendly · Analytics</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+        <a href="learn-aios-build-skill.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#FDF5DC">🛠️</div>
+              <span class="card-seq">Module 03B</span>
+            </div>
+            <div class="card-title">Turn Business Process into Skill</div>
+            <p class="card-desc">Package any repeatable process as a reusable playbook. The Skill vs. MCP distinction, skill anatomy, and a live Client Kickoff build: transcript → spec → Trello tasks.</p>
+            <div class="card-topics">
+              <span class="card-topic">Skill anatomy</span>
+              <span class="card-topic">Skill vs. MCP</span>
+              <span class="card-topic">Skill creator plugin</span>
+              <span class="card-topic">Fireflies + Trello</span>
+              <span class="card-topic">Live build</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">Connects: Fireflies · Trello · Any MCP</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="part-connector">
+      <div class="connector-line"></div>
+      <span class="connector-arrow">↓</span>
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- PART 4 — BUILD AUTOMATION -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="part-section p4" id="part4">
+      <div class="part-header">
+        <div class="part-num-block">
+          <span class="part-num">Part</span>
+          <span class="part-num-big">04</span>
+        </div>
+        <div class="part-info">
+          <div class="part-name">Build Automation</div>
+          <p class="part-desc">
+            With context, data, and skills in place, this phase turns your task audit into a structured
+            automation roadmap. Augmented slash commands take immediate work off your plate.
+            Cron jobs and triggers make work happen while you sleep.
+          </p>
+          <div class="part-milestone">📍 Outcome: Daily brief running before you wake up. Top recurring tasks automated or supervised. Bandwidth reclaimed.</div>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="learn-aios-workflows.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#ECFDF5">⚡</div>
+              <span class="card-seq">Module 04</span>
+            </div>
+            <div class="card-title">Workflows & Recurring Tasks</div>
+            <p class="card-desc">Run the task audit to identify what to automate. Build augmented slash commands for tasks requiring judgment. Set up cron jobs for tasks that run without you. Implement memory pruning to keep sessions lean.</p>
+            <div class="card-topics">
+              <span class="card-topic">Task audit</span>
+              <span class="card-topic">Augmented vs. supervised</span>
+              <span class="card-topic">Slash commands</span>
+              <span class="card-topic">Cron jobs (launchd)</span>
+              <span class="card-topic">Memory prune</span>
+              <span class="card-topic">Bandwidth recovery</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">Covers the full Manual → Automated spectrum</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <div class="part-connector">
+      <div class="connector-line"></div>
+      <span class="connector-arrow">↓</span>
+      <div class="connector-line"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- PART 5 — OPERATE RIGHT -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="part-section p5" id="part5">
+      <div class="part-header">
+        <div class="part-num-block">
+          <span class="part-num">Part</span>
+          <span class="part-num-big">05</span>
+        </div>
+        <div class="part-info">
+          <div class="part-name">Operate Right</div>
+          <p class="part-desc">
+            Before client data enters the system — and before you scale to a team — these two modules
+            lock the system down and make it efficient. Security without optimisation creates a
+            protected but slow AIOS. Both are required for production use.
+          </p>
+          <div class="part-milestone">📍 Outcome: Six security layers in place. Sessions running 2.5× longer before hitting caps. System ready for client work.</div>
+        </div>
+      </div>
+      <div class="module-grid">
+        <a href="learn-aios-security.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#FEF2F2">🔒</div>
+              <span class="card-seq">Module 05A</span>
+            </div>
+            <div class="card-title">Security Basics</div>
+            <p class="card-desc">Six security layers that must be in place before real data enters the system. Permissions, hard-block hooks, CLAUDE.md rules, sandbox configuration, audit logging, and autonomous deployment safety checklist.</p>
+            <div class="card-topics">
+              <span class="card-topic">settings.json deny rules</span>
+              <span class="card-topic">PreToolUse hooks</span>
+              <span class="card-topic">MCP vetting</span>
+              <span class="card-topic">.env security</span>
+              <span class="card-topic">Audit logging</span>
+              <span class="card-topic">Lethal trifecta</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">By Valera Tumash · 90-min setup checklist included</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+        <a href="learn-aios-token-optimisation.html" target="_blank" class="module-card">
+          <div class="card-top">
+            <div class="card-icon-row">
+              <div class="card-icon" style="background:#F7FEE7">⚡</div>
+              <span class="card-seq">Module 05B</span>
+            </div>
+            <div class="card-title">Token Optimisation</div>
+            <p class="card-desc">60–90% of tokens wasted by default — defaults are the problem, not you. Four free levers (RTK, context-mode, tuned settings.json, ccusage) get sessions running longer and eliminate the most common drain patterns.</p>
+            <div class="card-topics">
+              <span class="card-topic">RTK (--hook-only)</span>
+              <span class="card-topic">context-mode</span>
+              <span class="card-topic">MAX_THINKING_TOKENS</span>
+              <span class="card-topic">ccusage + ccstatusline</span>
+              <span class="card-topic">8 spike patterns</span>
+              <span class="card-topic">Model routing</span>
+            </div>
+          </div>
+          <div class="card-foot">
+            <span class="card-foot-label">By Valera Tumash · Handout + slides included</span>
+            <span class="card-open">Read module →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- KEY CONCEPTS GLOSSARY -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="reference-section" id="glossary">
+      <div class="ref-header">
+        <div class="ref-title">Key Concepts Reference</div>
+        <p class="ref-sub">The core vocabulary used throughout all five parts of this guide.</p>
+      </div>
+      <div class="glossary-grid">
+        <div class="glossary-item">
+          <div class="glossary-term">Capability</div>
+          <div class="glossary-def">A skill with <code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;font-size:11px;">user_invocable: false</code>. Always-on, auto-activates when relevant context is detected. Gives the AIOS access to an API or tool without being explicitly called. See → Module 01.</div>
+          <span class="glossary-tag">Automation Primitives</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Script</div>
+          <div class="glossary-def">Deterministic code (Python, bash) that does the same thing every time. The reliability backbone — handles the mechanical parts of any workflow. Used inside skills and commands for the parts that must never vary.</div>
+          <span class="glossary-tag">Automation Primitives</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Workflow / Skill</div>
+          <div class="glossary-def">A user-invocable skill. Combines capabilities, scripts, and natural language prompts into a structured process. Can be run in Augmented mode (you invoke it) or graduated to Supervised/Automated over time.</div>
+          <span class="glossary-tag">Automation Primitives</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Context OS</div>
+          <div class="glossary-def">The four context files that give every Claude session full business awareness: business-info.md, personal-info.md, strategy.md, current-data.md. Loaded by /prime at the start of every session.</div>
+          <span class="glossary-tag">Setup</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">/prime</div>
+          <div class="glossary-def">The session initialization command. Reads the workspace structure and all context files, summarizes understanding, and confirms readiness. Run at the start of every session without exception.</div>
+          <span class="glossary-tag">Setup</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Data OS</div>
+          <div class="glossary-def">The layer that connects real business data to the AIOS. Local SQLite database, API connectors, daily snapshot scripts, data audit cron, and a mission control dashboard. Enables the daily brief.</div>
+          <span class="glossary-tag">Intelligence</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Augmented</div>
+          <div class="glossary-def">You invoke the workflow, AI does ~80% of the work, you steer key decisions. The first level of automation — always the starting point for any new workflow before escalating to Supervised or Automated.</div>
+          <span class="glossary-tag">Automation spectrum</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Supervised</div>
+          <div class="glossary-def">Runs on a cron or trigger without you initiating it, but you review the batch of outputs before anything ships. ~96% off your plate. The right destination for high-value tasks you wouldn't fully automate.</div>
+          <span class="glossary-tag">Automation spectrum</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Snapshot methodology</div>
+          <div class="glossary-def">Because most APIs return cumulative totals (not daily deltas), you take a daily snapshot and calculate the difference yourself. Essential for Data OS — start snapshotting on day one, the warm-up period is 7–30 days.</div>
+          <span class="glossary-tag">Data OS</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Lethal trifecta</div>
+          <div class="glossary-def">Simon Willison's framework: Tools (agent can act) + Untrusted input (reads external content) + Sensitive access (has credentials) = catastrophic prompt injection risk. Every AIOS deployment hits all three by design.</div>
+          <span class="glossary-tag">Security</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">RTK (--hook-only)</div>
+          <div class="glossary-def">A PreToolUse hook that strips raw tool output before it enters context. ~89% of CLI noise tokens eliminated. Always install with <code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;font-size:11px;">--hook-only</code> flag — without it, it adds tokens instead of removing them.</div>
+          <span class="glossary-tag">Token Optimisation</span>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">Shadow price</div>
+          <div class="glossary-def">The API-equivalent cost of tokens consumed on a flat subscription plan. What tools like ccusage report — not your actual bill, but what those tokens would cost on pay-per-token API pricing. Used to measure optimisation progress.</div>
+          <span class="glossary-tag">Token Optimisation</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOOTER CTA ── -->
+    <div class="footer-cta">
+      <div class="footer-cta-text">
+        <div class="footer-cta-title">Ready to deliver AIOS for clients?</div>
+        <div class="footer-cta-sub">The Agency Owner Guide covers selling, pricing, delivery, and the $30k+ service model.</div>
+      </div>
+      <a href="learn-aios-agency.html" class="footer-cta-btn">Explore the Agency Owner Guide →</a>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Active sidebar link on scroll
+  const sections = document.querySelectorAll('section[id], .reference-section[id]');
+  const links = document.querySelectorAll('.sn-item[href^="#"]');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector(`.sn-item[href="#${entry.target.id}"]`);
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automate Your Entire Agency with Claude Code — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:        #1D4ED8; --blue-light:  #EFF6FF; --blue-mid:    #BFDBFE;
+      --teal:        #0D9488; --teal-light:  #F0FDFA; --teal-mid:    #99F6E4;
+      --gold:        #B45309; --gold-light:  #FFFBEB; --gold-mid:    #FDE68A;
+      --slate:       #334155; --slate-light: #F1F5F9; --slate-mid:   #CBD5E1;
+      --orange:      #EA580C; --orange-light:#FFF7ED; --orange-mid:  #FED7AA;
+      --ink:         #0F172A; --ink-dim:     #64748B; --ink-faint:   #94A3B8;
+      --surface:     #FFFFFF; --base:        #F0F4F8; --border: rgba(15,23,42,0.08);
+      --radius-md:6px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--orange-light); color: var(--orange); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--orange); border-left-color: var(--orange); background: var(--orange-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--orange-light); color: var(--orange); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.orange { background: var(--orange-light); border-left: 3px solid var(--orange); }
+    .callout.blue   { background: var(--blue-light);   border-left: 3px solid var(--blue); }
+    .callout.teal   { background: var(--teal-light);   border-left: 3px solid var(--teal); }
+    .callout.gold   { background: var(--gold-light);   border-left: 3px solid var(--gold); }
+    .callout.slate  { background: var(--slate-light);  border-left: 3px solid var(--slate); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Wrapper vs Harness visual */
+    .wh-grid { display: grid; grid-template-columns: 1fr 20px 1fr; gap: 0; align-items: stretch; margin: 24px 0; }
+    .wh-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; }
+    .wh-card.wrapper { border-color: #FECACA; }
+    .wh-card.harness { border-color: var(--blue-mid); }
+    .wh-vs { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--ink-faint); }
+    .wh-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+    .wh-card.wrapper .wh-label { color: #DC2626; }
+    .wh-card.harness .wh-label { color: var(--blue); }
+    .wh-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+    .wh-traits { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .wh-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .wh-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .wrapper .wh-dot { background: #DC2626; }
+    .harness .wh-dot { background: var(--blue); }
+
+    /* Capabilities grid */
+    .cap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+    .cap-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
+    .cap-icon { font-size: 20px; margin-bottom: 6px; }
+    .cap-title { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .cap-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+
+    /* Context pyramid */
+    .pyramid { display: flex; flex-direction: column; gap: 4px; margin: 24px 0; }
+    .pyramid-row { border-radius: var(--radius-md); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .pyramid-row.p5 { background: var(--blue-light);   border: 1px solid var(--blue-mid);   }
+    .pyramid-row.p4 { background: var(--teal-light);   border: 1px solid var(--teal-mid);   }
+    .pyramid-row.p3 { background: var(--gold-light);   border: 1px solid var(--gold-mid);   }
+    .pyramid-row.p2 { background: var(--orange-light); border: 1px solid var(--orange-mid); }
+    .pyramid-row.p1 { background: var(--slate-light);  border: 1px solid var(--slate-mid);  }
+    .pyramid-label { font-size: 13px; font-weight: 700; color: var(--ink); }
+    .pyramid-file  { font-family: 'SF Mono', monospace; font-size: 11px; font-weight: 600; }
+    .p5 .pyramid-file { color: var(--blue); }
+    .p4 .pyramid-file { color: var(--teal); }
+    .p3 .pyramid-file { color: var(--gold); }
+    .p2 .pyramid-file { color: var(--orange); }
+    .p1 .pyramid-file { color: var(--slate); }
+    .pyramid-desc { font-size: 12px; color: var(--ink-dim); }
+
+    /* Real example cards */
+    .examples-list { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+    .example-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .example-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--base); }
+    .example-icon { width: 34px; height: 34px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .ei1 { background: var(--blue-light);   }
+    .ei2 { background: var(--orange-light); }
+    .ei3 { background: var(--teal-light);   }
+    .example-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .example-sub   { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+    .example-body  { padding: 16px 18px; font-size: 13px; color: var(--ink-dim); line-height: 1.7; }
+    .example-body strong { font-weight: 600; color: var(--ink); }
+    .example-steps { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+    .example-step { display: flex; gap: 8px; align-items: flex-start; }
+    .step-n { width: 18px; height: 18px; border-radius: 50%; background: var(--orange-light); color: var(--orange); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .step-t { font-size: 12px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Explore workflow */
+    .explore-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .explore-step { padding: 16px 14px; background: var(--surface); border-right: 1px solid var(--border); }
+    .explore-step:last-child { border-right: none; }
+    .explore-num { width: 22px; height: 22px; border-radius: 50%; background: var(--orange-light); color: var(--orange); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .explore-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .explore-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Agency model */
+    .agency-layer { display: flex; flex-direction: column; gap: 3px; margin: 20px 0; }
+    .agency-row { padding: 12px 16px; border-radius: var(--radius-md); display: flex; align-items: center; gap: 12px; }
+    .agency-row.core  { background: #1E293B; }
+    .agency-row.l1    { background: var(--blue-light);   border: 1px solid var(--blue-mid);   }
+    .agency-row.l2    { background: var(--teal-light);   border: 1px solid var(--teal-mid);   }
+    .agency-row.l3    { background: var(--gold-light);   border: 1px solid var(--gold-mid);   }
+    .agency-row.l4    { background: var(--orange-light); border: 1px solid var(--orange-mid); }
+    .agency-row.l5    { background: var(--slate-light);  border: 1px solid var(--slate-mid);  }
+    .agency-badge { padding: 2px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+    .core  .agency-badge { background: #334155; color: #94A3B8; }
+    .l1    .agency-badge { background: var(--blue-mid);   color: var(--blue); }
+    .l2    .agency-badge { background: var(--teal-mid);   color: var(--teal); }
+    .l3    .agency-badge { background: var(--gold-mid);   color: var(--gold); }
+    .l4    .agency-badge { background: var(--orange-mid); color: var(--orange); }
+    .l5    .agency-badge { background: var(--slate-mid);  color: var(--slate); }
+    .agency-text { font-size: 13px; font-weight: 600; }
+    .core .agency-text { color: #F1F5F9; }
+    .agency-text:not(.core .agency-text) { color: var(--ink); }
+    .agency-sub { font-size: 11px; color: var(--ink-faint); margin-left: auto; }
+    .core .agency-sub { color: #64748B; }
+
+    /* Feature list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--slate); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .cap-grid, .tk-grid, .related-grid { grid-template-columns: 1fr; }
+      .explore-flow { grid-template-columns: 1fr 1fr; }
+      .wh-grid { grid-template-columns: 1fr; }
+      .wh-vs { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Automate Your Entire Agency</span>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <span class="badge">Workshop Module</span>
+  </div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"   class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#moment"     class="sidebar-link"><span class="sidebar-step">1</span> The Moment We're In</a>
+    <a href="#harness"    class="sidebar-link"><span class="sidebar-step">2</span> Wrapper vs. Harness</a>
+    <a href="#native"     class="sidebar-link"><span class="sidebar-step">3</span> Native Capabilities</a>
+    <a href="#pyramid"    class="sidebar-link"><span class="sidebar-step">4</span> The Context Pyramid</a>
+    <a href="#examples"   class="sidebar-link"><span class="sidebar-step">5</span> Real Systems Built</a>
+    <a href="#explore"    class="sidebar-link"><span class="sidebar-step">6</span> /explore — Idea to Build</a>
+    <a href="#agency"     class="sidebar-link"><span class="sidebar-step">7</span> Agency Layer Cake</a>
+    <a href="#opportunity" class="sidebar-link"><span class="sidebar-step">8</span> The Agency Opportunity</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways"  class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+    <a href="#next"       class="sidebar-link"><span class="sidebar-step">→</span> Next Steps</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">⚡ Agency Automation</div>
+      <h1 class="module-title">Automate Your Entire Agency with Claude Code</h1>
+      <p class="module-subtitle">
+        A vision-setting session covering what Claude Code actually is (a harness, not a wrapper),
+        what it can do out of the box, real automations already running inside a live agency,
+        and why the window to build this as a service is wide open right now.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~30 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Vision + Real examples</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Informal live session</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — THE MOMENT -->
+    <section class="section" id="moment">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">The Moment We're In</h2>
+      <p class="section-body">
+        This is the ChatGPT 2 moment. Not said lightly. The first ChatGPT moment was the mass
+        public realization that AI could hold a conversation. This is the moment the same thing
+        happens with AI that can <em>take action</em> — read your files, write your code, run your workflows,
+        and operate your tools while you're not there.
+      </p>
+
+      <div class="callout orange">
+        <div class="callout-icon">🔥</div>
+        <div class="callout-body">
+          <strong>The window is open now.</strong> Businesses don't have this yet. The consultants who
+          specialize in this while it's still an emerging offer — who build the delivery playbooks,
+          the reusable module libraries, the niche expertise — will have defensible positions when
+          the platforms commoditize the simpler versions. The rush is on.
+        </div>
+      </div>
+
+      <p class="section-body">
+        What's changing isn't just the technology. It's the business model math. When you can
+        build faster, test faster, and deliver faster than a traditional team — performance-based
+        pricing becomes viable, one developer can manage 5–10 client projects simultaneously,
+        and an agency's cost structure looks fundamentally different.
+      </p>
+
+      <div class="callout blue">
+        <div class="callout-icon">🏗</div>
+        <div class="callout-body">
+          <strong>Real number from the room:</strong> One agency's leader said he thought 50 clients would
+          mean total burnout for his current team. With agentic systems running, he calculated he could
+          reduce to 3 people and scale to 100 clients. Not a future projection — a current assessment
+          based on systems already running.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — WRAPPER VS HARNESS -->
+    <section class="section" id="harness">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">Wrapper vs. Harness — Why It Matters</h2>
+      <p class="section-body">
+        The AI world went through a vocabulary evolution worth understanding, because it explains
+        exactly what Claude Code is and why it's different from what came before.
+      </p>
+
+      <div class="wh-grid">
+        <div class="wh-card wrapper">
+          <div class="wh-label">The old world — Wrappers</div>
+          <div class="wh-title">A thin layer around a model</div>
+          <ul class="wh-traits">
+            <li class="wh-trait"><span class="wh-dot"></span>Took a base model and jerry-rigged functionality around its limitations — RAG systems, file search, custom prompting bolted on top.</li>
+            <li class="wh-trait"><span class="wh-dot"></span>When the model provider released native updates (Assistants API, knowledge bases, code interpreter), it obsoleted most wrappers overnight.</li>
+            <li class="wh-trait"><span class="wh-dot"></span>Thin. Fragile. Built to work around the model, not with it.</li>
+            <li class="wh-trait"><span class="wh-dot"></span>OpenClaude = ripped the Claude model out of a billion-dollar harness and put it in a crappy replacement. No web search out of the box. Dead end.</li>
+          </ul>
+        </div>
+        <div class="wh-vs">vs</div>
+        <div class="wh-card harness">
+          <div class="wh-label">The new world — Harnesses</div>
+          <div class="wh-title">A substantial environment around the model</div>
+          <ul class="wh-traits">
+            <li class="wh-trait"><span class="wh-dot"></span>Claude Code is trained via reinforcement learning to know <em>how and when</em> to use tools — not a feature bolted on, a core capability of the model itself.</li>
+            <li class="wh-trait"><span class="wh-dot"></span>Exists within a persistent environment (your workspace folder) with access to files, terminal, browser, and sub-agents out of the box.</li>
+            <li class="wh-trait"><span class="wh-dot"></span>Sturdy. Scalable. Gets more powerful as you add layers — context, data, commands, scripts, skills — without hitting a ceiling.</li>
+            <li class="wh-trait"><span class="wh-dot"></span>Progress curve: slower start, unlimited ceiling. The more you build, the more powerful it becomes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout slate">
+        <div class="callout-icon">📉</div>
+        <div class="callout-body">
+          <strong>On OpenClaude specifically:</strong> The progress curve with wrapper-style tools hits a plateau
+          or gets worse as complexity grows — more data, more edge cases, more failure modes.
+          Claude Code's curve goes the other way. Each layer you add compounds. The gap widens over time.
+          If you're on a wrapper, switch now.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — NATIVE CAPABILITIES -->
+    <section class="section" id="native">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">What Claude Code Can Do — Out of the Box</h2>
+      <p class="section-body">
+        Before you add a single custom command or skill, Claude Code ships with a set of native
+        capabilities that most people don't fully use. These are what make it a harness rather than
+        a chatbot — the ability to take real action in your environment.
+      </p>
+
+      <div class="cap-grid">
+        <div class="cap-card">
+          <div class="cap-icon">📂</div>
+          <div class="cap-title">File system access</div>
+          <div class="cap-desc">Read, write, create, delete, and move files anywhere you grant permission — including outside the workspace folder.</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon">🌐</div>
+          <div class="cap-title">Web search</div>
+          <div class="cap-desc">Search the web natively, without any MCP or extra setup. Research, validate, and pull live information mid-task.</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon">🤖</div>
+          <div class="cap-title">Sub-agents</div>
+          <div class="cap-desc">Spin up background agents to work in parallel. One agent researches while another builds — without you managing either.</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon">💻</div>
+          <div class="cap-title">Terminal execution</div>
+          <div class="cap-desc">Run scripts, shell commands, and code. Anything you can do in a terminal, Claude Code can do — and script to run automatically.</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon">🔌</div>
+          <div class="cap-title">MCP integrations</div>
+          <div class="cap-desc">Connect to any external platform via MCP servers — CRM, calendar, email, databases, APIs. The integration layer is unlimited.</div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-icon">⏰</div>
+          <div class="cap-title">Scheduled execution</div>
+          <div class="cap-desc">Wire any workflow to cron jobs or triggers. Work runs while you sleep — data collection, reports, audits, briefings.</div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The mindset shift:</strong> Stop thinking about what AI can help you do manually.
+          Start thinking about what AI can do <em>while you're not there</em>. If you can describe a task,
+          you can automate it. Anything can be automated — if you can think it and describe it,
+          Claude Code can build it and run it.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — CONTEXT PYRAMID -->
+    <section class="section" id="pyramid">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">The Context Pyramid — Layers That Compound</h2>
+      <p class="section-body">
+        An AIOS isn't built in one go. It's assembled in layers, each one making the AI more capable
+        and more useful. The metaphor is a pyramid — each layer needs the one below it to be stable
+        before you build on top. Skip layers and the system becomes unstable at scale.
+      </p>
+      <p class="section-body">
+        The reason for building in this order: each session, Claude Code reads these layers in sequence
+        to orient itself. Without the bottom layers in place, the upper layers don't have a foundation
+        to stand on. Context is everything.
+      </p>
+
+      <div class="pyramid">
+        <div class="pyramid-row p5">
+          <div>
+            <div class="pyramid-label">Real-time Data</div>
+            <div class="pyramid-desc">Live numbers — YouTube, Google Analytics, Stripe, Bitly, CRM. The chef's kiss on top. Starts manual, becomes automated over time.</div>
+          </div>
+          <div class="pyramid-file">current-data.md</div>
+        </div>
+        <div class="pyramid-row p4">
+          <div>
+            <div class="pyramid-label">Strategy</div>
+            <div class="pyramid-desc">Current priorities, quarterly goals, what success looks like. Teaches Claude how to think like a strategist aligned with your direction.</div>
+          </div>
+          <div class="pyramid-file">strategy.md</div>
+        </div>
+        <div class="pyramid-row p3">
+          <div>
+            <div class="pyramid-label">Personal Role</div>
+            <div class="pyramid-desc">Who you are, your relationship to the business, what you're responsible for. Claude knows how to help you specifically.</div>
+          </div>
+          <div class="pyramid-file">personal-info.md</div>
+        </div>
+        <div class="pyramid-row p2">
+          <div>
+            <div class="pyramid-label">Business Context</div>
+            <div class="pyramid-desc">What this business is, who it serves, how it operates. Before Claude can help, it needs to understand what it's helping with.</div>
+          </div>
+          <div class="pyramid-file">business-info.md</div>
+        </div>
+        <div class="pyramid-row p1">
+          <div>
+            <div class="pyramid-label">Workspace Orientation</div>
+            <div class="pyramid-desc">What is this workspace, where is everything, what tools are available. The foundation. Loaded every session automatically.</div>
+          </div>
+          <div class="pyramid-file">CLAUDE.md</div>
+        </div>
+      </div>
+
+      <div class="callout orange">
+        <div class="callout-icon">🏗</div>
+        <div class="callout-body">
+          <strong>Why this order matters:</strong> CLAUDE.md is always loaded first. It reads the workspace structure
+          and knows where everything is. Then /prime reads the context files. Each layer adds one more
+          answer: <em>what is this thing → what is the business → who am I in it → what are we doing →
+          how are we tracking.</em> Once all five layers are painted, you have a system that can think alongside you.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — REAL EXAMPLES -->
+    <section class="section" id="examples">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Real Systems Built — Not Hypotheticals</h2>
+      <p class="section-body">
+        These are systems built and running inside a live business during the weeks leading up to
+        this workshop. Not prototypes — production. They exist to show that anything you can describe
+        can be built and automated using this approach.
+      </p>
+
+      <div class="examples-list">
+
+        <div class="example-card">
+          <div class="example-header">
+            <div class="example-icon ei1">📡</div>
+            <div>
+              <div class="example-title">AI Model Tracker — Daily Intelligence Brief</div>
+              <div class="example-sub">Runs every morning before you wake up. Delivered via Telegram.</div>
+            </div>
+          </div>
+          <div class="example-body">
+            <strong>The problem:</strong> Claude Code's training data lags. When you ask it to build something,
+            it recommends whatever model it was trained on — often inferior, outdated, wrong for the use case.
+            You kept having to tell it to search the web for the latest Gemini model identifier.
+            <br><br>
+            <strong>The solution:</strong> A workspace that maintains a live reference library of all frontier
+            models, automatically updated when anything changes — so Claude Code always knows the best tool
+            for any job without searching.
+            <ul class="example-steps">
+              <li class="example-step"><span class="step-n">1</span><span class="step-t">Pulls from LM Arena leaderboard API every morning via scheduled script</span></li>
+              <li class="example-step"><span class="step-n">2</span><span class="step-t">Compares current top models against local database. Takes daily snapshot for trend tracking.</span></li>
+              <li class="example-step"><span class="step-n">3</span><span class="step-t">If a new model appears at the top: research it (web search + YouTube sentiment + community reactions)</span></li>
+              <li class="example-step"><span class="step-n">4</span><span class="step-t">Updates workspace reference docs with model documentation, API snippets, and use-case guidance</span></li>
+              <li class="example-step"><span class="step-n">5</span><span class="step-t">Generates content ideas based on the new model and delivers morning brief to Telegram</span></li>
+            </ul>
+            <br>
+            <strong>Result:</strong> Always up to date on the AI landscape. Content ideas generated overnight.
+            Never manually researching models again. A task that wouldn't have had time for — now done daily.
+          </div>
+        </div>
+
+        <div class="example-card">
+          <div class="example-header">
+            <div class="example-icon ei2">✂️</div>
+            <div>
+              <div class="example-title">Automated Video Editing Pipeline</div>
+              <div class="example-sub">Rough cut + B-roll suggestions. Editor becomes an operator, not a grunt.</div>
+            </div>
+          </div>
+          <div class="example-body">
+            <strong>The workflow:</strong> Drop a raw video file into a folder, run a script, get a draft cut
+            out the other side — plus timestamped B-roll suggestions based on content context.
+            <ul class="example-steps">
+              <li class="example-step"><span class="step-n">1</span><span class="step-t"><strong>Transcription:</strong> OpenAI Whisper transcribes the audio with precise timestamps</span></li>
+              <li class="example-step"><span class="step-n">2</span><span class="step-t"><strong>Cut detection:</strong> AI analyzes transcript for natural cut points — removes filler, dead air, restarts</span></li>
+              <li class="example-step"><span class="step-n">3</span><span class="step-t"><strong>Draft cut:</strong> ffmpeg assembles the rough cut. Editor receives a working draft, not raw footage.</span></li>
+              <li class="example-step"><span class="step-n">4</span><span class="step-t"><strong>B-roll suggestions:</strong> Second pass analyzes transcript with brand context. Generates timestamped notes: "you mentioned Lovable here — scroll of the Lovable interface?"</span></li>
+              <li class="example-step"><span class="step-n">5</span><span class="step-t"><strong>Editor reviews:</strong> Thumbs up / thumbs down on suggestions. Editor becomes an optimizer of the pipeline, not a worker in it.</span></li>
+            </ul>
+            <br>
+            <strong>Result:</strong> Editor output increases. Burnout decreases. Channel can scale past the
+            previous output ceiling. Content quality stays high because the creative decisions remain human.
+          </div>
+        </div>
+
+        <div class="example-card">
+          <div class="example-header">
+            <div class="example-icon ei3">📊</div>
+            <div>
+              <div class="example-title">Business Mission Control Dashboard</div>
+              <div class="example-sub">All data from all businesses in one place. Month-over-month at a glance.</div>
+            </div>
+          </div>
+          <div class="example-body">
+            <strong>The problem:</strong> Data was scattered across spreadsheets, Google Analytics,
+            YouTube Studio, Bitly, school platforms, and Stripe. Couldn't get a full picture of the business
+            without spending hours compiling. Couldn't catch problems early.
+            <br><br>
+            <strong>The solution:</strong> A local database (running on your machine, not a cloud service)
+            that pulls from all sources daily and surfaces everything through a dashboard — from YouTube
+            views to bookings to revenue.
+            <ul class="example-steps">
+              <li class="example-step"><span class="step-n">1</span><span class="step-t"><strong>Data collection scripts</strong> pull from YouTube API, Google Analytics, Bitly, school platform, Stripe daily</span></li>
+              <li class="example-step"><span class="step-n">2</span><span class="step-t"><strong>Snapshot approach:</strong> APIs often return totals, not deltas. Take daily snapshots and calculate the difference yourself.</span></li>
+              <li class="example-step"><span class="step-n">3</span><span class="step-t"><strong>Daily data audit</strong> validates numbers — cross-checks that figures look correct before surfacing them</span></li>
+              <li class="example-step"><span class="step-n">4</span><span class="step-t"><strong>Dashboard:</strong> HTML view of all key metrics. Month-to-date vs last month. One screen, full picture.</span></li>
+            </ul>
+            <br>
+            <strong>On the data warm-up period:</strong> Takes about 7–8 days before deltas are meaningful.
+            The goal is 30 days of history so you can compare month-to-date against last month.
+            "Am I green for the month?" — that's the primary question the dashboard answers.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — /EXPLORE -->
+    <section class="section" id="explore">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">/explore — From Idea to Built, via Voice</h2>
+      <p class="section-body">
+        The <code>/explore</code> command is the bridge between "I want to be able to do X" and an actual
+        working system. Combine it with voice input (Whisper Flow or any voice-to-text tool) and you
+        can describe an idea out loud and walk through a full build process — no typing required.
+      </p>
+      <p class="section-body">
+        It's particularly valuable for non-technical people because it handles the research and
+        scoping phases that usually require knowing what's technically possible. You describe the outcome;
+        it figures out how.
+      </p>
+
+      <div class="explore-flow">
+        <div class="explore-step">
+          <div class="explore-num">1</div>
+          <div class="explore-label">Describe the idea</div>
+          <div class="explore-desc">Speak or type what you want to be able to do. Rough is fine. The command is designed to ask clarifying questions.</div>
+        </div>
+        <div class="explore-step">
+          <div class="explore-num">2</div>
+          <div class="explore-label">Scoping dialog</div>
+          <div class="explore-desc">Claude enters plan mode and asks questions back and forth. Gets clear on the actual scope and functionality you want.</div>
+        </div>
+        <div class="explore-step">
+          <div class="explore-num">3</div>
+          <div class="explore-label">Research phase</div>
+          <div class="explore-desc">Searches the web and your codebase. Finds the best tools and APIs. Figures out how to build it given what already exists.</div>
+        </div>
+        <div class="explore-step">
+          <div class="explore-num">4</div>
+          <div class="explore-label">Build</div>
+          <div class="explore-desc">Executes the plan. Uses your existing workspace context, capabilities, and data. Anything you've built before gets reused.</div>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">🎙</div>
+        <div class="callout-body">
+          <strong>Voice + /explore = the non-technical path in.</strong> You don't need to know how to build it.
+          You need to be able to describe it. Run <code>/explore</code>, turn on your voice input, and talk
+          through what you want. The research phase handles technical feasibility. The build phase handles
+          execution. Your job is to describe the outcome and review the result.
+        </div>
+      </div>
+
+      <p class="section-body">
+        Examples that sound impossible but aren't: AI that edits your videos, a system that monitors
+        competitors daily, a tool that drafts client proposals from call notes, a dashboard that shows
+        all your business data in one place. The /explore command will tell you what's feasible
+        and how to build it — usually in under an hour.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — AGENCY LAYER CAKE -->
+    <section class="section" id="agency">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">The Agency Layer Cake</h2>
+      <p class="section-body">
+        An AIOS isn't set up all at once. It's a layered build — each layer runs on top of the
+        previous one. The business model stays at the center; the AI layers wrap around it, each one
+        making the business more capable, more autonomous, and more scalable.
+      </p>
+
+      <div class="agency-layer">
+        <div class="agency-row core">
+          <div class="agency-badge">Core</div>
+          <div class="agency-text">Your Business Model</div>
+          <div class="agency-sub">Agency, consulting, ecomm, roofing — anything. This is what creates value.</div>
+        </div>
+        <div class="agency-row l1">
+          <div class="agency-badge">Layer 1</div>
+          <div class="agency-text">Context OS</div>
+          <div class="agency-sub">CLAUDE.md + context files. Claude knows who you are and what you're doing.</div>
+        </div>
+        <div class="agency-row l2">
+          <div class="agency-badge">Layer 2</div>
+          <div class="agency-text">Data OS</div>
+          <div class="agency-sub">Local database + scripts. Real-time data from all your platforms feeding the system.</div>
+        </div>
+        <div class="agency-row l3">
+          <div class="agency-badge">Layer 3</div>
+          <div class="agency-text">Commands & Workflows</div>
+          <div class="agency-sub">Slash commands for recurring tasks. Daily brief, data audit, competitor analysis, proposals.</div>
+        </div>
+        <div class="agency-row l4">
+          <div class="agency-badge">Layer 4</div>
+          <div class="agency-text">Automation & Delegation</div>
+          <div class="agency-sub">Cron jobs and triggers. Work runs without you. Tasks delegated to scheduled agents.</div>
+        </div>
+        <div class="agency-row l5">
+          <div class="agency-badge">Layer 5</div>
+          <div class="agency-text">Growth Initiatives</div>
+          <div class="agency-sub">New projects and capabilities built on the freed bandwidth. Ideas executed faster than ever.</div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">📐</div>
+        <div class="callout-body">
+          <strong>Start with Layer 1, always.</strong> The instinct is to jump to automation. Resist it.
+          Context OS first. Data OS second. Each layer must be stable before you build on top.
+          You can't delegate tasks the system doesn't understand — and you can't get good outputs
+          without good inputs. Layers, not leaps.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — THE OPPORTUNITY -->
+    <section class="section" id="opportunity">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">The Agency Opportunity — Right Now</h2>
+      <p class="section-body">
+        The agentic engineering systems running inside this agency show what's already possible —
+        and the surface area of what can be automated across any business is enormous. Here's what
+        changes when you can build at this speed and cost.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Performance-based pricing becomes viable.</strong> When your build cost drops to near zero and your delivery speed multiplies, you can offer "we'll do the audit for free and take a percentage of upside" — because you can actually make money at it. A model that wasn't viable for traditional agencies is now on the table.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>One developer, 5–10 projects.</strong> With agentic engineering pipelines: spec it → feed it to the pipeline → it builds, tests, reviews, ships → dev reviews output. All their job becomes is understanding requirements, preparing specs, and reviewing results. One person handling what used to take a team.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Start with internal apps.</strong> Don't start by pitching clients. Start by building internal tools for your own agency — onboarding systems, client dashboards, proposal engines, reporting tools. You learn the methodology, build your template library, and have proof of delivery before you go external.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>The spec is everything.</strong> The limiting factor isn't the AI's ability to build — it's your ability to specify what you want. If you can properly spec something (especially coming off a client audit with all their context), you can feed it into an engineering pipeline and it will build. Get good at writing specs.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Employees become operators.</strong> The video editor doesn't manually cut footage — they review AI-suggested cuts and give thumbs up/thumbs down. They operate the system and optimize the pipeline. The same pattern applies across the agency: people move up the value chain, away from grunt work, toward judgment and direction.</span>
+        </li>
+      </ul>
+
+      <div class="callout orange">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>Doing the thing, teaching the thing, selling the tools to do the thing.</strong>
+          The most defensible position is to be someone who actually uses this at scale themselves —
+          and can show a client a live, working example of what you're proposing to build for them.
+          Your own AIOS is your best case study.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">Claude Code is a harness, not a wrapper</div>
+          <div class="tk-desc">It's a substantial, trained environment around the model — with native tools, persistent context, and a compound growth curve. Wrapper-style tools plateau. This one compounds.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Anything can be automated</div>
+          <div class="tk-desc">If you can describe it, you can build it. The limiting factor is your ability to specify what you want — not the AI's ability to execute. Stop asking "is this possible?" Start asking "how do I describe this?"</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">Context is everything — build it first</div>
+          <div class="tk-desc">The pyramid must be built bottom-up. CLAUDE.md → business → role → strategy → data. Without solid context layers, every other layer underperforms. This is not optional setup. It's the foundation.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Start with internal tools</div>
+          <div class="tk-desc">Build for your own agency first. Learn the methodology, create your reusable templates, and have real proof of delivery before you go to clients. Your AIOS is your best case study.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">Snapshot early, trend later</div>
+          <div class="tk-desc">Many APIs only give totals. Take daily snapshots from day one so you can calculate deltas. It takes 7–30 days before you have meaningful trend data. Start the clock now.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">The window is real — act now</div>
+          <div class="tk-desc">Businesses don't have this yet. The practitioners building niche playbooks and delivery track records now will be the ones with defensible positions when this becomes mainstream. The window is open. Use it.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- NEXT STEPS -->
+    <section class="section" id="next">
+      <div class="section-number">Act on This</div>
+      <h2 class="section-title">What to Do Next</h2>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>If you haven't done Setup & Context OS:</strong> Do that before anything else. Without the context pyramid built, every system you add on top will underperform.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Pick one internal task you do 3+ times per week.</strong> Don't start with the most ambitious automation. Start with the most repetitive thing you do. Use /explore to describe it and walk through the build. Get one win on the board.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Set up daily data collection on day one.</strong> Even if you don't have a dashboard yet, start snapshotting. Once you have 30 days of history, month-over-month comparisons become the most valuable data you have. Start the clock now.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Study the agentic engineering pattern.</strong> Spec → pipeline → plan → build → test → review → ship. This is the methodology that allows one developer to manage 5–10 client projects. GitHub Issues as the orchestration layer. Learn it.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Get off OpenClaude or any wrapper-style tool.</strong> The ceiling is real and it comes fast. The sooner you're building on Claude Code's native harness, the sooner you're building on a system with no ceiling.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-setup.html" class="related-card">
+          <div class="rc-tag">Foundation</div>
+          <div class="rc-title">Setup & Context OS</div>
+          <div class="rc-sub">Build the context pyramid this session is built on — the template, the four files, the session workflow.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="rc-tag">Building blocks</div>
+          <div class="rc-title">AIOS Automation Primitives</div>
+          <div class="rc-sub">Capabilities, Scripts, Workflows — the three components that make everything in this session possible.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-builder-mindset.html" class="related-card">
+          <div class="rc-tag">Strategy</div>
+          <div class="rc-title">Thinking Like an AIOS Builder</div>
+          <div class="rc-sub">The 5 principles, delivery process, pricing, and how to sell what this session describes.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

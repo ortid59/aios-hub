@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The AIOS Delivery Spectrum — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8;  --blue-light:#EFF6FF;  --blue-mid:#BFDBFE;
+      --teal:#0D9488;  --teal-light:#F0FDFA;  --teal-mid:#99F6E4;
+      --gold:#B45309;  --gold-light:#FFFBEB;  --gold-mid:#FDE68A;
+      --sky:#0284C7;   --sky-light:#F0F9FF;   --sky-mid:#BAE6FD;
+      --slate:#334155; --slate-light:#F1F5F9; --slate-mid:#CBD5E1;
+      --violet:#7C3AED; --violet-light:#F5F3FF; --violet-mid:#DDD6FE;
+      --ink:#0F172A;   --ink-dim:#64748B;    --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8;     --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--sky-light); color: var(--sky); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--sky); border-left-color: var(--sky); background: var(--sky-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--sky); border-color: var(--sky); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--sky-light); color: var(--sky); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--sky); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.sky    { background: var(--sky-light);    border-left: 3px solid var(--sky); }
+    .callout.teal   { background: var(--teal-light);   border-left: 3px solid var(--teal); }
+    .callout.gold   { background: var(--gold-light);   border-left: 3px solid var(--gold); }
+    .callout.slate  { background: var(--slate-light);  border-left: 3px solid var(--slate); }
+    .callout.violet { background: var(--violet-light); border-left: 3px solid var(--violet); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Then/Now transformation */
+    .transform-grid { display: grid; grid-template-columns: 1fr 32px 1fr; gap: 0; align-items: stretch; margin: 24px 0; }
+    .transform-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px; }
+    .transform-card.now  { border-color: var(--slate-mid); }
+    .transform-card.then { border-color: var(--sky-mid); }
+    .transform-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--ink-faint); }
+    .tc-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+    .transform-card.now  .tc-label { color: var(--slate); }
+    .transform-card.then .tc-label { color: var(--sky); }
+    .tc-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+    .tc-rows { display: flex; flex-direction: column; gap: 8px; }
+    .tc-row { display: flex; align-items: flex-start; gap: 10px; }
+    .tc-key { font-size: 11px; font-weight: 700; color: var(--ink-faint); min-width: 130px; flex-shrink: 0; padding-top: 1px; }
+    .tc-val { font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+    .tc-val.good { color: var(--teal); font-weight: 600; }
+    .tc-val.meh  { color: var(--slate); }
+
+    /* Company AGI */
+    .agi-diagram { background: #1E293B; border-radius: var(--radius-xl); padding: 24px; margin: 20px 0; text-align: center; }
+    .agi-center { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--sky), var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px; box-shadow: 0 0 32px rgba(2,132,199,.4); }
+    .agi-label { color: #F1F5F9; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .agi-sub { color: #64748B; font-size: 12px; margin-bottom: 16px; }
+    .agi-roles { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .agi-role { padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+    .agi-role.human { background: rgba(255,255,255,.08); color: #94A3B8; }
+    .agi-role.ai    { background: rgba(2,132,199,.2); color: #7DD3FC; }
+
+    /* Audit methods */
+    .audit-methods { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .audit-method { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; display: flex; align-items: flex-start; gap: 14px; }
+    .am-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .am-content { flex: 1; }
+    .am-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sky); margin-bottom: 4px; }
+    .am-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .am-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .am-tag   { display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .tag-current { background: var(--slate-light); color: var(--slate); }
+    .tag-emerging { background: var(--sky-light); color: var(--sky); }
+    .tag-future { background: var(--teal-light); color: var(--teal); }
+
+    /* Dev pipeline tools */
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+    .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tool-name  { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .tool-badge { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .badge-cli  { background: var(--blue-light);   color: var(--blue); }
+    .badge-sdk  { background: var(--sky-light);    color: var(--sky); }
+    .badge-mgd  { background: var(--teal-light);   color: var(--teal); }
+    .badge-wrap { background: var(--violet-light); color: var(--violet); }
+    .tool-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .tool-best  { margin-top: 8px; font-size: 11px; color: var(--ink-faint); font-style: italic; }
+
+    /* Delivery spectrum */
+    .spectrum-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+    .spectrum-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .spectrum-card.teach { border-top: 4px solid var(--sky); }
+    .spectrum-card.show  { border-top: 4px solid var(--teal); }
+    .spectrum-card.give  { border-top: 4px solid var(--violet); }
+    .sc-header { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .sc-label  { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+    .spectrum-card.teach .sc-label { color: var(--sky); }
+    .spectrum-card.show  .sc-label { color: var(--teal); }
+    .spectrum-card.give  .sc-label { color: var(--violet); }
+    .sc-icon  { font-size: 22px; margin-bottom: 4px; }
+    .sc-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+    .sc-body  { padding: 14px 16px; }
+    .sc-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; margin-bottom: 10px; }
+    .sc-price { font-size: 13px; font-weight: 800; color: var(--ink); }
+    .sc-price-note { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+    .sc-traits { list-style: none; display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+    .sc-trait  { font-size: 11px; color: var(--ink-dim); display: flex; gap: 6px; line-height: 1.4; }
+    .sc-dot    { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .teach .sc-dot { background: var(--sky); }
+    .show  .sc-dot { background: var(--teal); }
+    .give  .sc-dot { background: var(--violet); }
+
+    /* Revenue loop */
+    .revenue-loop { display: flex; flex-direction: column; gap: 3px; margin: 20px 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .rl-step { display: grid; grid-template-columns: 28px 1fr auto; gap: 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .rl-step:last-child { border-bottom: none; }
+    .rl-n { width: 20px; height: 20px; border-radius: 50%; background: var(--sky-light); color: var(--sky); font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rl-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .rl-desc  { font-size: 12px; color: var(--ink-dim); }
+    .rl-price { font-size: 12px; font-weight: 700; color: var(--sky); white-space: nowrap; }
+
+    /* Feature list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--sky); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--sky); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--sky); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .transform-grid { grid-template-columns: 1fr; }
+      .transform-arrow { display: none; }
+      .tools-grid, .spectrum-cards, .tk-grid, .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Delivery Spectrum</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"   class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#gap"        class="sidebar-link"><span class="sidebar-step">1</span> The SMB Transformation Gap</a>
+    <a href="#company-agi" class="sidebar-link"><span class="sidebar-step">2</span> Company AGI Vision</a>
+    <a href="#opportunity" class="sidebar-link"><span class="sidebar-step">3</span> The Market Opportunity</a>
+    <a href="#audit"      class="sidebar-link"><span class="sidebar-step">4</span> Audit Methodologies</a>
+    <a href="#dev"        class="sidebar-link"><span class="sidebar-step">5</span> Autonomous Dev Pipeline</a>
+    <a href="#spectrum"   class="sidebar-link"><span class="sidebar-step">6</span> Teach / Show / Give</a>
+    <a href="#revenue"    class="sidebar-link"><span class="sidebar-step">7</span> The Revenue Loop</a>
+    <a href="#friction"   class="sidebar-link"><span class="sidebar-step">8</span> The Human Friction</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways"  class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🌐 Delivery Spectrum</div>
+      <h1 class="module-title">The AIOS Delivery Spectrum:<br>From Install to Autonomous Dev Pipeline</h1>
+      <p class="module-subtitle">
+        A macro view of the AI transition opportunity for SMBs, the emerging "company AGI" org structure,
+        four audit methodologies, the autonomous development pipeline tooling, and the Teach/Show/Give
+        spectrum for packaging and pricing AIOS delivery.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Exploration session</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~30 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Strategic &amp; forward-looking</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Live thought process format</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — THE GAP -->
+    <section class="section" id="gap">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">The SMB Transformation Gap — Where the Money Is</h2>
+      <p class="section-body">
+        The opportunity for AIOS practitioners isn't abstract — it's the transition every small and
+        medium business will have to make over the next 5–10 years. Today's SMB looks nothing like
+        tomorrow's. The gap between them is where you get paid.
+      </p>
+
+      <div class="transform-grid">
+        <div class="transform-card now">
+          <div class="tc-label">Today — 2026</div>
+          <div class="tc-title">The average SMB</div>
+          <div class="tc-rows">
+            <div class="tc-row"><div class="tc-key">Team size</div><div class="tc-val meh">50 people, hierarchical</div></div>
+            <div class="tc-row"><div class="tc-key">Org structure</div><div class="tc-val meh">Multiple layers of management</div></div>
+            <div class="tc-row"><div class="tc-key">Tech stack</div><div class="tc-val meh">6–7 disconnected SaaS tools</div></div>
+            <div class="tc-row"><div class="tc-key">AI literacy</div><div class="tc-val meh">~5 out of 100</div></div>
+            <div class="tc-row"><div class="tc-key">Productivity analytics</div><div class="tc-val meh">Essentially zero</div></div>
+            <div class="tc-row"><div class="tc-key">Information flow</div><div class="tc-val meh">Slow, siloed, hierarchical</div></div>
+          </div>
+        </div>
+        <div class="transform-arrow">→</div>
+        <div class="transform-card then">
+          <div class="tc-label">Future — 2030</div>
+          <div class="tc-title">The AI-native SMB</div>
+          <div class="tc-rows">
+            <div class="tc-row"><div class="tc-key">Team size</div><div class="tc-val good">10 humans + AI employees</div></div>
+            <div class="tc-row"><div class="tc-key">Org structure</div><div class="tc-val good">Flat / circular, AI at center</div></div>
+            <div class="tc-row"><div class="tc-key">Tech stack</div><div class="tc-val good">1 unified platform</div></div>
+            <div class="tc-row"><div class="tc-key">AI literacy</div><div class="tc-val good">60–70 out of 100</div></div>
+            <div class="tc-row"><div class="tc-key">Productivity analytics</div><div class="tc-val good">~90 — full session tracking</div></div>
+            <div class="tc-row"><div class="tc-key">Information flow</div><div class="tc-val good">Every work session → artifact → central AI</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout sky">
+        <div class="callout-icon">💰</div>
+        <div class="callout-body">
+          <strong>The fresh market insight:</strong> Everything businesses have done with automation over the past
+          3 years — all the Zapier flows, all the AI integrations — will need to be redone as they move
+          to this model. That work doesn't port over. It's a completely fresh market. The pie of work
+          that needs doing is essentially untouched.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — COMPANY AGI -->
+    <section class="section" id="company-agi">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The "Company AGI" — The Org of the Future</h2>
+      <p class="section-body">
+        The fundamental shift isn't just AI tools replacing tasks — it's a redesign of how information
+        flows through an organization. Jack Dorsey's framing: the hierarchy exists because of how human
+        communication worked in large groups. AI changes that. The new model is a circular org with
+        a contextualized AI at the center.
+      </p>
+
+      <div class="agi-diagram">
+        <div class="agi-center">✦</div>
+        <div class="agi-label">Company AGI</div>
+        <div class="agi-sub">Central contextualized AI with access to all company data</div>
+        <div class="agi-roles">
+          <div class="agi-role human">Founder</div>
+          <div class="agi-role human">Marketer</div>
+          <div class="agi-role human">Tech lead</div>
+          <div class="agi-role ai">AI Employee ×10</div>
+          <div class="agi-role human">Sales</div>
+          <div class="agi-role ai">Market researcher</div>
+          <div class="agi-role ai">Creative director</div>
+        </div>
+      </div>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Every work session becomes an artifact.</strong> A meeting generates a Fireflies transcript. A design session generates a summary. A Claude Code session generates outputs. All of these feed into the central AI so it always has full context on what's happening across the business.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>The founder's primary job becomes world model maintenance.</strong> Strategy decisions, context updates, adjusting the AI's understanding of the business. Less operational involvement, more directional input. The whole team is doing this — feeding the central intelligence.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>AI employees are always plugged in.</strong> Specialized autonomous agents (market research, ad management, creative) all connected to the same central AI, pulling the same business context, operating 24/7 without management overhead.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>The tech stack simplifies dramatically.</strong> Instead of 7 disconnected SaaS tools, one unified platform — something like a Google-ified workspace where all business data, communication, and work sessions live together and feed the AI.</span>
+        </li>
+      </ul>
+
+      <div class="callout teal">
+        <div class="callout-icon">🔭</div>
+        <div class="callout-body">
+          <strong>We're already doing this right now.</strong> The AIOS workspace — Fireflies integration,
+          context files, Data OS, outputs folder — is the primitive version of this Company AGI.
+          You as a founder feeding strategy and context, all work sessions producing artifacts,
+          the AI always having the full picture. What you're building for yourself and your clients
+          is the early version of the org structure that will be standard in 5 years.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — THE OPPORTUNITY -->
+    <section class="section" id="opportunity">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Why Being Ahead of the Curve Pays</h2>
+      <p class="section-body">
+        The platforms that will eventually make this easy for anyone don't exist yet. When they do,
+        the practitioners who figured it out the hard way — who have the scar tissue of delivery,
+        who know the edge cases, who've refined the niche playbooks — will be the ones who benefit most.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>The "Morningside Automation" model redux.</strong> Years ago the team tried a flat-fee monthly automation model. Dev was too slow to make it profitable. Now, with autonomous dev pipelines, one developer can manage 5–10 client projects simultaneously. The model that didn't work before works now.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Tyler's proof of concept:</strong> Set up an AIOS for a client, get all their context and integrations in, use that as the ongoing development launchpad — charging $2,500/month retainer. Compare that to a marketing agency charging $4,000+ for ads: an "automation guy" on retainer delivering real operational improvement is at least as valuable, probably more.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Fewer, deeper clients beats many shallow ones.</strong> When you go deep with a client — stacking system on top of system — the value compounds. Each automation uses the context and integrations from the ones before it. The longer the relationship, the more defensible it becomes.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — AUDIT METHODS -->
+    <section class="section" id="audit">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Audit Methodologies — Four Ways to Map a Client</h2>
+      <p class="section-body">
+        The audit is the entry point for every engagement. The goal: understand where the company is,
+        identify automation opportunities, validate them, and produce a roadmap. How deep you need to
+        go, and how you collect the information, is still being actively experimented with.
+      </p>
+
+      <div class="audit-methods">
+        <div class="audit-method">
+          <div class="am-icon">🗂</div>
+          <div class="am-content">
+            <div class="am-label">Method 1</div>
+            <div class="am-title">Traditional Process Mapping</div>
+            <div class="am-desc">Kickoff call with executives → structured interviews across teams → process mapping in Figma (swimlanes, decision diamonds) → opportunity spotting → validation round → roadmap. This is the Morningside consulting approach. Thorough but resource-intensive and slow.</div>
+            <span class="am-tag tag-current">Current standard</span>
+          </div>
+        </div>
+        <div class="audit-method">
+          <div class="am-icon">📁</div>
+          <div class="am-content">
+            <div class="am-label">Method 2</div>
+            <div class="am-title">Drive Slurp + Agent Analysis</div>
+            <div class="am-desc">Get read access to Google Drive (or whatever the business runs on). Spawn Claude Code agents to investigate the entire drive. Agents crunch through documents, processes, and data to identify opportunities and produce an ops assessment + roadmap. Faster than traditional, but misses the nuance of direct interviews.</div>
+            <span class="am-tag tag-emerging">Emerging</span>
+          </div>
+        </div>
+        <div class="audit-method">
+          <div class="am-icon">🎙</div>
+          <div class="am-content">
+            <div class="am-label">Method 3</div>
+            <div class="am-title">AI-Powered Conversational Audit</div>
+            <div class="am-desc">The whole company (or team leads) sits down for 1 hour with an AI agent. They chat back and forth — the agent processes responses, identifies gaps, asks follow-up questions, and iterates until it has enough for a roadmap. Could also be voice agents that call team members. Compresses a multi-week audit into a single session. The future of auditing.</div>
+            <span class="am-tag tag-future">Future standard</span>
+          </div>
+        </div>
+        <div class="audit-method">
+          <div class="am-icon">📹</div>
+          <div class="am-content">
+            <div class="am-label">Method 4</div>
+            <div class="am-title">Screen Recording Analysis (Octor)</div>
+            <div class="am-desc">Tools like Octor record employee screens and use computer vision to map what tasks and workflows are actually happening — ground truth vs. what people say they do. Highly accurate but invasive. Works for smaller teams; harder to sell to larger organizations who will balk at sending screen recordings to an LLM provider.</div>
+            <span class="am-tag tag-emerging">Invasive / niche</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-body">
+          <strong>The open question:</strong> How deep do you actually need to go? A 200-item opportunity list
+          vs. the top 5 highest-value items to start moving on immediately. The right audit finds
+          the quick wins and the big swings — not every possible thing. Experienced practitioners
+          know the difference; the audit is also an exercise in prioritization judgment.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — AUTONOMOUS DEV -->
+    <section class="section" id="dev">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">The Autonomous Dev Pipeline — Build Faster for Clients</h2>
+      <p class="section-body">
+        The reason the retainer model now works (when it didn't before) is that development speed has
+        changed. With autonomous dev pipelines wrapping Claude Code, a single developer can move through
+        client builds at a rate that makes a $2,500–$5,000/month retainer genuinely profitable.
+        Here's what's available.
+      </p>
+
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-name">Claude Code CLI <span class="tool-badge badge-cli">Interactive</span></div>
+          <div class="tool-desc">The standard product — you interact with Claude Code in a terminal. Your primary workspace. This is what you're already using for AIOS. Not the dev pipeline itself, but the foundation everything else runs on.</div>
+          <div class="tool-best">Best for: daily work, AIOS management, context-driven tasks</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Claude Agent SDK <span class="tool-badge badge-sdk">Programmable</span></div>
+          <div class="tool-desc">Claude Code as a Python/TypeScript library. Same agent loop and tools that power the CLI, but programmable — your application drives it, not you in a terminal. Build custom agent pipelines, bug-fix bots, CI integrations. You host and manage the infrastructure.</div>
+          <div class="tool-best">Best for: custom automation products, repeated headless tasks</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Claude Managed Agents <span class="tool-badge badge-mgd">New / Beta</span></div>
+          <div class="tool-desc">Anthropic hosts and runs the agent infrastructure for you. Define the model, tools, and environment — Anthropic spins it in cloud containers, you stream events. No infrastructure management. Built for long-running tasks (minutes to hours) that need full tool access.</div>
+          <div class="tool-best">Best for: long-running autonomous tasks without managing infra</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-name">Oh My Claude Code <span class="tool-badge badge-wrap">Wrapper</span></div>
+          <div class="tool-desc">Multi-agent orchestration wrappers around Claude Code. Tools like "Oh My Claude Code" add structured loops (Ralph Loops, Ultra Work, Deep Bank), auto-research, and multi-agent coordination on top of the base CLI. Clone from GitHub, make your changes. Good for less-technical practitioners who want more structured dev automation.</div>
+          <div class="tool-best">Best for: structured multi-step development builds for clients</div>
+        </div>
+      </div>
+
+      <div class="callout sky">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>The workflow that makes the retainer profitable:</strong> AIOS set up for client →
+          context and integrations loaded → audit identifies top opportunities → dev pipeline
+          takes the spec and builds → you review output and ship. Each automation is built
+          against the client's actual systems and data from day one. No starting from scratch.
+          Context compounds with each build.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — TEACH/SHOW/GIVE -->
+    <section class="section" id="spectrum">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Teach / Show / Give — The Delivery Spectrum</h2>
+      <p class="section-body">
+        How you deliver AIOS to clients sits on a spectrum. Three distinct models, each with a different
+        client relationship, price point, and level of dependency. The right choice depends on the client's
+        appetite, your capacity, and how much you want them to be self-sufficient.
+      </p>
+
+      <div class="spectrum-cards">
+        <div class="spectrum-card teach">
+          <div class="sc-header">
+            <div class="sc-label">Left end</div>
+            <div class="sc-icon">🎓</div>
+            <div class="sc-title">Teach</div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-desc">Set up their AIOS, then teach them to use and grow it themselves. Ongoing support and training sessions. They get the keys.</div>
+            <div class="sc-price">~$5k setup</div>
+            <div class="sc-price-note">+ $2k/month support + weekly session</div>
+            <ul class="sc-traits">
+              <li class="sc-trait"><span class="sc-dot"></span>Client builds self-sufficiency over time</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Lower ongoing commitment for you</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Good for motivated, curious founders</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Relationship naturally ends as they learn</li>
+            </ul>
+          </div>
+        </div>
+        <div class="spectrum-card show">
+          <div class="sc-header">
+            <div class="sc-label">Middle</div>
+            <div class="sc-icon">🔧</div>
+            <div class="sc-title">Show</div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-desc">In-person setup, then ongoing dev retainer where you build automations for them. Tyler's model. They see it work but you're still the operator.</div>
+            <div class="sc-price">$2k–$5k/month</div>
+            <div class="sc-price-note">+ $2k–$4k per automation built</div>
+            <ul class="sc-traits">
+              <li class="sc-trait"><span class="sc-dot"></span>You do the building, they approve outputs</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Deep client relationship, high value per client</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Fewer clients = better outcomes</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Systems stack → value compounds over time</li>
+            </ul>
+          </div>
+        </div>
+        <div class="spectrum-card give">
+          <div class="sc-header">
+            <div class="sc-label">Right end</div>
+            <div class="sc-icon">📦</div>
+            <div class="sc-title">Give</div>
+          </div>
+          <div class="sc-body">
+            <div class="sc-desc">Build a custom ops product for them — a dashboard with integrated Claude Code chat, visibility across all systems. A finished product they just use.</div>
+            <div class="sc-price">~$10k setup</div>
+            <div class="sc-price-note">+ ~$800/month maintenance</div>
+            <ul class="sc-traits">
+              <li class="sc-trait"><span class="sc-dot"></span>Client gets a product, not a service</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Founder visibility into all ops from one place</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Higher setup cost, lower ongoing touch</li>
+              <li class="sc-trait"><span class="sc-dot"></span>Builds on automations over time</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-body">
+          <strong>Where to start:</strong> Show is the most commercially proven right now. Set up AIOS for
+          the client, use it as your development launchpad, charge a monthly retainer to keep building
+          on top of it. Tyler's $2,500/month model is already working. The "Give" (productized ops app)
+          model has high potential but requires more development investment upfront.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — REVENUE LOOP -->
+    <section class="section" id="revenue">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">The Revenue Loop — How It Compounds</h2>
+      <p class="section-body">
+        The "Show" model has a natural compounding loop. Each phase feeds the next, and the entire
+        engagement gets more valuable as context accumulates and systems stack.
+      </p>
+
+      <div class="revenue-loop">
+        <div class="rl-step">
+          <div class="rl-n">1</div>
+          <div>
+            <div class="rl-label">In-person AIOS setup</div>
+            <div class="rl-desc">Context OS, Data OS, integrations, initial modules. Establishes the launchpad.</div>
+          </div>
+          <div class="rl-price">$5k–$15k</div>
+        </div>
+        <div class="rl-step">
+          <div class="rl-n">2</div>
+          <div>
+            <div class="rl-label">Audit from the AIOS</div>
+            <div class="rl-desc">Use the connected workspace to run the audit — data already in, context already loaded. Faster, cheaper than traditional auditing.</div>
+          </div>
+          <div class="rl-price">Included / $3k</div>
+        </div>
+        <div class="rl-step">
+          <div class="rl-n">3</div>
+          <div>
+            <div class="rl-label">Ongoing development retainer</div>
+            <div class="rl-desc">Monthly fee to keep building automation on top of the base. Each build uses the context and integrations from everything before it.</div>
+          </div>
+          <div class="rl-price">$2k–$5k/mo</div>
+        </div>
+        <div class="rl-step">
+          <div class="rl-n">4</div>
+          <div>
+            <div class="rl-label">Per-automation builds</div>
+            <div class="rl-desc">Individual automations delivered on top of the retainer. Priced separately or bundled.</div>
+          </div>
+          <div class="rl-price">$2k–$4k each</div>
+        </div>
+        <div class="rl-step">
+          <div class="rl-n">5</div>
+          <div>
+            <div class="rl-label">Maintenance + expansion</div>
+            <div class="rl-desc">As systems stack and the client grows, maintenance compounds. New hires need onboarding into the system. New business areas need coverage.</div>
+          </div>
+          <div class="rl-price">MRR grows</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — HUMAN FRICTION -->
+    <section class="section" id="friction">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">The Human Friction — What Slows Everything Down</h2>
+      <p class="section-body">
+        The tech is not the bottleneck. People are. The transition from today's SMB to tomorrow's
+        AI-native org involves real human costs that every practitioner and every founder needs to
+        account for honestly.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Redundancies and layoffs:</strong> Moving from 50 people to 10 people + AI employees means real job losses. That involves legal processes, severance, and organizational trauma — all of which slow the transition.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Resistance to learning:</strong> Some team members will embrace AI tools enthusiastically. Others won't touch them. This bifurcation is normal — plan for it. The ones who adapt become more valuable; the ones who don't become redundant.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Training lag:</strong> Even motivated employees take time to build AI fluency. AI literacy going from 5 to 60 doesn't happen overnight. Realistic timelines for team adoption are 6–18 months, not weeks.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Permission anxiety:</strong> Founders are reluctant to give team members full API access to company systems. This is reasonable — and it's why the founder/executive setup comes before team rollout. Solve security and permissions before scaling out.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>The team sync problem:</strong> Multiple people on separate AIOS instances who need to share context is unsolved. GitHub repos with shared folders is the current best approach — but it's still rough. Stay focused on founder-first delivery until this is worked out.</span></li>
+      </ul>
+
+      <div class="callout slate">
+        <div class="callout-icon">⏳</div>
+        <div class="callout-body">
+          <strong>The pace of change is slower than it looks from inside the community.</strong>
+          You are in a group of early movers. The average SMB owner is nowhere near this.
+          That gap is the business opportunity — but it also means you'll spend more time
+          than expected managing change resistance and expectation-setting, not just building cool things.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">The transition is the market</div>
+          <div class="tk-desc">SMBs have to get from today's org structure to the AI-native one. That transition — audit, contextualization, development, training — is what you're selling. All previous automation work needs to be redone. It's a fresh market.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Company AGI is already happening</div>
+          <div class="tk-desc">What you're building with AIOS is the primitive version of the Company AGI model. Flat org, AI at center, every work session producing artifacts, humans feeding the world model. You're not waiting for the future — you're living it now.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">The AI-powered audit is the future</div>
+          <div class="tk-desc">Traditional process mapping is slow. The drive slurp approach is faster but incomplete. The conversational AI audit — one hour, whole company, AI agent interviews — compresses weeks into an afternoon. Build toward this.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Autonomous dev makes retainers profitable</div>
+          <div class="tk-desc">The "one automation per month" model failed before because dev was too slow. Autonomous pipelines change the math. Tyler's $2,500/month model works now. The delivery speed has unlocked the pricing model.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">Teach / Show / Give — pick your model</div>
+          <div class="tk-desc">Teach = training + self-sufficiency. Show = you build, they approve. Give = finished product. "Show" is the most commercially proven starting point. Fewer, deeper clients with compounding value beats a large client list with shallow relationships.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">People friction is the real bottleneck</div>
+          <div class="tk-desc">AI literacy, redundancy management, permission anxiety, resistance to change — these slow everything down more than any technical limitation. Expect it. Plan for it. Price engagements to account for the human work, not just the technical build.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-service-model.html" class="related-card">
+          <div class="rc-tag">Commercial Guide</div>
+          <div class="rc-title">The $30,000+ AIOS Service Model</div>
+          <div class="rc-sub">Detailed pricing, offer structure, and the in-person delivery model for AIOS services.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-builder-mindset.html" class="related-card">
+          <div class="rc-tag">Operator Guide</div>
+          <div class="rc-title">Thinking Like an AIOS Builder</div>
+          <div class="rc-sub">The 5 principles and methodology for anyone building or operating AIOS systems.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-automate-agency.html" class="related-card">
+          <div class="rc-tag">Vision</div>
+          <div class="rc-title">Automate Your Entire Agency</div>
+          <div class="rc-sub">Real automations already running inside a live agency — and the harness vs wrapper framing.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

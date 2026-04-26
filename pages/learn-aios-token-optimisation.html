@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Token Optimisation for AIOS — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8;   --blue-light:#EFF6FF;  --blue-mid:#BFDBFE;
+      --teal:#0D9488;   --teal-light:#F0FDFA;  --teal-mid:#99F6E4;
+      --lime:#65A30D;   --lime-light:#F7FEE7;  --lime-mid:#BEF264;
+      --gold:#B45309;   --gold-light:#FFFBEB;  --gold-mid:#FDE68A;
+      --red:#DC2626;    --red-light:#FEF2F2;   --red-mid:#FECACA;
+      --slate:#334155;  --slate-light:#F1F5F9; --slate-mid:#CBD5E1;
+      --ink:#0F172A;    --ink-dim:#64748B;     --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8;       --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--lime-light); color: var(--lime); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--lime); border-left-color: var(--lime); background: var(--lime-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--lime); border-color: var(--lime); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--lime-light); color: var(--lime); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+    .author-note { margin-top: 12px; padding: 10px 14px; background: var(--lime-light); border-left: 3px solid var(--lime); border-radius: var(--radius-md); font-size: 12px; color: var(--ink-dim); }
+    .author-note strong { color: var(--lime); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--lime); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.lime   { background: var(--lime-light);  border-left: 3px solid var(--lime); }
+    .callout.blue   { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.gold   { background: var(--gold-light);  border-left: 3px solid var(--gold); }
+    .callout.red    { background: var(--red-light);   border-left: 3px solid var(--red); }
+    .callout.teal   { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout.slate  { background: var(--slate-light); border-left: 3px solid var(--slate); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* The big number */
+    .stat-hero { background: #1E293B; border-radius: var(--radius-xl); padding: 24px; margin: 20px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .stat-item { text-align: center; padding: 12px; border-right: 1px solid rgba(255,255,255,.06); }
+    .stat-item:last-child { border-right: none; }
+    .stat-val  { font-size: 28px; font-weight: 800; letter-spacing: -.03em; color: #F1F5F9; }
+    .stat-val.green { color: #86EFAC; }
+    .stat-val.muted { color: #64748B; }
+    .stat-label { font-size: 11px; color: #64748B; margin-top: 4px; line-height: 1.4; }
+
+    /* Billing comparison */
+    .billing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .billing-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 18px; }
+    .billing-card.sub { border-color: var(--blue-mid); }
+    .billing-card.api { border-color: var(--gold-mid); }
+    .billing-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .billing-card.sub .billing-label { color: var(--blue); }
+    .billing-card.api .billing-label { color: var(--gold); }
+    .billing-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .billing-traits { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .billing-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .bt-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .sub .bt-dot { background: var(--blue); }
+    .api .bt-dot { background: var(--gold); }
+
+    /* The 4 levers */
+    .levers-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+    .lever-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 18px; }
+    .lever-num  { width: 28px; height: 28px; border-radius: 50%; background: var(--lime-light); color: var(--lime); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+    .lever-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; font-family: 'SF Mono', monospace; }
+    .lever-role { font-size: 11px; font-weight: 600; color: var(--lime); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+    .lever-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .lever-number { margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--ink); }
+
+    /* Hidden costs list */
+    .hidden-costs { background: #1E293B; border-radius: var(--radius-xl); padding: 20px; margin: 20px 0; }
+    .hc-title { color: #F87171; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
+    .hc-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .hc-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #94A3B8; line-height: 1.5; }
+    .hc-bullet { width: 4px; height: 4px; border-radius: 50%; background: #F87171; flex-shrink: 0; margin-top: 6px; }
+    .hc-key { color: #7DD3FC; font-family: 'SF Mono', monospace; font-weight: 600; }
+    .hc-note { color: #64748B; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,.06); }
+
+    /* Code block */
+    .code-block { background: #1E293B; border-radius: var(--radius-lg); padding: 16px 18px; margin: 12px 0; font-family: 'SF Mono', monospace; font-size: 13px; line-height: 1.8; overflow-x: auto; }
+    .code-key     { color: #7DD3FC; }
+    .code-val     { color: #86EFAC; }
+    .code-str     { color: #FCA5A5; }
+    .code-comment { color: #475569; }
+    .code-num     { color: #FDE68A; }
+
+    /* Config table */
+    .config-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin: 12px 0; font-size: 12px; }
+    .config-table th { background: #1E293B; color: #94A3B8; padding: 9px 14px; text-align: left; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+    .config-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .config-table tr:last-child td { border-bottom: none; }
+    .config-table tr:nth-child(even) td { background: var(--base); }
+    .config-key { font-family: 'SF Mono', monospace; color: var(--teal); font-weight: 600; }
+    .config-why { color: var(--ink-dim); line-height: 1.55; }
+
+    /* Pricing table */
+    .price-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin: 12px 0; font-size: 12px; }
+    .price-table th { background: #1E293B; color: #94A3B8; padding: 9px 14px; text-align: left; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+    .price-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table tr:nth-child(even) td { background: var(--base); }
+    .price-model { font-weight: 700; color: var(--ink); font-family: 'SF Mono', monospace; }
+    .price-row.recommended td { background: var(--lime-light); }
+    .price-row.recommended .price-model { color: var(--lime); }
+    .price-cost { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .price-note { color: var(--ink-dim); }
+
+    /* Model routing table */
+    .routing-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin: 12px 0; font-size: 12px; }
+    .routing-table th { background: #1E293B; color: #94A3B8; padding: 9px 14px; text-align: left; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+    .routing-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .routing-table tr:last-child td { border-bottom: none; }
+    .routing-table tr:nth-child(even) td { background: var(--base); }
+    .route-task { font-weight: 600; color: var(--ink); }
+    .route-cmd  { font-family: 'SF Mono', monospace; color: var(--teal); font-weight: 600; }
+
+    /* Spike patterns */
+    .spikes { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .spike-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .spike-n { width: 22px; height: 22px; border-radius: 50%; background: var(--red-light); color: var(--red); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .spike-content .spike-title { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .spike-content .spike-fix   { font-size: 11px; color: var(--ink-dim); }
+    .spike-content .spike-fix strong { color: var(--lime); }
+
+    /* Habits */
+    .habits { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+    .habit-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .habit-n { width: 22px; height: 22px; border-radius: 50%; background: var(--lime-light); color: var(--lime); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .habit-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .habit-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Checklist */
+    .checklist { display: flex; flex-direction: column; gap: 6px; margin: 16px 0; }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .check-box  { width: 16px; height: 16px; border: 2px solid var(--lime-mid); border-radius: 3px; flex-shrink: 0; margin-top: 2px; background: var(--lime-light); }
+    .check-text { font-size: 12px; color: var(--ink); line-height: 1.5; }
+    .check-text .cmd { font-family: 'SF Mono', monospace; color: var(--teal); font-size: 11px; }
+    .check-text small { display: block; color: var(--ink-faint); margin-top: 2px; font-size: 11px; }
+
+    /* Measurement commands */
+    .cmd-block { background: #1E293B; border-radius: var(--radius-lg); padding: 14px 16px; margin: 12px 0; font-family: 'SF Mono', monospace; font-size: 12px; line-height: 2; }
+    .cmd-line { display: flex; gap: 12px; }
+    .cmd-exe  { color: #86EFAC; }
+    .cmd-comment { color: #475569; }
+
+    /* CLAUDE.md budget */
+    .budget-bar { display: flex; gap: 2px; border-radius: var(--radius-lg); overflow: hidden; margin: 16px 0; border: 1px solid var(--border); }
+    .budget-col { padding: 14px; text-align: center; flex: 1; }
+    .budget-col.gold-standard { background: var(--lime-light); }
+    .budget-col.target        { background: var(--blue-light); }
+    .budget-col.ceiling       { background: var(--gold-light); }
+    .budget-col.hard-ceiling  { background: var(--red-light); }
+    .budget-col:not(:last-child) { border-right: 1px solid var(--border); }
+    .budget-val   { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+    .gold-standard .budget-val { color: var(--lime); }
+    .target        .budget-val { color: var(--blue); }
+    .ceiling       .budget-val { color: var(--gold); }
+    .hard-ceiling  .budget-val { color: var(--red); }
+    .budget-label  { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; color: var(--ink-faint); }
+
+    /* Feat list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--lime); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--teal); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .levers-grid, .billing-grid, .tk-grid, .related-grid { grid-template-columns: 1fr; }
+      .stat-hero { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Token Optimisation</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"  class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#why"       class="sidebar-link"><span class="sidebar-step">1</span> Why Optimise on a Flat Plan?</a>
+    <a href="#levers"    class="sidebar-link"><span class="sidebar-step">2</span> The 4 Levers</a>
+    <a href="#hidden"    class="sidebar-link"><span class="sidebar-step">3</span> Where Tokens Go</a>
+    <a href="#settings"  class="sidebar-link"><span class="sidebar-step">4</span> Baseline settings.json</a>
+    <a href="#ignore"    class="sidebar-link"><span class="sidebar-step">5</span> .claudeignore</a>
+    <a href="#cache"     class="sidebar-link"><span class="sidebar-step">6</span> Cache Economics</a>
+    <a href="#pricing"   class="sidebar-link"><span class="sidebar-step">7</span> Pricing Cheat Sheet</a>
+    <a href="#routing"   class="sidebar-link"><span class="sidebar-step">8</span> Model Routing</a>
+    <a href="#hud"       class="sidebar-link"><span class="sidebar-step">9</span> Live HUD</a>
+    <a href="#plugins"   class="sidebar-link"><span class="sidebar-step">10</span> RTK + context-mode</a>
+    <a href="#habits"    class="sidebar-link"><span class="sidebar-step">11</span> Habits</a>
+    <a href="#spikes"    class="sidebar-link"><span class="sidebar-step">12</span> 8 Spike Patterns</a>
+    <a href="#clamd"     class="sidebar-link"><span class="sidebar-step">13</span> CLAUDE.md Budget</a>
+    <div class="sidebar-divider"></div>
+    <a href="#setup"     class="sidebar-link"><span class="sidebar-step">✓</span> Setup Checklist</a>
+    <a href="#takeaways" class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">⚡ Token Optimisation</div>
+      <h1 class="module-title">Token Optimisation for AIOS</h1>
+      <p class="module-subtitle">
+        Most Claude Code users burn 60–90% more tokens than needed. Defaults are the problem, not you.
+        Four levers — none costing anything — can get your ratio above 2x and keep sessions running
+        longer before you hit caps.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">📄 Handout + slides included</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~30 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">90 min to implement</div>
+      </div>
+      <div class="author-note">By <strong>Valera Tumash</strong> — valera@aaaaccelerator.com · Based on 4 months of measured, real-world Claude Code usage data.</div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — WHY -->
+    <section class="section" id="why">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">Why Optimise on a Flat Plan?</h2>
+      <p class="section-body">
+        Your bill doesn't drop when you optimise tokens on a subscription. So why bother?
+        Because the win you <em>feel</em> is real: <strong>"I don't hit the weekly cap anymore"</strong>
+        and <strong>"sessions last longer."</strong> Every token saved delays throttle, extends context
+        before <code>/compact</code>, and becomes real dollars the moment you exceed caps or switch to API.
+      </p>
+
+      <div class="stat-hero">
+        <div class="stat-item">
+          <div class="stat-val">~$400</div>
+          <div class="stat-label">Actual subscription paid<br>(4 months)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val green">$3,053</div>
+          <div class="stat-label">Shadow price — what those tokens would cost on API rates</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">7.5×</div>
+          <div class="stat-label">Ratio — the target is getting yours above 2× first</div>
+        </div>
+      </div>
+
+      <div class="callout lime">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>What is "shadow price"?</strong> Tools like <code>ccusage</code> read your local JSONL logs
+          and multiply every token by its API rate. The $3,053 figure is what those tokens <em>would have cost</em>
+          on pay-per-token API billing — a hypothetical comparison, not a bill. It's how you measure the value
+          flowing through your flat-rate plan.
+        </div>
+      </div>
+
+      <div class="billing-grid">
+        <div class="billing-card sub">
+          <div class="billing-label">Your subscription</div>
+          <div class="billing-title">Flat monthly fee</div>
+          <ul class="billing-traits">
+            <li class="billing-trait"><span class="bt-dot"></span>$20 / $100 / $200 per month, fixed</li>
+            <li class="billing-trait"><span class="bt-dot"></span>5h rolling session window + weekly cap</li>
+            <li class="billing-trait"><span class="bt-dot"></span>Bill doesn't move with token count</li>
+            <li class="billing-trait"><span class="bt-dot"></span>Win = sessions run longer, caps hit less often</li>
+          </ul>
+        </div>
+        <div class="billing-card api">
+          <div class="billing-label">API / what tools report</div>
+          <div class="billing-title">Metered pay-per-token</div>
+          <ul class="billing-traits">
+            <li class="billing-trait"><span class="bt-dot"></span>Every token has a price — linear cost</li>
+            <li class="billing-trait"><span class="bt-dot"></span>No caps — but bill can balloon fast</li>
+            <li class="billing-trait"><span class="bt-dot"></span>Where ccusage shadow prices come from</li>
+            <li class="billing-trait"><span class="bt-dot"></span>Savings become real the moment you exceed subscription caps or switch to API</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — THE 4 LEVERS -->
+    <section class="section" id="levers">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The 4 Levers — All Free, All Stack</h2>
+      <p class="section-body">
+        Four tools that work together. None cost anything. Installing all four takes about 90 minutes.
+        If you only do one thing: <strong>install RTK</strong>. Five minutes, immediate win.
+      </p>
+
+      <div class="levers-grid">
+        <div class="lever-card">
+          <div class="lever-num">1</div>
+          <div class="lever-name">ccusage</div>
+          <div class="lever-role">Measure</div>
+          <div class="lever-desc">Reads your local JSONL logs and calculates shadow prices. The instrument panel — you can't optimise what you don't measure.</div>
+          <div class="lever-number">$3,053 equivalent over 4 months measured</div>
+        </div>
+        <div class="lever-card">
+          <div class="lever-num">2</div>
+          <div class="lever-name">RTK</div>
+          <div class="lever-role">Strip tool output</div>
+          <div class="lever-desc">PreToolUse hook that strips raw tool output before it enters context. Community-validated: ~89% of CLI noise tokens eliminated. Zero friction — every Bash call auto-optimised.</div>
+          <div class="lever-number">13.5M tokens saved over 8,865 commands</div>
+        </div>
+        <div class="lever-card">
+          <div class="lever-num">3</div>
+          <div class="lever-name">context-mode</div>
+          <div class="lever-role">Sandbox tool output</div>
+          <div class="lever-desc">Claude plugin / MCP server. Tool output goes to a sandbox, not the main context. Queryable when needed. Preserves items across compactions — solving the "context loss" problem.</div>
+          <div class="lever-number">105 items preserved across compactions · 56% token reduction</div>
+        </div>
+        <div class="lever-card">
+          <div class="lever-num">4</div>
+          <div class="lever-name">settings.json</div>
+          <div class="lever-role">Tune the defaults</div>
+          <div class="lever-desc">Four environment variables that change the default behaviour. Sonnet instead of Opus, capped thinking, early autocompact, Haiku subagents. Two minutes to copy and paste.</div>
+          <div class="lever-number">~70% thinking-cost reduction from thinking cap alone</div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🔗</div>
+        <div class="callout-body">
+          <strong>They stack.</strong> RTK strips what enters the context. context-mode prevents the rest
+          from entering at all. settings.json reduces cost per token. ccusage proves the savings.
+          Together they compound — installing all four in order is the path to 2×+ ratio.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — WHERE TOKENS GO -->
+    <section class="section" id="hidden">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Where Tokens Go — The Hidden Costs</h2>
+      <p class="section-body">
+        Most people think context = the chat. It's way more than that. Everything below is loaded
+        on every turn and stays in context until <code>/clear</code> or <code>/compact</code>.
+      </p>
+
+      <div class="hidden-costs">
+        <div class="hc-title">Loaded on every turn</div>
+        <ul class="hc-list">
+          <li class="hc-item"><span class="hc-bullet"></span><span><span class="hc-key">Raw tool output</span> — ls, grep, git diff, file reads. Every line stays until cleared.</span></li>
+          <li class="hc-item"><span class="hc-bullet"></span><span><span class="hc-key">CLAUDE.md</span> — loaded on every prompt, forever. Every line you add costs tokens every message.</span></li>
+          <li class="hc-item"><span class="hc-bullet"></span><span><span class="hc-key">MCP tool definitions</span> — &gt;10 MCPs can cut effective window from 200k to 70k. (April 2026: auto-deferred if &gt;10% of context, but still matters.)</span></li>
+          <li class="hc-item"><span class="hc-bullet"></span><span><span class="hc-key">Hidden thinking tokens</span> — default 31,999. You're paying for extended thinking even when you don't need it.</span></li>
+          <li class="hc-item"><span class="hc-bullet"></span><span><span class="hc-key">System prompts + conversation history</span> — grows with every exchange.</span></li>
+          <li class="hc-item"><span class="hc-bullet"></span><span><span class="hc-key">Compaction residue</span> — compaction at 95% (default) fires after you've already paid for everything.</span></li>
+        </ul>
+        <div class="hc-note">⚠ <strong style="color:#94A3B8">Opus 4.7 tokenizer trap:</strong> Opus 4.7 costs ~35% more tokens for identical text compared to Opus 4.6. If you upgraded silently (you did), you're paying 35% more on every prompt. Invisible. Nobody flags it. Always pair Opus 4.7 with CLAUDE_CODE_EFFORT_LEVEL=medium.</div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — SETTINGS.JSON -->
+    <section class="section" id="settings">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">The Baseline settings.json — 2-Minute Change</h2>
+      <p class="section-body">
+        Copy this into <code>~/.claude/settings.json</code>. If you copy nothing else from this
+        workshop, copy this. It changes four defaults that are costing you tokens on every prompt.
+      </p>
+
+      <div class="code-block">
+{<br>
+&nbsp;&nbsp;<span class="code-key">"model"</span>: <span class="code-str">"sonnet"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"env"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"MAX_THINKING_TOKENS"</span>: <span class="code-str">"8000"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"CLAUDE_AUTOCOMPACT_PCT_OVERRIDE"</span>: <span class="code-str">"60"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"CLAUDE_CODE_SUBAGENT_MODEL"</span>: <span class="code-str">"haiku"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-key">"CLAUDE_CODE_EFFORT_LEVEL"</span>: <span class="code-str">"medium"</span><br>
+&nbsp;&nbsp;}<br>
+}
+      </div>
+
+      <table class="config-table">
+        <thead><tr><th>Line</th><th>Why it matters</th></tr></thead>
+        <tbody>
+          <tr><td class="config-key">model: sonnet</td><td class="config-why">Sonnet 4.6 matches Opus 4.6 on most coding at ~1/5 the input price. Escalate per-task with <code>/model opus</code> or <code>/model opusplan</code> when you actually need reasoning.</td></tr>
+          <tr><td class="config-key">MAX_THINKING_TOKENS: 8000</td><td class="config-why">Default is 31,999. This single setting gives ~70% thinking-cost reduction. Thinking bills at output rate — most tasks don't need 32k thinking tokens.</td></tr>
+          <tr><td class="config-key">CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: 60</td><td class="config-why">Default fires at 95% — by then you've already paid for everything. Compact at 60% for cleaner context and earlier refresh. Reframe: autocompact is a failure mode, not a safety net.</td></tr>
+          <tr><td class="config-key">CLAUDE_CODE_SUBAGENT_MODEL: haiku</td><td class="config-why">~80% cheaper on Task tool calls. Haiku handles most subagent work fine. The savings compound fast on any workflow using parallel agents.</td></tr>
+          <tr><td class="config-key">CLAUDE_CODE_EFFORT_LEVEL: medium</td><td class="config-why">Prevents unexpected xhigh thinking spikes on Opus 4.7. Critical if you're using Opus 4.7 for anything — without this, thinking can explode unexpectedly.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — CLAUDEIGNORE -->
+    <section class="section" id="ignore">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">.claudeignore — 50-70% Less File-Scanning Waste</h2>
+      <p class="section-body">
+        Without a <code>.claudeignore</code> at workspace root, every grep walks <code>node_modules</code>,
+        every Read can pull a lockfile. Add this file and eliminate low-signal bulk from every scan.
+      </p>
+
+      <div class="code-block">
+<span class="code-comment"># .claudeignore — place at workspace root</span><br>
+node_modules/<br>
+.git/<br>
+.venv/<br>
+dist/<br>
+*.lock<br>
+*.log<br>
+data/*.db<br>
+outputs/playwright/
+      </div>
+
+      <div class="callout lime">
+        <div class="callout-icon">📁</div>
+        <div class="callout-body">
+          <strong>Start with the block above, then grow it.</strong> A mature <code>.claudeignore</code>
+          has 60+ patterns sectioned by category. Consider adding an <code>/optimize-context</code> skill
+          that scans your repo for large/low-signal files and suggests new patterns to add.
+          Every pattern you add is tokens saved on every scan, forever.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — CACHE -->
+    <section class="section" id="cache">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Cache Economics — The "Free Money" Lever Nobody Uses</h2>
+      <p class="section-body">
+        Prompt caching is automatic in Claude Code — you don't enable it, you just need to not break it.
+        The economics are stark enough that understanding them changes how you work.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Cache write: $10/MTok</strong> — one-time cost to write a prefix to cache.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Cache hit: $0.50/MTok</strong> — 10x cheaper than fresh input ($5/MTok). For a session-length of work, one write amortises across the whole thing.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>1-hour TTL now available</strong> (April 2026) — alongside the 5-minute TTL. Use 1h TTL for long sessions to avoid cache expiry mid-flow.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>What breaks cache:</strong> Rewriting CLAUDE.md or system prompts mid-session. Adding new text before existing cached content. Don't modify the prefix during a session — any change forces a full re-tokenize and re-write.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Cache miss from idle:</strong> Pause &gt;5 minutes (with 5-min TTL) and the prefix re-tokenizes. Fix: don't pause mid-flow on the default TTL. Or switch to the 1h TTL for long sessions.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — PRICING -->
+    <section class="section" id="pricing">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">2026 Pricing Cheat Sheet</h2>
+      <p class="section-body">
+        5× cost delta between Opus and Sonnet on input. The decision of which model to use
+        is not aesthetic — it has direct financial consequences. Pick deliberately.
+      </p>
+
+      <table class="price-table">
+        <thead><tr><th>Model</th><th>Input / MTok</th><th>Output / MTok</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td class="price-model">Haiku 4.5</td><td class="price-cost">$1</td><td class="price-cost">$5</td><td class="price-note">Subagents, greps, simple lookups</td></tr>
+          <tr class="price-row recommended"><td class="price-model">Sonnet 4.6 ★</td><td class="price-cost">$3</td><td class="price-cost">$15</td><td class="price-note"><strong>Default. Coding, refactoring, routine tasks.</strong> Matches Opus 4.6 on most coding.</td></tr>
+          <tr><td class="price-model">Opus 4.6</td><td class="price-cost">$15</td><td class="price-cost">$75</td><td class="price-note">Complex architecture. Legacy but still active.</td></tr>
+          <tr><td class="price-model">Opus 4.7</td><td class="price-cost">$5</td><td class="price-cost">$25</td><td class="price-note">Heavy reasoning — but ~35% tokenizer inflation vs 4.6. Always pair with EFFORT_LEVEL=medium.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout red">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>The Opus habit kills budgets.</strong> Most people leave it on Opus all the time and wonder why
+          they're hitting limits. Sonnet handles 80%+ of coding tasks. Start in Sonnet, escalate to Opus
+          only when you hit a reasoning gap, come back to Sonnet after. The savings are immediate.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — MODEL ROUTING -->
+    <section class="section" id="routing">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Model Routing — The Right Tool Per Task</h2>
+
+      <table class="routing-table">
+        <thead><tr><th>Task</th><th>Command</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="route-task">Planning / architecture</td><td class="route-cmd">/model opus</td><td style="font-size:12px;color:var(--ink-dim);">Complex reasoning needs the bigger model. Use it deliberately for this phase only.</td></tr>
+          <tr><td class="route-task">Execution / coding</td><td class="route-cmd">/model sonnet</td><td style="font-size:12px;color:var(--ink-dim);">Default. Sonnet matches Opus on most coding at 1/5 the cost.</td></tr>
+          <tr><td class="route-task">Plan then execute in one session</td><td class="route-cmd">/model opusplan</td><td style="font-size:12px;color:var(--ink-dim);">Plans in Opus, executes in Sonnet. ~40% cheaper than staying on full Opus throughout.</td></tr>
+          <tr><td class="route-task">Subagents (Task tool)</td><td class="route-cmd">SUBAGENT_MODEL=haiku</td><td style="font-size:12px;color:var(--ink-dim);">~80% cheaper. Set once in settings.json, applies to every subagent call automatically.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 9 — LIVE HUD -->
+    <section class="section" id="hud">
+      <div class="section-number">Section 09</div>
+      <h2 class="section-title">The Live HUD — See It to Save It</h2>
+      <p class="section-body">
+        The psychological shift from "I wonder how much I've spent" to "I have $5.80 left today"
+        changes behaviour more than any config tweak. Install the status line so you can see
+        burn rate in real time.
+      </p>
+
+      <div class="code-block">
+<span class="code-comment"># Install and wire up — accept ccusage install when prompted</span><br>
+npx ccstatusline@latest
+      </div>
+
+      <div class="code-block">
+<span class="code-comment"># Pin the version in settings.json — never leave @latest</span><br>
+<span class="code-key">"statusLine"</span>: {<br>
+&nbsp;&nbsp;<span class="code-key">"type"</span>: <span class="code-str">"command"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"command"</span>: <span class="code-str">"npx -y ccstatusline@2.2.8"</span>,<br>
+&nbsp;&nbsp;<span class="code-key">"padding"</span>: <span class="code-num">0</span><br>
+}
+      </div>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>ccstatusline</strong> — 1.1K stars, interactive TUI. 25+ widgets: model, context %, session cost, daily cost, 5h block burn, git state, token counts. Auto-wires into settings.json.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>ccusage</strong> — 13K stars, the data layer ccstatusline runs on. Accept the install prompt when you run ccstatusline for the first time.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>cc-budget</strong> (optional) — <code>npm i -g cc-budget</code>. Sets a hard daily cap with traffic-light readout. 25 stars — bleeding-edge, not a core recommendation. Start with ccstatusline + ccusage; add cc-budget when you want a hard cap.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 10 — PLUGINS -->
+    <section class="section" id="plugins">
+      <div class="section-number">Section 10</div>
+      <h2 class="section-title">RTK + context-mode — The Two Plugins That Matter</h2>
+
+      <p class="section-body" style="font-weight:700;color:var(--ink);">RTK — strips raw tool output before it enters context</p>
+
+      <div class="code-block">
+<span class="code-comment"># Install — always use --hook-only</span><br>
+brew install rtk<br>
+rtk init -g --hook-only<br>
+rtk gain <span class="code-comment"># check your savings</span>
+      </div>
+
+      <div class="callout red">
+        <div class="callout-icon">🚨</div>
+        <div class="callout-body">
+          <strong>CRITICAL: always use <code>--hook-only</code>.</strong> Without it, RTK adds ~400 tokens per prompt
+          and defeats the entire purpose. This is the most common installation mistake.
+        </div>
+      </div>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>~89% of CLI noise tokens stripped</strong> (community-validated). Works via PreToolUse hook — every Bash call is auto-optimised with zero friction.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>68% total input-token reduction</strong> over 8,865 commands = 13.5M tokens saved across 6 weeks of real usage.</span></li>
+      </ul>
+
+      <p class="section-body" style="font-weight:700;color:var(--ink);margin-top:24px;">context-mode — sandboxes tool output, preserves state</p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text">Claude plugin / MCP server. Tool output goes to a sandbox — not the main context. Queryable via <code>ctx_search</code> and <code>ctx_execute</code> when the AI needs to reference it.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text">One 5.4h session (76 calls): 1.5 MB processed, 857 KB stayed in sandbox — <strong>never hit context.</strong> 56% token reduction. 105 items preserved across compactions.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text">Solves the "context loss after /compact" problem. Items in the sandbox survive compaction and are available when referenced.</span></li>
+      </ul>
+
+      <div class="callout teal">
+        <div class="callout-icon">🔗</div>
+        <div class="callout-body">
+          <strong>They do different jobs and stack.</strong> RTK trims what enters context (strips the noise before
+          it lands). context-mode prevents tool output from entering context at all (sandboxes it instead).
+          Install both — together they eliminate the two largest token sinks in any active session.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 11 — HABITS -->
+    <section class="section" id="habits">
+      <div class="section-number">Section 11</div>
+      <h2 class="section-title">Habits — No Config Fixes a Bad Habit</h2>
+
+      <div class="habits">
+        <div class="habit-row">
+          <div class="habit-n">1</div>
+          <div>
+            <div class="habit-title">Phase separation — Explore → /clear → Implement</div>
+            <div class="habit-desc">Planning context is a liability when you're implementing. The plan file is the handoff, not the chat history. <code>/clear</code> between phases is the most impactful single habit change.</div>
+          </div>
+        </div>
+        <div class="habit-row">
+          <div class="habit-n">2</div>
+          <div>
+            <div class="habit-title">Batch prompts into single messages</div>
+            <div class="habit-desc">Every message triggers a full context re-read. Five short messages cost 5× more than one batched message. Think before you type — combine the question, not the keystrokes.</div>
+          </div>
+        </div>
+        <div class="habit-row">
+          <div class="habit-n">3</div>
+          <div>
+            <div class="habit-title">Compact timing — never mid-implementation</div>
+            <div class="habit-desc">Compact at logical breakpoints (after exploration, after milestones). Autocompact fires at 95% by default — by then you've paid for everything. Override to 60%. Reframe: autocompact firing is a failure, not a feature.</div>
+          </div>
+        </div>
+        <div class="habit-row">
+          <div class="habit-n">4</div>
+          <div>
+            <div class="habit-title">Surgical file references</div>
+            <div class="habit-desc">Don't read 500 lines when you need 40. Grep first to find the relevant line, then Read with offset and limit. Every unnecessary line read is tokens paid on every subsequent turn.</div>
+          </div>
+        </div>
+        <div class="habit-row">
+          <div class="habit-n">5</div>
+          <div>
+            <div class="habit-title">Subagents as context firewalls — but cap concurrency</div>
+            <div class="habit-desc">Research in a subagent = that research never enters your main context. But unbounded parallel fan-out is how $47K bills happen. One dev's case: 80-85% of his spend was Opus in subagents he forgot to cap. Always set a concurrency limit.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 12 — SPIKE PATTERNS -->
+    <section class="section" id="spikes">
+      <div class="section-number">Section 12</div>
+      <h2 class="section-title">8 Spike Patterns — Know What's Bleeding You</h2>
+
+      <div class="spikes">
+        <div class="spike-row"><div class="spike-n">1</div><div class="spike-content"><div class="spike-title">Context resubmission</div><div class="spike-fix">Every message re-sends full conversation history. Fix: <strong>/clear between phases</strong></div></div></div>
+        <div class="spike-row"><div class="spike-n">2</div><div class="spike-content"><div class="spike-title">Autocompact cascade</div><div class="spike-fix">Compaction at 95% drops critical context mid-task. Fix: <strong>override to 60%</strong></div></div></div>
+        <div class="spike-row"><div class="spike-n">3</div><div class="spike-content"><div class="spike-title">Subagent fan-out</div><div class="spike-fix">5 agents = 5× context overhead. Fix: <strong>Haiku subagents + cap concurrency</strong></div></div></div>
+        <div class="spike-row"><div class="spike-n">4</div><div class="spike-content"><div class="spike-title">Long session tool accumulation</div><div class="spike-fix">Tool output accumulates across a session. Fix: <strong>RTK + fresh session every 2-3 hours</strong></div></div></div>
+        <div class="spike-row"><div class="spike-n">5</div><div class="spike-content"><div class="spike-title">MCP bloat</div><div class="spike-fix">Each MCP's tool schema loads on every message. Fix: <strong>prune to &lt;10 MCPs, prefer skills + CLIs</strong>. (April 2026: Claude Code auto-defers MCPs &gt;10% of context — advice is softer now, but still prune.)</div></div></div>
+        <div class="spike-row"><div class="spike-n">6</div><div class="spike-content"><div class="spike-title">Cache expiry</div><div class="spike-fix">Idle &gt;5 min forces prefix re-tokenize. Fix: <strong>don't pause mid-flow; use 1h TTL for long sessions</strong></div></div></div>
+        <div class="spike-row"><div class="spike-n">7</div><div class="spike-content"><div class="spike-title">Extended thinking default (Opus 4.7 xhigh)</div><div class="spike-fix">Thinking bills at output rate. Fix: <strong>EFFORT_LEVEL=medium</strong></div></div></div>
+        <div class="spike-row"><div class="spike-n">8</div><div class="spike-content"><div class="spike-title">Version regression</div><div class="spike-fix">Opus 4.7 tokenizer ~35% more verbose than 4.6. Fix: <strong>default Sonnet 4.6</strong></div></div></div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 13 — CLAUDE.MD BUDGET -->
+    <section class="section" id="clamd">
+      <div class="section-number">Section 13</div>
+      <h2 class="section-title">CLAUDE.md Budget — Every Line Costs Every Turn</h2>
+      <p class="section-body">
+        CLAUDE.md is loaded on every single prompt. Every line you add costs tokens on every message
+        for the life of the session. Treat it as an index, not a dump.
+      </p>
+
+      <div class="budget-bar">
+        <div class="budget-col gold-standard">
+          <div class="budget-val">&lt;50</div>
+          <div class="budget-label">Gold standard<br>~750 tokens</div>
+        </div>
+        <div class="budget-col target">
+          <div class="budget-val">&lt;80</div>
+          <div class="budget-label">Target for<br>complex AIOS</div>
+        </div>
+        <div class="budget-col ceiling">
+          <div class="budget-val">150</div>
+          <div class="budget-label">Practical<br>ceiling</div>
+        </div>
+        <div class="budget-col hard-ceiling">
+          <div class="budget-val">200</div>
+          <div class="budget-label">Anthropic<br>hard ceiling</div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">📋</div>
+        <div class="callout-body">
+          <strong>Use CLAUDE.md as an index, not a dump.</strong> Trigger keywords → file paths.
+          The detail lives in <code>.claude/rules/</code>, skill <code>SKILL.md</code>, or <code>docs/</code>.
+          CLAUDE.md just needs enough to orient Claude — workspace structure, available commands,
+          and a few pointer lines. Nothing more.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SETUP CHECKLIST -->
+    <section class="section" id="setup">
+      <div class="section-number">Setup Checklist</div>
+      <h2 class="section-title">One-Time Setup — 90 Minutes Total</h2>
+      <p class="section-body">Order matters: settings.json first (free, immediate), RTK second (5 min), context-mode third.</p>
+
+      <div class="checklist">
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Edit <code>~/.claude/settings.json</code> with the baseline config above<small>2 minutes. Immediate impact on every session.</small></div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Install RTK: <span class="cmd">brew install rtk && rtk init -g --hook-only</span><small>5 minutes. Never omit --hook-only.</small></div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Install context-mode plugin<small>From github.com/mksglu/context-mode</small></div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Add <code>.claudeignore</code> to workspace root<small>Copy the block from Section 05. Grow it over time.</small></div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Run <span class="cmd">npx ccstatusline@latest</span>, accept ccusage install, pick widgets, then <strong>pin the version</strong> in settings.json<small>Don't leave @latest — pin to specific version.</small></div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text"><span class="cmd">npm i -g cc-budget</span>, set a daily cap (optional)<small>Only after ccstatusline is working.</small></div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Trim CLAUDE.md to <strong>&lt;80 lines</strong><small>Audit what's in there. Move detail to .claude/rules/ or docs/.</small></div></div>
+      </div>
+
+      <p class="section-body" style="margin-top:24px;font-weight:600;color:var(--ink);">Measure weekly:</p>
+      <div class="cmd-block">
+        <div class="cmd-line"><span class="cmd-exe">ccusage</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd-comment"># per-block token + cost detail</span></div>
+        <div class="cmd-line"><span class="cmd-exe">ccusage block</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd-comment"># current 5h block burn</span></div>
+        <div class="cmd-line"><span class="cmd-exe">rtk gain</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd-comment"># tokens RTK is saving</span></div>
+        <div class="cmd-line"><span class="cmd-exe">/ctx-stats</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd-comment"># context-mode savings</span></div>
+        <div class="cmd-line"><span class="cmd-exe">/usage</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd-comment"># weekly headline % (too coarse for per-task)</span></div>
+      </div>
+
+      <p class="section-body" style="margin-top:24px;font-weight:600;color:var(--ink);">Per-session habits:</p>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Start in plan mode for non-trivial tasks</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text"><code>/clear</code> between phases (explore → implement)</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Batch related prompts into single messages</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Reference files surgically (line ranges, function names, not full files)</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Compact at logical breakpoints only; never mid-implementation</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Escalate to Opus only when needed; return to Sonnet after</div></div>
+        <div class="check-item"><div class="check-box"></div><div class="check-text">Glance at statusline — burn-rate spike or budget &lt;20% → stop and diagnose</div></div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <p class="section-body">Expected results after full implementation: sessions run ~2.5× longer before hitting limits, ~60–70% overall token spend reduction, better quality in long sessions, ratio above 2× on the paid vs API-equivalent comparison.</p>
+
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">Defaults are the problem, not you</div>
+          <div class="tk-desc">60–90% of wasted tokens come from default settings that ship with Claude Code. The first 2-minute fix — copying the baseline settings.json — eliminates most of it before you do anything else.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">If you only do one thing: install RTK</div>
+          <div class="tk-desc">5-minute install. ~89% of CLI noise tokens stripped. 68% total input-token reduction observed over real usage. The single highest-impact low-effort change available. Use --hook-only.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">Sonnet handles 80%+ of coding</div>
+          <div class="tk-desc">Most people stay on Opus all the time. Sonnet matches Opus 4.6 on most coding at ~1/5 the cost. Escalate to Opus for reasoning-heavy tasks, come back to Sonnet after. This single habit change is worth more than all the config tweaks combined.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Autocompact at 95% is a failure mode</div>
+          <div class="tk-desc">By the time it fires at default, you've already paid for everything. Override to 60%. Compact deliberately at logical breakpoints. The goal is to compact before the context becomes expensive, not after.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">CLAUDE.md is loaded every turn</div>
+          <div class="tk-desc">Every line you add costs tokens on every single message for the life of the session. Target &lt;80 lines. Use it as an index — trigger keywords → paths. Move all detail to .claude/rules/ or docs/.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">Measure before you optimise</div>
+          <div class="tk-desc">You cannot optimise what you don't measure. Run ccusage weekly. Check rtk gain. Look at /ctx-stats. 10 minutes of measurement beats hours of guessing which optimisations are actually working.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- REFERENCES -->
+    <section class="section">
+      <div class="section-number">References</div>
+      <h2 class="section-title">Tools Referenced</h2>
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>RTK:</strong> rtk-ai.app — <code>brew install rtk && rtk init -g --hook-only</code></span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>context-mode:</strong> github.com/mksglu/context-mode</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>ccusage:</strong> <code>npm i -g ccusage</code> (13K stars)</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>ccstatusline:</strong> github.com/sirmalloc/ccstatusline (1.1K stars)</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>cc-budget:</strong> github.com/boyand/cc-budget (optional hard cap, 25 stars)</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Questions:</strong> valera@aaaaccelerator.com</span></li>
+      </ul>
+
+      <div class="callout slate" style="margin-top:24px;">
+        <div class="callout-icon">📄</div>
+        <div class="callout-body">
+          <strong>Companion materials:</strong> The full handout (<code>handout-token-optimisation.md</code>) and
+          slides PDF (<code>handout-slides.pdf</code>) were distributed with the original workshop.
+          The handout is the definitive reference — copy-paste ready config blocks, all checklists,
+          and pricing tables in one document for use inside your Claude Code workspace.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-security.html" class="related-card">
+          <div class="rc-tag">Same author</div>
+          <div class="rc-title">Claude Code Security Basics</div>
+          <div class="rc-sub">Valera's companion workshop — six security layers, hooks, MCP vetting, audit logging.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-setup.html" class="related-card">
+          <div class="rc-tag">Foundation</div>
+          <div class="rc-title">Setup &amp; Context OS</div>
+          <div class="rc-sub">Where CLAUDE.md lives and why keeping it lean matters — the workspace structure this module optimises.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-workflows.html" class="related-card">
+          <div class="rc-tag">Automation</div>
+          <div class="rc-title">Workflows &amp; Recurring Tasks</div>
+          <div class="rc-sub">Subagent fan-out, cron jobs, and memory prune — all become more efficient with token optimisation in place.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

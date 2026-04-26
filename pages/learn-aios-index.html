@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn AIOS — Module Library</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8;   --blue-light:#EFF6FF;  --blue-mid:#BFDBFE;
+      --teal:#0D9488;   --teal-light:#F0FDFA;  --teal-mid:#99F6E4;
+      --gold:#B45309;   --gold-light:#FFFBEB;  --gold-mid:#FDE68A;
+      --red:#DC2626;    --red-light:#FEF2F2;   --red-mid:#FECACA;
+      --orange:#EA580C; --orange-light:#FFF7ED; --orange-mid:#FED7AA;
+      --purple:#7C3AED; --purple-light:#F5F3FF; --purple-mid:#DDD6FE;
+      --indigo:#4338CA; --indigo-light:#EEF2FF; --indigo-mid:#C7D2FE;
+      --emerald:#059669; --em-light:#ECFDF5;   --em-mid:#A7F3D0;
+      --violet:#7C3AED; --violet-light:#F5F3FF; --violet-mid:#DDD6FE;
+      --amber:#D97706;  --amber-light:#FFFBEB;  --amber-mid:#FDE68A;
+      --rose:#E11D48;   --rose-light:#FFF1F2;   --rose-mid:#FECDD3;
+      --sky:#0284C7;    --sky-light:#F0F9FF;    --sky-mid:#BAE6FD;
+      --lime:#65A30D;   --lime-light:#F7FEE7;   --lime-mid:#BEF264;
+      --pink:#DB2777;   --pink-light:#FDF2F8;   --pink-mid:#FBCFE8;
+      --ink:#0F172A;    --ink-dim:#64748B;     --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8;       --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+
+    /* NAV */
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg, var(--blue), var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .logo-text { font-size: 13px; font-weight: 700; color: var(--ink); }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+
+    /* HERO */
+    .hero { max-width: 900px; margin: 0 auto; padding: 56px 32px 40px; }
+    .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+    .hero-title { font-size: 40px; font-weight: 800; letter-spacing: -.04em; color: var(--ink); line-height: 1.15; margin-bottom: 14px; }
+    .hero-sub { font-size: 16px; color: var(--ink-dim); line-height: 1.65; max-width: 580px; margin-bottom: 28px; }
+    .hero-stats { display: flex; gap: 24px; }
+    .hero-stat { }
+    .hero-stat-val { font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+    .hero-stat-label { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+
+    /* TRACK LABELS */
+    .tracks { max-width: 900px; margin: 0 auto; padding: 0 32px 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .track-pill { padding: 4px 14px; border-radius: 100px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1px solid transparent; transition: all .15s; }
+    .track-pill.active, .track-pill:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+    .track-pill:not(.active) { background: var(--surface); color: var(--ink-dim); border-color: var(--border); }
+
+    /* GRID */
+    .modules-wrap { max-width: 900px; margin: 0 auto; padding: 0 32px 64px; }
+    .track-section { margin-bottom: 40px; }
+    .track-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .track-heading-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
+    .track-heading-line { flex: 1; height: 1px; background: var(--border); }
+    .module-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+
+    /* MODULE CARD */
+    .module-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 22px; text-decoration: none; display: flex; flex-direction: column; gap: 0; transition: box-shadow .18s, transform .18s, border-color .18s; position: relative; overflow: hidden; }
+    .module-card:hover { box-shadow: 0 8px 32px rgba(15,23,42,.1); transform: translateY(-1px); }
+    .module-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+
+    /* accent bars */
+    .acc-teal::before    { background: var(--teal); }
+    .acc-indigo::before  { background: var(--indigo); }
+    .acc-emerald::before { background: var(--emerald); }
+    .acc-orange::before  { background: var(--orange); }
+    .acc-blue::before    { background: var(--blue); }
+    .acc-red::before     { background: var(--red); }
+    .acc-purple::before  { background: var(--purple); }
+    .acc-violet::before  { background: var(--violet); }
+
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .card-badge { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; flex-shrink: 0; }
+    .badge-teal    { background: var(--teal-light);    color: var(--teal); }
+    .badge-indigo  { background: var(--indigo-light);  color: var(--indigo); }
+    .badge-emerald { background: var(--em-light);      color: var(--emerald); }
+    .badge-orange  { background: var(--orange-light);  color: var(--orange); }
+    .badge-blue    { background: var(--blue-light);    color: var(--blue); }
+    .badge-red     { background: var(--red-light);     color: var(--red); }
+    .badge-purple  { background: var(--purple-light);  color: var(--purple); }
+    .badge-violet  { background: var(--violet-light);  color: var(--violet); }
+    .badge-amber   { background: var(--amber-light);   color: var(--amber); }
+    .acc-amber::before { background: var(--amber); }
+    .badge-rose    { background: var(--rose-light);    color: var(--rose); }
+    .acc-rose::before  { background: var(--rose); }
+    .badge-sky     { background: var(--sky-light);     color: var(--sky); }
+    .acc-sky::before   { background: var(--sky); }
+    .badge-lime    { background: var(--lime-light);    color: var(--lime); }
+    .acc-lime::before  { background: var(--lime); }
+    .badge-pink    { background: var(--pink-light);    color: var(--pink); }
+    .acc-pink::before  { background: var(--pink); }
+
+    .card-order { font-size: 11px; font-weight: 700; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+    .card-title { font-size: 16px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+    .card-desc  { font-size: 13px; color: var(--ink-dim); line-height: 1.65; flex: 1; margin-bottom: 16px; }
+    .card-meta  { display: flex; align-items: center; justify-content: space-between; }
+    .card-topics { display: flex; flex-wrap: wrap; gap: 5px; }
+    .card-topic { padding: 2px 8px; background: var(--base); border-radius: 100px; font-size: 10px; font-weight: 600; color: var(--ink-dim); border: 1px solid var(--border); }
+    .card-arrow { font-size: 16px; flex-shrink: 0; transition: transform .15s; }
+    .module-card:hover .card-arrow { transform: translateX(3px); }
+
+    /* accent arrow colors */
+    .acc-teal    .card-arrow { color: var(--teal); }
+    .acc-indigo  .card-arrow { color: var(--indigo); }
+    .acc-emerald .card-arrow { color: var(--emerald); }
+    .acc-orange  .card-arrow { color: var(--orange); }
+    .acc-blue    .card-arrow { color: var(--blue); }
+    .acc-red     .card-arrow { color: var(--red); }
+    .acc-purple  .card-arrow { color: var(--purple); }
+    .acc-violet  .card-arrow { color: var(--violet); }
+
+    /* COMING SOON card */
+    .module-card.coming { opacity: .55; cursor: default; }
+    .module-card.coming:hover { box-shadow: none; transform: none; }
+
+    @media (max-width: 700px) {
+      .hero { padding: 36px 20px 28px; }
+      .hero-title { font-size: 28px; }
+      .tracks, .modules-wrap { padding-left: 20px; padding-right: 20px; }
+      .module-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <span class="logo-text">Advisor AI Partners</span>
+  </div>
+  <div class="breadcrumb">
+    <a href="../hub.html">Hub</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Learn AIOS</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Learn AIOS — Module Library</div>
+  <h1 class="hero-title">Build Your AI<br>Operating System</h1>
+  <p class="hero-sub">
+    Workshop recordings turned into structured learning modules. Each one covers a specific layer
+    of the AIOS — from first setup through automation, security, and scaling it as a service.
+    Follow the Foundation track in order, then explore the rest.
+  </p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-val">14</div>
+      <div class="hero-stat-label">Modules available</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val">~7h</div>
+      <div class="hero-stat-label">Total reading time</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val">Live</div>
+      <div class="hero-stat-label">Updated as workshops ship</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULES -->
+<div class="modules-wrap">
+
+  <!-- FOUNDATION TRACK -->
+  <div class="track-section">
+    <div class="track-heading">
+      <span class="track-heading-label">Foundation — Do these in order</span>
+      <div class="track-heading-line"></div>
+    </div>
+    <div class="module-grid">
+
+      <a href="learn-aios-setup.html" class="module-card acc-teal">
+        <div class="card-top">
+          <span class="card-badge badge-teal">Start Here</span>
+          <span class="card-order">01</span>
+        </div>
+        <div class="card-title">Setup &amp; Context OS</div>
+        <div class="card-desc">Get your workspace running from scratch. The template structure, the four context files that give Claude its intelligence, core commands, and the session workflow you'll use every day.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Template</span>
+            <span class="card-topic">CLAUDE.md</span>
+            <span class="card-topic">/prime</span>
+            <span class="card-topic">Context files</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-quick-setup.html" class="module-card acc-violet">
+        <div class="card-top">
+          <span class="card-badge badge-violet">Quick Setup</span>
+          <span class="card-order">02</span>
+        </div>
+        <div class="card-title">Quick Setup with Plug &amp; Play Modules</div>
+        <div class="card-desc">The beginner-friendly path using the Claude Desktop App and pre-built modules. Download a ZIP, run /install, Claude walks you through everything. No terminal required to get started.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Desktop App</span>
+            <span class="card-topic">/install</span>
+            <span class="card-topic">Module library</span>
+            <span class="card-topic">Telegram</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-data-os.html" class="module-card acc-indigo">
+        <div class="card-top">
+          <span class="card-badge badge-indigo">Layer 2</span>
+          <span class="card-order">03</span>
+        </div>
+        <div class="card-title">Data OS — Business Intelligence Layer</div>
+        <div class="card-desc">Connect your real business data. Map your funnel, build a local SQLite database, hook into every API, take daily snapshots, run the data audit, and get a mission control dashboard.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">SQLite</span>
+            <span class="card-topic">APIs</span>
+            <span class="card-topic">Snapshots</span>
+            <span class="card-topic">Cron</span>
+            <span class="card-topic">Dashboard</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-workflows.html" class="module-card acc-emerald">
+        <div class="card-top">
+          <span class="card-badge badge-emerald">Layer 3</span>
+          <span class="card-order">04</span>
+        </div>
+        <div class="card-title">Workflows &amp; Recurring Tasks</div>
+        <div class="card-desc">Audit what you currently do, identify what can be automated, build augmented slash commands and automated cron jobs. Includes a real live schedule with memory prune and workspace audit.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Task audit</span>
+            <span class="card-topic">Slash commands</span>
+            <span class="card-topic">Cron jobs</span>
+            <span class="card-topic">Memory prune</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- CONCEPTS TRACK -->
+  <div class="track-section">
+    <div class="track-heading">
+      <span class="track-heading-label">Concepts &amp; Architecture</span>
+      <div class="track-heading-line"></div>
+    </div>
+    <div class="module-grid">
+
+      <a href="learn-aios-primitives.html" class="module-card acc-blue">
+        <div class="card-top">
+          <span class="card-badge badge-blue">Architecture</span>
+          <span class="card-order">05</span>
+        </div>
+        <div class="card-title">AIOS Automation Primitives</div>
+        <div class="card-desc">The three building blocks of every AIOS system — Capabilities, Scripts, and Workflows. The vocabulary you need to design, explain, and scale any automation you build.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Capabilities</span>
+            <span class="card-topic">Scripts</span>
+            <span class="card-topic">Workflows</span>
+            <span class="card-topic">Automation spectrum</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-automate-agency.html" class="module-card acc-orange">
+        <div class="card-top">
+          <span class="card-badge badge-orange">Vision</span>
+          <span class="card-order">06</span>
+        </div>
+        <div class="card-title">Automate Your Entire Agency with Claude Code</div>
+        <div class="card-desc">What Claude Code actually is (a harness, not a wrapper), what it can do natively, real automations already running in a live agency, and why the window to build this as a service is open now.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Harness vs wrapper</span>
+            <span class="card-topic">Real examples</span>
+            <span class="card-topic">/explore</span>
+            <span class="card-topic">Agency model</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-build-skill.html" class="module-card acc-pink">
+        <div class="card-top">
+          <span class="card-badge badge-pink">Build-Along</span>
+          <span class="card-order">14</span>
+        </div>
+        <div class="card-title">Turn Business Process into Skill</div>
+        <div class="card-desc">Any repeatable process can become a skill — a reusable playbook your AIOS executes consistently. Covers what skills are, how they differ from MCPs, and builds a live Client Kickoff skill: transcript → spec → Trello tasks.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Skill anatomy</span>
+            <span class="card-topic">Skill vs MCP</span>
+            <span class="card-topic">Fireflies + Trello</span>
+            <span class="card-topic">Live demo</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- SECURITY & EFFICIENCY TRACK -->
+  <div class="track-section">
+    <div class="track-heading">
+      <span class="track-heading-label">Security &amp; Efficiency — by Valera Tumash</span>
+      <div class="track-heading-line"></div>
+    </div>
+    <div class="module-grid">
+
+      <a href="learn-aios-security.html" class="module-card acc-red">
+        <div class="card-top">
+          <span class="card-badge badge-red">Security</span>
+          <span class="card-order">07</span>
+        </div>
+        <div class="card-title">Claude Code Security Basics</div>
+        <div class="card-desc">Six layers to lock down your workspace before client data enters the picture. Permissions, hard-block hooks, CLAUDE.md rules, sandbox, audit logging, and autonomous deployment safety.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">6 layers</span>
+            <span class="card-topic">Hooks</span>
+            <span class="card-topic">MCP vetting</span>
+            <span class="card-topic">.env security</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-token-optimisation.html" class="module-card acc-lime">
+        <div class="card-top">
+          <span class="card-badge badge-lime">Efficiency</span>
+          <span class="card-order">13</span>
+        </div>
+        <div class="card-title">Token Optimisation for AIOS</div>
+        <div class="card-desc">Most Claude Code users burn 60–90% more tokens than needed. Four free levers — RTK, context-mode, tuned settings.json, ccusage — can get your ratio above 2× and sessions running 2.5× longer. Includes companion handout + slides.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">RTK</span>
+            <span class="card-topic">context-mode</span>
+            <span class="card-topic">settings.json</span>
+            <span class="card-topic">8 spike patterns</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- SELLING AIOS TRACK -->
+  <div class="track-section">
+    <div class="track-heading">
+      <span class="track-heading-label">Selling AIOS as a Service — two distinct guides</span>
+      <div class="track-heading-line"></div>
+    </div>
+    <div class="module-grid">
+
+      <a href="learn-aios-builder-mindset.html" class="module-card acc-purple">
+        <div class="card-top">
+          <span class="card-badge badge-purple">Operator Guide</span>
+          <span class="card-order">08</span>
+        </div>
+        <div class="card-title">Thinking Like an AIOS Builder</div>
+        <div class="card-desc">For practitioners and clients learning to operate AIOS. The 5 principles, task audit methodology, KPIs, bandwidth framework, and how to build layers — not leaps. Give this to an operator or client learning the system.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">5 principles</span>
+            <span class="card-topic">Task audit</span>
+            <span class="card-topic">3 KPIs</span>
+            <span class="card-topic">Bandwidth</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-service-model.html" class="module-card acc-amber">
+        <div class="card-top">
+          <span class="card-badge badge-amber">Commercial Guide</span>
+          <span class="card-order">09</span>
+        </div>
+        <div class="card-title">The $30,000+ AIOS Service Model</div>
+        <div class="card-desc">For agencies and consultants packaging AIOS as a service. Offer structure, pricing tiers (free audit to $70k+ in-person), digital employees as upsells, revenue models, target clients, and the specialist niche play.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Offer structure</span>
+            <span class="card-topic">Pricing tiers</span>
+            <span class="card-topic">IRL delivery</span>
+            <span class="card-topic">Revenue models</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- FIELD REPORTS TRACK -->
+  <div class="track-section">
+    <div class="track-heading">
+      <span class="track-heading-label">Field Reports &amp; Advanced Delivery</span>
+      <div class="track-heading-line"></div>
+    </div>
+    <div class="module-grid">
+
+      <a href="learn-aios-mastermind-recap.html" class="module-card acc-rose">
+        <div class="card-top">
+          <span class="card-badge badge-rose">Field Report</span>
+          <span class="card-order">11</span>
+        </div>
+        <div class="card-title">AIOS Mastermind Recap: My First AIOS-as-a-Service</div>
+        <div class="card-desc">Debrief from a full-day in-person AIOS session with 5 business owners. Introduces the "Supervised" automation stage, crystallizes the Capabilities / Commands / Skills taxonomy, and walks a complete workflow from manual to automated.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Supervised stage</span>
+            <span class="card-topic">Skills taxonomy</span>
+            <span class="card-topic">Risk dimension</span>
+            <span class="card-topic">Heat map</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="learn-aios-delivery-spectrum.html" class="module-card acc-sky">
+        <div class="card-top">
+          <span class="card-badge badge-sky">Strategy</span>
+          <span class="card-order">12</span>
+        </div>
+        <div class="card-title">The AIOS Delivery Spectrum: From Install to Autonomous Dev Pipeline</div>
+        <div class="card-desc">The SMB transformation gap (2026→2030), the Company AGI vision, four audit methodologies, autonomous dev pipeline tooling, and the Teach / Show / Give delivery spectrum with pricing.</div>
+        <div class="card-meta">
+          <div class="card-topics">
+            <span class="card-topic">Company AGI</span>
+            <span class="card-topic">Audit methods</span>
+            <span class="card-topic">Dev pipeline</span>
+            <span class="card-topic">Teach/Show/Give</span>
+          </div>
+          <span class="card-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thinking Like an AIOS Builder — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #1D4ED8;
+      --blue-light:  #EFF6FF;
+      --blue-mid:    #BFDBFE;
+      --teal:        #0D9488;
+      --teal-light:  #F0FDFA;
+      --teal-mid:    #99F6E4;
+      --gold:        #B45309;
+      --gold-light:  #FFFBEB;
+      --gold-mid:    #FDE68A;
+      --purple:      #7C3AED;
+      --purple-light:#F5F3FF;
+      --purple-mid:  #DDD6FE;
+      --ink:         #0F172A;
+      --ink-dim:     #64748B;
+      --ink-faint:   #94A3B8;
+      --surface:     #FFFFFF;
+      --base:        #F0F4F8;
+      --border:      rgba(15,23,42,0.08);
+      --radius-sm:   6px;
+      --radius-md:   8px;
+      --radius-lg:   12px;
+      --radius-xl:   16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--base);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    .topnav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 32px; height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 11px;
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge-workshop { padding: 3px 10px; background: var(--purple-light); color: var(--purple); border-radius: 100px; font-size: 11px; font-weight: 600; }
+
+    /* LAYOUT */
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+
+    /* SIDEBAR */
+    .sidebar {
+      padding: 32px 0; position: sticky; top: 52px;
+      height: calc(100vh - 52px); overflow-y: auto;
+      border-right: 1px solid var(--border); background: var(--surface);
+    }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all 0.15s ease; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--purple); border-left-color: var(--purple); background: var(--purple-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--purple); border-color: var(--purple); color: #fff; }
+
+    /* MAIN */
+    .main { padding: 40px 48px; max-width: 840px; }
+
+    /* Hero */
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--purple-light); color: var(--purple); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 620px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    /* Sections */
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 20px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.purple { background: var(--purple-light); border-left: 3px solid var(--purple); }
+    .callout.blue   { background: var(--blue-light);   border-left: 3px solid var(--blue); }
+    .callout.teal   { background: var(--teal-light);   border-left: 3px solid var(--teal); }
+    .callout.gold   { background: var(--gold-light);   border-left: 3px solid var(--gold); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* 5 Principles */
+    .principles-list { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+    .principle-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 20px;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .principle-num {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--purple-light); color: var(--purple);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; flex-shrink: 0;
+    }
+    .principle-content { flex: 1; }
+    .principle-name { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .principle-desc { font-size: 13px; color: var(--ink-dim); line-height: 1.65; }
+    .principle-tag { display: inline-block; margin-top: 8px; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; background: var(--purple-mid); color: var(--purple); }
+
+    /* KPI cards */
+    .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-align: center; }
+    .kpi-icon { font-size: 24px; margin-bottom: 8px; }
+    .kpi-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .kpi-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+
+    /* Process flow */
+    .process-flow { display: flex; flex-direction: column; gap: 0; margin: 24px 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .process-step { display: flex; align-items: stretch; border-bottom: 1px solid var(--border); }
+    .process-step:last-child { border-bottom: none; }
+    .step-marker { width: 72px; background: var(--base); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px; flex-shrink: 0; border-right: 1px solid var(--border); gap: 4px; }
+    .step-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+    .step-badge.s1 { background: var(--blue-light);   color: var(--blue); }
+    .step-badge.s2 { background: var(--teal-light);   color: var(--teal); }
+    .step-badge.s3 { background: var(--gold-light);   color: var(--gold); }
+    .step-badge.s4 { background: var(--purple-light); color: var(--purple); }
+    .step-badge.s5 { background: #F0FDF4;             color: #15803D; }
+    .step-price-tag { font-size: 10px; font-weight: 700; color: var(--ink-faint); text-align: center; }
+    .step-content { padding: 16px 20px; flex: 1; background: var(--surface); }
+    .step-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .step-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .step-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+    .step-pill { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; background: var(--base); color: var(--ink-dim); border: 1px solid var(--border); }
+
+    /* VS card — Claude Code vs OpenClaude */
+    .versus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 20px 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .versus-header { grid-column: 1 / -1; padding: 12px 20px; background: #1E293B; color: #94A3B8; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .versus-col { background: var(--surface); padding: 20px; }
+    .versus-col.cc-col  { border-right: 1px solid var(--border); }
+    .versus-icon { font-size: 24px; margin-bottom: 8px; }
+    .versus-name { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .versus-role { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .cc-col  .versus-role { color: var(--blue); }
+    .oc-col  .versus-role { color: var(--teal); }
+    .versus-traits { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .versus-trait { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+    .trait-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .cc-col  .trait-dot { background: var(--blue); }
+    .oc-col  .trait-dot { background: var(--teal); }
+
+    /* Target market */
+    .target-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .target-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .target-card.yes { border-color: #86EFAC; }
+    .target-card.no  { border-color: #FECACA; }
+    .target-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+    .target-card.yes .target-label { color: #15803D; }
+    .target-card.no  .target-label { color: #DC2626; }
+    .target-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .target-item { font-size: 12px; color: var(--ink-dim); display: flex; align-items: flex-start; gap: 6px; }
+    .target-icon { font-size: 12px; flex-shrink: 0; }
+
+    /* Pricing table */
+    .pricing-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin: 20px 0; font-size: 13px; }
+    .pricing-table th { background: #1E293B; color: #94A3B8; padding: 10px 16px; text-align: left; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+    .pricing-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .pricing-table tr:last-child td { border-bottom: none; }
+    .pricing-table tr:nth-child(even) td { background: var(--base); }
+    .price-val { font-weight: 700; color: var(--ink); font-size: 15px; }
+    .price-note { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+
+    /* Scale challenge */
+    .challenge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .challenge-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .challenge-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+    .challenge-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .challenge-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Feature list */
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feature-dot  { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .dot-purple { background: var(--purple); }
+    .dot-blue   { background: var(--blue); }
+    .dot-teal   { background: var(--teal); }
+    .dot-gold   { background: var(--gold); }
+    .feature-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feature-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .takeaways-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+    .takeaway-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .takeaway-num  { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--purple); margin-bottom: 6px; }
+    .takeaway-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .takeaway-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow 0.15s, border-color 0.15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,0.08); border-color: var(--blue-mid); }
+    .related-card-tag   { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .related-card-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .related-card-sub   { font-size: 11px; color: var(--ink-faint); }
+    .related-card-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .kpi-grid, .versus-grid, .target-grid, .takeaways-grid, .challenge-grid, .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Builder Mindset</span>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <span class="badge-workshop">Workshop Module</span>
+  </div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"    class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#principles"  class="sidebar-link"><span class="sidebar-step">1</span> The 5 Principles</a>
+    <a href="#kpis"        class="sidebar-link"><span class="sidebar-step">2</span> 3 KPIs for Autonomy</a>
+    <a href="#process"     class="sidebar-link"><span class="sidebar-step">3</span> The Delivery Process</a>
+    <a href="#versus"      class="sidebar-link"><span class="sidebar-step">4</span> Workspace vs. Employee</a>
+    <a href="#targets"     class="sidebar-link"><span class="sidebar-step">5</span> Target Clients</a>
+    <a href="#pricing"     class="sidebar-link"><span class="sidebar-step">6</span> Pricing Framework</a>
+    <a href="#scaling"     class="sidebar-link"><span class="sidebar-step">7</span> Scaling to Teams</a>
+    <a href="#ecosystem"   class="sidebar-link"><span class="sidebar-step">8</span> The Ecosystem Model</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways"   class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+    <a href="#next"        class="sidebar-link"><span class="sidebar-step">→</span> Next Steps</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🧠 AIOS Strategy</div>
+      <h1 class="module-title">Thinking Like an AIOS Builder</h1>
+      <p class="module-subtitle">
+        The methodology, mindset, and business model for building and selling AIOS systems.
+        Covers the 5 principles of AIOS system thinking, the delivery process from audit to automation,
+        how to price it, and the distinction between your workspace and an AI employee.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~30 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Strategy + Business Model</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Open session format</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — 5 PRINCIPLES -->
+    <section class="section" id="principles">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">The 5 Principles of an AIOS Builder</h2>
+      <p class="section-body">
+        Before you build anything for a client — or for yourself — you need a clear methodology.
+        Without a framework for how you approach AIOS work, you'll charge ahead randomly and end up
+        nowhere useful. These five principles define what it means to think like a builder in this space.
+      </p>
+
+      <div class="principles-list">
+        <div class="principle-card">
+          <div class="principle-num">01</div>
+          <div class="principle-content">
+            <div class="principle-name">Talk, don't type. Just ask.</div>
+            <div class="principle-desc">
+              Your primary interface with AIOS is natural language. Stop defaulting to manual clicking
+              and file-editing. If you can describe it, you can ask for it. The bottleneck is rarely
+              the AI's capability — it's your habit of reaching for the keyboard when you should be
+              reaching for the prompt.
+            </div>
+            <span class="principle-tag">Core habit</span>
+          </div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">02</div>
+          <div class="principle-content">
+            <div class="principle-name">Layers, not leaps.</div>
+            <div class="principle-desc">
+              Build incrementally. Context OS first. Then data. Then intelligence. Then task automation.
+              Then new initiatives. Jumping to full automation without the foundational layers
+              produces brittle, unreliable systems. Every layer you skip creates a gap that shows
+              up later in the most inconvenient way possible.
+            </div>
+            <span class="principle-tag">Build discipline</span>
+          </div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">03</div>
+          <div class="principle-content">
+            <div class="principle-name">Build for scale and security from day one.</div>
+            <div class="principle-desc">
+              Don't build something that works for one person and breaks for five. Security and
+              scalability considerations aren't features you add later — they're architectural decisions
+              you make from the start. Every step of the way, ask: can this scale? Is this secure?
+              Rushing past this is how you end up rebuilding everything.
+            </div>
+            <span class="principle-tag">Architecture</span>
+          </div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">04</div>
+          <div class="principle-content">
+            <div class="principle-name">Borrow before you build.</div>
+            <div class="principle-desc">
+              Check if someone has already built what you need before writing a single line.
+              The community, the module library, the starter kit — these exist because building
+              from scratch is expensive. Plug-and-play modules mean your second client setup costs
+              a fraction of your first. Borrowing is how the model becomes scalable.
+            </div>
+            <span class="principle-tag">Leverage</span>
+          </div>
+        </div>
+        <div class="principle-card">
+          <div class="principle-num">05</div>
+          <div class="principle-content">
+            <div class="principle-name">3 KPIs from desk autonomy.</div>
+            <div class="principle-desc">
+              Know exactly what you're optimizing for at every stage. The three numbers that define
+              AIOS success aren't vanity metrics — they're the signal that your system is actually working.
+              If you can't measure it, you can't improve it, and you can't sell it to a client
+              with confidence.
+            </div>
+            <span class="principle-tag">Measurement</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout purple">
+        <div class="callout-icon">🗺</div>
+        <div class="callout-body">
+          <strong>The big picture this points toward:</strong> Get the context. Get the data. Get the intelligence.
+          Then audit your tasks and build systems to automate them — freeing up bandwidth. Then use that
+          freed bandwidth to work on new initiatives you never had time for, with an AI that can help
+          you move from idea to execution significantly faster than before.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — 3 KPIS -->
+    <section class="section" id="kpis">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">3 KPIs for Desk Autonomy</h2>
+      <p class="section-body">
+        Three numbers tell you whether an AIOS deployment is actually working. Track these for
+        yourself and for every client engagement. When you can demonstrate movement on these metrics,
+        you have proof of value — not just a story.
+      </p>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">⚙️</div>
+          <div class="kpi-label">Task Automation %</div>
+          <div class="kpi-desc">What percentage of the initially identified manual tasks have been successfully automated? This is your delivery scorecard.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Revenue per Employee</div>
+          <div class="kpi-desc">As tasks automate, you scale output without scaling headcount. Revenue per employee rising = the model is working. Getting leaner while producing more.</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🖥</div>
+          <div class="kpi-label">Desk Autonomy</div>
+          <div class="kpi-desc">The end goal: how much of your operational load can run without you needing to be at your desk? This is the ultimate freedom metric.</div>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">📊</div>
+        <div class="callout-body">
+          <strong>Why these three specifically:</strong> They connect to what business owners actually care about —
+          time freedom, efficiency, and money. Task automation % proves delivery. Revenue per employee
+          proves business impact. Desk autonomy proves the vision. Together they tell the complete story
+          of what AIOS is supposed to do.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — DELIVERY PROCESS -->
+    <section class="section" id="process">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">The AIOS Delivery Process</h2>
+      <p class="section-body">
+        A productized AIOS service has a clear sequence. Each phase builds on the previous one,
+        and each has a defined scope. Knowing where you are in the process — and what comes next —
+        is the difference between a chaotic engagement and a repeatable offer.
+      </p>
+
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="step-marker">
+            <div class="step-badge s1">01</div>
+            <div class="step-price-tag">Free or paid</div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Audit</div>
+            <div class="step-desc">
+              Identify all the manual tasks the client or founder does. Score them by time spent,
+              business value, and automation feasibility. The audit creates the roadmap for everything
+              that follows. Can be offered free to get them in the door, or charged ~$3k (deductible
+              from the full package price).
+            </div>
+            <div class="step-pills">
+              <span class="step-pill">Task identification</span>
+              <span class="step-pill">Time scoring</span>
+              <span class="step-pill">Priority matrix</span>
+            </div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-marker">
+            <div class="step-badge s2">02</div>
+            <div class="step-price-tag">Core price</div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Core OS Setup</div>
+            <div class="step-desc">
+              Install and configure the Context OS, Data OS, and Intelligence layer — the starter kit.
+              This is the base every AIOS deployment needs. For the founder and 1–3 executives,
+              set up their full workspace: context, productivity system, and core capabilities.
+              This is non-negotiable before any automation work begins.
+            </div>
+            <div class="step-pills">
+              <span class="step-pill">Context OS</span>
+              <span class="step-pill">Data OS</span>
+              <span class="step-pill">Intelligence layer</span>
+              <span class="step-pill">Starter kit install</span>
+            </div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-marker">
+            <div class="step-badge s3">03</div>
+            <div class="step-price-tag">Per module</div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Module Installation</div>
+            <div class="step-desc">
+              Using the audit output, install plug-and-play modules from the library to knock out
+              as many tasks as possible. Prioritize reusable modules — anything you build once that
+              applies across clients goes into your library, dropping your delivery cost over time.
+              Each module installed is a task automated.
+            </div>
+            <div class="step-pills">
+              <span class="step-pill">Plug-and-play modules</span>
+              <span class="step-pill">Task automation</span>
+              <span class="step-pill">Library building</span>
+            </div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-marker">
+            <div class="step-badge s4">04</div>
+            <div class="step-price-tag">Ongoing</div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">Training & Handoff</div>
+            <div class="step-desc">
+              The hardest question in the delivery model: teach them to fish, or give them the fish?
+              The practical answer: do the task audit <em>with</em> them and walk them through using the
+              system themselves, but stay involved for ongoing refinement. Completely non-technical clients
+              will likely need ongoing support rather than a full handoff — plan for that in the pricing.
+            </div>
+            <div class="step-pills">
+              <span class="step-pill">Collaborative audit</span>
+              <span class="step-pill">System walkthrough</span>
+              <span class="step-pill">Ongoing retainer option</span>
+            </div>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="step-marker">
+            <div class="step-badge s5">05</div>
+            <div class="step-price-tag">Build phase</div>
+          </div>
+          <div class="step-content">
+            <div class="step-title">New Initiatives</div>
+            <div class="step-desc">
+              Once the operational load is handled by automation, the freed bandwidth opens new possibilities —
+              projects they always wanted to pursue but never had time for. With an AI workspace, the client
+              can move from idea to execution faster than ever. This phase is the payoff: not just saving time
+              but creating capacity for growth.
+            </div>
+            <div class="step-pills">
+              <span class="step-pill">Growth projects</span>
+              <span class="step-pill">New revenue streams</span>
+              <span class="step-pill">Idea-to-execution speed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — WORKSPACE VS EMPLOYEE -->
+    <section class="section" id="versus">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Your Workspace vs. an AI Employee</h2>
+      <p class="section-body">
+        One of the most important distinctions in the AIOS architecture is what Claude Code (your workspace)
+        is for versus what an autonomous agent like OpenClaude is for. People get this wrong constantly —
+        trying to make their workspace into a background workhorse, or expecting an autonomous agent to be
+        their primary interface. They're different tools for different jobs.
+      </p>
+
+      <div class="versus-grid">
+        <div class="versus-header">Two different tools — each best at its job</div>
+        <div class="versus-col cc-col">
+          <div class="versus-icon">🖥</div>
+          <div class="versus-name">Claude Code Workspace</div>
+          <div class="versus-role">Your operating environment</div>
+          <ul class="versus-traits">
+            <li class="versus-trait"><span class="trait-dot"></span>Where <em>you</em> do work. Your primary interface for getting things done each day.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Has your full business context, data, and intelligence at hand.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>You invoke workflows. You direct the work. You're in the loop.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Highest controllability — you decide what happens at every step.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Can monitor and interface with autonomous agents running in the background.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Best for: custom work, judgment calls, anything that benefits from your steering.</li>
+          </ul>
+        </div>
+        <div class="versus-col oc-col">
+          <div class="versus-icon">🤖</div>
+          <div class="versus-name">OpenClaude / Autonomous Agent</div>
+          <div class="versus-role">A specialized AI employee</div>
+          <ul class="versus-traits">
+            <li class="versus-trait"><span class="trait-dot"></span>Works independently, 24/7, on a specific role — thumbnail designer, content repurposer, SDR.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Monitors triggers (Notion calendar, new video, status change) and acts on them automatically.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Self-improving: applies criteria, scores outputs, improves its own method over time.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Lives on a Mac Mini or VPS — dedicated compute, not your machine.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Output flows back to your workspace for review — you don't run the process, you review results.</li>
+            <li class="versus-trait"><span class="trait-dot"></span>Best for: high-volume, repeatable, defined tasks that don't need you in the loop.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The integration layer:</strong> The two work together. Your Claude Code workspace logs what the
+          autonomous agents are doing, can ping them with new tasks, and receives their outputs for review.
+          One is your cockpit; the other is your crew. The mistake is confusing which is which — or
+          trying to use your cockpit as a crew member.
+        </div>
+      </div>
+
+      <p class="section-body">
+        <strong>Pricing implication:</strong> Each autonomous agent can be priced as a "digital employee."
+        After refining an agent across 5–6 client engagements, it has proven output quality.
+        That's a discrete sellable product at a premium — not just a bespoke service.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — TARGET CLIENTS -->
+    <section class="section" id="targets">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Who to Sell To Right Now</h2>
+      <p class="section-body">
+        This is an emerging offer. The question of team scaling is still an open one.
+        That means being smart about who you target in your first several engagements —
+        learning on a small stage, not making expensive mistakes in front of a 200-person enterprise.
+      </p>
+
+      <div class="target-grid">
+        <div class="target-card yes">
+          <div class="target-label">✓ Right now — go here</div>
+          <ul class="target-list">
+            <li class="target-item"><span class="target-icon">✓</span>Solo founders and 1-person operations</li>
+            <li class="target-item"><span class="target-icon">✓</span>Small businesses — 1 to ~50 people</li>
+            <li class="target-item"><span class="target-icon">✓</span>Founder / CEO / C-suite setup (3–5 users)</li>
+            <li class="target-item"><span class="target-icon">✓</span>Early adopter business owners who are AI-curious</li>
+            <li class="target-item"><span class="target-icon">✓</span>Clients where you set up just the founder first, then expand</li>
+            <li class="target-item"><span class="target-icon">✓</span>Businesses where you can niche down (roofing, local services, SMMA, etc.)</li>
+          </ul>
+        </div>
+        <div class="target-card no">
+          <div class="target-label">✗ Not yet — avoid until you're ready</div>
+          <ul class="target-list">
+            <li class="target-item"><span class="target-icon">✗</span>Large clients (100+ people) — team scaling not solved yet</li>
+            <li class="target-item"><span class="target-icon">✗</span>Fully non-technical clients with no AI curiosity at all</li>
+            <li class="target-item"><span class="target-icon">✗</span>Clients expecting full autonomous operation from day one</li>
+            <li class="target-item"><span class="target-icon">✗</span>Enterprise deals before you've delivered 2–3 times at smaller scale</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-body">
+          <strong>The niche advantage:</strong> The fastest path to scaling this offer is to specialize.
+          Once you've done 3–5 AIOS setups for one type of business (e.g., social media agencies),
+          you know exactly which modules they need, what their task audit looks like, and how to
+          deliver it fast. Your second engagement in that niche costs a fraction of the first.
+          That's when you can command premium pricing and deliver at a profit.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — PRICING -->
+    <section class="section" id="pricing">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Pricing Framework</h2>
+      <p class="section-body">
+        This offer is new enough that pricing is still being figured out in the field. Don't anchor
+        too high before you've delivered a couple times. The rough structure below is directional —
+        your numbers will shift as you build delivery confidence and client results.
+      </p>
+
+      <table class="pricing-table">
+        <thead>
+          <tr><th>Offering</th><th>Price range</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Audit (standalone)</strong></td>
+            <td><span class="price-val">Free – $3k</span><div class="price-note">As a lead magnet or paid entry point</div></td>
+            <td style="font-size:12px;color:var(--ink-dim);">Use a free audit to get in the door. Alternatively charge $3k — deductible from the full package if they convert.</td>
+          </tr>
+          <tr>
+            <td><strong>Core OS + Module Setup</strong></td>
+            <td><span class="price-val">~$15k</span><div class="price-note">Full package including audit</div></td>
+            <td style="font-size:12px;color:var(--ink-dim);">Context OS, Data OS, Intelligence layer, starter kit, plus module installs from the audit. For founder + up to C-suite.</td>
+          </tr>
+          <tr>
+            <td><strong>Per autonomous agent</strong></td>
+            <td><span class="price-val">~$3k+</span><div class="price-note">Value-based, once refined</div></td>
+            <td style="font-size:12px;color:var(--ink-dim);">Price individual "digital employees" after you've refined them across multiple clients. Proven output = justified premium.</td>
+          </tr>
+          <tr>
+            <td><strong>In-person deployment</strong></td>
+            <td><span class="price-val">$70k+</span><div class="price-note">Plus travel and commission</div></td>
+            <td style="font-size:12px;color:var(--ink-dim);">Palantir-style: consultant + developer pair, on-site 2–3 days. High-touch for enterprise-adjacent clients. Not for beginners.</td>
+          </tr>
+          <tr>
+            <td><strong>Ongoing retainer</strong></td>
+            <td><span class="price-val">TBD</span><div class="price-note">Recurring revenue opportunity</div></td>
+            <td style="font-size:12px;color:var(--ink-dim);">Training, maintenance, new module installs, scaling to team. This is where recurring revenue lives — design the initial package to flow into it.</td>
+          </tr>
+          <tr>
+            <td><strong>Revenue share</strong></td>
+            <td><span class="price-val">% of upside</span><div class="price-note">Only when results are predictable</div></td>
+            <td style="font-size:12px;color:var(--ink-dim);">If you can get out of their way and guarantee results — e.g., take a % above a revenue baseline. High risk / high reward. Only after you have delivery confidence.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout gold">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-body">
+          <strong>Start low, learn fast.</strong> The uncertainty in delivery is still real.
+          You don't know what you'll encounter when you're sitting with a non-technical founder
+          who has never touched AI. Under-promise, deliver strong, then raise prices as you
+          build proof and repeatability. Don't chase the $70k in-person deal before you've
+          completed 2–3 successful smaller ones.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — SCALING TO TEAMS -->
+    <section class="section" id="scaling">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">Scaling AIOS to Teams — The Open Question</h2>
+      <p class="section-body">
+        Getting the founder set up on AIOS is relatively straightforward. Getting a full team
+        using it consistently is genuinely unsolved. This is the biggest delivery risk in the model
+        right now — and being honest about it with clients is part of building trust.
+      </p>
+
+      <div class="challenge-grid">
+        <div class="challenge-card">
+          <div class="challenge-label">The core tension</div>
+          <div class="challenge-title">Teach to fish vs. give the fish</div>
+          <div class="challenge-desc">
+            Do you train the client to run AIOS themselves (sustainable, but hard for non-technical teams)?
+            Or do you maintain it for them (recurring revenue, but creates dependency)?
+            The right answer varies by client — build it into your discovery process.
+          </div>
+        </div>
+        <div class="challenge-card">
+          <div class="challenge-label">The security risk</div>
+          <div class="challenge-title">API keys + non-technical users</div>
+          <div class="challenge-desc">
+            Giving a non-technical team member full API access to everything is a real risk.
+            The mitigation: lock down API key permissions to read-only where possible, configure
+            strict permission settings per role, and never give write access to anyone who
+            doesn't understand what that means.
+          </div>
+        </div>
+        <div class="challenge-card">
+          <div class="challenge-label">The practical approach</div>
+          <div class="challenge-title">Claude Desktop for team members</div>
+          <div class="challenge-desc">
+            For non-technical team members, Claude Desktop (not the CLI) is the right entry point —
+            scope-limited, easier to use, lower risk. Give them a scoped version for their specific role,
+            not the full workspace the founder uses.
+          </div>
+        </div>
+        <div class="challenge-card">
+          <div class="challenge-label">The sync layer</div>
+          <div class="challenge-title">GitHub or database for team context</div>
+          <div class="challenge-desc">
+            Context sharing across the C-suite requires a sync layer — a shared GitHub repository
+            or database that lets multiple workspaces pull from the same data and context.
+            This is the foundation for a coordinated team AIOS rather than isolated individual setups.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout purple">
+        <div class="callout-icon">🔬</div>
+        <div class="callout-body">
+          <strong>Still being figured out:</strong> VPS vs. Mac Mini for autonomous agents, how to structure team
+          context sharing, the right permission model for team API access — these are active experiments,
+          not solved problems. Start with the founder. Add C-suite. Watch how it behaves before promising
+          team-wide rollouts.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — ECOSYSTEM MODEL -->
+    <section class="section" id="ecosystem">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">The AIOS Ecosystem Model</h2>
+      <p class="section-body">
+        The long-term vision isn't just individual agencies delivering AIOS to individual clients.
+        It's a specialist network — where each practitioner becomes deeply expert in a specific niche,
+        and client leads flow to the most qualified specialist for that business type.
+      </p>
+
+      <ul class="feature-list">
+        <li class="feature-item">
+          <span class="feature-dot dot-purple"></span>
+          <span class="feature-text"><strong>Specialize in a niche.</strong> Local services, SMMAs, real estate, industrial automation — pick one and go deep. Once you have 3–5 setups in that niche, you can deliver at a fraction of the cost and time of your first engagement. That's when the model becomes profitable and scalable.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-blue"></span>
+          <span class="feature-text"><strong>Build a reusable module library.</strong> Every custom build that works across multiple clients becomes a plug-and-play module. Over time, you assemble a library that dramatically reduces delivery cost. The library is the asset that makes you scalable.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-teal"></span>
+          <span class="feature-text"><strong>Client referral network.</strong> As the ecosystem grows, business owners coming through the funnel get matched to specialists. Practitioners who specialize in a niche get inbound leads within that niche. This is the two-sided marketplace model — specialists get clients, business owners get specialists.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-gold"></span>
+          <span class="feature-text"><strong>Revenue share upside.</strong> The most ambitious version: go into a client engagement for free, take a percentage of revenue above a baseline. Only viable once you have delivery confidence and a proven niche playbook. High risk, but aligns incentives completely.</span>
+        </li>
+      </ul>
+
+      <div class="callout teal">
+        <div class="callout-icon">🌐</div>
+        <div class="callout-body">
+          <strong>The one-person AI agency is real.</strong> This model allows a single consultant with a refined
+          niche playbook, a reusable module library, and a network of client referrals to run a premium
+          practice that would have required a team 3 years ago. The window is open now —
+          before the big platforms commoditize it. The rush is on.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+
+      <div class="takeaways-grid">
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 01</div>
+          <div class="takeaway-title">You need a clear methodology</div>
+          <div class="takeaway-desc">Don't start building without the 5 principles in mind. A clear goal, a clear method, and a clear set of metrics. Without those, you'll get somewhere — just not where you wanted to go.</div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 02</div>
+          <div class="takeaway-title">Layers, not leaps — always</div>
+          <div class="takeaway-desc">Context before automation. Assisted before delegated. Small clients before large ones. Founder before team. Every skip creates a structural debt that shows up at the worst possible moment.</div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 03</div>
+          <div class="takeaway-title">Claude Code ≠ autonomous agent</div>
+          <div class="takeaway-desc">Your workspace is your cockpit. An OpenClaude agent is a crew member. Confusing the two leads to architectures that don't work. Each has a job — use them accordingly.</div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 04</div>
+          <div class="takeaway-title">Start small, price low, learn fast</div>
+          <div class="takeaway-desc">The delivery uncertainty is real. Do your first 2–3 engagements at a price where getting it wrong won't sink you. Build your playbook before you sell the premium version of it.</div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 05</div>
+          <div class="takeaway-title">Reusability is the business model</div>
+          <div class="takeaway-desc">Every module you build once and install twice is margin. Every niche playbook you can execute without rebuilding is scale. Your library is your leverage — build it from day one.</div>
+        </div>
+        <div class="takeaway-card">
+          <div class="takeaway-num">Takeaway 06</div>
+          <div class="takeaway-title">The window is open, not forever</div>
+          <div class="takeaway-desc">AIOS as a productized service has a window. Platforms are moving fast. Specialists who niche down now and build delivery track records will have defensible positions. Generic approaches won't.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- NEXT STEPS -->
+    <section class="section" id="next">
+      <div class="section-number">Your Roadmap</div>
+      <h2 class="section-title">Apply the Builder Mindset</h2>
+      <p class="section-body">
+        The principles only matter if they change how you work. Here's how to put this session into practice.
+      </p>
+
+      <ul class="feature-list">
+        <li class="feature-item">
+          <span class="feature-dot dot-purple"></span>
+          <span class="feature-text"><strong>Print (or save) the 5 principles.</strong> Before you start any AIOS work — for yourself or a client — scan them. They're a pre-flight checklist, not a philosophy lecture.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-blue"></span>
+          <span class="feature-text"><strong>Run your own task audit first.</strong> You can't sell something you haven't lived. Do the task audit on yourself, automate 3 things using the starter kit modules, and track your task automation % for 30 days.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-teal"></span>
+          <span class="feature-text"><strong>Pick a niche — even tentatively.</strong> You don't have to commit forever. Pick one type of client, learn their common tasks, build your first reusable modules for them. See if it fits before you lock in.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-gold"></span>
+          <span class="feature-text"><strong>Land your first small engagement.</strong> Offer a free audit to one business contact. Deliver the Core OS setup. Charge what you need to charge to sleep at night, but get the delivery rep before you charge premium.</span>
+        </li>
+        <li class="feature-item">
+          <span class="feature-dot dot-purple"></span>
+          <span class="feature-text"><strong>Track the 3 KPIs from session one.</strong> Task automation %, revenue per employee, desk autonomy. Even rough estimates. Numbers create accountability — for you and for the client conversation.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- RELATED -->
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="related-card-tag">Foundation</div>
+          <div class="related-card-title">AIOS Automation Primitives</div>
+          <div class="related-card-sub">The building blocks — Capabilities, Scripts, Workflows — that power everything you deliver.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+        <a href="learn-aios-security.html" class="related-card">
+          <div class="related-card-tag">Security</div>
+          <div class="related-card-title">Claude Code Security Basics</div>
+          <div class="related-card-sub">Lock it down before you hand it to a client. Six layers, 5-minute setup.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+        <a href="#" class="related-card">
+          <div class="related-card-tag">Delivery</div>
+          <div class="related-card-title">Running the Task Audit</div>
+          <div class="related-card-sub">How to identify, score, and prioritize automation opportunities with a client.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

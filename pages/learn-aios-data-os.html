@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data OS — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8; --blue-light:#EFF6FF; --blue-mid:#BFDBFE;
+      --teal:#0D9488; --teal-light:#F0FDFA; --teal-mid:#99F6E4;
+      --gold:#B45309; --gold-light:#FFFBEB; --gold-mid:#FDE68A;
+      --green:#15803D; --green-light:#F0FDF4; --green-mid:#BBF7D0;
+      --indigo:#4338CA; --indigo-light:#EEF2FF; --indigo-mid:#C7D2FE;
+      --ink:#0F172A; --ink-dim:#64748B; --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8; --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    /* NAV */
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--indigo-light); color: var(--indigo); }
+
+    /* LAYOUT */
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--indigo); border-left-color: var(--indigo); background: var(--indigo-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+
+    /* MAIN */
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--indigo-light); color: var(--indigo); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--indigo); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.indigo { background: var(--indigo-light); border-left: 3px solid var(--indigo); }
+    .callout.teal   { background: var(--teal-light);   border-left: 3px solid var(--teal); }
+    .callout.gold   { background: var(--gold-light);   border-left: 3px solid var(--gold); }
+    .callout.green  { background: var(--green-light);  border-left: 3px solid var(--green); }
+    .callout.blue   { background: var(--blue-light);   border-left: 3px solid var(--blue); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* Funnel */
+    .funnel { display: flex; flex-direction: column; gap: 3px; margin: 24px 0; }
+    .funnel-row { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: center; padding: 13px 16px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface); }
+    .funnel-row.top    { border-color: var(--blue-mid); }
+    .funnel-row.upper  { border-color: var(--indigo-mid); }
+    .funnel-row.middle { border-color: var(--teal-mid); }
+    .funnel-row.lower  { border-color: var(--gold-mid); }
+    .funnel-row.bottom { border-color: var(--green-mid); }
+    .funnel-icon { font-size: 16px; text-align: center; }
+    .funnel-content { }
+    .funnel-label { font-size: 13px; font-weight: 700; color: var(--ink); }
+    .funnel-desc  { font-size: 11px; color: var(--ink-dim); margin-top: 1px; }
+    .funnel-source { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 100px; white-space: nowrap; }
+    .top    .funnel-source { background: var(--blue-light);   color: var(--blue); }
+    .upper  .funnel-source { background: var(--indigo-light); color: var(--indigo); }
+    .middle .funnel-source { background: var(--teal-light);   color: var(--teal); }
+    .lower  .funnel-source { background: var(--gold-light);   color: var(--gold); }
+    .bottom .funnel-source { background: var(--green-light);  color: var(--green); }
+    .funnel-arrow { text-align: center; font-size: 14px; color: var(--ink-faint); padding: 0 28px; }
+
+    /* DB comparison */
+    .db-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .db-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 18px; }
+    .db-card.recommended { border-color: var(--green-mid); }
+    .db-badge { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+    .db-card.recommended .db-badge { color: var(--green); }
+    .db-card:not(.recommended) .db-badge { color: var(--ink-faint); }
+    .db-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .db-traits { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .db-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .db-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .recommended .db-dot { background: var(--green); }
+    .db-card:not(.recommended) .db-dot { background: var(--ink-faint); }
+
+    /* Snapshot explainer */
+    .snapshot-flow { display: flex; align-items: stretch; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .snapshot-col { flex: 1; padding: 16px 14px; background: var(--surface); border-right: 1px solid var(--border); }
+    .snapshot-col:last-child { border-right: none; }
+    .snapshot-num { width: 22px; height: 22px; border-radius: 50%; background: var(--indigo-light); color: var(--indigo); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+    .snapshot-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .snapshot-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Cron schedule */
+    .cron-schedule { border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .cron-header { padding: 12px 18px; background: #1E293B; color: #94A3B8; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .cron-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .cron-row:last-child { border-bottom: none; }
+    .cron-time { font-family: 'SF Mono', monospace; font-size: 12px; font-weight: 700; color: var(--indigo); flex-shrink: 0; width: 72px; padding-top: 1px; }
+    .cron-job { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+    .cron-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+
+    /* API connector cards */
+    .api-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+    .api-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; }
+    .api-icon { font-size: 18px; margin-bottom: 6px; }
+    .api-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .api-desc { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+    .api-tag  { margin-top: 8px; display: inline-block; padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 600; }
+    .tag-api  { background: var(--blue-light); color: var(--blue); }
+    .tag-sheet { background: var(--green-light); color: var(--green); }
+    .tag-ask  { background: var(--gold-light); color: var(--gold); }
+
+    /* Audit steps */
+    .audit-steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .audit-step { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .audit-step:last-child { border-bottom: none; }
+    .audit-step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--indigo-light); color: var(--indigo); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .audit-step-content { flex: 1; }
+    .audit-step-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .audit-step-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Dashboard mockup */
+    .dashboard-mockup { background: #1E293B; border-radius: var(--radius-xl); padding: 20px; margin: 20px 0; }
+    .dm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .dm-title { color: #F1F5F9; font-size: 14px; font-weight: 700; }
+    .dm-badge { padding: 3px 10px; background: #334155; color: #94A3B8; border-radius: 100px; font-size: 10px; font-weight: 600; }
+    .dm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+    .dm-card { background: #334155; border-radius: var(--radius-md); padding: 12px; }
+    .dm-card-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #64748B; margin-bottom: 6px; }
+    .dm-card-val { font-size: 20px; font-weight: 800; letter-spacing: -.02em; color: #F1F5F9; }
+    .dm-card-delta { font-size: 11px; margin-top: 2px; }
+    .delta-up   { color: #4ADE80; }
+    .delta-down { color: #F87171; }
+    .dm-note { font-size: 11px; color: #475569; text-align: center; margin-top: 8px; }
+
+    /* Plan/implement */
+    .plan-flow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .plan-card-step { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--indigo); margin-bottom: 6px; }
+    .plan-card-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .plan-card-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+    .plan-card-cmd { margin-top: 10px; padding: 8px 12px; background: #1E293B; border-radius: var(--radius-md); font-family: 'SF Mono', monospace; font-size: 11px; color: #7DD3FC; }
+
+    /* Feature list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num   { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--indigo); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--indigo); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .db-grid, .api-grid, .tk-grid, .related-grid, .plan-flow { grid-template-columns: 1fr; }
+      .dm-grid { grid-template-columns: 1fr 1fr; }
+      .snapshot-flow { flex-direction: column; }
+      .snapshot-col { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Data OS</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Workshop Module</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"  class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#what"      class="sidebar-link"><span class="sidebar-step">1</span> What Is Data OS?</a>
+    <a href="#funnel"    class="sidebar-link"><span class="sidebar-step">2</span> Map Your Funnel</a>
+    <a href="#database"  class="sidebar-link"><span class="sidebar-step">3</span> Local Database First</a>
+    <a href="#connectors" class="sidebar-link"><span class="sidebar-step">4</span> API Connectors</a>
+    <a href="#snapshots" class="sidebar-link"><span class="sidebar-step">5</span> The Snapshot Pattern</a>
+    <a href="#cron"      class="sidebar-link"><span class="sidebar-step">6</span> Cron Schedule</a>
+    <a href="#audit"     class="sidebar-link"><span class="sidebar-step">7</span> Data Audit</a>
+    <a href="#dashboard" class="sidebar-link"><span class="sidebar-step">8</span> Mission Control Dashboard</a>
+    <a href="#plan"      class="sidebar-link"><span class="sidebar-step">9</span> /create-plan + /implement</a>
+    <div class="sidebar-divider"></div>
+    <a href="#security"  class="sidebar-link"><span class="sidebar-step">🔒</span> Security</a>
+    <a href="#takeaways" class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+    <a href="#next"      class="sidebar-link"><span class="sidebar-step">→</span> Next Steps</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">📊 Data OS</div>
+      <h1 class="module-title">Data OS — Your Business Intelligence Layer</h1>
+      <p class="module-subtitle">
+        The second layer of your AIOS. Once your Context OS tells Claude who you are and what you're doing,
+        Data OS tells it where things actually stand — live funnel numbers, revenue, clicks, bookings —
+        piped in automatically every morning from every platform you run.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~25 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Builds on Setup & Context OS</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Practical implementation session</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — WHAT IS DATA OS -->
+    <section class="section" id="what">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">What Is Data OS — and Why Does It Matter?</h2>
+      <p class="section-body">
+        Context OS gives your AI a static picture of your business — who you are, your strategy,
+        your goals. Data OS makes it live. It's the layer that connects your real business data —
+        all of it, from all your platforms — into a single local database that your AIOS can query
+        in real time.
+      </p>
+      <p class="section-body">
+        Without it, your AI is a smart advisor with no current information. With it, your AI walks
+        into every session knowing your numbers: where your funnel is today, whether this month is
+        tracking better than last month, what's working and what's not. That's when it becomes genuinely
+        useful as an analytical partner.
+      </p>
+
+      <div class="callout indigo">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>The moment it clicked:</strong> "I thought business data just had to be an absolute mess.
+          It's in spreadsheets, in platforms, in analytics tools — everywhere except one place.
+          When I realized I could just connect all of this and have a single source of truth running
+          locally on my machine, that was one of the biggest unlocks I've had."
+        </div>
+      </div>
+
+      <p class="section-body">
+        The goal isn't to look at raw data. The goal is a single question answered every morning:
+        <strong>"Am I green for the month?"</strong> Is this month tracking better than last month across
+        every metric that matters? Everything else is in service of that answer.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — MAP YOUR FUNNEL -->
+    <section class="section" id="funnel">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">Step One: Map Your Funnel</h2>
+      <p class="section-body">
+        Before you connect a single API, sketch your business funnel top to bottom. Every stage
+        of your funnel has data — and that data lives somewhere. Identify what the stages are,
+        what you measure at each one, and which platform holds that data.
+      </p>
+      <p class="section-body">
+        This is the planning session you need to do before building. Here's the typical shape
+        for an agency or service business:
+      </p>
+
+      <div class="funnel">
+        <div class="funnel-row top">
+          <div class="funnel-icon">📣</div>
+          <div class="funnel-content">
+            <div class="funnel-label">Top of Funnel — Impressions & Reach</div>
+            <div class="funnel-desc">Content views, ad impressions, organic reach. How many eyeballs are you getting?</div>
+          </div>
+          <div class="funnel-source">YouTube API · Google Ads · LinkedIn</div>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-row upper">
+          <div class="funnel-icon">🔗</div>
+          <div class="funnel-content">
+            <div class="funnel-label">Clicks & Intent</div>
+            <div class="funnel-desc">Link clicks from content to landing pages. Who showed enough interest to click through?</div>
+          </div>
+          <div class="funnel-source">Bitly API</div>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-row middle">
+          <div class="funnel-icon">🌐</div>
+          <div class="funnel-content">
+            <div class="funnel-label">Website Visitors</div>
+            <div class="funnel-desc">Traffic to landing pages, conversion pages, your site. Where are they going and what are they doing?</div>
+          </div>
+          <div class="funnel-source">Google Analytics</div>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-row lower">
+          <div class="funnel-icon">📅</div>
+          <div class="funnel-content">
+            <div class="funnel-label">Bookings & Leads</div>
+            <div class="funnel-desc">Discovery calls booked, leads captured. The moment intent converts to a real conversation.</div>
+          </div>
+          <div class="funnel-source">Calendly · CRM</div>
+        </div>
+        <div class="funnel-arrow">↓</div>
+        <div class="funnel-row bottom">
+          <div class="funnel-icon">💰</div>
+          <div class="funnel-content">
+            <div class="funnel-label">Revenue</div>
+            <div class="funnel-desc">Closed deals, recurring revenue, total intake. The bottom line the whole funnel is serving.</div>
+          </div>
+          <div class="funnel-source">Stripe · Google Sheets (P&L)</div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🗂</div>
+        <div class="callout-body">
+          <strong>Your funnel will look different.</strong> If you run ads instead of content, your top of funnel
+          is ad impressions from Google or Meta. If you do outreach, you need your Instantly campaign data
+          or a manual tracking sheet. If you have a KPI sheet, that's a data source too.
+          Map your actual funnel — not the example one.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — LOCAL DATABASE -->
+    <section class="section" id="database">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Local Database First — Not Cloud</h2>
+      <p class="section-body">
+        The instinct is to reach for Supabase, Airtable, or another cloud database. Resist it.
+        Start with a local SQLite database — it runs directly on your machine, requires zero extra
+        accounts, and is lightning fast to query. You can upgrade to cloud storage later once you know
+        what you actually need.
+      </p>
+
+      <div class="db-grid">
+        <div class="db-card recommended">
+          <div class="db-badge">✓ Start here</div>
+          <div class="db-title">SQLite — Local Database</div>
+          <ul class="db-traits">
+            <li class="db-trait"><span class="db-dot"></span>Runs directly on your machine. Zero setup beyond asking Claude Code to create it.</li>
+            <li class="db-trait"><span class="db-dot"></span>Lightning fast to query — no network latency, no API calls, just reads from disk.</li>
+            <li class="db-trait"><span class="db-dot"></span>Works offline. Slow connection? No problem. Your data is local.</li>
+            <li class="db-trait"><span class="db-dot"></span>Relational — tables can connect to each other. Claude designs the schema; you don't need to know SQL.</li>
+            <li class="db-trait"><span class="db-dot"></span>Negligible RAM usage. Runs fine on any machine, including old MacBooks.</li>
+            <li class="db-trait"><span class="db-dot"></span>Claude knows it better than you do. Ask it to explain the schema anytime.</li>
+          </ul>
+        </div>
+        <div class="db-card">
+          <div class="db-badge">Upgrade path</div>
+          <div class="db-title">Supabase — Cloud Database</div>
+          <ul class="db-traits">
+            <li class="db-trait"><span class="db-dot"></span>Access from anywhere — not tied to one machine.</li>
+            <li class="db-trait"><span class="db-dot"></span>Team sharing: multiple people can query the same database.</li>
+            <li class="db-trait"><span class="db-dot"></span>Requires: account setup, API key, schema design, connection string config.</li>
+            <li class="db-trait"><span class="db-dot"></span>More friction to get started — another hurdle for beginners.</li>
+            <li class="db-trait"><span class="db-dot"></span>Worth it later, once you need multi-machine access or team sharing.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">⚙️</div>
+        <div class="callout-body">
+          <strong>You don't need to know SQL.</strong> Ask Claude Code to plan the database schema based on
+          your funnel. Tell it what metrics you need to track, and it will figure out the optimal
+          table structure and how they relate to each other. Use <code>/create-plan</code> for this —
+          it forces Claude to consider how the schema connects to the rest of your workspace.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — API CONNECTORS -->
+    <section class="section" id="connectors">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">API Connectors — Hooking Into Your Platforms</h2>
+      <p class="section-body">
+        Most platforms you already use have APIs. Getting connected means: getting an API key from
+        each platform's developer settings, storing it in your <code>.env</code> file, and then asking
+        Claude Code to write a script that pulls the data you need.
+      </p>
+
+      <div class="api-grid">
+        <div class="api-card">
+          <div class="api-icon">📊</div>
+          <div class="api-name">Google Analytics</div>
+          <div class="api-desc">Website traffic, page views, conversion data, session behavior. Extensive depth available.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">🔗</div>
+          <div class="api-name">Bitly</div>
+          <div class="api-desc">Click tracking for all your links. Total clicks per link — use snapshots to get daily deltas.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">💳</div>
+          <div class="api-name">Stripe</div>
+          <div class="api-desc">Revenue, charges, subscriptions, MRR. Dozens of API endpoints — Claude picks the right ones.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">📅</div>
+          <div class="api-name">Calendly</div>
+          <div class="api-desc">Bookings data — calls scheduled, show rates, cancellations. Your conversion from visit to call.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">▶️</div>
+          <div class="api-name">YouTube</div>
+          <div class="api-desc">Views, watch time, subscriber data per video and channel. Returns totals — snapshot for deltas.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">📋</div>
+          <div class="api-name">Google Sheets</div>
+          <div class="api-desc">P&L, KPI trackers, manual data your team maintains. A bridge to any data that doesn't have an API.</div>
+          <div class="api-tag tag-sheet">Sheets API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">📣</div>
+          <div class="api-name">Google Ads</div>
+          <div class="api-desc">Ad spend, impressions, clicks, conversion data. Track ROAS alongside organic funnel metrics.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">🔍</div>
+          <div class="api-name">Other Platforms</div>
+          <div class="api-desc">LinkedIn, Instantly, your CRM, your email platform. If it has an API, Claude can connect it.</div>
+          <div class="api-tag tag-ask">Ask Claude</div>
+        </div>
+        <div class="api-card">
+          <div class="api-icon">🧠</div>
+          <div class="api-name">Notion</div>
+          <div class="api-desc">Project data, CRM records, content calendars. Pull structured data from your Notion workspace.</div>
+          <div class="api-tag tag-api">API</div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">🔑</div>
+        <div class="callout-body">
+          <strong>API key security:</strong> Every key goes into your <code>.env</code> file.
+          This file <strong>never</strong> gets pushed to GitHub — it stays local on your machine.
+          Use <strong>read-only</strong> API scopes wherever possible; you're collecting data, not writing it.
+          Ask Claude Code: "How can we make sure this isn't pulling in sensitive data I don't want stored locally?"
+          — it will help you scope down permissions correctly.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — SNAPSHOT PATTERN -->
+    <section class="section" id="snapshots">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">The Snapshot Pattern — Why Totals Aren't Enough</h2>
+      <p class="section-body">
+        Here's the catch with most APIs: they return the current total, not a day-by-day breakdown.
+        YouTube tells you a video has 47,200 views — not how many it got yesterday. Bitly tells you
+        a link has 1,340 clicks — not the delta from the day before. To get day-over-day trends,
+        you need to take daily snapshots and calculate the difference yourself.
+      </p>
+
+      <div class="snapshot-flow">
+        <div class="snapshot-col">
+          <div class="snapshot-num">1</div>
+          <div class="snapshot-label">API returns total</div>
+          <div class="snapshot-desc">YouTube says 47,200 views. Bitly says 1,340 clicks. These are cumulative totals at this moment in time.</div>
+        </div>
+        <div class="snapshot-col">
+          <div class="snapshot-num">2</div>
+          <div class="snapshot-label">Daily snapshot saved</div>
+          <div class="snapshot-desc">Cron job runs at 6 AM. Records today's total for every metric into the local database with a timestamp.</div>
+        </div>
+        <div class="snapshot-col">
+          <div class="snapshot-num">3</div>
+          <div class="snapshot-label">Delta calculated</div>
+          <div class="snapshot-desc">Today's total minus yesterday's total = views gained today. Now you have real daily performance data.</div>
+        </div>
+        <div class="snapshot-col">
+          <div class="snapshot-num">4</div>
+          <div class="snapshot-label">Month-to-date emerges</div>
+          <div class="snapshot-desc">After 30 days, sum the deltas. Compare this month's total to last month's. "Am I green for the month?"</div>
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">⏳</div>
+        <div class="callout-body">
+          <strong>The warm-up period is real.</strong> You need about 7–8 days before you have useful daily data.
+          You need 30+ days before month-over-month comparisons are meaningful. Start the clock immediately —
+          every day you delay is a day of data you don't have. Don't wait until the rest of your system is
+          perfect. Start snapshotting now.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — CRON SCHEDULE -->
+    <section class="section" id="cron">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">The Cron Schedule — Automated, Every Morning</h2>
+      <p class="section-body">
+        Everything runs on a cron schedule — scheduled tasks that fire automatically at a given time
+        each day. You set these up once and they run without you. Your data is collected, audited, and
+        summarized before you've opened your laptop.
+      </p>
+
+      <div class="cron-schedule">
+        <div class="cron-header">Daily cron schedule — example</div>
+        <div class="cron-row">
+          <div class="cron-time">06:00 AM</div>
+          <div>
+            <div class="cron-job">Data collection</div>
+            <div class="cron-desc">Scripts pull from all APIs — YouTube, Google Analytics, Bitly, Stripe, Calendly, Google Sheets. Takes snapshots and writes every metric to the local database with today's timestamp.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">06:30 AM</div>
+          <div>
+            <div class="cron-job">Data audit</div>
+            <div class="cron-desc">An AI agent reviews everything collected. Checks for holes, inconsistencies, and errors. Fixes issues on the spot. Generates a report of what ran, what broke, and suggestions for improving the system.</div>
+          </div>
+        </div>
+        <div class="cron-row">
+          <div class="cron-time">07:00 AM</div>
+          <div>
+            <div class="cron-job">Daily brief</div>
+            <div class="cron-desc">Report assembled from the fresh data and delivered — via Telegram, email, or to a file in the workspace. You wake up with your business numbers already in front of you.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">⚙️</div>
+        <div class="callout-body">
+          <strong>How to set up a cron job:</strong> Ask Claude Code — "I want to set up a cron job at 6 AM
+          that runs my data collection script." It will create the script, configure the cron entry,
+          and walk you through testing it. You do not need to know cron syntax.
+          Thursday workshops cover recurring tasks and cron in detail.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — DATA AUDIT -->
+    <section class="section" id="audit">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">The Data Audit — Trust but Verify</h2>
+      <p class="section-body">
+        Your data collection will occasionally break. APIs change. Network calls fail. Rate limits
+        hit. If you don't audit, you won't know your data is bad until you're making decisions based on it.
+        The data audit is a 6:30 AM AI agent that checks everything that just ran and reports back.
+      </p>
+
+      <div class="callout indigo">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>"If your data isn't accurate, it's useless."</strong> An AI that's confident and wrong
+          is worse than one that doesn't have data at all. The audit is not optional — it's what
+          makes everything else trustworthy.
+        </div>
+      </div>
+
+      <div class="audit-steps">
+        <div class="audit-step">
+          <div class="audit-step-num">1</div>
+          <div class="audit-step-content">
+            <div class="audit-step-title">Check every data source</div>
+            <div class="audit-step-desc">Did each API connector run successfully? Are there any gaps in today's data? Are the numbers in expected ranges or do any look suspiciously off?</div>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="audit-step-num">2</div>
+          <div class="audit-step-content">
+            <div class="audit-step-title">Identify holes and errors</div>
+            <div class="audit-step-desc">Flag any metric that didn't collect, any connector that returned an error, any value that looks like an outlier or data anomaly.</div>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="audit-step-num">3</div>
+          <div class="audit-step-content">
+            <div class="audit-step-title">Fix issues on the spot</div>
+            <div class="audit-step-desc">If it can retry failed connectors or correct minor data issues automatically, it does. Simple fixes happen without you — edge cases get flagged for your attention.</div>
+          </div>
+        </div>
+        <div class="audit-step">
+          <div class="audit-step-num">4</div>
+          <div class="audit-step-content">
+            <div class="audit-step-title">Leave a report and suggestions</div>
+            <div class="audit-step-desc">Generate a report of what ran, what broke, and what could be improved. After 7 days of reports, use <code>/create-plan</code> to analyze patterns and make systematic improvements.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — DASHBOARD -->
+    <section class="section" id="dashboard">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Mission Control Dashboard</h2>
+      <p class="section-body">
+        The payoff. Once data is flowing, ask Claude Code to build you an HTML dashboard that
+        visualizes everything — your full funnel, month-to-date vs last month, all key metrics
+        at a glance. Open it in a browser every morning. One screen. Full picture.
+      </p>
+      <p class="section-body">
+        You customize it entirely through conversation. Tell Claude what you want to see, in what
+        order, at what level of detail. It rebuilds the dashboard to match. No code required.
+      </p>
+
+      <div class="dashboard-mockup">
+        <div class="dm-header">
+          <div class="dm-title">Mission Control — Month to Date</div>
+          <div class="dm-badge">April 2026 · Updated 06:32 AM</div>
+        </div>
+        <div class="dm-grid">
+          <div class="dm-card">
+            <div class="dm-card-label">Views MTD</div>
+            <div class="dm-card-val">184k</div>
+            <div class="dm-card-delta delta-up">↑ 12% vs last month</div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-card-label">Link Clicks</div>
+            <div class="dm-card-val">3,240</div>
+            <div class="dm-card-delta delta-up">↑ 8% vs last month</div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-card-label">Bookings</div>
+            <div class="dm-card-val">47</div>
+            <div class="dm-card-delta delta-down">↓ 3% vs last month</div>
+          </div>
+          <div class="dm-card">
+            <div class="dm-card-label">Revenue MTD</div>
+            <div class="dm-card-val">$42k</div>
+            <div class="dm-card-delta delta-up">↑ 18% vs last month</div>
+          </div>
+        </div>
+        <div class="dm-note">Example only — yours shows your real data from your real platforms</div>
+      </div>
+
+      <div class="callout green">
+        <div class="callout-icon">✓</div>
+        <div class="callout-body">
+          <strong>The only question that matters:</strong> "Am I green for the month?" If this month is
+          tracking better than last month across the metrics that count — revenue, bookings, top-of-funnel —
+          life is good. This dashboard gives you that answer in under 10 seconds, every morning.
+        </div>
+      </div>
+
+      <p class="section-body">
+        Building the dashboard also forces good data hygiene — it requires you to confirm you're
+        capturing the right metrics in the right structure. If something looks wrong in the dashboard,
+        you know to fix the collection script.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 9 — CREATE PLAN + IMPLEMENT -->
+    <section class="section" id="plan">
+      <div class="section-number">Section 09</div>
+      <h2 class="section-title">/create-plan + /implement — Why This Workflow Beats Plan Mode</h2>
+      <p class="section-body">
+        When you're building Data OS — database schema, API connectors, cron scripts, the dashboard —
+        use <code>/create-plan</code> followed by <code>/implement</code> in a fresh agent, rather than
+        relying on Claude's native plan mode alone. Here's why it matters.
+      </p>
+
+      <div class="plan-flow">
+        <div class="plan-card">
+          <div class="plan-card-step">Step 1</div>
+          <div class="plan-card-title">/create-plan [what you want]</div>
+          <div class="plan-card-desc">
+            More thorough than native plan mode — asks you clarifying questions, considers the full workspace
+            (not just the current session), and thinks about how the change affects everything else.
+            Creates a detailed plan document in <code>plans/</code> with dated filename.
+          </div>
+          <div class="plan-card-cmd">/create-plan set up Stripe API connector + snapshot table</div>
+        </div>
+        <div class="plan-card">
+          <div class="plan-card-step">Step 2</div>
+          <div class="plan-card-title">/implement in a fresh agent</div>
+          <div class="plan-card-desc">
+            Open a new Claude Code instance, run <code>/prime</code> first (maximum context, fresh brainpower),
+            then pass the implement command pointing at the plan file. Fresh start = full token space
+            dedicated entirely to execution.
+          </div>
+          <div class="plan-card-cmd">/implement plans/2026-04-25-stripe-connector.md</div>
+        </div>
+      </div>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Prevents workspace drift:</strong> /create-plan forces consideration of how the change affects the rest of the workspace. Without it, features can drift — each one unaware of what else has been built.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Fresh agent = maximum power:</strong> If you use the same Claude session from planning through implementation, you're burning token space on the planning conversation. Fresh instance + /prime = full context window dedicated to doing the work.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Plans are reusable:</strong> A well-written plan in <code>plans/</code> can be reviewed, shared, modified, and re-implemented. You have a record of intent, not just code.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Documentation built in:</strong> Add a documentation step to your implement command — whenever something major is implemented, Claude creates associated documentation automatically.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECURITY -->
+    <section class="section" id="security">
+      <div class="section-number">Security</div>
+      <h2 class="section-title">API Key Security — Non-Negotiable</h2>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>All keys go in .env — never anywhere else.</strong> Your <code>.env</code> file stays local on your machine. It is in your <code>.gitignore</code>. It never goes to GitHub. Ever.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Use read-only scopes.</strong> You're collecting data, not writing to platforms. Every API you set up should have the minimum permissions needed — typically read-only. Check each platform's developer settings for scope options.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Don't store sensitive customer data locally.</strong> Your Data OS is for your business metrics — funnel data, revenue, performance. It is not a CRM of customer PII. Keep those boundaries clear, especially when setting up for clients.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Ask Claude to audit the scope.</strong> Before finalizing any API connection: "How can we make sure this isn't pulling in any sensitive data I don't want stored locally?" Claude will walk you through scoping it correctly.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">Map your funnel before touching an API</div>
+          <div class="tk-desc">You can't build the right data collection without knowing what you're trying to measure. Sketch your funnel — top to bottom — and identify where each metric lives before writing a single line of code.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">Start local, upgrade later</div>
+          <div class="tk-desc">SQLite on your machine. Zero friction, lightning fast, works offline. Supabase is the upgrade path for team access — not the starting point. Don't create friction that delays getting started.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">APIs give totals — you need to calculate deltas</div>
+          <div class="tk-desc">YouTube views, Bitly clicks, Stripe revenue — most APIs return a running total. Take daily snapshots and calculate the delta yourself. Start snapshotting immediately — the warm-up period is real.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">The audit is not optional</div>
+          <div class="tk-desc">If your data collection breaks silently and you don't know, you'll make decisions on bad data. The 6:30 AM audit catches errors, fixes them, and tells you how to improve. Bad data = useless AIOS.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">The one question the dashboard answers</div>
+          <div class="tk-desc">"Am I green for the month?" This month vs last month across your key metrics. Design your dashboard around this question. Everything else is noise until you can answer this one clearly.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">Use /create-plan + fresh agent to build</div>
+          <div class="tk-desc">Build Data OS components with /create-plan (thorough, workspace-aware) then /implement in a fresh primed agent (maximum token space). Prevents drift. Creates a record of intent. Builds in documentation.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- NEXT STEPS -->
+    <section class="section" id="next">
+      <div class="section-number">Build It</div>
+      <h2 class="section-title">Your Data OS Setup Sequence</h2>
+
+      <ul class="feat-list">
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Sketch your funnel today.</strong> Draw it on paper or in a doc — top of funnel to revenue, every stage, every metric, every platform. This is the plan your API scripts will follow.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Add data sources to current-data.md manually first.</strong> Before any automation, fill in today's numbers by hand. This gives Claude a baseline to work from, and tells you exactly what you're going to automate.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Set up your first API connector — pick the easiest one.</strong> Bitly is a good starting point: simple API, clear use case, direct value. Use <code>/create-plan</code> + <code>/implement</code>. Get one working before adding more.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Set up the cron job immediately.</strong> Even if you only have one data source connected, start the daily snapshot schedule now. Every day you wait is a day of data you don't have.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Add the data audit at 6:30 AM.</strong> Right after collection. It catches problems before you start your day.</span>
+        </li>
+        <li class="feat-item">
+          <span class="feat-dot"></span>
+          <span class="feat-text"><strong>Build the dashboard once you have 7+ days of data.</strong> Ask Claude: "Build me an HTML mission control dashboard that shows month-to-date vs last month for my key funnel metrics." Customize from there.</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-setup.html" class="related-card">
+          <div class="rc-tag">Prerequisite</div>
+          <div class="rc-title">Setup & Context OS</div>
+          <div class="rc-sub">Data OS builds on top of Context OS. Make sure your four context files are filled in first.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-automate-agency.html" class="related-card">
+          <div class="rc-tag">Vision</div>
+          <div class="rc-title">Automate Your Entire Agency</div>
+          <div class="rc-sub">See how the data layer — dashboard, daily brief, model tracker — fits into the full automation picture.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="rc-tag">Building blocks</div>
+          <div class="rc-title">AIOS Automation Primitives</div>
+          <div class="rc-sub">The cron scripts and data connectors you're building here are Scripts. Understand how they fit the full stack.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

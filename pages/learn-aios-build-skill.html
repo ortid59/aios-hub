@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turn Business Process into Skill — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1D4ED8;  --blue-light:#EFF6FF;  --blue-mid:#BFDBFE;
+      --teal:#0D9488;  --teal-light:#F0FDFA;  --teal-mid:#99F6E4;
+      --gold:#B45309;  --gold-light:#FFFBEB;  --gold-mid:#FDE68A;
+      --pink:#DB2777;  --pink-light:#FDF2F8;  --pink-mid:#FBCFE8;
+      --slate:#334155; --slate-light:#F1F5F9; --slate-mid:#CBD5E1;
+      --ink:#0F172A;   --ink-dim:#64748B;    --ink-faint:#94A3B8;
+      --surface:#FFFFFF; --base:#F0F4F8;     --border:rgba(15,23,42,.08);
+      --radius-md:8px; --radius-lg:12px; --radius-xl:16px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; }
+
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg,var(--blue),var(--teal)); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: var(--pink-light); color: var(--pink); }
+
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--pink); border-left-color: var(--pink); background: var(--pink-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--pink); border-color: var(--pink); color: #fff; }
+
+    .main { padding: 40px 48px; max-width: 860px; }
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--pink-light); color: var(--pink); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--pink); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.pink  { background: var(--pink-light);  border-left: 3px solid var(--pink); }
+    .callout.teal  { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout.blue  { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.gold  { background: var(--gold-light);  border-left: 3px solid var(--gold); }
+    .callout.slate { background: var(--slate-light); border-left: 3px solid var(--slate); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* What is a skill */
+    .skill-def { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .sd-header { padding: 16px 20px; background: var(--pink-light); border-bottom: 1px solid var(--pink-mid); }
+    .sd-title  { font-size: 15px; font-weight: 700; color: var(--pink); margin-bottom: 4px; }
+    .sd-sub    { font-size: 12px; color: var(--ink-dim); }
+    .sd-body   { padding: 16px 20px; font-size: 13px; color: var(--ink-dim); line-height: 1.7; }
+
+    /* Skill vs MCP comparison */
+    .vs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .vs-header { grid-column: 1/-1; padding: 12px 20px; background: #1E293B; color: #94A3B8; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    .vs-col { background: var(--surface); padding: 18px; }
+    .vs-col.left { border-right: 1px solid var(--border); }
+    .vs-col-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .vs-badge { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .badge-mcp  { background: var(--blue-light);  color: var(--blue); }
+    .badge-skl  { background: var(--pink-light);  color: var(--pink); }
+    .vs-traits { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-top: 8px; }
+    .vs-trait  { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .vs-dot    { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .left  .vs-dot { background: var(--blue); }
+    .right .vs-dot { background: var(--pink); }
+
+    /* Skill anatomy */
+    .anatomy { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .anat-row { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .anat-row:last-child { border-bottom: none; }
+    .anat-file { font-family: 'SF Mono', monospace; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 100px; text-align: center; }
+    .af-core   { background: var(--pink-light); color: var(--pink); }
+    .af-scripts { background: var(--blue-light); color: var(--blue); }
+    .af-refs   { background: var(--teal-light);  color: var(--teal); }
+    .af-assets { background: var(--gold-light);  color: var(--gold); }
+    .af-opt    { background: var(--slate-light); color: var(--slate); font-style: italic; }
+    .anat-content .anat-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .anat-content .anat-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Demo workflow */
+    .demo-flow { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .demo-step { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); }
+    .demo-step:last-child { border-bottom: none; }
+    .demo-n { width: 26px; height: 26px; border-radius: 50%; background: var(--pink-light); color: var(--pink); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .demo-label { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .demo-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Client kickoff flow */
+    .kickoff-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .kf-step { padding: 16px 14px; background: var(--surface); border-right: 1px solid var(--border); }
+    .kf-step:last-child { border-right: none; }
+    .kf-icon { font-size: 20px; margin-bottom: 8px; }
+    .kf-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .kf-desc  { font-size: 11px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Setup steps */
+    .setup-list { display: flex; flex-direction: column; gap: 8px; margin: 20px 0; }
+    .setup-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .setup-n { width: 22px; height: 22px; border-radius: 50%; background: var(--pink-light); color: var(--pink); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .setup-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .setup-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.55; }
+    .setup-cmd   { margin-top: 6px; font-family: 'SF Mono', monospace; font-size: 11px; color: var(--teal); font-weight: 600; }
+
+    /* Build approach */
+    .build-steps { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .bs-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .bs-n { width: 22px; height: 22px; border-radius: 50%; background: var(--pink-light); color: var(--pink); font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .bs-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .bs-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.55; }
+
+    /* Feat list */
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .feat-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; background: var(--base); border-radius: var(--radius-md); }
+    .feat-dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--pink); flex-shrink: 0; margin-top: 5px; }
+    .feat-text { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .feat-text strong { font-weight: 600; }
+
+    /* Takeaways */
+    .tk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .tk-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+    .tk-num  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--pink); margin-bottom: 6px; }
+    .tk-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .tk-desc  { font-size: 12px; color: var(--ink-dim); line-height: 1.6; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow .15s, border-color .15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: var(--blue-mid); }
+    .rc-tag   { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .rc-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .rc-sub   { font-size: 11px; color: var(--ink-faint); }
+    .rc-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--pink); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .vs-grid { grid-template-columns: 1fr; }
+      .vs-col.left { border-right: none; border-bottom: 1px solid var(--border); }
+      .kickoff-flow { grid-template-columns: 1fr 1fr; }
+      .tk-grid, .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Build a Skill</span>
+    </div>
+  </div>
+  <div class="topnav-right"><span class="badge">Build-Along Workshop</span></div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"  class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#what"      class="sidebar-link"><span class="sidebar-step">1</span> What Is a Skill?</a>
+    <a href="#vs-mcp"    class="sidebar-link"><span class="sidebar-step">2</span> Skill vs. MCP</a>
+    <a href="#anatomy"   class="sidebar-link"><span class="sidebar-step">3</span> Skill Anatomy</a>
+    <a href="#why"       class="sidebar-link"><span class="sidebar-step">4</span> Why Skills Matter</a>
+    <a href="#demo"      class="sidebar-link"><span class="sidebar-step">5</span> The Demo — Client Kickoff</a>
+    <a href="#setup"     class="sidebar-link"><span class="sidebar-step">6</span> Installation Walk-Through</a>
+    <a href="#how-build" class="sidebar-link"><span class="sidebar-step">7</span> How to Build Your Own</a>
+    <a href="#ideas"     class="sidebar-link"><span class="sidebar-step">8</span> Skill Ideas for Your Business</a>
+    <div class="sidebar-divider"></div>
+    <a href="#takeaways" class="sidebar-link"><span class="sidebar-step">★</span> Key Takeaways</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🛠 Build-Along</div>
+      <h1 class="module-title">AIOS: Turn Business Process into Skill</h1>
+      <p class="module-subtitle">
+        Any repeatable business process can become a skill — a reusable playbook that teaches your AIOS
+        how to execute it consistently. This build-along workshop covers what skills are, how they differ
+        from MCPs, and walks through building a live "Client Kickoff" skill that turns a Fireflies
+        transcript into a full project setup in Trello.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Build-along workshop</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Hosted by Nick (software engineering / AI agency)</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~25 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Includes live demo transcript</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — WHAT IS A SKILL -->
+    <section class="section" id="what">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">What Is a Skill?</h2>
+
+      <div class="skill-def">
+        <div class="sd-header">
+          <div class="sd-title">A skill is a reusable playbook that teaches your AIOS how to do a specific task.</div>
+          <div class="sd-sub">Write it once. Invoke it whenever that process needs to happen. Consistent output every time.</div>
+        </div>
+        <div class="sd-body">
+          Think of it as a <strong>smart SOP you give to an agent</strong> — but unlike a document a human reads,
+          the agent can actually execute it. Every time you need to run that process, instead of
+          starting from scratch or re-explaining the steps, you just trigger the skill. It knows
+          exactly what to do, what tools to use, and how to structure the output.
+        </div>
+      </div>
+
+      <p class="section-body">
+        In practice, a skill is a markdown file inside your <code>.claude/skills/</code> directory.
+        It contains natural language instructions for how the AIOS should approach a specific task —
+        what steps to take, what tools to call, what output to produce, and what to save where.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Composable:</strong> Skills are designed to work together. Your AIOS picks up the right skill based on context cues — you can also chain multiple skills to create more complex, multi-step workflows.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Portable:</strong> Skills work across web Claude, Claude Code, and the API. A skill you build for your AIOS works anywhere Claude can be accessed.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Invocable or automatic:</strong> Set <code>user_invocable: true</code> for skills you trigger with a command. Set <code>user_invocable: false</code> for capabilities that activate automatically based on context (see Automation Primitives module).</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — SKILL VS MCP -->
+    <section class="section" id="vs-mcp">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">Skill vs. MCP — Two Different Things</h2>
+      <p class="section-body">
+        There's a lot of terminology flying around. The MCP vs. Skill distinction trips people up
+        because both are "things you add to AIOS." They're different layers that work together.
+      </p>
+
+      <div class="vs-grid">
+        <div class="vs-header">MCP vs. Skill — what each one actually does</div>
+        <div class="vs-col left">
+          <div class="vs-col-title">MCP <span class="vs-badge badge-mcp">The Tool</span></div>
+          <ul class="vs-traits">
+            <li class="vs-trait"><span class="vs-dot"></span>A connector to external software — an API endpoint your AIOS can call</li>
+            <li class="vs-trait"><span class="vs-dot"></span>Provides real-time data access and tool invocation</li>
+            <li class="vs-trait"><span class="vs-dot"></span>Examples: Google Calendar MCP, Trello MCP, Fireflies MCP, Notion MCP</li>
+            <li class="vs-trait"><span class="vs-dot"></span>What the AIOS <strong>can</strong> do</li>
+            <li class="vs-trait"><span class="vs-dot"></span>Without a skill, the agent has to figure out how to use it fresh each time — wasting tokens and producing inconsistent results</li>
+          </ul>
+        </div>
+        <div class="vs-col right">
+          <div class="vs-col-title">Skill <span class="vs-badge badge-skl">The Instructions</span></div>
+          <ul class="vs-traits">
+            <li class="vs-trait"><span class="vs-dot"></span>Instructions on how to use a tool (or multiple tools) in the right way</li>
+            <li class="vs-trait"><span class="vs-dot"></span>Captures workflows, best practices, and expected output format</li>
+            <li class="vs-trait"><span class="vs-dot"></span>Can be paired with an MCP to give the agent an exact roadmap of what to do</li>
+            <li class="vs-trait"><span class="vs-dot"></span><strong>How</strong> the AIOS should do it</li>
+            <li class="vs-trait"><span class="vs-dot"></span>Ensures consistent, structured output every time — team members or the agent never have to figure it out from scratch</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout pink">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>MCP + Skill is the power combo.</strong> The MCP connects to Trello. The skill teaches the
+          agent exactly which boards to create, how to structure the columns, what format the task
+          descriptions should use, and who to assign each type of task to. The tool does the work;
+          the skill provides the judgment and structure.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — ANATOMY -->
+    <section class="section" id="anatomy">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">Skill Anatomy — What's Inside</h2>
+
+      <div class="anatomy">
+        <div class="anat-row">
+          <div class="anat-file af-core">SKILL.md</div>
+          <div class="anat-content">
+            <div class="anat-name">Core instruction file — required</div>
+            <div class="anat-desc">The markdown file with all the instructions: what the skill does, what steps to follow, what tools to call, what output to produce. This is the skill. Everything else is optional enrichment.</div>
+          </div>
+        </div>
+        <div class="anat-row">
+          <div class="anat-file af-scripts">scripts/</div>
+          <div class="anat-content">
+            <div class="anat-name">Code execution — optional</div>
+            <div class="anat-desc">Python or bash scripts for anything that needs to be deterministic — data processing, file operations, API calls that benefit from hardcoded logic. Referenced from SKILL.md when the skill needs to run them.</div>
+          </div>
+        </div>
+        <div class="anat-row">
+          <div class="anat-file af-refs">references/</div>
+          <div class="anat-content">
+            <div class="anat-name">Context documents — optional</div>
+            <div class="anat-desc">SOPs, document templates, example outputs, reference materials. Anything the agent needs to consult when running the skill. Referenced from SKILL.md so the agent knows when to read them.</div>
+          </div>
+        </div>
+        <div class="anat-row">
+          <div class="anat-file af-assets">assets/</div>
+          <div class="anat-content">
+            <div class="anat-name">Customisation assets — optional</div>
+            <div class="anat-desc">Logos, templates, media files, or anything the skill needs for output generation. Not commonly needed but available when you want to produce branded outputs.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🔧</div>
+        <div class="callout-body">
+          <strong>Building a skill:</strong> Use the official <strong>skill-creator</strong> plugin from the
+          Anthropic marketplace — it comes with most Claude Code installations. Access it with
+          <code>/plugins</code> in Claude Code. The skill creator walks you through the structure
+          and generates the initial files based on your description of the process.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — WHY SKILLS MATTER -->
+    <section class="section" id="why">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Why Skills Matter — Especially for Teams and Client Delivery</h2>
+      <p class="section-body">
+        A skill becomes critical the moment more than one person — or more than one agent — needs
+        to run the same process. Without a skill, every run is slightly different. With a skill,
+        the result is consistent whether it's you, a team member, or a scheduled automation running it.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Team consistency.</strong> When you set up AIOS for a whole team, a skill ensures every team member gets the same structured output from the same process — without needing to understand how it works under the hood.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Repeatability without re-explanation.</strong> Every new client, every new project, every new week — the same process runs the same way. No starting from scratch. No "but last time you did it differently."</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Automatable.</strong> Once a skill is dialled in, you can attach it to triggers or schedules. The skill runs, produces the output, and your involvement becomes reviewing results rather than doing the work.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Token efficiency.</strong> The agent doesn't waste tokens figuring out how to use a tool — the skill tells it exactly what to do. Faster, cheaper, more reliable execution.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Client deliverable.</strong> When you set up AIOS for a client, skills are the part that encodes your best practices — the "how we do things here" layer that makes the system actually valuable to their business.</span></li>
+      </ul>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — THE DEMO -->
+    <section class="section" id="demo">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">The Demo — Client Kickoff Skill</h2>
+      <p class="section-body">
+        The workshop built a "Client Kickoff" skill live — a real-world example that most agency
+        and service business operators will recognise. The process it automates: turning a discovery
+        call transcript into a fully organised project setup.
+      </p>
+
+      <div class="callout slate">
+        <div class="callout-icon">🎯</div>
+        <div class="callout-body">
+          <strong>The process being automated:</strong> Client has a discovery call on Google Meet.
+          Fireflies records the transcript. Instead of manually reviewing, writing a spec, breaking
+          it into tasks, and assigning them in Trello — the skill does all of that automatically
+          in one invocation.
+        </div>
+      </div>
+
+      <div class="kickoff-flow">
+        <div class="kf-step">
+          <div class="kf-icon">🎙</div>
+          <div class="kf-label">Fetch transcript</div>
+          <div class="kf-desc">Pulls latest transcript from Fireflies via MCP. Or accepts a local transcript file if Fireflies isn't connected.</div>
+        </div>
+        <div class="kf-step">
+          <div class="kf-icon">📋</div>
+          <div class="kf-label">Generate spec</div>
+          <div class="kf-desc">Reads the transcript and produces a project spec document — description, requirements, scope — saved to a new client folder in AIOS.</div>
+        </div>
+        <div class="kf-step">
+          <div class="kf-icon">✅</div>
+          <div class="kf-label">Break into tasks</div>
+          <div class="kf-desc">Converts the spec into discrete tasks. Assigns each to a team member based on their role (or to yourself if working solo).</div>
+        </div>
+        <div class="kf-step">
+          <div class="kf-icon">📊</div>
+          <div class="kf-label">Push to Trello</div>
+          <div class="kf-desc">Creates a new Trello board for the client. Creates cards for each task, assigns team members. Team can immediately see their work.</div>
+        </div>
+      </div>
+
+      <div class="callout pink">
+        <div class="callout-icon">⭐</div>
+        <div class="callout-body">
+          <strong>The key insight:</strong> This workflow isn't just for software projects. Any client work —
+          marketing agency, consulting, operations — follows the same pattern: discovery call → spec →
+          tasks → assign. The skill handles the conversion. You just verify the output.
+        </div>
+      </div>
+
+      <p class="section-body">
+        After running this skill, you have: a new project folder in AIOS named for the client,
+        the transcript saved locally, a spec document, and a Trello board with tasks assigned —
+        all from a single command. What would take 30–60 minutes of manual work happens in
+        one skill invocation.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — INSTALLATION -->
+    <section class="section" id="setup">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Installation Walk-Through</h2>
+      <p class="section-body">
+        The workshop walked through the full installation live. Here's the exact sequence, including
+        the "gotchas" that came up during the session.
+      </p>
+
+      <div class="setup-list">
+        <div class="setup-item">
+          <div class="setup-n">1</div>
+          <div>
+            <div class="setup-title">Drop the skill ZIP into your AIOS folder</div>
+            <div class="setup-desc">Download the skill ZIP, place it in your workspace root (or wherever your AIOS folder lives). Works in terminal or Claude Desktop — the process is identical.</div>
+          </div>
+        </div>
+        <div class="setup-item">
+          <div class="setup-n">2</div>
+          <div>
+            <div class="setup-title">Ask Claude to install it</div>
+            <div class="setup-desc">You don't need a special command — just tell Claude what you want. It will find the ZIP, unzip it, and place the skill in <code>.claude/skills/</code>.</div>
+            <div class="setup-cmd">"Please install the client kickoff skill from the zip"</div>
+          </div>
+        </div>
+        <div class="setup-item">
+          <div class="setup-n">3</div>
+          <div>
+            <div class="setup-title">Run the first setup — it will ask you questions</div>
+            <div class="setup-desc">Trigger the skill for the first time. It walks you through setup: Do you have Fireflies? Enter Trello API key and token. Who is on your team (name, role, email)? The skill stores these answers and doesn't ask again.</div>
+            <div class="setup-cmd">"Let's kick off a new project"</div>
+          </div>
+        </div>
+        <div class="setup-item">
+          <div class="setup-n">4</div>
+          <div>
+            <div class="setup-title">Add API keys to .env</div>
+            <div class="setup-desc">The skill installs two MCPs (Fireflies + Trello). Add the API keys to your <code>.env</code> file when prompted. Trello: get key from trello.com/power-ups/admin, generate a token. Fireflies: get key from the Fireflies dashboard.</div>
+          </div>
+        </div>
+        <div class="setup-item">
+          <div class="setup-n">5</div>
+          <div>
+            <div class="setup-title">Restart the session to load MCPs</div>
+            <div class="setup-desc">After MCPs are installed, restart your Claude Code session so they load. Verify with <code>/mcp</code> — you should see Fireflies and Trello both connected.</div>
+            <div class="setup-cmd">/mcp</div>
+          </div>
+        </div>
+        <div class="setup-item">
+          <div class="setup-n">6</div>
+          <div>
+            <div class="setup-title">Run the full skill on a real transcript</div>
+            <div class="setup-desc">Provide a client name, project name, and either let it fetch from Fireflies or point it to a local transcript file. It creates the folder structure, spec, and Trello board automatically.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">🔑</div>
+        <div class="callout-body">
+          <strong>Team access note:</strong> Team members added to the skill do not need Anthropic accounts
+          or their own AIOS. They're just added to the Trello board so they can see their tasks.
+          You run the AIOS; they work in Trello. Only upgrade to per-person AIOS when team members
+          actually need to run prompts themselves.
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">💾</div>
+        <div class="callout-body">
+          <strong>Team context is shared:</strong> The team roster you enter during setup gets saved to
+          your AIOS context files — not just inside this skill, but available to your whole system.
+          Other skills and workflows can reference team members without you entering the info again.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — HOW TO BUILD YOUR OWN -->
+    <section class="section" id="how-build">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">How to Build Your Own Skill</h2>
+      <p class="section-body">
+        The workflow for building a new skill from scratch. The key is to start with a real process
+        you already repeat — document it clearly, then let the skill creator help you translate
+        it into an executable playbook.
+      </p>
+
+      <div class="build-steps">
+        <div class="bs-row">
+          <div class="bs-n">1</div>
+          <div>
+            <div class="bs-title">Identify a repeatable process</div>
+            <div class="bs-desc">Find something you do more than once a month that has consistent inputs and expected outputs. Client onboarding, weekly reporting, content creation, lead qualification — any structured workflow is a candidate.</div>
+          </div>
+        </div>
+        <div class="bs-row">
+          <div class="bs-n">2</div>
+          <div>
+            <div class="bs-title">Document the steps clearly</div>
+            <div class="bs-desc">Write out the process as you'd explain it to a smart assistant. What information do you start with? What are the steps? What tools do you use at each step? What's the expected output? This becomes the basis for your SKILL.md.</div>
+          </div>
+        </div>
+        <div class="bs-row">
+          <div class="bs-n">3</div>
+          <div>
+            <div class="bs-title">Use the skill-creator plugin</div>
+            <div class="bs-desc">Access with <code>/plugins</code> in Claude Code. The official Anthropic skill creator is the fastest path to a well-structured SKILL.md. Feed it your process documentation and it generates the initial skill structure.</div>
+          </div>
+        </div>
+        <div class="bs-row">
+          <div class="bs-n">4</div>
+          <div>
+            <div class="bs-title">Add MCPs for any external tools</div>
+            <div class="bs-desc">If the process interacts with external platforms (CRM, project management, calendar, email), identify the appropriate MCPs and install them. Add the instructions for using each MCP correctly inside your SKILL.md references.</div>
+          </div>
+        </div>
+        <div class="bs-row">
+          <div class="bs-n">5</div>
+          <div>
+            <div class="bs-title">Test, refine, and iterate</div>
+            <div class="bs-desc">Run the skill on real data. See where it produces unexpected results. Update the instructions to cover those cases. Each iteration makes it more reliable. After 5–10 runs, most skills stabilise and become production-ready.</div>
+          </div>
+        </div>
+        <div class="bs-row">
+          <div class="bs-n">6</div>
+          <div>
+            <div class="bs-title">Version and share via GitHub</div>
+            <div class="bs-desc">Commit your skill folder to your AIOS GitHub repo. Now it's versioned, portable, and shareable. Other team members can pull it. You can improve it over time and commit updates. This is how the plug-and-play module library is built.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — SKILL IDEAS -->
+    <section class="section" id="ideas">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Skill Ideas for Your Business</h2>
+      <p class="section-body">
+        Any recurring process that produces a structured output is a skill candidate. Here's a
+        starting list organised by business function — use them as prompts for your own task audit.
+      </p>
+
+      <ul class="feat-list">
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Client onboarding:</strong> Discovery call transcript → project spec → task list → project management setup (exactly what was built in this workshop). Works for any service business.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Weekly reporting:</strong> Pull metrics from Data OS → compare to last week → format into a standard report → send to stakeholders or save to a shared folder.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Meeting intelligence:</strong> Fireflies transcript → extract action items → assign to owners → create follow-up tasks → draft follow-up email. Done in one trigger.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Content repurposing:</strong> Video/podcast transcript → LinkedIn post → Twitter thread → newsletter section → YouTube description. Consistent format every time.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Lead qualification:</strong> New lead info → research company → score against ICP criteria → draft personalised outreach → create CRM record.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>Proposal generation:</strong> Client brief → scope breakdown → pricing calculation → formatted proposal document → send via email MCP.</span></li>
+        <li class="feat-item"><span class="feat-dot"></span><span class="feat-text"><strong>SOW to statement of work:</strong> Scope discussion → structured SOW document → create contract in DocuSign or similar. Compresses hours of manual work into a single skill run.</span></li>
+      </ul>
+
+      <div class="callout pink">
+        <div class="callout-icon">🚀</div>
+        <div class="callout-body">
+          <strong>The skill library compounds.</strong> Each skill you build can be shared across clients,
+          refined over time, and reused. By the time you're delivering AIOS as a service, your
+          skill library is your competitive advantage — the "default setup" for a given niche
+          that no competitor can replicate quickly.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TAKEAWAYS -->
+    <section class="section" id="takeaways">
+      <div class="section-number">Key Takeaways</div>
+      <h2 class="section-title">What to Remember</h2>
+      <div class="tk-grid">
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 01</div>
+          <div class="tk-title">A skill is a smart SOP you give an agent</div>
+          <div class="tk-desc">It tells the agent what to do, in what order, using which tools, producing what output. Once it's written, you invoke it instead of explaining the process each time. Write once, run many.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 02</div>
+          <div class="tk-title">MCP = what AIOS can do. Skill = how it should do it</div>
+          <div class="tk-desc">MCPs connect to external tools. Skills encode the judgment and workflow for using those tools correctly. Use them together: MCP for the connection, skill for the best practice.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 03</div>
+          <div class="tk-title">Team context saves to AIOS globally</div>
+          <div class="tk-desc">When a skill asks for your team roster during setup, those answers save to your AIOS context files — available to every other skill and workflow. You enter it once and it persists.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 04</div>
+          <div class="tk-title">Skills are the client delivery layer</div>
+          <div class="tk-desc">When you set up AIOS for a client, skills encode your best practices — the "how we do things here" that makes the system valuable. The skill library you build over multiple client engagements is a compounding asset.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 05</div>
+          <div class="tk-title">Start with real processes you already repeat</div>
+          <div class="tk-desc">Don't invent something new to build a skill. Find a process you run at least monthly that produces a structured output. Document it, use skill creator, add MCPs where needed, test and refine. That's the whole workflow.</div>
+        </div>
+        <div class="tk-card">
+          <div class="tk-num">Takeaway 06</div>
+          <div class="tk-title">Works the same in terminal and Claude Desktop</div>
+          <div class="tk-desc">Install a skill ZIP, ask Claude to install it, run it by description — the exact same process works whether you're in VS Code terminal, cursor, or the Claude Desktop app. No difference.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="rc-tag">Architecture</div>
+          <div class="rc-title">AIOS Automation Primitives</div>
+          <div class="rc-sub">The full capabilities/scripts/workflows taxonomy — where skills fit in the broader automation stack.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-quick-setup.html" class="related-card">
+          <div class="rc-tag">Installation</div>
+          <div class="rc-title">Quick Setup with Plug &amp; Play Modules</div>
+          <div class="rc-sub">How the /install command works — the same mechanism used to install skills from ZIPs.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+        <a href="learn-aios-workflows.html" class="related-card">
+          <div class="rc-tag">Automation</div>
+          <div class="rc-title">Workflows &amp; Recurring Tasks</div>
+          <div class="rc-sub">How to attach a skill to a cron job or trigger so it runs automatically without you invoking it.</div>
+          <span class="rc-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

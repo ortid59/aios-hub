@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setup & Context OS — Learn AIOS</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #1D4ED8;
+      --blue-light:  #EFF6FF;
+      --blue-mid:    #BFDBFE;
+      --teal:        #0D9488;
+      --teal-light:  #F0FDFA;
+      --teal-mid:    #99F6E4;
+      --gold:        #B45309;
+      --gold-light:  #FFFBEB;
+      --gold-mid:    #FDE68A;
+      --green:       #15803D;
+      --green-light: #F0FDF4;
+      --green-mid:   #BBF7D0;
+      --ink:         #0F172A;
+      --ink-dim:     #64748B;
+      --ink-faint:   #94A3B8;
+      --surface:     #FFFFFF;
+      --base:        #F0F4F8;
+      --border:      rgba(15,23,42,0.08);
+      --radius-sm:   6px;
+      --radius-md:   8px;
+      --radius-lg:   12px;
+      --radius-xl:   16px;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--base); color: var(--ink); line-height: 1.6; min-height: 100vh; }
+
+    /* NAV */
+    .topnav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 32px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .topnav-left { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 28px; height: 28px; background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 11px; }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--ink-faint); }
+    .breadcrumb-current { font-weight: 600; color: var(--ink); }
+    .badge-start { padding: 3px 10px; background: var(--green-light); color: var(--green); border-radius: 100px; font-size: 11px; font-weight: 600; }
+
+    /* LAYOUT */
+    .page-layout { display: grid; grid-template-columns: 240px 1fr; max-width: 1200px; margin: 0 auto; min-height: calc(100vh - 52px); }
+
+    /* SIDEBAR */
+    .sidebar { padding: 32px 0; position: sticky; top: 52px; height: calc(100vh - 52px); overflow-y: auto; border-right: 1px solid var(--border); background: var(--surface); }
+    .sidebar-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); padding: 0 20px 8px; }
+    .sidebar-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: var(--ink-dim); text-decoration: none; border-left: 2px solid transparent; transition: all 0.15s ease; }
+    .sidebar-link:hover { color: var(--ink); background: var(--base); }
+    .sidebar-link.active { color: var(--teal); border-left-color: var(--teal); background: var(--teal-light); font-weight: 500; }
+    .sidebar-divider { height: 1px; background: var(--border); margin: 12px 20px; }
+    .sidebar-step { width: 18px; height: 18px; border-radius: 50%; background: var(--base); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0; }
+    .sidebar-link.active .sidebar-step { background: var(--teal); border-color: var(--teal); color: #fff; }
+
+    /* MAIN */
+    .main { padding: 40px 48px; max-width: 860px; }
+
+    /* Hero */
+    .module-hero { margin-bottom: 40px; }
+    .module-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: var(--teal-light); color: var(--teal); border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; }
+    .module-title { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); line-height: 1.2; margin-bottom: 12px; }
+    .module-subtitle { font-size: 16px; color: var(--ink-dim); line-height: 1.6; max-width: 640px; }
+    .module-meta { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-dim); }
+    .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--border); }
+
+    /* Sections */
+    .section { margin-bottom: 48px; scroll-margin-top: 72px; }
+    .section-number { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; }
+    .section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 12px; }
+    .section-body { font-size: 14px; color: var(--ink-dim); line-height: 1.75; margin-bottom: 16px; }
+    .section-divider { height: 1px; background: var(--border); margin: 8px 0 40px; }
+
+    /* Callouts */
+    .callout { display: flex; gap: 12px; padding: 16px; border-radius: var(--radius-lg); margin: 20px 0; }
+    .callout.teal   { background: var(--teal-light);  border-left: 3px solid var(--teal); }
+    .callout.blue   { background: var(--blue-light);  border-left: 3px solid var(--blue); }
+    .callout.gold   { background: var(--gold-light);  border-left: 3px solid var(--gold); }
+    .callout.green  { background: var(--green-light); border-left: 3px solid var(--green); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 600; }
+
+    /* File tree */
+    .file-tree { background: #1E293B; border-radius: var(--radius-xl); padding: 20px 24px; margin: 20px 0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.9; }
+    .ft-dir   { color: #7DD3FC; font-weight: 600; }
+    .ft-file  { color: #94A3B8; }
+    .ft-key   { color: #86EFAC; font-weight: 600; }
+    .ft-note  { color: #475569; font-style: italic; }
+    .ft-slash { color: #64748B; }
+    .ft-indent { display: inline-block; }
+
+    /* File cards — context OS */
+    .context-files { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+    .context-file-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .context-file-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--base); }
+    .file-icon { width: 32px; height: 32px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .file-icon.fi1 { background: var(--blue-light); }
+    .file-icon.fi2 { background: var(--teal-light); }
+    .file-icon.fi3 { background: var(--gold-light); }
+    .file-icon.fi4 { background: var(--green-light); }
+    .file-name { font-size: 13px; font-weight: 700; color: var(--ink); font-family: 'SF Mono', monospace; }
+    .file-role { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+    .context-file-body { padding: 16px 18px; }
+    .file-desc { font-size: 13px; color: var(--ink-dim); line-height: 1.7; margin-bottom: 12px; }
+    .file-fields { display: flex; flex-direction: column; gap: 6px; }
+    .file-field { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; background: var(--base); border-radius: var(--radius-md); }
+    .field-label { font-size: 11px; font-weight: 700; color: var(--ink); font-family: 'SF Mono', monospace; white-space: nowrap; flex-shrink: 0; min-width: 180px; }
+    .field-hint { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+
+    /* Command cards */
+    .commands-list { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+    .command-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .command-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .command-chip { padding: 3px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; font-family: 'SF Mono', monospace; }
+    .chip-prime  { background: var(--teal-light);  color: var(--teal); }
+    .chip-plan   { background: var(--blue-light);  color: var(--blue); }
+    .chip-impl   { background: var(--gold-light);  color: var(--gold); }
+    .command-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+    .command-tag  { margin-left: auto; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px; background: var(--base); color: var(--ink-faint); }
+    .command-body { padding: 14px 16px; font-size: 13px; color: var(--ink-dim); line-height: 1.65; }
+    .command-body strong { font-weight: 600; color: var(--ink); }
+    .command-example { margin-top: 10px; padding: 8px 12px; background: #1E293B; border-radius: var(--radius-md); font-family: 'SF Mono', monospace; font-size: 11px; color: #7DD3FC; }
+
+    /* Skills vs Commands */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .compare-header { grid-column: 1/-1; padding: 12px 20px; background: #1E293B; color: #94A3B8; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .compare-col { background: var(--surface); padding: 18px; }
+    .compare-col.left { border-right: 1px solid var(--border); }
+    .compare-col-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .compare-col-badge { padding: 2px 8px; border-radius: 100px; font-size: 10px; font-weight: 700; }
+    .badge-cmd  { background: var(--blue-mid);  color: var(--blue); }
+    .badge-skl  { background: var(--teal-mid);  color: var(--teal); }
+    .compare-traits { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .compare-trait { font-size: 12px; color: var(--ink-dim); display: flex; gap: 7px; line-height: 1.5; }
+    .ct-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .left .ct-dot  { background: var(--blue); }
+    .right .ct-dot { background: var(--teal); }
+
+    /* Setup steps */
+    .setup-steps { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 24px 0; }
+    .setup-step { display: flex; align-items: stretch; border-bottom: 1px solid var(--border); }
+    .setup-step:last-child { border-bottom: none; }
+    .step-num-col { width: 56px; background: var(--base); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border-right: 1px solid var(--border); }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--teal); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
+    .step-content-col { padding: 16px 18px; background: var(--surface); flex: 1; }
+    .step-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .step-desc  { font-size: 13px; color: var(--ink-dim); line-height: 1.6; }
+    .step-code  { margin-top: 10px; padding: 10px 14px; background: #1E293B; border-radius: var(--radius-md); font-family: 'SF Mono', monospace; font-size: 12px; color: #86EFAC; }
+    .step-note  { margin-top: 8px; font-size: 11px; color: var(--ink-faint); }
+
+    /* Session workflow */
+    .session-flow { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; margin: 20px 0; }
+    .session-step { flex: 1; padding: 16px 14px; background: var(--surface); border-right: 1px solid var(--border); text-align: center; }
+    .session-step:last-child { border-right: none; }
+    .session-num { width: 24px; height: 24px; border-radius: 50%; background: var(--teal-light); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; margin: 0 auto 8px; }
+    .session-label { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .session-detail { font-size: 11px; color: var(--ink-dim); line-height: 1.5; }
+    .session-cmd { margin-top: 6px; display: inline-block; padding: 2px 8px; background: var(--base); border-radius: var(--radius-sm); font-family: 'SF Mono', monospace; font-size: 10px; color: var(--teal); font-weight: 600; }
+
+    /* Path grid */
+    .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+    .path-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; }
+    .path-card.recommended { border-color: var(--teal-mid); }
+    .path-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+    .path-card.recommended .path-badge { color: var(--teal); }
+    .path-card:not(.recommended) .path-badge { color: var(--ink-faint); }
+    .path-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+    .path-list  { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .path-item  { font-size: 12px; color: var(--ink-dim); display: flex; gap: 6px; }
+    .path-pro   { color: var(--green); font-weight: 600; }
+    .path-con   { color: var(--gold);  font-weight: 600; }
+
+    /* Tips */
+    .tips-list { display: flex; flex-direction: column; gap: 8px; margin: 20px 0; }
+    .tip-item  { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .tip-dot   { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
+    .tip-text  { font-size: 13px; color: var(--ink); line-height: 1.55; }
+    .tip-text strong { font-weight: 600; }
+
+    /* Related */
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
+    .related-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; text-decoration: none; transition: box-shadow 0.15s, border-color 0.15s; }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(15,23,42,0.08); border-color: var(--blue-mid); }
+    .related-card-tag   { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+    .related-card-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+    .related-card-sub   { font-size: 11px; color: var(--ink-faint); }
+    .related-card-arrow { font-size: 14px; color: var(--blue); margin-top: 10px; display: block; }
+
+    code { background: var(--base); padding: 1px 5px; border-radius: 4px; font-family: 'SF Mono', monospace; font-size: 12px; color: var(--teal); }
+
+    @media (max-width: 900px) {
+      .page-layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: 24px 20px; }
+      .compare-grid, .path-grid, .related-grid { grid-template-columns: 1fr; }
+      .session-flow { flex-direction: column; }
+      .session-step { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-left">
+    <div class="logo-mark">AI</div>
+    <div class="breadcrumb">
+      <a href="../hub.html">Hub</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Learn AIOS</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-current">Setup & Context OS</span>
+    </div>
+  </div>
+  <div class="topnav-right">
+    <span class="badge-start">Start Here</span>
+  </div>
+</nav>
+
+<div class="page-layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <a href="#overview"  class="sidebar-link active"><span class="sidebar-step">0</span> Overview</a>
+    <a href="#what"      class="sidebar-link"><span class="sidebar-step">1</span> What is a Workspace?</a>
+    <a href="#template"  class="sidebar-link"><span class="sidebar-step">2</span> Template Structure</a>
+    <a href="#claude-md" class="sidebar-link"><span class="sidebar-step">3</span> CLAUDE.md</a>
+    <a href="#context"   class="sidebar-link"><span class="sidebar-step">4</span> Context OS — The 4 Files</a>
+    <a href="#commands"  class="sidebar-link"><span class="sidebar-step">5</span> Core Commands</a>
+    <a href="#skills"    class="sidebar-link"><span class="sidebar-step">6</span> Commands vs. Skills</a>
+    <a href="#setup"     class="sidebar-link"><span class="sidebar-step">7</span> Installation Steps</a>
+    <a href="#session"   class="sidebar-link"><span class="sidebar-step">8</span> Session Workflow</a>
+    <div class="sidebar-divider"></div>
+    <a href="#tips"      class="sidebar-link"><span class="sidebar-step">★</span> Tips & Gotchas</a>
+    <a href="#next"      class="sidebar-link"><span class="sidebar-step">→</span> What's Next</a>
+  </aside>
+
+  <main class="main">
+
+    <div class="module-hero" id="overview">
+      <div class="module-tag">🚀 Start Here</div>
+      <h1 class="module-title">Setup & Context OS</h1>
+      <p class="module-subtitle">
+        Everything you need to get your first AIOS workspace running — the template structure,
+        the four context files that give Claude its intelligence, the core commands, and the
+        session workflow you'll use every single day.
+      </p>
+      <div class="module-meta">
+        <div class="meta-item">📽 Workshop recording</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">~25 min read</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Foundation — do this first</div>
+        <div class="meta-dot"></div>
+        <div class="meta-item">Includes template walkthrough</div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 1 — WHAT IS A WORKSPACE -->
+    <section class="section" id="what">
+      <div class="section-number">Section 01</div>
+      <h2 class="section-title">What Is an AIOS Workspace?</h2>
+      <p class="section-body">
+        A workspace is just a folder on your computer. That's it. Inside that folder live the context files,
+        commands, scripts, and outputs that turn Claude Code from a blank AI into something that knows
+        your business, your role, your strategy, and your data.
+      </p>
+      <p class="section-body">
+        You open the folder in VS Code (or any IDE), open a terminal, and start a Claude Code session.
+        Claude reads the workspace, loads your context, and is immediately oriented — who you are,
+        what you're trying to achieve, where everything lives. Every session starts fresh but never blank.
+      </p>
+
+      <div class="callout teal">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Context is everything.</strong> Without a properly filled context OS, every Claude session
+          starts from zero — you're re-explaining yourself constantly. With it, Claude walks in already
+          knowing your business, your strategy, your current numbers, and your role. That's the difference
+          between a general-purpose chatbot and a business operating system.
+        </div>
+      </div>
+
+      <div class="path-grid">
+        <div class="path-card recommended">
+          <div class="path-badge">✓ Recommended</div>
+          <div class="path-title">VS Code + Claude Code CLI</div>
+          <ul class="path-list">
+            <li class="path-item"><span class="path-pro">+</span> Full terminal access and power</li>
+            <li class="path-item"><span class="path-pro">+</span> Run multiple sessions side by side</li>
+            <li class="path-item"><span class="path-pro">+</span> Scripts, cron jobs, full automation</li>
+            <li class="path-item"><span class="path-pro">+</span> No UI limitations on context size</li>
+            <li class="path-item"><span class="path-con">~</span> Requires a bit more initial setup</li>
+          </ul>
+        </div>
+        <div class="path-card">
+          <div class="path-badge">Alternative</div>
+          <div class="path-title">Claude Desktop App</div>
+          <ul class="path-list">
+            <li class="path-item"><span class="path-pro">+</span> Easier for non-technical users</li>
+            <li class="path-item"><span class="path-pro">+</span> Built-in Claude Code integration</li>
+            <li class="path-item"><span class="path-con">~</span> UI limits on context processing</li>
+            <li class="path-item"><span class="path-con">~</span> Less control over automation</li>
+            <li class="path-item"><span class="path-con">~</span> Ceiling on what you can build</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="section-body">
+        Cursor works the same way — same folder, same commands, same approach. The workspace is
+        platform-agnostic. You can move it anywhere.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 2 — TEMPLATE STRUCTURE -->
+    <section class="section" id="template">
+      <div class="section-number">Section 02</div>
+      <h2 class="section-title">The Workspace Template — File by File</h2>
+      <p class="section-body">
+        The starter template gives you the scaffold. Download the ZIP, unzip it, rename the folder
+        to something that represents your business (e.g., <code>advisoraipartners-workspace</code>),
+        and open it in VS Code. Here's what's inside and what each piece does.
+      </p>
+
+      <div class="file-tree">
+        <div><span class="ft-key">your-workspace/</span></div>
+        <div><span class="ft-indent" style="padding-left:16px">├── </span><span class="ft-key">CLAUDE.md</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Loaded every session. The source of truth.</span></div>
+        <div style="height:6px"></div>
+        <div><span class="ft-indent" style="padding-left:16px">├── </span><span class="ft-dir">.claude/</span></div>
+        <div><span class="ft-indent" style="padding-left:32px">├── </span><span class="ft-dir">commands/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Slash commands (/prime, /create-plan, /implement)</span></div>
+        <div><span class="ft-indent" style="padding-left:48px">├── </span><span class="ft-file">prime.md</span></div>
+        <div><span class="ft-indent" style="padding-left:48px">├── </span><span class="ft-file">create-plan.md</span></div>
+        <div><span class="ft-indent" style="padding-left:48px">└── </span><span class="ft-file">implement.md</span></div>
+        <div><span class="ft-indent" style="padding-left:32px">└── </span><span class="ft-dir">skills/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Heavier plugins with folders, references, scripts</span></div>
+        <div><span class="ft-indent" style="padding-left:48px">├── </span><span class="ft-dir">mcp-integration/</span></div>
+        <div><span class="ft-indent" style="padding-left:48px">└── </span><span class="ft-dir">skill-creator/</span></div>
+        <div style="height:6px"></div>
+        <div><span class="ft-indent" style="padding-left:16px">├── </span><span class="ft-dir">context/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← The Context OS. Fill these in first.</span></div>
+        <div><span class="ft-indent" style="padding-left:32px">├── </span><span class="ft-key">business-info.md</span></div>
+        <div><span class="ft-indent" style="padding-left:32px">├── </span><span class="ft-key">personal-info.md</span></div>
+        <div><span class="ft-indent" style="padding-left:32px">├── </span><span class="ft-key">strategy.md</span></div>
+        <div><span class="ft-indent" style="padding-left:32px">└── </span><span class="ft-key">current-data.md</span></div>
+        <div style="height:6px"></div>
+        <div><span class="ft-indent" style="padding-left:16px">├── </span><span class="ft-dir">plans/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Plans created by /create-plan</span></div>
+        <div><span class="ft-indent" style="padding-left:16px">├── </span><span class="ft-dir">outputs/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Deliverables, analyses, work products</span></div>
+        <div><span class="ft-indent" style="padding-left:16px">├── </span><span class="ft-dir">reference/</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Templates, patterns, reusable materials</span></div>
+        <div><span class="ft-indent" style="padding-left:16px">└── </span><span class="ft-dir">scripts/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-note">← Automation scripts and cron jobs</span></div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">📁</div>
+        <div class="callout-body">
+          <strong>Hidden files on Mac:</strong> The <code>.claude/</code> folder starts with a dot, so it's hidden
+          by default in Finder. Press <strong>Cmd + Shift + Period</strong> to toggle hidden files on and off.
+          You'll need to do this once after downloading the template to confirm everything is there.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 3 — CLAUDE.MD -->
+    <section class="section" id="claude-md">
+      <div class="section-number">Section 03</div>
+      <h2 class="section-title">CLAUDE.md — The Foundation Document</h2>
+      <p class="section-body">
+        <code>CLAUDE.md</code> is automatically loaded at the start of every Claude Code session.
+        It's the first thing Claude reads — the document that tells it what this workspace is,
+        where everything lives, and how to operate within it. Think of it as the orientation brief
+        Claude gets every time it walks in the door.
+      </p>
+
+      <div class="tips-list">
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Always-loaded context:</strong> Every session, Claude reads CLAUDE.md first. It knows the workspace structure, what commands are available, and the rules for maintaining the workspace — before you've typed a single word.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Living document:</strong> Whenever Claude makes a significant change to the workspace — adding a new command, creating a new output type, changing the structure — it must update CLAUDE.md to reflect that. The instruction is baked into the template itself.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>What it contains:</strong> The workspace structure (as a directory map), descriptions of each key directory, the available slash commands, the session workflow, and the rule that CLAUDE.md must always match reality. Keep it current — stale CLAUDE.md = confused sessions.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Don't bloat it:</strong> CLAUDE.md is loaded every session, so size matters. Keep it accurate and minimal. Deep detail belongs in the context files or command files, not here. This is the map, not the territory.</div>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">⚙️</div>
+        <div class="callout-body">
+          <strong>The self-maintaining workspace:</strong> Because CLAUDE.md instructs Claude to update it
+          whenever the workspace changes, the workspace becomes self-documenting. Add a new command and
+          Claude will add it to CLAUDE.md without being told. This is what makes the workspace stay
+          coherent across hundreds of sessions.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 4 — CONTEXT OS -->
+    <section class="section" id="context">
+      <div class="section-number">Section 04</div>
+      <h2 class="section-title">Context OS — The Four Files</h2>
+      <p class="section-body">
+        The <code>context/</code> folder is the heart of the AIOS setup. These four files are what
+        Claude reads during <code>/prime</code> to fully orient itself. Filling them in is the
+        single most important thing you do when setting up a workspace — for yourself or a client.
+        Everything else builds on top of this foundation.
+      </p>
+      <p class="section-body">
+        Each file has a specific job. Together they answer the four questions every AI assistant
+        needs answered to be genuinely useful: <em>What is this business? Who am I helping? What are we trying to achieve? Where do things stand right now?</em>
+      </p>
+
+      <div class="context-files">
+
+        <div class="context-file-card">
+          <div class="context-file-header">
+            <div class="file-icon fi1">🏢</div>
+            <div>
+              <div class="file-name">business-info.md</div>
+              <div class="file-role">Organizational context — what and who</div>
+            </div>
+          </div>
+          <div class="context-file-body">
+            <div class="file-desc">
+              Sets the stage for everything else. Describes the organization — what it does, who it serves,
+              its products or services, stage, team size, and any important constraints. Claude reads this
+              to understand what kind of work it's supporting before it reads anything else about your role or goals.
+            </div>
+            <div class="file-fields">
+              <div class="file-field">
+                <span class="field-label">Organization Overview</span>
+                <span class="field-hint">What does the business do? Who does it serve? What's its mission or focus?</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Products / Services</span>
+                <span class="field-hint">Primary offerings or areas. Helps Claude understand what you're building or delivering.</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Key Context</span>
+                <span class="field-hint">Stage, team size, market position, recent changes, or constraints Claude should know.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-file-card">
+          <div class="context-file-header">
+            <div class="file-icon fi2">👤</div>
+            <div>
+              <div class="file-name">personal-info.md</div>
+              <div class="file-role">Your role — who Claude is helping</div>
+            </div>
+          </div>
+          <div class="context-file-body">
+            <div class="file-desc">
+              Defines your place within the business. Claude needs to know who it's talking to —
+              your title, what you're accountable for, what decisions you make, what your daily
+              work looks like. This is what lets Claude tailor every response and output to your
+              specific situation rather than giving generic advice.
+            </div>
+            <div class="file-fields">
+              <div class="file-field">
+                <span class="field-label">Your Role</span>
+                <span class="field-hint">Title, function, primary responsibilities. What are you accountable for?</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Key Responsibilities</span>
+                <span class="field-hint">Core areas you manage. Helps Claude understand what tasks are relevant.</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">How This Workspace Helps</span>
+                <span class="field-hint">What recurring tasks, analyses, or decisions do you want Claude's help with?</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-file-card">
+          <div class="context-file-header">
+            <div class="file-icon fi3">🎯</div>
+            <div>
+              <div class="file-name">strategy.md</div>
+              <div class="file-role">Current priorities — where you're going</div>
+            </div>
+          </div>
+          <div class="context-file-body">
+            <div class="file-desc">
+              Captures what you're actually working toward right now. This is where Claude gets
+              aligned with your direction — not just what the business does, but what it's optimizing
+              for this quarter or year. Without this, Claude is helpful but not strategic. With it,
+              every suggestion and output is pointed in the right direction.
+            </div>
+            <div class="file-fields">
+              <div class="file-field">
+                <span class="field-label">Current Focus Period</span>
+                <span class="field-hint">What timeframe does this strategy cover? Q1? Full year? A specific initiative?</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Strategic Priorities</span>
+                <span class="field-hint">The 2–5 things you're actually focused on achieving. Be specific.</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">What Success Looks Like</span>
+                <span class="field-hint">Outcomes and milestones that define "done" for this period.</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Key Decisions or Open Questions</span>
+                <span class="field-hint">Strategic tensions or trade-offs Claude should be aware of.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="context-file-card">
+          <div class="context-file-header">
+            <div class="file-icon fi4">📊</div>
+            <div>
+              <div class="file-name">current-data.md</div>
+              <div class="file-role">Live numbers — the chef's kiss on top</div>
+            </div>
+          </div>
+          <div class="context-file-body">
+            <div class="file-desc">
+              The numbers behind the narrative. Revenue, users, conversion rates, pipeline status,
+              team capacity, recent wins and losses — anything Claude needs to do real analysis
+              rather than generic advice. Starts as a manually updated snapshot; eventually becomes
+              a live file refreshed by scripts pulling from your actual data sources.
+            </div>
+            <div class="file-fields">
+              <div class="file-field">
+                <span class="field-label">Key Metrics</span>
+                <span class="field-hint">A table: Metric | Current Value | Target | Notes. Fill in what matters most.</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Current State</span>
+                <span class="field-hint">Qualitative: status of key projects, recent wins/losses, blockers, capacity.</span>
+              </div>
+              <div class="file-field">
+                <span class="field-label">Data Sources</span>
+                <span class="field-hint">Where this data comes from — useful for building automation scripts later.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout blue">
+        <div class="callout-icon">🔗</div>
+        <div class="callout-body">
+          <strong>How they connect:</strong> business-info sets the organizational stage → personal-info defines
+          your place in it → strategy.md says what you're optimizing toward → current-data gives Claude
+          the real numbers. Each file references the others so Claude sees the complete picture, not
+          four disconnected documents. Together they become the intelligence layer that makes everything else possible.
+        </div>
+      </div>
+
+      <div class="callout gold">
+        <div class="callout-icon">📈</div>
+        <div class="callout-body">
+          <strong>Automate current-data over time:</strong> Once you're comfortable, add a script to
+          <code>scripts/</code> that pulls from your real data sources — YouTube Analytics, Google Analytics,
+          Stripe, your CRM, your P&L — and refreshes <code>current-data.md</code> automatically.
+          That's when the daily brief and business intelligence features really come alive.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 5 — COMMANDS -->
+    <section class="section" id="commands">
+      <div class="section-number">Section 05</div>
+      <h2 class="section-title">Core Commands — The Three Workhorses</h2>
+      <p class="section-body">
+        Commands live in <code>.claude/commands/</code> as markdown files. They're invoked with
+        a slash prefix in your Claude Code session. The template ships with three that you'll use
+        in every session — think of them as the engine, not the content. They work across any task,
+        with any context.
+      </p>
+
+      <div class="commands-list">
+
+        <div class="command-card">
+          <div class="command-header">
+            <div class="command-chip chip-prime">/prime</div>
+            <div class="command-name">Session initialization</div>
+            <div class="command-tag">Run first, every time</div>
+          </div>
+          <div class="command-body">
+            <strong>Purpose:</strong> Load all context and orient Claude for the session. Run this at the
+            start of every single session — it's the ritual that makes the workspace system work.
+            Claude will scan the workspace, read your context files, and confirm back: who you are,
+            what the workspace is for, what commands are available, your current strategy, and a
+            confirmation it's ready to help.
+            <div class="command-example">→ Run ls, read CLAUDE.md and context/ → summarize understanding → confirm ready</div>
+          </div>
+        </div>
+
+        <div class="command-card">
+          <div class="command-header">
+            <div class="command-chip chip-plan">/create-plan</div>
+            <div class="command-name">Plan before you build</div>
+            <div class="command-tag">Use before any substantial change</div>
+          </div>
+          <div class="command-body">
+            <strong>Purpose:</strong> Before making significant changes — adding a command, building a
+            new workflow, restructuring the workspace — use this to create a thorough plan. The plan
+            lives in <code>plans/</code> with a dated filename so you have a history. Claude will think
+            through the problem, document the approach, and list step-by-step tasks before touching anything.
+            <div class="command-example">/create-plan add a competitor analysis command for my podcast</div>
+          </div>
+        </div>
+
+        <div class="command-card">
+          <div class="command-header">
+            <div class="command-chip chip-impl">/implement</div>
+            <div class="command-name">Execute a plan</div>
+            <div class="command-tag">Use after /create-plan</div>
+          </div>
+          <div class="command-body">
+            <strong>Purpose:</strong> Takes a plan created by <code>/create-plan</code> and executes it
+            step by step. Reads the plan, works through each task in order, validates the work, and
+            updates the plan status. These two commands are designed to be used together — plan first,
+            implement second. This separation prevents half-baked changes and keeps a record of intent.
+            <div class="command-example">/implement plans/2026-04-25-competitor-analysis-command.md</div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="section-body">
+        Beyond these three, you'll build your own commands over time — <code>/data-audit</code>,
+        <code>/daily-brief</code>, <code>/analyze-competitor</code>, whatever your recurring workflows demand.
+        Each one is just a markdown file in <code>.claude/commands/</code> that tells Claude what
+        to do step by step. That's the entire mechanism.
+      </p>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 6 — COMMANDS VS SKILLS -->
+    <section class="section" id="skills">
+      <div class="section-number">Section 06</div>
+      <h2 class="section-title">Commands vs. Skills — What's the Difference?</h2>
+      <p class="section-body">
+        Claude Code technically calls both "skills," but in practice they're two different things
+        with different weights. Getting clear on the distinction helps you know what to reach for
+        when you're building new functionality.
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-header">Commands vs. Skills — a practical distinction</div>
+        <div class="compare-col left">
+          <div class="compare-col-title">
+            Commands
+            <span class="compare-col-badge badge-cmd">Lightweight</span>
+          </div>
+          <ul class="compare-traits">
+            <li class="compare-trait"><span class="ct-dot"></span>A single markdown file in <code>.claude/commands/</code></li>
+            <li class="compare-trait"><span class="ct-dot"></span>Invocable with a slash command (<code>/prime</code>, <code>/daily-brief</code>)</li>
+            <li class="compare-trait"><span class="ct-dot"></span>Works as the glue that stitches together context, data, and functionality in a sequence of steps</li>
+            <li class="compare-trait"><span class="ct-dot"></span>Can reference scripts and other files within the workspace</li>
+            <li class="compare-trait"><span class="ct-dot"></span>Good for: workflows you want to invoke manually on-demand or run on a schedule</li>
+          </ul>
+        </div>
+        <div class="compare-col right">
+          <div class="compare-col-title">
+            Skills
+            <span class="compare-col-badge badge-skl">Heavyweight</span>
+          </div>
+          <ul class="compare-traits">
+            <li class="compare-trait"><span class="ct-dot"></span>A full folder in <code>.claude/skills/</code> with a <code>SKILL.md</code> entry point</li>
+            <li class="compare-trait"><span class="ct-dot"></span>Contains subfolders: <code>examples/</code>, <code>references/</code>, <code>scripts/</code></li>
+            <li class="compare-trait"><span class="ct-dot"></span>Teaches Claude a new capability — design patterns, API access, tool usage — not just a workflow</li>
+            <li class="compare-trait"><span class="ct-dot"></span>Can be user-invocable or non-invocable (background capability)</li>
+            <li class="compare-trait"><span class="ct-dot"></span>Good for: giving Claude access to external systems, APIs, or specialized domain knowledge</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout teal">
+        <div class="callout-icon">🧩</div>
+        <div class="callout-body">
+          <strong>In practice:</strong> A command says "do these steps in this order." A skill says "here's
+          how to use this tool or think about this domain." Your <code>/daily-brief</code> command might
+          use the MCP integration skill to pull data from external sources — the command orchestrates,
+          the skill provides the capability. They're designed to work together.
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 7 — INSTALLATION -->
+    <section class="section" id="setup">
+      <div class="section-number">Section 07</div>
+      <h2 class="section-title">Getting Set Up — Step by Step</h2>
+      <p class="section-body">
+        Here's the exact sequence for getting your first workspace running.
+        Most of you will fly through steps 1–4. The time investment is in step 5 — filling in your context.
+        That's where the real value gets created.
+      </p>
+
+      <div class="setup-steps">
+        <div class="setup-step">
+          <div class="step-num-col"><div class="step-num">1</div></div>
+          <div class="step-content-col">
+            <div class="step-title">Install VS Code (or Cursor)</div>
+            <div class="step-desc">Download from code.visualstudio.com. If you already have it, skip ahead. Cursor works identically — same folder structure, same commands, same approach.</div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num-col"><div class="step-num">2</div></div>
+          <div class="step-content-col">
+            <div class="step-title">Install Claude Code CLI</div>
+            <div class="step-desc">Open a terminal in VS Code (Terminal → New Terminal) and run the install command for your OS.</div>
+            <div class="step-code">npm install -g @anthropic-ai/claude-code</div>
+            <div class="step-note">You'll need Node.js installed. If you don't have it: brew install node (Mac) or download from nodejs.org.</div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num-col"><div class="step-num">3</div></div>
+          <div class="step-content-col">
+            <div class="step-title">Download and unzip the template</div>
+            <div class="step-desc">Get the starter template ZIP from the course materials. Unzip it and rename the folder to something that represents your business.</div>
+            <div class="step-code">e.g. → advisoraipartners-workspace/</div>
+            <div class="step-note">Mac: Press Cmd+Shift+Period to reveal hidden files after unzipping — the .claude/ folder will be invisible otherwise.</div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num-col"><div class="step-num">4</div></div>
+          <div class="step-content-col">
+            <div class="step-title">Open the folder in VS Code and start Claude Code</div>
+            <div class="step-desc">File → Open Folder, select your workspace. Then open a terminal and start a Claude Code session.</div>
+            <div class="step-code">claude</div>
+            <div class="step-note">Claude Code will authenticate with your Anthropic account. Recommended plan: Max ($200/mo) for heavy use, or start with Pro ($20/mo) and upgrade when you hit limits.</div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num-col"><div class="step-num">5</div></div>
+          <div class="step-content-col">
+            <div class="step-title">Fill in your Context OS files</div>
+            <div class="step-desc">Open each file in <code>context/</code> and fill in your information. Start with business-info.md, then personal-info.md, then strategy.md. current-data.md can wait until you have real numbers to put in.</div>
+            <div class="step-code">context/business-info.md → context/personal-info.md → context/strategy.md</div>
+            <div class="step-note">Don't worry about perfection. A rough draft is infinitely better than nothing. Claude will get dramatically smarter with each sentence you add.</div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="step-num-col"><div class="step-num">6</div></div>
+          <div class="step-content-col">
+            <div class="step-title">Run /prime and confirm it works</div>
+            <div class="step-desc">In your Claude Code session, type the prime command. Claude will read your workspace and summarize back what it understands about you, your business, and your goals. If it sounds right, you're ready to go.</div>
+            <div class="step-code">/prime</div>
+            <div class="step-note">Claude will list: who you are, what the workspace is for, available commands, your current strategy, and a readiness confirmation.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- SECTION 8 — SESSION WORKFLOW -->
+    <section class="section" id="session">
+      <div class="section-number">Section 08</div>
+      <h2 class="section-title">Your Daily Session Workflow</h2>
+      <p class="section-body">
+        Once the workspace is set up, every day looks the same. The ritual is the same whether
+        you're doing a 15-minute task or a 4-hour build session. Consistency here is what makes
+        the workspace feel like a real operating system rather than a chatbot.
+      </p>
+
+      <div class="session-flow">
+        <div class="session-step">
+          <div class="session-num">1</div>
+          <div class="session-label">Start</div>
+          <div class="session-detail">Open workspace in VS Code, open terminal</div>
+          <div class="session-cmd">claude</div>
+        </div>
+        <div class="session-step">
+          <div class="session-num">2</div>
+          <div class="session-label">Prime</div>
+          <div class="session-detail">Load context, orient Claude for the session</div>
+          <div class="session-cmd">/prime</div>
+        </div>
+        <div class="session-step">
+          <div class="session-num">3</div>
+          <div class="session-label">Work</div>
+          <div class="session-detail">Use commands or direct Claude with tasks in natural language</div>
+        </div>
+        <div class="session-step">
+          <div class="session-num">4</div>
+          <div class="session-label">Plan</div>
+          <div class="session-detail">For anything substantial, plan it before building</div>
+          <div class="session-cmd">/create-plan</div>
+        </div>
+        <div class="session-step">
+          <div class="session-num">5</div>
+          <div class="session-label">Execute</div>
+          <div class="session-detail">Implement the plan step by step</div>
+          <div class="session-cmd">/implement</div>
+        </div>
+        <div class="session-step">
+          <div class="session-num">6</div>
+          <div class="session-label">Maintain</div>
+          <div class="session-detail">Claude updates CLAUDE.md and context/ as the workspace evolves</div>
+        </div>
+      </div>
+
+      <div class="callout green">
+        <div class="callout-icon">✓</div>
+        <div class="callout-body">
+          <strong>One workspace, keep building layers:</strong> You don't need a new workspace for every project.
+          Build layers on top of the same workspace. Add new commands. Add new data sources. Add context
+          as your business evolves. The workspace grows with you — that's what makes it an operating system
+          rather than a one-off tool. Separate workspaces only when you need separate contexts entirely
+          (e.g., a completely different business, or a team that shouldn't see your full workspace).
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- TIPS -->
+    <section class="section" id="tips">
+      <div class="section-number">Tips & Gotchas</div>
+      <h2 class="section-title">Things Worth Knowing</h2>
+
+      <div class="tips-list">
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Show hidden files first.</strong> On Mac, <code>Cmd + Shift + Period</code> toggles hidden files in Finder. You need this to see the <code>.claude/</code> folder after downloading the template. Easy to miss; causes a lot of confusion when people think the template is empty.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>/prime every session, no exceptions.</strong> Claude Code sessions don't carry state between them. If you skip /prime, Claude is working without your context — it'll give generic responses instead of business-aware ones. Make it automatic.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Fill in context before you do anything else.</strong> The instinct is to start building commands and workflows immediately. Don't. Empty context files mean every output is generic. Even rough, incomplete context files make a massive difference. Do those first.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Max plan is worth it.</strong> The $200/month Max plan removes the usage friction that derails deep work sessions. If you're using this for your business, the first good session will pay for the month. The $20/mo Pro plan works — upgrade when you start hitting limits regularly.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Commands vs. the VS Code sidebar.</strong> Some people use the Claude Code panel built into VS Code rather than the terminal. The terminal approach (recommended here) is faster and can process more context. The UI is limited by its interface. Use the terminal.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>current-data.md starts manual, becomes automated.</strong> Fill it in manually at first — even rough numbers are better than nothing. As you get comfortable, add scripts to <code>scripts/</code> that pull from your actual data sources and keep this file fresh automatically.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>CLAUDE.md must always match reality.</strong> If you add a new command but don't update CLAUDE.md, future sessions won't know it exists. Claude is instructed to update this file after any structural change — but always worth checking if something feels like it's being forgotten.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Multiple terminals = multiple sessions.</strong> You can run several Claude Code sessions in parallel by opening multiple terminals in VS Code. Each session is isolated. Useful for running one session for focused work while another handles a background task.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- WHAT'S NEXT -->
+    <section class="section" id="next">
+      <div class="section-number">What Comes Next</div>
+      <h2 class="section-title">The Learning Path from Here</h2>
+      <p class="section-body">
+        Context OS is the foundation. Data OS builds on top of it. Once you have both running,
+        you start adding commands, then automating them. Here's the week-by-week sequence these
+        workshops were originally designed around.
+      </p>
+
+      <div class="tips-list">
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Day 1 (this module):</strong> Setup + Context OS — get the workspace running and fill in your four context files.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Day 2 — Data OS:</strong> Integrate your real data sources. P&L, YouTube Analytics, CRM, Stripe, Bitly. Build the local database layer that makes current-data.md live and automatic.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Day 3 — Custom Workflows:</strong> Build your first custom commands. Create a /data-audit, a /daily-brief, or any recurring workflow you currently do manually. Use /create-plan + /implement to build them safely.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Day 4 — Recurring Tasks & Cron:</strong> Wire your best workflows to triggers and schedules. Work done while you sleep — the daily brief, the data refresh, the status check. This is the delegation layer.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-dot"></div>
+          <div class="tip-text"><strong>Day 5 and beyond — AIOS as a Service:</strong> Take what you've built for yourself and start offering it to clients. Refer to the Builder Mindset module for the delivery process and pricing framework.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- RELATED -->
+    <section class="section">
+      <div class="section-number">Continue Learning</div>
+      <h2 class="section-title">Related Modules</h2>
+      <div class="related-grid">
+        <a href="learn-aios-primitives.html" class="related-card">
+          <div class="related-card-tag">Foundation</div>
+          <div class="related-card-title">AIOS Automation Primitives</div>
+          <div class="related-card-sub">Capabilities, Scripts, Workflows — the building blocks you'll add on top of your Context OS.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+        <a href="learn-aios-security.html" class="related-card">
+          <div class="related-card-tag">Security</div>
+          <div class="related-card-title">Claude Code Security Basics</div>
+          <div class="related-card-sub">Lock down your workspace before you put real client data in it. Six layers, five minutes.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+        <a href="learn-aios-builder-mindset.html" class="related-card">
+          <div class="related-card-tag">Strategy</div>
+          <div class="related-card-title">Thinking Like an AIOS Builder</div>
+          <div class="related-card-sub">The methodology, mindset, and business model for building and selling AIOS systems.</div>
+          <span class="related-card-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id], .module-hero');
+  const links = document.querySelectorAll('.sidebar-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const t = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+        if (t) t.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
