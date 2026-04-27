@@ -659,6 +659,25 @@ function switchTab(t){
   document.getElementById('preview-tab-label').textContent = t;
   renderPicker();
   updatePreview();
+  updateHeroFromTab(t);
+}
+
+function updateHeroFromTab(t){
+  const blended = getBlended(t);
+  const total = getTotal(t);
+  if(blended <= 0){
+    document.getElementById('h-3yr').textContent = '—';
+    document.getElementById('h-7yr').textContent = '—';
+    document.getElementById('h-3yr-lbl').textContent = 'Build Portfolio '+t+' to see';
+    document.getElementById('h-7yr-lbl').textContent = 'Build Portfolio '+t+' to see';
+    return;
+  }
+  const d = calcGrowth(blended, 84);
+  document.getElementById('h-3yr').textContent = fmt(d[36]);
+  document.getElementById('h-7yr').textContent = fmt(d[84]);
+  const suffix = total === 100 ? '' : ' (partial)';
+  document.getElementById('h-3yr-lbl').textContent = `Portfolio ${t} · ${blended.toFixed(1)}% blended${suffix}`;
+  document.getElementById('h-7yr-lbl').textContent = `Portfolio ${t} · ${blended.toFixed(1)}% blended${suffix}`;
 }
 
 // ════════════════════════════════════
@@ -714,10 +733,10 @@ function onAllocInput(inp){
   if(v > 100) v = 100;
   if(v === 0) delete PORTFOLIOS[activeTab][id];
   else PORTFOLIOS[activeTab][id] = v;
-  // update visual on this row
   inp.classList.toggle('has-val', v > 0);
   inp.closest('.fund-row').classList.toggle('included', v > 0);
   updatePreview();
+  updateHeroFromTab(activeTab);
 }
 
 // ════════════════════════════════════
@@ -813,11 +832,13 @@ function loadPreset(key){
   PORTFOLIOS[activeTab] = {...PRESETS[key]};
   renderPicker();
   updatePreview();
+  updateHeroFromTab(activeTab);
 }
 function clearPortfolio(){
   PORTFOLIOS[activeTab] = {};
   renderPicker();
   updatePreview();
+  updateHeroFromTab(activeTab);
 }
 
 // ════════════════════════════════════
