@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dev Tracker — Advisor AI Partners</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue:         #2563EB;
+      --blue-light:   #DBEAFE;
+      --teal:         #0D9488;
+      --teal-light:   #CCFBF1;
+      --gold:         #D97706;
+      --gold-light:   #FEF3C7;
+      --purple:       #7C3AED;
+      --purple-light: #EDE9FE;
+      --green:        #16A34A;
+      --green-light:  #DCFCE7;
+      --red:          #DC2626;
+      --red-light:    #FEE2E2;
+      --slate:        #475569;
+      --bg:           #F8FAFC;
+      --surface:      #FFFFFF;
+      --border:       #E2E8F0;
+      --text:         #0F172A;
+      --muted:        #64748B;
+      --faint:        #94A3B8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .syne { font-family: 'Syne', sans-serif; }
+    .mono { font-family: 'Geist Mono', monospace; }
+
+    /* ── Header ── */
+    .header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .header-inner { max-width: 1200px; margin: 0 auto; padding: 11px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--blue); display: flex; align-items: center; justify-content: center; }
+    .logo-mark span { color: #fff; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; }
+    .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+    .header-meta { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--faint); letter-spacing: 0.06em; }
+
+    /* ── Nav ── */
+    .nav-bar { background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .nav-bar::-webkit-scrollbar { display: none; }
+    .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: flex-end; gap: 2px; }
+    .nav-tab { padding: 10px 18px; border: none; background: transparent; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: color 0.15s, border-color 0.15s; display: flex; align-items: center; gap: 7px; }
+    .nav-tab:hover { color: var(--text); }
+    .nav-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Main ── */
+    .main { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Section label ── */
+    .section-label { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .section-label span { font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.18em; white-space: nowrap; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── Badges ── */
+    .badge { font-family: 'Geist Mono', monospace; font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; padding: 3px 9px; border-radius: 20px; display: inline-block; }
+    .badge-active   { background: var(--green-light);  color: var(--green); }
+    .badge-review   { background: var(--blue-light);   color: var(--blue); }
+    .badge-scoping  { background: var(--purple-light); color: var(--purple); }
+    .badge-blocked  { background: var(--red-light);    color: var(--red); }
+    .badge-complete { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+    .badge-paused   { background: var(--gold-light);   color: var(--gold); }
+    .badge-strategic{ background: #F1F5F9; color: var(--slate); border: 1px solid #CBD5E1; }
+
+    /* ── Overview grid ── */
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .client-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s; position: relative; overflow: hidden; }
+    .client-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 12px 0 0 12px; }
+    .client-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); border-color: #CBD5E1; transform: translateY(-1px); }
+    .client-card.blue::before   { background: var(--blue); }
+    .client-card.teal::before   { background: var(--teal); }
+    .client-card.purple::before { background: var(--purple); }
+    .client-card.gold::before   { background: var(--gold); }
+    .cc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .cc-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+    .cc-sub  { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* ── Progress ── */
+    .progress-wrap { margin: 12px 0 6px; }
+    .progress-label { display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .progress-label span { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--muted); }
+    .progress-label strong { font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 600; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+    .fill-blue   { background: var(--blue); }
+    .fill-teal   { background: var(--teal); }
+    .fill-purple { background: var(--purple); }
+    .fill-gold   { background: var(--gold); }
+    .fill-green  { background: var(--green); }
+
+    /* ── Detail page ── */
+    .detail-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+    @media (max-width: 860px) { .detail-layout { grid-template-columns: 1fr; } }
+    .detail-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .detail-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: #fff; flex-shrink: 0; }
+    .detail-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+    .detail-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+    /* ── Cards ── */
+    .scope-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 18px; }
+    .scope-card > h3 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--text); }
+    .side-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; }
+    .side-card > h3 { font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 12px; }
+
+    /* ── Milestone list ── */
+    .milestone-list { list-style: none; }
+    .milestone-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .milestone-item:last-child { border-bottom: none; }
+    .ms-check { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; margin-top: 1px; }
+    .ms-check.done { background: var(--green); border-color: var(--green); }
+    .ms-check.done::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+    .ms-check.in-progress { background: var(--blue-light); border-color: var(--blue); }
+    .ms-check.in-progress::after { content: '→'; color: var(--blue); font-size: 11px; font-weight: 700; }
+    .ms-body { flex: 1; }
+    .ms-title { font-size: 13px; font-weight: 500; line-height: 1.4; }
+    .ms-title.done-text { text-decoration: line-through; color: var(--muted); }
+    .ms-note { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+    /* ── Info rows ── */
+    .info-row { display: flex; align-items: flex-start; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #F1F5F9; font-size: 12px; }
+    .info-row:last-child { border-bottom: none; }
+    .info-row .lbl { color: var(--muted); flex-shrink: 0; margin-right: 12px; }
+    .info-row .val { font-weight: 500; text-align: right; }
+
+    /* ── Next steps ── */
+    .next-step { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #F1F5F9; font-size: 12px; }
+    .next-step:last-child { border-bottom: none; }
+    .step-num { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; background: var(--blue-light); color: var(--blue); font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .step-text { flex: 1; line-height: 1.5; padding-top: 1px; }
+
+    /* ── Tags ── */
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-family: 'Geist Mono', monospace; font-size: 9px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); margin: 2px 2px 0 0; }
+
+    /* ── Notes ── */
+    .notes-area { width: 100%; min-height: 90px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; resize: vertical; outline: none; transition: border-color 0.15s; line-height: 1.6; }
+    .notes-area:focus { border-color: var(--blue); }
+    .save-btn { margin-top: 8px; padding: 6px 14px; background: var(--blue); color: #fff; border: none; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+    .save-btn:hover { background: #1D4ED8; }
+    .save-indicator { font-family: 'Geist Mono', monospace; font-size: 10px; color: var(--green); margin-left: 8px; display: none; }
+
+    /* ── AIOS Install tracker ── */
+    .install-grid { display: flex; flex-direction: column; gap: 12px; }
+    .install-row {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px 20px;
+      display: grid; grid-template-columns: 1fr 1fr 180px auto; gap: 16px; align-items: center;
+    }
+    .install-row.strategic { border-style: dashed; border-color: #CBD5E1; background: #FAFAFA; }
+    .install-client { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+    .install-contact { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* Stage pipeline */
+    .stage-pipe { display: flex; gap: 4px; }
+    .stage-dot {
+      height: 6px; flex: 1; border-radius: 4px;
+      background: var(--border);
+      position: relative;
+    }
+    .stage-dot.done  { background: var(--green); }
+    .stage-dot.active { background: var(--blue); }
+
+    .stage-labels { display: flex; gap: 4px; margin-top: 4px; }
+    .stage-lbl { flex: 1; font-family: 'Geist Mono', monospace; font-size: 8px; color: var(--faint); text-align: center; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stage-lbl.done-lbl  { color: var(--green); }
+    .stage-lbl.active-lbl { color: var(--blue); font-weight: 600; }
+
+    .install-pct { font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 600; color: var(--text); text-align: right; }
+    .install-pct span { font-size: 10px; color: var(--muted); }
+
+    .remove-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border); background: transparent; color: var(--faint); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; line-height: 1; }
+    .remove-btn:hover { background: var(--red-light); color: var(--red); border-color: var(--red); }
+
+    /* Add install form */
+    .add-install-bar { display: flex; gap: 10px; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+    .add-install-bar input, .add-install-bar select {
+      font-family: 'Space Grotesk', sans-serif; font-size: 12px;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 7px 10px; background: var(--bg); outline: none; color: var(--text);
+    }
+    .add-install-bar input:focus, .add-install-bar select:focus { border-color: var(--blue); }
+    .add-install-bar input[placeholder="Client name"] { width: 140px; }
+    .add-install-bar input[placeholder="Contact name"] { width: 120px; }
+    .add-btn { padding: 7px 16px; background: var(--blue); color: #fff; border: none; border-radius: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+    .add-btn:hover { background: #1D4ED8; }
+
+    /* Stats strip */
+    .stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+    .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; text-align: center; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+    .stat-lbl { font-family: 'Geist Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--faint); margin-top: 2px; }
+
+    /* AIOS stage editor popup */
+    .stage-clickable { cursor: pointer; }
+    .stage-clickable:hover .stage-dot { opacity: 0.75; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark"><span>A</span></div>
+      <span class="logo-text syne">Advisor AI Partners</span>
+      <span style="color:var(--border);margin:0 6px">·</span>
+      <span class="mono" style="font-size:11px;color:var(--muted)">Dev Tracker</span>
+    </div>
+    <div class="header-meta" id="lastSaved">Apr 26, 2026</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <div class="nav-inner">
+    <button class="nav-tab active" data-page="overview">Overview</button>
+    <button class="nav-tab" data-page="step-up">
+      <span class="nav-dot" style="background:var(--blue)"></span>Step Up AUP
+    </button>
+    <button class="nav-tab" data-page="coastal">
+      <span class="nav-dot" style="background:var(--teal)"></span>Coastal Maverick
+    </button>
+    <button class="nav-tab" data-page="optimus">
+      <span class="nav-dot" style="background:var(--purple)"></span>Optimus
+    </button>
+    <button class="nav-tab" data-page="aios">
+      <span class="nav-dot" style="background:var(--gold)"></span>AIOS Installs
+    </button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════ OVERVIEW -->
+  <div class="page active" id="page-overview">
+
+    <div class="stats-strip">
+      <div class="stat-box">
+        <div class="stat-num">3</div>
+        <div class="stat-lbl">Client Projects</div>
+      </div>
+      <div class="stat-box" style="border-left:3px solid var(--blue)">
+        <div class="stat-num" style="color:var(--blue)">2</div>
+        <div class="stat-lbl">In Progress</div>
+      </div>
+      <div class="stat-box" style="border-left:3px solid var(--purple)">
+        <div class="stat-num" style="color:var(--purple)">1</div>
+        <div class="stat-lbl">Scoping</div>
+      </div>
+      <div class="stat-box" style="border-left:3px solid var(--gold)">
+        <div class="stat-num" style="color:var(--gold)" id="aios-count">3</div>
+        <div class="stat-lbl">AIOS Installs</div>
+      </div>
+    </div>
+
+    <div class="section-label"><span>Client Projects</span></div>
+    <div class="overview-grid">
+
+      <div class="client-card blue" onclick="switchPage('step-up')">
+        <div class="cc-header">
+          <div>
+            <div class="cc-name">Step Up</div>
+            <div class="cc-sub">AUP Program · Pam Vala &amp; Keith Johnson</div>
+          </div>
+          <span class="badge badge-review">In Review</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Build Progress</span><strong>75%</strong></div>
+          <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:14px">
+          <span>🔧 Lovable</span><span>🐛 2 bugs open</span><span>📅 Demo ready</span>
+        </div>
+      </div>
+
+      <div class="client-card teal" onclick="switchPage('coastal')">
+        <div class="cc-header">
+          <div>
+            <div class="cc-name">Coastal Maverick</div>
+            <div class="cc-sub">AIOS Install · Heather</div>
+          </div>
+          <span class="badge badge-active">Active</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Build Progress</span><strong>40%</strong></div>
+          <div class="progress-bar"><div class="progress-fill fill-teal" style="width:40%"></div></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:14px">
+          <span>🛠 AIOS setup</span><span>📅 In progress</span>
+        </div>
+      </div>
+
+      <div class="client-card purple" onclick="switchPage('optimus')">
+        <div class="cc-header">
+          <div>
+            <div class="cc-name">Optimus</div>
+            <div class="cc-sub">Client Portal · Louie Hillman</div>
+          </div>
+          <span class="badge badge-scoping">Scoping</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Build Progress</span><strong>10%</strong></div>
+          <div class="progress-bar"><div class="progress-fill fill-purple" style="width:10%"></div></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:14px">
+          <span>🆕 Scoping phase</span><span>📋 TBD stack</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:32px">
+      <div class="section-label"><span>Team Notes</span></div>
+      <div class="scope-card">
+        <h3>Shared Build Notes</h3>
+        <textarea class="notes-area" id="overview-notes" placeholder="Add team notes, blockers, or updates here…" style="min-height:110px"></textarea>
+        <br>
+        <button class="save-btn" onclick="saveNotes('overview-notes')">Save</button>
+        <span class="save-indicator" id="overview-notes-saved">Saved ✓</span>
+      </div>
+    </div>
+
+  </div><!-- /overview -->
+
+
+  <!-- ══════════════════════════════════ STEP UP AUP -->
+  <div class="page" id="page-step-up">
+    <div class="detail-header">
+      <div class="detail-icon" style="background:var(--blue)">S</div>
+      <div>
+        <div class="detail-title syne">Step Up — AUP Program</div>
+        <div class="detail-sub">Annual Update Presentation Tool · Built in Lovable</div>
+      </div>
+      <div style="margin-left:auto"><span class="badge badge-review">In Review</span></div>
+    </div>
+
+    <div class="detail-layout">
+      <div>
+
+        <div class="scope-card">
+          <h3>Project Scope</h3>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px">
+            A Lovable-built web app for Step Up advisors (Pam Vala and Keith Johnson) to build AUP-code presentations with photos and recommendations. Advisors toggle which codes appear in the final client output and deliver a secure client portal link (URL + password — no account login required). Admin can preview, print individual codes, or print the full presentation deck.
+          </p>
+          <div>
+            <span class="tag">Lovable</span>
+            <span class="tag">AUP codes</span>
+            <span class="tag">Photo upload</span>
+            <span class="tag">Recommendations</span>
+            <span class="tag">Client portal (secure link)</span>
+            <span class="tag">Print to PDF</span>
+            <span class="tag">Admin preview</span>
+          </div>
+        </div>
+
+        <div class="scope-card">
+          <h3>Build Milestones</h3>
+          <ul class="milestone-list">
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Core AUP code entry + photo upload</div>
+                <div class="ms-note">Working — codes can be entered with photos assigned</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Include/exclude toggle per code</div>
+                <div class="ms-note">Toggle controls what appears in final presentation</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Recommended flag per code</div>
+                <div class="ms-note">Admin can mark codes as recommended</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Secure client portal (URL + password)</div>
+                <div class="ms-note">Sends link + password to client — no account needed</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Admin preview (no client link needed)</div>
+                <div class="ms-note">Advisor can preview without generating a client link</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Print individual code / full presentation</div>
+                <div class="ms-note">Print single code or entire deck</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check in-progress" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Bug fix: photo auto-assign on sheet upload</div>
+                <div class="ms-note">🐛 Open — photo sheet upload should auto-assign photos to codes</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check in-progress" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Bug fix: include toggle + recommended logic</div>
+                <div class="ms-note">🐛 Open — included codes should appear in final presentation even when "recommended" is toggled off</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Demo meeting with Pam &amp; Keith</div>
+                <div class="ms-note">Show current state — get feedback before adding more features</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Auto-generate proposal email from presentation</div>
+                <div class="ms-note">Post-demo v2 feature — email drafted from selected codes</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="scope-card">
+          <h3>Build Notes</h3>
+          <textarea class="notes-area" id="step-up-notes" placeholder="Add notes about blockers, decisions, or updates for this project…"></textarea>
+          <br>
+          <button class="save-btn" onclick="saveNotes('step-up-notes')">Save Notes</button>
+          <span class="save-indicator" id="step-up-notes-saved">Saved ✓</span>
+        </div>
+
+      </div>
+
+      <div>
+        <div class="side-card">
+          <h3>Project Details</h3>
+          <div class="info-row"><span class="lbl">Client</span><span class="val">Step Up</span></div>
+          <div class="info-row"><span class="lbl">Contacts</span><span class="val">Pam Vala, Keith Johnson</span></div>
+          <div class="info-row"><span class="lbl">Build Tool</span><span class="val">Lovable</span></div>
+          <div class="info-row"><span class="lbl">Developer</span><span class="val">Aamish Aaftab</span></div>
+          <div class="info-row"><span class="lbl">Status</span><span class="val"><span class="badge badge-review">In Review</span></span></div>
+          <div class="info-row"><span class="lbl">Open Bugs</span><span class="val" style="color:var(--red)">2</span></div>
+          <div class="info-row"><span class="lbl">Overall</span><span class="val">75%</span></div>
+        </div>
+
+        <div class="side-card">
+          <h3>Next Steps</h3>
+          <div class="next-step"><div class="step-num">1</div><div class="step-text">Fix include-toggle bug before demo</div></div>
+          <div class="next-step"><div class="step-num">2</div><div class="step-text">Schedule demo with Pam &amp; Keith — show current state, get feedback</div></div>
+          <div class="next-step"><div class="step-num">3</div><div class="step-text">Fix photo auto-assign bug (post-demo)</div></div>
+          <div class="next-step"><div class="step-num">4</div><div class="step-text">Build proposal email generator (v2)</div></div>
+        </div>
+
+        <div class="side-card">
+          <h3>Progress</h3>
+          <div class="progress-wrap" style="margin:0">
+            <div class="progress-label"><span>Overall</span><strong>75%</strong></div>
+            <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+          </div>
+          <div class="progress-wrap" style="margin-top:14px">
+            <div class="progress-label"><span>Core features</span><strong>100%</strong></div>
+            <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+          </div>
+          <div class="progress-wrap" style="margin-top:14px">
+            <div class="progress-label"><span>Bug fixes</span><strong>0%</strong></div>
+            <div class="progress-bar"><div class="progress-fill fill-gold" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /step-up -->
+
+
+  <!-- ══════════════════════════════════ COASTAL MAVERICK -->
+  <div class="page" id="page-coastal">
+    <div class="detail-header">
+      <div class="detail-icon" style="background:var(--teal)">C</div>
+      <div>
+        <div class="detail-title syne">Coastal Maverick</div>
+        <div class="detail-sub">AIOS Install + Content System · Heather</div>
+      </div>
+      <div style="margin-left:auto"><span class="badge badge-active">Active</span></div>
+    </div>
+
+    <div class="detail-layout">
+      <div>
+        <div class="scope-card">
+          <h3>Project Scope</h3>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px">
+            Full AIOS deployment for Coastal Maverick (Heather). Includes GHL CRM setup, AI content workflows, automation pipelines, and ongoing AI-powered business operating system integration tailored to Coastal Maverick's business.
+          </p>
+          <div>
+            <span class="tag">AIOS</span>
+            <span class="tag">GHL</span>
+            <span class="tag">Content system</span>
+            <span class="tag">Automation</span>
+            <span class="tag">Follow-Up Machine</span>
+          </div>
+        </div>
+
+        <div class="scope-card">
+          <h3>Build Milestones</h3>
+          <ul class="milestone-list">
+            <li class="milestone-item">
+              <div class="ms-check done" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title done-text">Discovery &amp; scope session</div>
+                <div class="ms-note">Scope confirmed, project kicked off</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check in-progress" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">AIOS Command OS install</div>
+                <div class="ms-note">Core module installation in progress</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">GHL pipeline + automation setup</div>
+                <div class="ms-note">CRM pipelines and follow-up workflows</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Content system build</div>
+                <div class="ms-note">Social + email content workflows</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Client handoff + training</div>
+                <div class="ms-note">Live handoff and onboarding with Heather</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="scope-card">
+          <h3>Build Notes</h3>
+          <textarea class="notes-area" id="coastal-notes" placeholder="Add notes about Coastal Maverick build progress, Heather's feedback, or blockers…"></textarea>
+          <br>
+          <button class="save-btn" onclick="saveNotes('coastal-notes')">Save Notes</button>
+          <span class="save-indicator" id="coastal-notes-saved">Saved ✓</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="side-card">
+          <h3>Project Details</h3>
+          <div class="info-row"><span class="lbl">Client</span><span class="val">Coastal Maverick</span></div>
+          <div class="info-row"><span class="lbl">Contact</span><span class="val">Heather</span></div>
+          <div class="info-row"><span class="lbl">Type</span><span class="val">AIOS Install</span></div>
+          <div class="info-row"><span class="lbl">Status</span><span class="val"><span class="badge badge-active">Active</span></span></div>
+          <div class="info-row"><span class="lbl">Progress</span><span class="val">40%</span></div>
+        </div>
+        <div class="side-card">
+          <h3>Next Steps</h3>
+          <div class="next-step"><div class="step-num" style="background:var(--teal-light);color:var(--teal)">1</div><div class="step-text">Complete AIOS Command OS install</div></div>
+          <div class="next-step"><div class="step-num" style="background:var(--teal-light);color:var(--teal)">2</div><div class="step-text">Set up GHL pipeline and automation</div></div>
+          <div class="next-step"><div class="step-num" style="background:var(--teal-light);color:var(--teal)">3</div><div class="step-text">Build content system workflows</div></div>
+          <div class="next-step"><div class="step-num" style="background:var(--teal-light);color:var(--teal)">4</div><div class="step-text">Schedule progress check-in with Heather</div></div>
+        </div>
+        <div class="side-card">
+          <h3>Progress</h3>
+          <div class="progress-wrap" style="margin:0">
+            <div class="progress-label"><span>Overall</span><strong>40%</strong></div>
+            <div class="progress-bar"><div class="progress-fill fill-teal" style="width:40%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /coastal -->
+
+
+  <!-- ══════════════════════════════════ OPTIMUS -->
+  <div class="page" id="page-optimus">
+    <div class="detail-header">
+      <div class="detail-icon" style="background:var(--purple)">O</div>
+      <div>
+        <div class="detail-title syne">Optimus</div>
+        <div class="detail-sub">Client Portal · Louie Hillman</div>
+      </div>
+      <div style="margin-left:auto"><span class="badge badge-scoping">Scoping</span></div>
+    </div>
+
+    <div class="detail-layout">
+      <div>
+        <div class="scope-card">
+          <h3>Project Scope</h3>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px">
+            Client portal build for Optimus (Louie Hillman). Scope in discovery — update this section once requirements are confirmed. Define what the portal needs to do, who will use it, and any technical constraints.
+          </p>
+          <div>
+            <span class="tag">Client portal</span>
+            <span class="tag">Scoping</span>
+            <span class="tag">Stack TBD</span>
+          </div>
+        </div>
+
+        <div class="scope-card">
+          <h3>Build Milestones</h3>
+          <ul class="milestone-list">
+            <li class="milestone-item">
+              <div class="ms-check in-progress" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Discovery &amp; requirements definition</div>
+                <div class="ms-note">Define portal features, user types, and key functionality with Louie</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Tech stack decision</div>
+                <div class="ms-note">Lovable? Supabase + custom? Decide based on requirements</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">MVP design + build</div>
+                <div class="ms-note">Core portal functionality</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Louie review &amp; feedback round</div>
+                <div class="ms-note">Present MVP, iterate on feedback</div>
+              </div>
+            </li>
+            <li class="milestone-item">
+              <div class="ms-check" onclick="toggleMilestone(this)"></div>
+              <div class="ms-body">
+                <div class="ms-title">Launch &amp; handoff</div>
+                <div class="ms-note">Go live, train Louie's team</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="scope-card">
+          <h3>Build Notes</h3>
+          <textarea class="notes-area" id="optimus-notes" placeholder="Add scope details, feature requirements, or technical notes for the Optimus portal…"></textarea>
+          <br>
+          <button class="save-btn" onclick="saveNotes('optimus-notes')">Save Notes</button>
+          <span class="save-indicator" id="optimus-notes-saved">Saved ✓</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="side-card">
+          <h3>Project Details</h3>
+          <div class="info-row"><span class="lbl">Client</span><span class="val">Optimus</span></div>
+          <div class="info-row"><span class="lbl">Contact</span><span class="val">Louie Hillman</span></div>
+          <div class="info-row"><span class="lbl">Type</span><span class="val">Client Portal</span></div>
+          <div class="info-row"><span class="lbl">Status</span><span class="val"><span class="badge badge-scoping">Scoping</span></span></div>
+          <div class="info-row"><span class="lbl">Progress</span><span class="val">10%</span></div>
+        </div>
+        <div class="side-card">
+          <h3>Next Steps</h3>
+          <div class="next-step"><div class="step-num" style="background:var(--purple-light);color:var(--purple)">1</div><div class="step-text">Complete discovery with Louie — lock requirements</div></div>
+          <div class="next-step"><div class="step-num" style="background:var(--purple-light);color:var(--purple)">2</div><div class="step-text">Decide tech stack based on requirements</div></div>
+          <div class="next-step"><div class="step-num" style="background:var(--purple-light);color:var(--purple)">3</div><div class="step-text">Begin MVP build once scope is locked</div></div>
+        </div>
+        <div class="side-card">
+          <h3>Progress</h3>
+          <div class="progress-wrap" style="margin:0">
+            <div class="progress-label"><span>Overall</span><strong>10%</strong></div>
+            <div class="progress-bar"><div class="progress-fill fill-purple" style="width:10%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /optimus -->
+
+
+  <!-- ══════════════════════════════════ AIOS INSTALLS -->
+  <div class="page" id="page-aios">
+    <div class="detail-header">
+      <div class="detail-icon" style="background:var(--gold)">I</div>
+      <div>
+        <div class="detail-title syne">AIOS Installs</div>
+        <div class="detail-sub">AI-Powered Business Operating System · Multi-Client Pipeline</div>
+      </div>
+      <div style="margin-left:auto"><span class="badge badge-active">Active</span></div>
+    </div>
+
+    <!-- Stage legend -->
+    <div class="scope-card" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+        <span class="mono" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em">Install Stages →</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <div style="width:28px;height:6px;border-radius:3px;background:var(--green)"></div><span style="font-size:11px;color:var(--muted)">Done</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <div style="width:28px;height:6px;border-radius:3px;background:var(--blue)"></div><span style="font-size:11px;color:var(--muted)">Current</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <div style="width:28px;height:6px;border-radius:3px;background:var(--border)"></div><span style="font-size:11px;color:var(--muted)">Upcoming</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <div style="width:28px;height:6px;border-radius:3px;background:var(--border);border:1px dashed #CBD5E1"></div><span style="font-size:11px;color:var(--muted)">Strategic giveaway</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="install-grid" id="install-grid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Add install form -->
+    <div class="scope-card" style="margin-top:20px">
+      <h3>Add New Install</h3>
+      <div class="add-install-bar">
+        <input type="text" id="new-client" placeholder="Client name" />
+        <input type="text" id="new-contact" placeholder="Contact name" />
+        <select id="new-stage">
+          <option value="0">Stage: Discovery</option>
+          <option value="1">Stage: GHL Setup</option>
+          <option value="2">Stage: Build</option>
+          <option value="3">Stage: Training</option>
+          <option value="4">Stage: Live</option>
+        </select>
+        <select id="new-type">
+          <option value="paid">Paid Install</option>
+          <option value="strategic">Strategic Giveaway</option>
+        </select>
+        <button class="add-btn" onclick="addInstall()">+ Add Install</button>
+      </div>
+    </div>
+
+    <div class="scope-card" style="margin-top:4px">
+      <h3>AIOS Notes</h3>
+      <textarea class="notes-area" id="aios-notes" placeholder="Add notes about the AIOS install pipeline, client readiness, or deployment updates…"></textarea>
+      <br>
+      <button class="save-btn" onclick="saveNotes('aios-notes')">Save Notes</button>
+      <span class="save-indicator" id="aios-notes-saved">Saved ✓</span>
+    </div>
+
+  </div><!-- /aios -->
+
+</div><!-- /main -->
+
+<script>
+  /* ── Stage config ── */
+  const STAGES = ['Discovery','GHL Setup','Build','Training','Live'];
+
+  /* ── Default installs ── */
+  const DEFAULT_INSTALLS = [
+    { id: 'i1', client: '3G', contact: 'Greg', stage: 1, type: 'paid' },
+    { id: 'i2', client: 'Josie',  contact: 'Josie', stage: 0, type: 'paid' },
+    { id: 'i3', client: 'Strategic Install 1', contact: '—', stage: 0, type: 'strategic' },
+  ];
+
+  /* ── State ── */
+  let installs = JSON.parse(localStorage.getItem('devtracker-installs') || 'null') || DEFAULT_INSTALLS;
+
+  function saveInstalls() {
+    localStorage.setItem('devtracker-installs', JSON.stringify(installs));
+    updateAiosCount();
+    updateLastSaved();
+  }
+
+  function updateAiosCount() {
+    document.getElementById('aios-count').textContent = installs.length;
+  }
+
+  /* ── Render install grid ── */
+  function renderInstalls() {
+    const grid = document.getElementById('install-grid');
+    grid.innerHTML = '';
+    installs.forEach((inst, idx) => {
+      const pct = Math.round((inst.stage / (STAGES.length - 1)) * 100);
+      const isStrategic = inst.type === 'strategic';
+
+      const row = document.createElement('div');
+      row.className = 'install-row' + (isStrategic ? ' strategic' : '');
+      row.innerHTML = `
+        <div>
+          <div class="install-client">${inst.client}</div>
+          <div class="install-contact">${inst.contact}${isStrategic ? ' &nbsp;<span class="badge badge-strategic" style="font-size:8px;padding:1px 6px">Strategic</span>' : ''}</div>
+        </div>
+        <div>
+          <div class="stage-pipe stage-clickable" data-idx="${idx}" title="Click to advance stage">
+            ${STAGES.map((s, si) => `<div class="stage-dot ${si < inst.stage ? 'done' : si === inst.stage ? 'active' : ''}"></div>`).join('')}
+          </div>
+          <div class="stage-labels">
+            ${STAGES.map((s, si) => `<div class="stage-lbl ${si < inst.stage ? 'done-lbl' : si === inst.stage ? 'active-lbl' : ''}">${s}</div>`).join('')}
+          </div>
+        </div>
+        <div class="install-pct">${pct}<span>%</span><br><span style="font-size:9px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)">${STAGES[inst.stage]}</span></div>
+        <button class="remove-btn" data-idx="${idx}" title="Remove">×</button>
+      `;
+      grid.appendChild(row);
+    });
+
+    /* Stage click — advance */
+    grid.querySelectorAll('.stage-clickable').forEach(el => {
+      el.addEventListener('click', function() {
+        const idx = parseInt(this.dataset.idx);
+        if (installs[idx].stage < STAGES.length - 1) {
+          installs[idx].stage++;
+          saveInstalls();
+          renderInstalls();
+        }
+      });
+    });
+
+    /* Remove */
+    grid.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const idx = parseInt(this.dataset.idx);
+        if (confirm(`Remove "${installs[idx].client}"?`)) {
+          installs.splice(idx, 1);
+          saveInstalls();
+          renderInstalls();
+        }
+      });
+    });
+
+    updateAiosCount();
+  }
+
+  /* ── Add install ── */
+  function addInstall() {
+    const client  = document.getElementById('new-client').value.trim();
+    const contact = document.getElementById('new-contact').value.trim();
+    const stage   = parseInt(document.getElementById('new-stage').value);
+    const type    = document.getElementById('new-type').value;
+    if (!client) { document.getElementById('new-client').focus(); return; }
+    installs.push({ id: 'i' + Date.now(), client, contact: contact || '—', stage, type });
+    saveInstalls();
+    renderInstalls();
+    document.getElementById('new-client').value = '';
+    document.getElementById('new-contact').value = '';
+    document.getElementById('new-stage').value = '0';
+    document.getElementById('new-type').value = 'paid';
+  }
+
+  /* ── Tab navigation ── */
+  function switchPage(id) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelector(`[data-page="${id}"]`).classList.add('active');
+    document.getElementById(`page-${id}`).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchPage(tab.dataset.page));
+  });
+
+  /* ── Milestone toggle ── */
+  function toggleMilestone(el) {
+    const title = el.nextElementSibling.querySelector('.ms-title');
+    if (el.classList.contains('done')) {
+      el.classList.remove('done'); title.classList.remove('done-text');
+    } else if (el.classList.contains('in-progress')) {
+      el.classList.remove('in-progress'); el.classList.add('done'); title.classList.add('done-text');
+    } else {
+      el.classList.add('in-progress');
+    }
+  }
+
+  /* ── Notes ── */
+  const NOTE_KEYS = ['overview-notes','step-up-notes','coastal-notes','optimus-notes','aios-notes'];
+  function loadNotes() {
+    NOTE_KEYS.forEach(k => {
+      const v = localStorage.getItem('devtracker-' + k);
+      if (v !== null) document.getElementById(k).value = v;
+    });
+  }
+  function saveNotes(key) {
+    localStorage.setItem('devtracker-' + key, document.getElementById(key).value);
+    const ind = document.getElementById(key + '-saved');
+    if (ind) { ind.style.display = 'inline'; setTimeout(() => ind.style.display = 'none', 2000); }
+    updateLastSaved();
+  }
+
+  /* ── Last saved ── */
+  function updateLastSaved() {
+    const now = new Date();
+    const s = now.toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    document.getElementById('lastSaved').textContent = 'Last saved ' + s;
+    localStorage.setItem('devtracker-last-saved', now.toISOString());
+  }
+
+  /* ── Init ── */
+  loadNotes();
+  renderInstalls();
+  const ls = localStorage.getItem('devtracker-last-saved');
+  if (ls) {
+    const d = new Date(ls);
+    document.getElementById('lastSaved').textContent = 'Last saved ' + d.toLocaleString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+</script>
+
+</body>
+</html>

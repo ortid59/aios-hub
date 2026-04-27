@@ -7,1165 +7,1023 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --navy: #1B3A6B;
-  --teal: #0097A7;
-  --gold: #C9A84C;
-  --gold-light: #F0DFA0;
-  --navy-light: #EBF0F8;
-  --teal-light: #E0F5F7;
-  --white: #FFFFFF;
-  --gray-50: #F8FAFC;
-  --gray-100: #F1F5F9;
-  --gray-200: #E2E8F0;
-  --gray-400: #94A3B8;
-  --gray-600: #475569;
-  --gray-800: #1E293B;
-  --red: #DC2626;
-  --red-light: #FEF2F2;
-  --green: #16A34A;
-  --green-light: #F0FDF4;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow: 0 4px 12px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.05);
-  --shadow-lg: 0 10px 30px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
-  --radius: 12px;
-  --radius-sm: 8px;
+  --navy:#1B3A6B; --teal:#0097A7; --gold:#C9A84C;
+  --navy-lt:#EBF0F8; --teal-lt:#E0F5F7; --gold-lt:#FEF9EE;
+  --white:#fff; --g50:#F8FAFC; --g100:#F1F5F9; --g200:#E2E8F0;
+  --g400:#94A3B8; --g600:#475569; --g800:#1E293B;
+  --red:#DC2626; --red-lt:#FEF2F2; --green:#16A34A; --green-lt:#F0FDF4;
+  --sh-sm:0 1px 3px rgba(0,0,0,.08); --sh:0 4px 12px rgba(0,0,0,.08); --sh-lg:0 10px 30px rgba(0,0,0,.12);
+  --r:12px; --r-sm:8px;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g50);color:var(--g800);min-height:100vh}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* NAV */
+.topnav{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.tn-brand{display:flex;align-items:center;gap:.75rem}
+.tn-logo{width:36px;height:36px;border-radius:8px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:.95rem}
+.tn-name{color:#fff;font-size:.95rem;font-weight:600}.tn-name span{color:var(--gold)}
+.tn-links{display:flex;gap:.15rem}
+.tn-link{color:rgba(255,255,255,.75);text-decoration:none;font-size:.82rem;font-weight:500;padding:.38rem .75rem;border-radius:6px;transition:.2s}
+.tn-link:hover{background:rgba(255,255,255,.1);color:#fff}
+.tn-badge{background:var(--gold);color:var(--navy);font-size:.68rem;font-weight:700;padding:.18rem .6rem;border-radius:20px}
+.guide-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:.35rem .8rem;font-size:.8rem;font-weight:600;cursor:pointer;transition:.2s}
+.guide-btn:hover{background:rgba(255,255,255,.25)}
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--gray-50);
-  color: var(--gray-800);
-  min-height: 100vh;
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,#1a4d7a 100%);padding:2.5rem 2rem 2rem;color:#fff}
+.hero-inner{max-width:1200px;margin:0 auto}
+.hero-tag{font-size:.78rem;color:rgba(255,255,255,.6);font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem}
+.hero-title{font-size:1.9rem;font-weight:700;margin-bottom:.3rem}.hero-title span{color:var(--gold)}
+.hero-sub{font-size:.9rem;color:rgba(255,255,255,.65);margin-bottom:1.75rem}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem}
+.s-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);border-radius:var(--r-sm);padding:1rem 1.15rem}
+.s-lbl{font-size:.7rem;color:rgba(255,255,255,.5);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.25rem}
+.s-val{font-size:1.4rem;font-weight:700;color:#fff}
+.s-sub{font-size:.7rem;color:rgba(255,255,255,.45);margin-top:.1rem}
+
+/* GUIDE OVERLAY */
+.guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.guide-overlay.open{display:flex}
+.guide-modal{background:#fff;border-radius:var(--r);max-width:760px;width:100%;padding:2rem;position:relative;max-height:90vh;overflow-y:auto}
+.guide-close{position:absolute;top:1rem;right:1rem;background:var(--g100);border:none;border-radius:6px;width:30px;height:30px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.guide-modal h2{color:var(--navy);font-size:1.3rem;margin-bottom:.25rem}
+.guide-modal .guide-intro{font-size:.9rem;color:var(--g600);margin-bottom:1.5rem;line-height:1.6}
+.guide-step{display:flex;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--g100)}
+.guide-step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.guide-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;font-size:.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+.guide-step-body h4{font-size:.95rem;font-weight:700;color:var(--navy);margin-bottom:.3rem}
+.guide-step-body p{font-size:.85rem;color:var(--g600);line-height:1.65}
+.guide-tip{background:var(--teal-lt);border-left:3px solid var(--teal);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:.75rem 1rem;margin-top:.75rem;font-size:.82rem;color:#005f6b;line-height:1.55}
+.guide-tip strong{color:var(--teal)}
+
+/* MAIN */
+.main{max-width:1200px;margin:0 auto;padding:2rem 2rem}
+
+/* SECTION HEAD */
+.sh{margin-bottom:1.25rem}.sh-title{font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:.2rem}
+.sh-sub{font-size:.85rem;color:var(--g600)}.sh-bar{height:3px;width:44px;background:var(--teal);border-radius:2px;margin-top:.4rem}
+.section-mb{margin-bottom:2.5rem}
+
+/* CARD */
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh-sm);border:1px solid var(--g200)}
+.card-body{padding:1.5rem}
+
+/* ── PORTFOLIO BUILDER ── */
+.portfolio-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.ptab{background:#fff;border:2px solid var(--g200);border-radius:var(--r-sm);padding:.55rem 1.25rem;font-size:.875rem;font-weight:600;color:var(--g600);cursor:pointer;transition:.2s;display:flex;align-items:center;gap:.5rem}
+.ptab:hover{border-color:var(--teal);color:var(--teal)}
+.ptab.active{border-color:var(--navy);background:var(--navy);color:#fff}
+.ptab .ptab-ret{font-size:.72rem;opacity:.75}
+
+.builder-layout{display:grid;grid-template-columns:1fr 340px;gap:1.25rem}
+
+/* Fund picker */
+.picker{padding:1.25rem}
+.picker-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem}
+.picker-title{font-size:.95rem;font-weight:700;color:var(--navy)}
+.picker-filters{display:flex;gap:.35rem;flex-wrap:wrap}
+.pf-btn{background:var(--g100);border:none;border-radius:20px;padding:.25rem .7rem;font-size:.72rem;font-weight:600;color:var(--g600);cursor:pointer;transition:.2s}
+.pf-btn:hover{background:var(--g200)}.pf-btn.on{background:var(--navy);color:#fff}
+.picker-search{width:100%;border:1px solid var(--g200);border-radius:var(--r-sm);padding:.5rem .8rem;font-size:.85rem;outline:none;margin-bottom:1rem}
+.picker-search:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,151,167,.1)}
+
+.fund-rows{display:flex;flex-direction:column;gap:2px;max-height:520px;overflow-y:auto;padding-right:4px}
+.fund-row{display:flex;align-items:center;gap:.75rem;padding:.65rem .75rem;border-radius:var(--r-sm);border:1px solid transparent;transition:.15s;cursor:default}
+.fund-row:hover{background:var(--g50);border-color:var(--g200)}
+.fund-row.included{background:var(--navy-lt);border-color:#c5d5ea}
+.fr-info{flex:1;min-width:0}
+.fr-name{font-size:.82rem;font-weight:600;color:var(--g800);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fr-cls{font-size:.68rem;font-weight:600;padding:.12rem .45rem;border-radius:4px;display:inline-block;margin-top:.1rem}
+.fr-ret{font-size:.82rem;font-weight:700;color:var(--green);min-width:52px;text-align:right}
+.fr-ret.neg{color:var(--red)}
+.alloc-input{width:62px;border:1.5px solid var(--g200);border-radius:6px;padding:.3rem .4rem;font-size:.85rem;font-weight:600;text-align:center;outline:none;transition:.15s}
+.alloc-input:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,151,167,.12)}
+.alloc-input.has-val{border-color:var(--navy);background:var(--navy-lt);color:var(--navy)}
+.alloc-suffix{font-size:.75rem;color:var(--g400);margin-left:1px}
+
+/* Preview panel */
+.preview{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+.pv-header{font-size:.85rem;font-weight:700;color:var(--navy)}
+.allocation-meter{background:var(--g100);border-radius:var(--r-sm);padding:.85rem 1rem}
+.am-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.am-label{font-size:.75rem;font-weight:700;color:var(--g600)}
+.am-value{font-size:1.1rem;font-weight:800}
+.am-value.ok{color:var(--green)}.am-value.over{color:var(--red)}.am-value.under{color:var(--gold)}
+.am-bar-wrap{height:8px;background:var(--g200);border-radius:4px;overflow:hidden}
+.am-bar{height:100%;border-radius:4px;transition:.3s}
+.am-bar.ok{background:var(--green)}.am-bar.over{background:var(--red)}.am-bar.under{background:var(--gold)}
+.am-hint{font-size:.7rem;color:var(--g400);margin-top:.3rem}
+
+.blended-return{text-align:center;padding:1rem;background:var(--navy-lt);border-radius:var(--r-sm);border:1px solid #c5d5ea}
+.br-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--g600);margin-bottom:.2rem}
+.br-value{font-size:2.1rem;font-weight:800;color:var(--navy)}
+.br-sub{font-size:.72rem;color:var(--g400)}
+
+.donut-section{text-align:center}
+.donut-wrap{position:relative;width:130px;height:130px;margin:0 auto .75rem}
+#preview-donut{width:130px !important;height:130px !important}
+
+.preview-holdings{display:flex;flex-direction:column;gap:.3rem}
+.ph-row{display:flex;align-items:center;gap:.5rem;font-size:.75rem}
+.ph-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ph-name{flex:1;color:var(--g600);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph-pct{font-weight:700;color:var(--g800)}
+
+.apply-btn{width:100%;padding:.75rem;border:none;border-radius:var(--r-sm);background:var(--navy);color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;transition:.2s}
+.apply-btn:hover{background:#0f2547}.apply-btn:disabled{background:var(--g200);color:var(--g400);cursor:not-allowed}
+
+.presets-row{display:flex;gap:.5rem;margin-bottom:1rem}
+.preset-btn{flex:1;padding:.45rem;border:1.5px solid var(--g200);border-radius:var(--r-sm);background:#fff;font-size:.75rem;font-weight:600;color:var(--g600);cursor:pointer;transition:.2s;text-align:center}
+.preset-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+/* EDUCATION CENTER */
+.edu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.edu-card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:1.25rem;cursor:pointer;transition:.2s}
+.edu-card:hover{box-shadow:var(--sh);transform:translateY(-2px)}
+.edu-icon{font-size:1.8rem;margin-bottom:.6rem}
+.edu-name{font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:.15rem}
+.edu-risk{font-size:.72rem;font-weight:600;margin-bottom:.6rem}
+.edu-blurb{font-size:.78rem;color:var(--g600);line-height:1.55}
+.edu-expand{display:none;margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--g100)}
+.edu-expand.open{display:block}
+.edu-expand p{font-size:.8rem;color:var(--g600);line-height:1.65;margin-bottom:.5rem}
+.edu-funds{font-size:.75rem;color:var(--g400);font-style:italic}
+
+/* DCA EXPLAINER */
+.dca-bar{background:linear-gradient(135deg,var(--navy) 0%,#1a4d7a 100%);border-radius:var(--r);padding:1.75rem;margin-bottom:2.5rem;color:#fff}
+.dca-title{font-size:1rem;font-weight:700;margin-bottom:.85rem}
+.dca-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.dca-item h4{font-size:.78rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+.dca-item p{font-size:.8rem;color:rgba(255,255,255,.8);line-height:1.55}
+
+/* PROJECTIONS */
+.proj-layout{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:2.5rem}
+.chart-card{padding:1.5rem}
+.chart-title{font-size:.9rem;font-weight:700;color:var(--navy);margin-bottom:.9rem}
+.chart-wrap{position:relative;height:270px}
+.milestones{display:flex;flex-direction:column;gap:.85rem}
+.ms-card{background:#fff;border-radius:var(--r);border:1px solid var(--g200);padding:1rem 1.25rem;display:flex;align-items:center;gap:.85rem;box-shadow:var(--sh-sm)}
+.ms-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ms-label{font-size:.7rem;color:var(--g400);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.ms-value{font-size:1.35rem;font-weight:800;color:var(--navy)}
+.ms-note{font-size:.7rem;color:var(--g400)}
+
+/* BEAR SIM */
+.bear-layout{display:grid;grid-template-columns:1fr 2fr;gap:1.25rem;margin-bottom:2.5rem}
+.bear-controls{padding:1.5rem;display:flex;flex-direction:column;gap:1.35rem}
+.ctrl-group label{display:block;font-size:.75rem;font-weight:700;color:var(--g600);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.04em}
+.ctrl-val{font-size:1.3rem;font-weight:800;color:var(--navy);display:inline-block;margin-bottom:.35rem}
+.ctrl-sub{font-size:.7rem;color:var(--g400);margin-bottom:.5rem}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;border-radius:3px;background:var(--g200);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:var(--navy);border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,.2)}
+.bear-results{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.br-item{border-radius:var(--r-sm);padding:.8rem .9rem}
+.br-item-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.15rem}
+.br-item-val{font-size:1.15rem;font-weight:800}
+.insight{background:var(--teal-lt);border:1px solid var(--teal);border-radius:var(--r-sm);padding:.85rem 1rem}
+.insight h4{font-size:.82rem;font-weight:700;color:var(--teal);margin-bottom:.3rem}
+.insight p{font-size:.76rem;color:#005f6b;line-height:1.55}
+
+/* FUND TABLE */
+.ftbl-filters{display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap}
+.ftbl-btn{background:#fff;border:1px solid var(--g200);border-radius:20px;padding:.28rem .85rem;font-size:.75rem;font-weight:600;color:var(--g600);cursor:pointer;transition:.2s}
+.ftbl-btn:hover{border-color:var(--teal);color:var(--teal)}.ftbl-btn.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.ftbl{width:100%;border-collapse:collapse}
+.ftbl th{text-align:left;font-size:.7rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.05em;padding:.65rem 1rem;background:var(--g50);border-bottom:1px solid var(--g200)}
+.ftbl td{padding:.8rem 1rem;border-bottom:1px solid var(--g100);font-size:.82rem;vertical-align:middle}
+.ftbl tr:last-child td{border-bottom:none}.ftbl tr:hover td{background:var(--g50)}
+.fn{font-weight:600;color:var(--navy)}
+.cls-badge{display:inline-block;font-size:.63rem;font-weight:700;padding:.12rem .45rem;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-top:.12rem}
+.c-sv{background:#E0F5F7;color:#0097A7}.c-bd{background:#EEF2FF;color:#4F46E5}
+.c-ba{background:#FEF9EE;color:#B45309}.c-us{background:#F0FDF4;color:#16A34A}.c-in{background:#FDF4FF;color:#9333EA}
+.rc{font-weight:700}.rp{color:var(--green)}.rn{color:var(--red)}.r0{color:var(--g600)}
+.rdots{display:flex;gap:2px}.rdot{width:7px;height:7px;border-radius:50%;background:var(--g200)}.rdot.on{background:var(--navy)}
+
+/* DISCLAIMER */
+.disc{background:var(--g100);border-radius:var(--r-sm);padding:.85rem 1.1rem;font-size:.71rem;color:var(--g400);line-height:1.5;margin-bottom:1.5rem}
+.footer{text-align:center;padding:1.5rem;font-size:.75rem;color:var(--g400);border-top:1px solid var(--g200)}
+.footer a{color:var(--teal);text-decoration:none}
+
+@media(max-width:900px){
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .builder-layout{grid-template-columns:1fr}
+  .edu-grid{grid-template-columns:repeat(2,1fr)}
+  .proj-layout{grid-template-columns:1fr}
+  .bear-layout{grid-template-columns:1fr}
+  .dca-grid{grid-template-columns:1fr}
+  .tn-links{display:none}
 }
-
-/* ── TOP NAV ── */
-.topnav {
-  background: var(--navy);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  height: 64px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+@media(max-width:600px){
+  .hero{padding:1.75rem 1rem 1.25rem}
+  .main{padding:1.25rem 1rem}
+  .edu-grid{grid-template-columns:1fr}
 }
-.topnav-brand { display: flex; align-items: center; gap: .75rem; }
-.topnav-logo { width: 36px; height: 36px; border-radius: 8px; background: var(--teal); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 1rem; }
-.topnav-name { color: white; font-size: 1rem; font-weight: 600; }
-.topnav-name span { color: var(--gold); }
-.topnav-nav { display: flex; gap: .25rem; }
-.topnav-link {
-  color: rgba(255,255,255,.75);
-  text-decoration: none;
-  font-size: .85rem;
-  font-weight: 500;
-  padding: .4rem .85rem;
-  border-radius: 6px;
-  transition: all .2s;
-}
-.topnav-link:hover { background: rgba(255,255,255,.1); color: white; }
-.topnav-badge {
-  background: var(--gold);
-  color: var(--navy);
-  font-size: .7rem;
-  font-weight: 700;
-  padding: .2rem .6rem;
-  border-radius: 20px;
-}
-
-/* ── HERO ── */
-.hero {
-  background: linear-gradient(135deg, var(--navy) 0%, #1a4d7a 100%);
-  padding: 3rem 2rem 2.5rem;
-  color: white;
-}
-.hero-inner { max-width: 1200px; margin: 0 auto; }
-.hero-greeting { font-size: .9rem; color: rgba(255,255,255,.65); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .5rem; }
-.hero-title { font-size: 2rem; font-weight: 700; margin-bottom: .4rem; }
-.hero-title span { color: var(--gold); }
-.hero-subtitle { font-size: 1rem; color: rgba(255,255,255,.7); margin-bottom: 2rem; }
-.hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
-.stat-card {
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: var(--radius-sm);
-  padding: 1.1rem 1.25rem;
-}
-.stat-label { font-size: .75rem; color: rgba(255,255,255,.55); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .3rem; }
-.stat-value { font-size: 1.5rem; font-weight: 700; color: white; }
-.stat-sub { font-size: .75rem; color: rgba(255,255,255,.5); margin-top: .15rem; }
-
-/* ── MAIN CONTAINER ── */
-.main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
-
-/* ── SECTION TITLES ── */
-.section-head { margin-bottom: 1.5rem; }
-.section-title { font-size: 1.3rem; font-weight: 700; color: var(--navy); margin-bottom: .25rem; }
-.section-sub { font-size: .875rem; color: var(--gray-600); }
-.section-divider { height: 3px; width: 48px; background: var(--teal); border-radius: 2px; margin-top: .5rem; }
-
-/* ── CARDS ── */
-.card {
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--gray-200);
-}
-.card-body { padding: 1.5rem; }
-
-/* ── PORTFOLIO SELECTOR ── */
-.portfolio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2.5rem; }
-
-.portfolio-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  border: 2px solid var(--gray-200);
-  padding: 1.5rem;
-  cursor: pointer;
-  transition: all .25s;
-  position: relative;
-  overflow: hidden;
-}
-.portfolio-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: var(--gray-200);
-  transition: background .25s;
-}
-.portfolio-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-.portfolio-card.selected { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .15), var(--shadow); }
-.portfolio-card.selected::before { background: var(--accent-color); }
-
-.portfolio-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--gray-400); margin-bottom: .5rem; }
-.portfolio-name { font-size: 1.15rem; font-weight: 700; color: var(--navy); margin-bottom: .15rem; }
-.portfolio-risk { font-size: .8rem; font-weight: 600; margin-bottom: 1.1rem; }
-.portfolio-return { font-size: 2rem; font-weight: 800; margin-bottom: .1rem; }
-.portfolio-return-label { font-size: .75rem; color: var(--gray-400); margin-bottom: 1.25rem; }
-.portfolio-holdings { display: flex; flex-direction: column; gap: .35rem; }
-.holding-row { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--gray-600); }
-.holding-bar-wrap { flex: 1; height: 5px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
-.holding-bar { height: 100%; border-radius: 3px; transition: width .4s; }
-.holding-pct { font-weight: 600; color: var(--gray-800); min-width: 32px; text-align: right; }
-.select-badge {
-  position: absolute;
-  top: 1rem; right: 1rem;
-  background: var(--accent-color);
-  color: white;
-  font-size: .7rem;
-  font-weight: 700;
-  padding: .2rem .6rem;
-  border-radius: 20px;
-  display: none;
-}
-.portfolio-card.selected .select-badge { display: block; }
-
-/* ── PROJECTIONS ── */
-.projections-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; }
-
-.milestones { display: flex; flex-direction: column; gap: 1rem; }
-.milestone-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  border: 1px solid var(--gray-200);
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  box-shadow: var(--shadow-sm);
-}
-.milestone-icon {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.milestone-label { font-size: .75rem; color: var(--gray-400); font-weight: 500; text-transform: uppercase; letter-spacing: .04em; }
-.milestone-value { font-size: 1.45rem; font-weight: 800; color: var(--navy); }
-.milestone-note { font-size: .73rem; color: var(--gray-400); }
-
-.chart-card { padding: 1.5rem; }
-.chart-title { font-size: .95rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
-.chart-wrap { position: relative; height: 280px; }
-
-/* ── BEAR MARKET SIMULATOR ── */
-.bear-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2.5rem; }
-
-.bear-controls { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
-.control-group label { display: block; font-size: .8rem; font-weight: 700; color: var(--gray-600); margin-bottom: .4rem; text-transform: uppercase; letter-spacing: .04em; }
-.control-value { font-size: 1.4rem; font-weight: 800; color: var(--navy); display: inline-block; margin-bottom: .4rem; }
-.control-sub { font-size: .72rem; color: var(--gray-400); margin-bottom: .6rem; }
-input[type=range] {
-  width: 100%;
-  -webkit-appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--gray-200);
-  outline: none;
-  cursor: pointer;
-}
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: var(--navy);
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0,0,0,.2);
-}
-
-.bear-result {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: .75rem;
-  margin-top: .5rem;
-}
-.bear-result-item {
-  border-radius: var(--radius-sm);
-  padding: .9rem 1rem;
-}
-.bear-result-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .2rem; }
-.bear-result-value { font-size: 1.25rem; font-weight: 800; }
-
-.insight-box {
-  background: var(--teal-light);
-  border: 1px solid var(--teal);
-  border-radius: var(--radius-sm);
-  padding: 1rem 1.25rem;
-  margin-top: 1rem;
-}
-.insight-box h4 { font-size: .85rem; font-weight: 700; color: var(--teal); margin-bottom: .35rem; }
-.insight-box p { font-size: .78rem; color: #005f6b; line-height: 1.5; }
-
-/* ── FUND LIBRARY ── */
-.fund-filters { display: flex; gap: .5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
-.filter-btn {
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: 20px;
-  padding: .3rem .9rem;
-  font-size: .78rem;
-  font-weight: 600;
-  color: var(--gray-600);
-  cursor: pointer;
-  transition: all .2s;
-}
-.filter-btn:hover { border-color: var(--teal); color: var(--teal); }
-.filter-btn.active { background: var(--navy); border-color: var(--navy); color: white; }
-
-.fund-table { width: 100%; border-collapse: collapse; }
-.fund-table th {
-  text-align: left;
-  font-size: .72rem;
-  font-weight: 700;
-  color: var(--gray-400);
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  padding: .7rem 1rem;
-  background: var(--gray-50);
-  border-bottom: 1px solid var(--gray-200);
-}
-.fund-table td {
-  padding: .85rem 1rem;
-  border-bottom: 1px solid var(--gray-100);
-  font-size: .84rem;
-  vertical-align: middle;
-}
-.fund-table tr:last-child td { border-bottom: none; }
-.fund-table tr:hover td { background: var(--gray-50); }
-.fund-name-cell { font-weight: 600; color: var(--navy); }
-.fund-class-badge {
-  display: inline-block;
-  font-size: .65rem;
-  font-weight: 700;
-  padding: .15rem .5rem;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  margin-top: .15rem;
-}
-.class-stable { background: #E0F5F7; color: #0097A7; }
-.class-bond { background: #EEF2FF; color: #4F46E5; }
-.class-balanced { background: #FEF9EE; color: #B45309; }
-.class-us { background: #F0FDF4; color: #16A34A; }
-.class-intl { background: #FDF4FF; color: #9333EA; }
-
-.return-cell { font-weight: 700; }
-.positive { color: var(--green); }
-.negative { color: var(--red); }
-.neutral { color: var(--gray-600); }
-
-.risk-dots { display: flex; gap: 2px; }
-.risk-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-200); }
-.risk-dot.filled { background: var(--navy); }
-
-/* ── DCA EDUCATION ── */
-.dca-explainer {
-  background: linear-gradient(135deg, #1B3A6B 0%, #0097A7 100%);
-  border-radius: var(--radius);
-  padding: 2rem;
-  margin-bottom: 2.5rem;
-  color: white;
-}
-.dca-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
-.dca-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-.dca-item { }
-.dca-item h4 { font-size: .8rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .4rem; }
-.dca-item p { font-size: .83rem; color: rgba(255,255,255,.8); line-height: 1.55; }
-
-/* ── DISCLAIMER ── */
-.disclaimer {
-  background: var(--gray-100);
-  border-radius: var(--radius-sm);
-  padding: 1rem 1.25rem;
-  margin-bottom: 2rem;
-  font-size: .73rem;
-  color: var(--gray-400);
-  line-height: 1.5;
-}
-
-/* ── FOOTER ── */
-.portal-footer {
-  text-align: center;
-  padding: 2rem;
-  font-size: .78rem;
-  color: var(--gray-400);
-  border-top: 1px solid var(--gray-200);
-}
-.portal-footer strong { color: var(--teal); }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {
-  .hero-stats { grid-template-columns: repeat(2, 1fr); }
-  .portfolio-grid { grid-template-columns: 1fr; }
-  .projections-layout { grid-template-columns: 1fr; }
-  .bear-layout { grid-template-columns: 1fr; }
-  .dca-grid { grid-template-columns: 1fr; }
-  .topnav-nav { display: none; }
-}
-@media (max-width: 600px) {
-  .hero { padding: 2rem 1rem 1.5rem; }
-  .hero-stats { grid-template-columns: 1fr 1fr; }
-  .main { padding: 1.5rem 1rem; }
-}
-
-.section-mb { margin-bottom: 2.5rem; }
-
-/* Allocation donut */
-.donut-wrap { display: flex; align-items: center; gap: 1.5rem; }
-.donut-canvas { width: 120px !important; height: 120px !important; }
-.donut-legend { flex: 1; }
-.legend-item { display: flex; align-items: center; gap: .5rem; font-size: .76rem; color: var(--gray-600); margin-bottom: .3rem; }
-.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.legend-label { flex: 1; }
-.legend-pct { font-weight: 700; color: var(--gray-800); }
-
-/* Tab content */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
 </style>
 </head>
 <body>
 
-<!-- TOP NAV -->
+<!-- NAV -->
 <nav class="topnav">
-  <div class="topnav-brand">
-    <div class="topnav-logo">AP</div>
-    <div class="topnav-name">Advisor AI Partners &mdash; <span>Richard Pope Portal</span></div>
+  <div class="tn-brand">
+    <div class="tn-logo">AP</div>
+    <div class="tn-name">Advisor AI Partners — <span>Richard Pope</span></div>
   </div>
-  <div class="topnav-nav">
-    <a href="#portfolios" class="topnav-link">Portfolios</a>
-    <a href="#projections" class="topnav-link">Projections</a>
-    <a href="#bear-sim" class="topnav-link">Bear Market Simulator</a>
-    <a href="#fund-library" class="topnav-link">Fund Library</a>
-    <span class="topnav-badge">Miami DROP Plan</span>
+  <div class="tn-links">
+    <a href="#builder" class="tn-link">Build Portfolio</a>
+    <a href="#education" class="tn-link">Learn</a>
+    <a href="#projections" class="tn-link">Projections</a>
+    <a href="#bear-sim" class="tn-link">Bear Market</a>
+    <a href="#funds" class="tn-link">All Funds</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:.75rem;">
+    <button class="guide-btn" onclick="openGuide()">📖 How to Use This Tool</button>
+    <span class="tn-badge">Miami DROP</span>
   </div>
 </nav>
+
+<!-- GUIDE OVERLAY -->
+<div class="guide-overlay" id="guide-overlay" onclick="closeGuideOnBg(event)">
+  <div class="guide-modal">
+    <button class="guide-close" onclick="closeGuide()">✕</button>
+    <h2>How to Use This Investment Portal</h2>
+    <p class="guide-intro">This guide is written for Richard — a plain-English walkthrough of every section, no financial jargon required. David built this tool so you can explore your options, ask great questions, and feel confident about where your money is going.</p>
+
+    <div class="guide-step">
+      <div class="guide-num">1</div>
+      <div class="guide-step-body">
+        <h4>Build Your Portfolio — Pick Your Funds</h4>
+        <p>This is the most important section. You have 3 portfolio "slots" (A, B, and C) — think of them as three different recipes you can try. Start with Portfolio A. You'll see a list of all the funds available in your Miami DROP plan. Each fund has a percentage input next to it. Type in how much of your money (as a percentage) you want in each fund. For example, if you want half your money in the Vanguard 500 Index, type 50 next to it. All your percentages have to add up to exactly 100. The tool will show you how close you are.</p>
+        <div class="guide-tip">
+          <strong>New to this?</strong> Start with one of the preset buttons — <em>Conservative</em>, <em>Moderate</em>, or <em>Growth</em>. These are starting points David has suggested. You can always adjust from there.
+        </div>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-num">2</div>
+      <div class="guide-step-body">
+        <h4>Understand Your Blended Return</h4>
+        <p>Once you pick your funds and set your percentages, the portal automatically calculates your <strong>blended return</strong>. This is an average of all your funds' historical 10-year performance, weighted by how much you put in each one. A higher number means more growth potential — but also more ups and downs. A lower number is smoother and more stable, but grows slower. There's no "right" answer — it depends on what lets you sleep at night.</p>
+        <div class="guide-tip"><strong>Important:</strong> These are historical numbers from the past — not a promise of future results. The market could do better or worse. We use them to give you a reasonable baseline for planning.</div>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-num">3</div>
+      <div class="guide-step-body">
+        <h4>Apply the Portfolio and See Your Projections</h4>
+        <p>Once you're happy with a portfolio allocation, click <strong>"Apply to Projections."</strong> This updates the Growth Projections section (below) with your exact numbers. You'll see a chart showing how your account could grow over 7 years, and milestone cards showing projected balances at 1, 3, 5, and 7 years — based on your $7,000/month contributions starting from your current $15,355 balance.</p>
+        <div class="guide-tip"><strong>Try all three portfolios</strong> — build A, B, and C with different approaches, then compare. Seeing the difference between conservative, moderate, and aggressive side-by-side often makes the choice much clearer.</div>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-num">4</div>
+      <div class="guide-step-body">
+        <h4>Learn About the Funds</h4>
+        <p>Scroll to the <strong>"Understanding Your Investments"</strong> section. You'll see four boxes — one for each type of fund available in your plan. Click any box to expand it and read a plain-English explanation of what that fund type is, how it behaves in good and bad markets, and when it makes sense to use it. This is your education center.</p>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-num">5</div>
+      <div class="guide-step-body">
+        <h4>Use the Bear Market Simulator</h4>
+        <p>A <strong>bear market</strong> is when stock prices fall significantly — sometimes for months or years. This simulator helps you see what would happen to YOUR account if that happened. There are three sliders:</p>
+        <p style="margin-top:.5rem;"><strong>Slider 1 — Market Decline:</strong> How far the market drops. Move it left for a mild dip (−10%), right for a severe crash (−60%).</p>
+        <p style="margin-top:.4rem;"><strong>Slider 2 — Duration:</strong> How many months the downturn lasts. Anywhere from 6 months to 3 years.</p>
+        <p style="margin-top:.4rem;"><strong>Slider 3 — Timing:</strong> When in your 7-year plan the bear market hits. Early? Late? See how it changes the outcome.</p>
+        <p style="margin-top:.4rem;">The chart shows <strong>three lines</strong>: (1) No bear market at all, (2) Bear market happens but you keep investing your $7,000/month, (3) Bear market happens and you stop investing out of fear. The key lesson: the green line (keep investing) usually ends up ahead — because you're buying cheap shares while prices are low.</p>
+        <div class="guide-tip"><strong>This is the most important part for you, Richard.</strong> At 70 with a 7-year horizon, a bear market mid-way through your plan is survivable — especially with dollar cost averaging. This tool proves it with your real numbers.</div>
+      </div>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-num">6</div>
+      <div class="guide-step-body">
+        <h4>Browse All Available Funds</h4>
+        <p>The <strong>Fund Library</strong> at the bottom shows every fund in your Miami DROP plan. You can filter by type (Bond, Stock, etc.) and see how each fund has performed over 1, 3, 5, and 10 years. The dots next to each fund show its risk level — 1 dot is very safe, 5 dots is more volatile. Use this as a reference when building your portfolios.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-greeting">Personal Investment Portal</div>
+    <div class="hero-tag">Personal Investment Portal · City of Miami GESE DROP</div>
     <h1 class="hero-title">Welcome, <span>Richard</span></h1>
-    <p class="hero-subtitle">City of Miami GESE DROP · Plan ID 108110 · Prepared by David Ortiz</p>
+    <p class="hero-sub">Plan ID 108110 · 401ATXEX · Prepared by David Ortiz, Advisor AI Partners</p>
     <div class="hero-stats">
-      <div class="stat-card">
-        <div class="stat-label">Current Balance</div>
-        <div class="stat-value" id="stat-balance">$15,355</div>
-        <div class="stat-sub">Massmutual GIA</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Monthly Contribution</div>
-        <div class="stat-value">$7,000</div>
-        <div class="stat-sub">Dollar Cost Averaging</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">3-Year Projected</div>
-        <div class="stat-value" id="stat-3yr">—</div>
-        <div class="stat-sub" id="stat-3yr-lbl">Select a portfolio</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">7-Year Projected</div>
-        <div class="stat-value" id="stat-7yr">—</div>
-        <div class="stat-sub" id="stat-7yr-lbl">Select a portfolio</div>
-      </div>
+      <div class="s-card"><div class="s-lbl">Current Balance</div><div class="s-val">$15,356</div><div class="s-sub">Massmutual GIA (100%)</div></div>
+      <div class="s-card"><div class="s-lbl">Monthly Contribution</div><div class="s-val">$7,000</div><div class="s-sub">Dollar cost averaging</div></div>
+      <div class="s-card"><div class="s-lbl">3-Year Projection</div><div class="s-val" id="h-3yr">—</div><div class="s-sub" id="h-3yr-lbl">Apply a portfolio to see</div></div>
+      <div class="s-card"><div class="s-lbl">7-Year Projection</div><div class="s-val" id="h-7yr">—</div><div class="s-sub" id="h-7yr-lbl">Apply a portfolio to see</div></div>
     </div>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-  <!-- SECTION: CHOOSE YOUR PORTFOLIO -->
-  <div id="portfolios" class="section-mb">
-    <div class="section-head">
-      <div class="section-title">Choose Your Portfolio Strategy</div>
-      <div class="section-sub">Three options designed for your $7,000/month dollar cost averaging plan. Target date funds excluded per your preference.</div>
-      <div class="section-divider"></div>
-    </div>
-
-    <div class="portfolio-grid">
-
-      <!-- PORTFOLIO A -->
-      <div class="portfolio-card" id="card-A" onclick="selectPortfolio('A')" style="--accent-color:#0097A7;--accent-rgb:0,151,167;">
-        <span class="select-badge">✓ Selected</span>
-        <div class="portfolio-label">Portfolio A</div>
-        <div class="portfolio-name">Steady Growth</div>
-        <div class="portfolio-risk" style="color:#0097A7">● Conservative</div>
-        <div class="portfolio-return" style="color:#0097A7" id="return-A">7.1%</div>
-        <div class="portfolio-return-label">Historical Blended Avg (10-yr)</div>
-        <div class="donut-wrap" style="margin-bottom:1rem;">
-          <canvas class="donut-canvas" id="donut-A"></canvas>
-          <div class="donut-legend" id="legend-A"></div>
-        </div>
-        <div class="portfolio-holdings" id="holdings-A"></div>
-      </div>
-
-      <!-- PORTFOLIO B -->
-      <div class="portfolio-card" id="card-B" onclick="selectPortfolio('B')" style="--accent-color:#1B3A6B;--accent-rgb:27,58,107;">
-        <span class="select-badge">✓ Selected</span>
-        <div class="portfolio-label">Portfolio B</div>
-        <div class="portfolio-name">Balanced Builder</div>
-        <div class="portfolio-risk" style="color:#1B3A6B">● Moderate</div>
-        <div class="portfolio-return" style="color:#1B3A6B" id="return-B">9.0%</div>
-        <div class="portfolio-return-label">Historical Blended Avg (10-yr)</div>
-        <div class="donut-wrap" style="margin-bottom:1rem;">
-          <canvas class="donut-canvas" id="donut-B"></canvas>
-          <div class="donut-legend" id="legend-B"></div>
-        </div>
-        <div class="portfolio-holdings" id="holdings-B"></div>
-      </div>
-
-      <!-- PORTFOLIO C -->
-      <div class="portfolio-card" id="card-C" onclick="selectPortfolio('C')" style="--accent-color:#C9A84C;--accent-rgb:201,168,76;">
-        <span class="select-badge">✓ Selected</span>
-        <div class="portfolio-label">Portfolio C</div>
-        <div class="portfolio-name">Growth Maximizer</div>
-        <div class="portfolio-risk" style="color:#B45309">● Aggressive</div>
-        <div class="portfolio-return" style="color:#C9A84C" id="return-C">11.1%</div>
-        <div class="portfolio-return-label">Historical Blended Avg (10-yr)</div>
-        <div class="donut-wrap" style="margin-bottom:1rem;">
-          <canvas class="donut-canvas" id="donut-C"></canvas>
-          <div class="donut-legend" id="legend-C"></div>
-        </div>
-        <div class="portfolio-holdings" id="holdings-C"></div>
-      </div>
-
-    </div>
+<!-- ══ PORTFOLIO BUILDER ══ -->
+<div id="builder" class="section-mb">
+  <div class="sh">
+    <div class="sh-title">Build Your Portfolio</div>
+    <div class="sh-sub">Select funds and set your allocation percentages for each portfolio. All three must add up to 100% before you can apply them.</div>
+    <div class="sh-bar"></div>
   </div>
 
-  <!-- DCA EDUCATION BAR -->
-  <div class="dca-explainer">
-    <div class="dca-title">💡 Why Dollar Cost Averaging Works for You</div>
-    <div class="dca-grid">
-      <div class="dca-item">
-        <h4>Removes Timing Risk</h4>
-        <p>By investing $7,000 every month regardless of market conditions, you automatically buy more shares when prices are low and fewer when prices are high.</p>
-      </div>
-      <div class="dca-item">
-        <h4>Bear Markets = Buying Opportunity</h4>
-        <p>When markets drop, your fixed contribution buys more units at a discount. This lowers your average cost and turbocharges your recovery. See the simulator below.</p>
-      </div>
-      <div class="dca-item">
-        <h4>Discipline Beats Prediction</h4>
-        <p>No one consistently times the market. DCA enforces discipline — you stay invested through ups and downs, letting compounding work uninterrupted over your time horizon.</p>
-      </div>
-    </div>
+  <div class="portfolio-tabs" id="ptabs">
+    <button class="ptab active" id="ptab-A" onclick="switchTab('A')">Portfolio A <span class="ptab-ret" id="ptab-ret-A">(7.1%)</span></button>
+    <button class="ptab" id="ptab-B" onclick="switchTab('B')">Portfolio B <span class="ptab-ret" id="ptab-ret-B">(—)</span></button>
+    <button class="ptab" id="ptab-C" onclick="switchTab('C')">Portfolio C <span class="ptab-ret" id="ptab-ret-C">(—)</span></button>
   </div>
 
-  <!-- SECTION: GROWTH PROJECTIONS -->
-  <div id="projections" class="section-mb">
-    <div class="section-head">
-      <div class="section-title">Growth Projections</div>
-      <div class="section-sub">Based on your selected portfolio's historical blended return with $7,000/month contributions starting from $15,355.72.</div>
-      <div class="section-divider"></div>
+  <div class="builder-layout">
+    <!-- Fund Picker -->
+    <div class="card picker">
+      <div class="picker-header">
+        <span class="picker-title">Available Funds — type a % to include</span>
+        <div class="picker-filters">
+          <button class="pf-btn on" onclick="pFilter('all',this)">All</button>
+          <button class="pf-btn" onclick="pFilter('Stable Value',this)">Stable</button>
+          <button class="pf-btn" onclick="pFilter('Bond',this)">Bond</button>
+          <button class="pf-btn" onclick="pFilter('Balanced',this)">Balanced</button>
+          <button class="pf-btn" onclick="pFilter('U.S. Stock',this)">U.S. Stock</button>
+          <button class="pf-btn" onclick="pFilter('International',this)">Intl</button>
+        </div>
+      </div>
+      <input type="text" class="picker-search" id="fund-search" placeholder="Search funds…" oninput="renderPicker()"/>
+      <div class="fund-rows" id="fund-rows"></div>
     </div>
 
-    <div class="projections-layout">
-      <div class="card chart-card">
-        <div class="chart-title">Portfolio Value Over Time — <span id="proj-portfolio-label">Select a Portfolio</span></div>
-        <div class="chart-wrap">
-          <canvas id="growthChart"></canvas>
-        </div>
+    <!-- Preview Panel -->
+    <div class="card preview">
+      <div class="pv-header">Portfolio <span id="preview-tab-label">A</span> Preview</div>
+
+      <div class="presets-row">
+        <button class="preset-btn" onclick="loadPreset('conservative')">📈 Conservative</button>
+        <button class="preset-btn" onclick="loadPreset('moderate')">⚖️ Moderate</button>
+        <button class="preset-btn" onclick="loadPreset('growth')">🚀 Growth</button>
+        <button class="preset-btn" onclick="clearPortfolio()">🗑 Clear</button>
       </div>
 
-      <div class="milestones">
-        <div class="milestone-card">
-          <div class="milestone-icon" style="background:#E0F5F7;">📅</div>
-          <div>
-            <div class="milestone-label">Year 1</div>
-            <div class="milestone-value" id="milestone-1yr">—</div>
-            <div class="milestone-note">12 months of contributions</div>
-          </div>
+      <div class="allocation-meter">
+        <div class="am-row">
+          <span class="am-label">Total Allocation</span>
+          <span class="am-value" id="am-val">0%</span>
         </div>
-        <div class="milestone-card">
-          <div class="milestone-icon" style="background:#EBF0F8;">📅</div>
-          <div>
-            <div class="milestone-label">Year 3</div>
-            <div class="milestone-value" id="milestone-3yr">—</div>
-            <div class="milestone-note">36 months · age <span id="age-3yr">73</span></div>
-          </div>
-        </div>
-        <div class="milestone-card">
-          <div class="milestone-icon" style="background:#FEF9EE;">📅</div>
-          <div>
-            <div class="milestone-label">Year 5</div>
-            <div class="milestone-value" id="milestone-5yr">—</div>
-            <div class="milestone-note">60 months · age <span id="age-5yr">75</span></div>
-          </div>
-        </div>
-        <div class="milestone-card">
-          <div class="milestone-icon" style="background:#F0FDF4;">📅</div>
-          <div>
-            <div class="milestone-label">Year 7</div>
-            <div class="milestone-value" id="milestone-7yr">—</div>
-            <div class="milestone-note">84 months · age <span id="age-7yr">77</span></div>
-          </div>
-        </div>
-        <div class="card" style="border:2px solid var(--teal); padding:1.1rem 1.25rem;">
-          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--teal);letter-spacing:.04em;margin-bottom:.25rem;">Total Contributions (7yr)</div>
-          <div style="font-size:1.4rem;font-weight:800;color:var(--navy);" id="total-contrib">$588,000</div>
-          <div style="font-size:.72rem;color:var(--gray-400);">$7,000 × 84 months</div>
-        </div>
-        <div class="card" style="border:2px solid var(--gold); padding:1.1rem 1.25rem;">
-          <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:#B45309;letter-spacing:.04em;margin-bottom:.25rem;">Investment Gains (7yr)</div>
-          <div style="font-size:1.4rem;font-weight:800;color:var(--navy);" id="total-gains">—</div>
-          <div style="font-size:.72rem;color:var(--gray-400);">Returns earned on contributions</div>
-        </div>
+        <div class="am-bar-wrap"><div class="am-bar under" id="am-bar" style="width:0%"></div></div>
+        <div class="am-hint" id="am-hint">Type percentages next to any fund to build your portfolio.</div>
       </div>
+
+      <div class="blended-return">
+        <div class="br-label">Historical Blended Return (10-yr avg)</div>
+        <div class="br-value" id="br-val">—</div>
+        <div class="br-sub">Based on your selected allocations</div>
+      </div>
+
+      <div class="donut-section">
+        <div class="donut-wrap"><canvas id="preview-donut" width="130" height="130"></canvas></div>
+        <div class="preview-holdings" id="preview-holdings"></div>
+      </div>
+
+      <button class="apply-btn" id="apply-btn" disabled onclick="applyPortfolio()">
+        Apply Portfolio to Projections
+      </button>
+      <div style="font-size:.7rem;color:var(--g400);text-align:center;margin-top:.4rem" id="apply-status">Allocations must total 100% to apply</div>
     </div>
   </div>
-
-  <!-- SECTION: BEAR MARKET SIMULATOR -->
-  <div id="bear-sim" class="section-mb">
-    <div class="section-head">
-      <div class="section-title">Bear Market Simulator</div>
-      <div class="section-sub">Adjust the sliders to see what happens to Richard's portfolio during a market downturn — and why keeping contributions going makes all the difference.</div>
-      <div class="section-divider"></div>
-    </div>
-
-    <div class="bear-layout">
-      <div class="card bear-controls">
-        <div class="control-group">
-          <label>Market Decline</label>
-          <div class="control-value" id="decline-val" style="color:#DC2626;">−30%</div>
-          <div class="control-sub">How far the market drops</div>
-          <input type="range" id="decline-slider" min="10" max="60" value="30" step="5" oninput="updateBear()"/>
-          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400);margin-top:.2rem;"><span>−10%</span><span>−60%</span></div>
-        </div>
-
-        <div class="control-group">
-          <label>Bear Market Duration</label>
-          <div class="control-value" id="duration-val" style="color:#1B3A6B;">18 months</div>
-          <div class="control-sub">How long the downturn lasts</div>
-          <input type="range" id="duration-slider" min="6" max="36" value="18" step="3" oninput="updateBear()"/>
-          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400);margin-top:.2rem;"><span>6 mo</span><span>36 mo</span></div>
-        </div>
-
-        <div class="control-group">
-          <label>Starts at Month</label>
-          <div class="control-value" id="start-val" style="color:#C9A84C;">Month 18</div>
-          <div class="control-sub">When in the timeline the bear hits</div>
-          <input type="range" id="start-slider" min="6" max="48" value="18" step="6" oninput="updateBear()"/>
-          <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400);margin-top:.2rem;"><span>Mo 6</span><span>Mo 48</span></div>
-        </div>
-
-        <div class="bear-result">
-          <div class="bear-result-item" style="background:var(--red-light);">
-            <div class="bear-result-label" style="color:#DC2626;">Portfolio Low Point</div>
-            <div class="bear-result-value" style="color:#DC2626;" id="bear-low">—</div>
-          </div>
-          <div class="bear-result-item" style="background:var(--green-light);">
-            <div class="bear-result-label" style="color:#16A34A;">With DCA at 7yr</div>
-            <div class="bear-result-value" style="color:#16A34A;" id="bear-dca-end">—</div>
-          </div>
-          <div class="bear-result-item" style="background:var(--navy-light);">
-            <div class="bear-result-label" style="color:var(--navy);">No Bear Market</div>
-            <div class="bear-result-value" style="color:var(--navy);" id="bear-normal-end">—</div>
-          </div>
-          <div class="bear-result-item" style="background:#FEF9EE;">
-            <div class="bear-result-label" style="color:#B45309;">Stop Investing</div>
-            <div class="bear-result-value" style="color:#B45309;" id="bear-stop-end">—</div>
-          </div>
-        </div>
-
-        <div class="insight-box" id="bear-insight">
-          <h4>💡 Key Insight</h4>
-          <p id="bear-insight-text">Adjust the sliders to see the DCA advantage during market downturns.</p>
-        </div>
-      </div>
-
-      <div class="card chart-card">
-        <div class="chart-title">Bear Market Scenario — 7-Year View</div>
-        <div style="display:flex;gap:1.25rem;margin-bottom:.75rem;flex-wrap:wrap;">
-          <span style="font-size:.75rem;display:flex;align-items:center;gap:.35rem;"><span style="display:inline-block;width:16px;height:3px;background:#1B3A6B;border-radius:2px;"></span>No Bear Market</span>
-          <span style="font-size:.75rem;display:flex;align-items:center;gap:.35rem;"><span style="display:inline-block;width:16px;height:3px;background:#16A34A;border-radius:2px;"></span>Bear Market — Keep DCA-ing ✓</span>
-          <span style="font-size:.75rem;display:flex;align-items:center;gap:.35rem;"><span style="display:inline-block;width:16px;height:3px;background:#DC2626;border-radius:2px;border-style:dashed;"></span>Bear Market — Stop Investing ✗</span>
-        </div>
-        <div class="chart-wrap" style="height:320px;">
-          <canvas id="bearChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION: FUND LIBRARY -->
-  <div id="fund-library" class="section-mb">
-    <div class="section-head">
-      <div class="section-title">Fund Library — All Available Funds</div>
-      <div class="section-sub">Historical returns are approximate 10-year averages as of 2024. Past performance does not guarantee future results.</div>
-      <div class="section-divider"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-body" style="padding-bottom:.5rem;">
-        <div class="fund-filters">
-          <button class="filter-btn active" onclick="filterFunds('all',this)">All Funds</button>
-          <button class="filter-btn" onclick="filterFunds('Stable Value',this)">Stable Value</button>
-          <button class="filter-btn" onclick="filterFunds('Bond',this)">Bond</button>
-          <button class="filter-btn" onclick="filterFunds('Balanced',this)">Balanced</button>
-          <button class="filter-btn" onclick="filterFunds('U.S. Stock',this)">U.S. Stock</button>
-          <button class="filter-btn" onclick="filterFunds('International',this)">International</button>
-        </div>
-      </div>
-      <div style="overflow-x:auto;">
-        <table class="fund-table" id="fund-table">
-          <thead>
-            <tr>
-              <th>Fund Name</th>
-              <th>Asset Class</th>
-              <th style="text-align:right;">1-Year</th>
-              <th style="text-align:right;">3-Year</th>
-              <th style="text-align:right;">5-Year</th>
-              <th style="text-align:right;">10-Year</th>
-              <th>Risk Level</th>
-            </tr>
-          </thead>
-          <tbody id="fund-tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- DISCLAIMER -->
-  <div class="disclaimer">
-    <strong>Important Disclosures:</strong> This portal is for educational purposes and is not investment advice. Historical returns shown are approximate annualized figures based on publicly available data as of 2024–2025 and are not guarantees of future performance. All projections are hypothetical and assume consistent monthly contributions and steady compounding. Actual results will vary. Richard Pope's portfolio decisions should be made in consultation with a licensed financial advisor. This portal was prepared by David Ortiz, Advisor AI Partners.
-  </div>
-
 </div>
 
-<!-- FOOTER -->
-<div class="portal-footer">
-  Prepared for <strong>Richard A. Pope</strong> · City of Miami GESE DROP Plan · By <strong>Advisor AI Partners</strong> · David Ortiz &nbsp;|&nbsp; <a href="https://meetings.advisoraipartners.com" style="color:var(--teal);text-decoration:none;">Schedule a Meeting</a>
+<!-- ══ EDUCATION ══ -->
+<div id="education" class="section-mb">
+  <div class="sh">
+    <div class="sh-title">Understanding Your Investments</div>
+    <div class="sh-sub">Click any card to learn more. Plain English — no jargon.</div>
+    <div class="sh-bar"></div>
+  </div>
+  <div class="edu-grid">
+
+    <div class="edu-card" onclick="toggleEdu(this)">
+      <div class="edu-icon">🏦</div>
+      <div class="edu-name">Stable Value / Cash</div>
+      <div class="edu-risk" style="color:#0097A7">● Very Low Risk</div>
+      <div class="edu-blurb">Think of this as a savings account inside your retirement plan. Your money doesn't fluctuate. It earns a guaranteed interest rate.</div>
+      <div class="edu-expand">
+        <p>The <strong>Massmutual Guaranteed Interest Account</strong> is where your money sits right now. It's backed by an insurance contract, so your balance never goes down due to market conditions.</p>
+        <p><strong>When it makes sense:</strong> As a safe "anchor" for a portion of your portfolio — especially to balance out riskier stock funds. Not ideal as your only holding if you want growth over 7+ years.</p>
+        <p><strong>The trade-off:</strong> You won't lose money, but inflation may erode purchasing power over time. A 3% return barely keeps up with average inflation.</p>
+        <div class="edu-funds">In your plan: Massmutual Guaranteed Interest Account (~3.1% historical)</div>
+      </div>
+    </div>
+
+    <div class="edu-card" onclick="toggleEdu(this)">
+      <div class="edu-icon">📊</div>
+      <div class="edu-name">Bond Funds</div>
+      <div class="edu-risk" style="color:#4F46E5">● Low Risk</div>
+      <div class="edu-blurb">When you invest in bonds, you're essentially lending money to the government or big companies. They pay you back with interest over time.</div>
+      <div class="edu-expand">
+        <p>Bonds are much more stable than stocks. They don't typically shoot up or crash dramatically. The <strong>Vanguard Total Bond Market</strong> holds thousands of different bonds, which spreads the risk.</p>
+        <p><strong>When it makes sense:</strong> As a stabilizing "shock absorber" in your portfolio. When stocks fall, bonds often hold steady or even rise slightly, smoothing out your overall balance.</p>
+        <p><strong>The trade-off:</strong> Low volatility means lower growth. Bond funds have historically returned around 1–3% annually — solid protection but not a growth engine.</p>
+        <p><strong>Recent note:</strong> Bond returns have been negative in some recent years due to interest rate increases. This is normal and tends to reverse over time.</p>
+        <div class="edu-funds">In your plan: Vanguard Total Bond Market Index ADM (~1.8% 10-yr)</div>
+      </div>
+    </div>
+
+    <div class="edu-card" onclick="toggleEdu(this)">
+      <div class="edu-icon">⚖️</div>
+      <div class="edu-name">Balanced / Mixed Funds</div>
+      <div class="edu-risk" style="color:#B45309">● Moderate Risk</div>
+      <div class="edu-blurb">These funds do the mixing for you — holding both stocks and bonds in one package. Built-in diversification at a moderate risk level.</div>
+      <div class="edu-expand">
+        <p>A balanced fund is like a "set it and forget it" blend. <strong>Vanguard Wellington</strong>, for example, has been around since 1929 and holds roughly 65% stocks and 35% bonds. It has a remarkable long-term track record.</p>
+        <p><strong>When it makes sense:</strong> As a core holding for someone who wants growth but doesn't want extreme volatility. Wellington tends to lose less in bear markets than pure stock funds, and still grows well in bull markets.</p>
+        <p><strong>The trade-off:</strong> You won't hit the highs of an all-stock portfolio, but you also won't feel the full lows. For most retirees doing DCA, this is a sweet spot.</p>
+        <div class="edu-funds">In your plan: Vanguard Wellington Admiral, MissionSquare Long-Term Growth, MissionSquare Conservative Growth (~5.8–8.9% 10-yr)</div>
+      </div>
+    </div>
+
+    <div class="edu-card" onclick="toggleEdu(this)">
+      <div class="edu-icon">📈</div>
+      <div class="edu-name">Stock (Equity) Funds</div>
+      <div class="edu-risk" style="color:#16A34A">● Moderate–High Risk</div>
+      <div class="edu-blurb">You own tiny pieces of hundreds or thousands of companies. Over long periods, stocks have historically outperformed everything else — but they go up and down.</div>
+      <div class="edu-expand">
+        <p>The <strong>Vanguard 500 Index</strong> tracks the 500 largest U.S. companies (Apple, Microsoft, Amazon, etc.). When those companies do well, your balance grows. When they struggle, it dips.</p>
+        <p><strong>Large-cap funds</strong> (like Vanguard 500, Fidelity Contrafund) invest in big, established companies — more stable than smaller companies.<br/><strong>Small-cap funds</strong> (like Vanguard Small-Cap) invest in smaller, faster-growing companies — higher potential but more volatile.<br/><strong>International funds</strong> (like Vanguard Total Intl) invest overseas — adds global diversification.</p>
+        <p><strong>The key insight for you:</strong> Because you're contributing $7,000 every month, market dips are actually your friend — you buy more shares at a lower price. See the Bear Market Simulator for proof.</p>
+        <div class="edu-funds">In your plan: Vanguard 500, Fidelity Contrafund K, JPMorgan US Equity, Vanguard Small-Cap, and more (~7.8–13.1% 10-yr)</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DCA BAR -->
+<div class="dca-bar">
+  <div class="dca-title">💡 Why Dollar Cost Averaging Works in Your Favor</div>
+  <div class="dca-grid">
+    <div class="dca-item"><h4>No Timing Required</h4><p>By investing $7,000 every month regardless of market conditions, you automatically buy more shares when prices are low and fewer when prices are high — without having to predict anything.</p></div>
+    <div class="dca-item"><h4>Bear Markets Become Buying Opportunities</h4><p>When markets drop, your fixed $7,000 buys more units at a discount. That lowers your average cost and supercharges your recovery. The Bear Market Simulator below shows this with your real numbers.</p></div>
+    <div class="dca-item"><h4>Discipline Beats Prediction</h4><p>No investor consistently times the market. DCA enforces discipline — you stay invested through ups and downs, letting compounding work uninterrupted. Time in the market beats timing the market.</p></div>
+  </div>
+</div>
+
+<!-- ══ PROJECTIONS ══ -->
+<div id="projections" class="section-mb">
+  <div class="sh">
+    <div class="sh-title">Growth Projections</div>
+    <div class="sh-sub">Apply a portfolio above to see your personalized 7-year growth projection based on historical blended returns and $7,000/month contributions.</div>
+    <div class="sh-bar"></div>
+  </div>
+  <div class="proj-layout">
+    <div class="card chart-card">
+      <div class="chart-title">Portfolio Growth — <span id="proj-lbl" style="color:var(--teal)">Apply a portfolio to get started</span></div>
+      <div class="chart-wrap"><canvas id="growthChart"></canvas></div>
+    </div>
+    <div class="milestones">
+      <div class="ms-card"><div class="ms-icon" style="background:var(--teal-lt)">📅</div><div><div class="ms-label">Year 1</div><div class="ms-value" id="ms-1yr">—</div><div class="ms-note">12 months · age 71</div></div></div>
+      <div class="ms-card"><div class="ms-icon" style="background:var(--navy-lt)">📅</div><div><div class="ms-label">Year 3</div><div class="ms-value" id="ms-3yr">—</div><div class="ms-note">36 months · age 73</div></div></div>
+      <div class="ms-card"><div class="ms-icon" style="background:var(--gold-lt)">📅</div><div><div class="ms-label">Year 5</div><div class="ms-value" id="ms-5yr">—</div><div class="ms-note">60 months · age 75</div></div></div>
+      <div class="ms-card"><div class="ms-icon" style="background:var(--green-lt)">📅</div><div><div class="ms-label">Year 7</div><div class="ms-value" id="ms-7yr">—</div><div class="ms-note">84 months · age 77</div></div></div>
+      <div class="card" style="border:2px solid var(--teal);padding:.9rem 1.15rem;">
+        <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;color:var(--teal);letter-spacing:.04em;margin-bottom:.2rem">Total Invested (7yr)</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--navy)">$603,356</div>
+        <div style="font-size:.68rem;color:var(--g400)">$15,356 + ($7,000 × 84 months)</div>
+      </div>
+      <div class="card" style="border:2px solid var(--gold);padding:.9rem 1.15rem;">
+        <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;color:#B45309;letter-spacing:.04em;margin-bottom:.2rem">Investment Gains (7yr)</div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--navy)" id="ms-gains">—</div>
+        <div style="font-size:.68rem;color:var(--g400)">Returns earned on top of contributions</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BEAR MARKET SIMULATOR ══ -->
+<div id="bear-sim" class="section-mb">
+  <div class="sh">
+    <div class="sh-title">Bear Market Simulator</div>
+    <div class="sh-sub">Adjust the sliders to see what happens to your portfolio during a downturn — and why keeping your contributions going makes all the difference.</div>
+    <div class="sh-bar"></div>
+  </div>
+  <div class="bear-layout">
+    <div class="card bear-controls">
+      <div class="ctrl-group">
+        <label>Market Decline</label>
+        <div class="ctrl-val" id="dc-val" style="color:var(--red)">−30%</div>
+        <div class="ctrl-sub">How far the market falls</div>
+        <input type="range" id="dc-slider" min="10" max="60" value="30" step="5" oninput="updateBear()"/>
+        <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--g400);margin-top:.15rem"><span>−10%</span><span>Mild</span><span>−60%</span></div>
+      </div>
+      <div class="ctrl-group">
+        <label>Downturn Duration</label>
+        <div class="ctrl-val" id="dur-val" style="color:var(--navy)">18 months</div>
+        <div class="ctrl-sub">How long the bear market lasts</div>
+        <input type="range" id="dur-slider" min="6" max="36" value="18" step="3" oninput="updateBear()"/>
+        <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--g400);margin-top:.15rem"><span>6 mo</span><span>18 mo</span><span>36 mo</span></div>
+      </div>
+      <div class="ctrl-group">
+        <label>When It Starts</label>
+        <div class="ctrl-val" id="st-val" style="color:var(--gold)">Month 18</div>
+        <div class="ctrl-sub">Point in your timeline when the bear hits</div>
+        <input type="range" id="st-slider" min="6" max="48" value="18" step="6" oninput="updateBear()"/>
+        <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--g400);margin-top:.15rem"><span>Mo 6</span><span>Mo 24</span><span>Mo 48</span></div>
+      </div>
+      <div class="bear-results">
+        <div class="br-item" style="background:var(--red-lt)"><div class="br-item-lbl" style="color:var(--red)">Portfolio Low</div><div class="br-item-val" style="color:var(--red)" id="b-low">—</div></div>
+        <div class="br-item" style="background:var(--green-lt)"><div class="br-item-lbl" style="color:var(--green)">Keep DCA — 7yr End</div><div class="br-item-val" style="color:var(--green)" id="b-dca">—</div></div>
+        <div class="br-item" style="background:var(--navy-lt)"><div class="br-item-lbl" style="color:var(--navy)">No Bear — 7yr End</div><div class="br-item-val" style="color:var(--navy)" id="b-norm">—</div></div>
+        <div class="br-item" style="background:var(--gold-lt)"><div class="br-item-lbl" style="color:#B45309">Stop Investing — 7yr</div><div class="br-item-val" style="color:#B45309" id="b-stop">—</div></div>
+      </div>
+      <div class="insight">
+        <h4>💡 What This Means for You</h4>
+        <p id="bear-insight">Use the sliders above to model a scenario, then read the explanation here.</p>
+      </div>
+    </div>
+    <div class="card chart-card">
+      <div class="chart-title">7-Year Bear Market Scenario</div>
+      <div style="display:flex;gap:1rem;margin-bottom:.75rem;flex-wrap:wrap">
+        <span style="font-size:.73rem;display:flex;align-items:center;gap:.3rem"><span style="display:inline-block;width:14px;height:3px;background:#1B3A6B;border-radius:2px"></span>No Bear Market</span>
+        <span style="font-size:.73rem;display:flex;align-items:center;gap:.3rem"><span style="display:inline-block;width:14px;height:3px;background:#16A34A;border-radius:2px"></span>Bear — Keep DCA-ing ✓</span>
+        <span style="font-size:.73rem;display:flex;align-items:center;gap:.3rem"><span style="display:inline-block;width:14px;height:3px;background:#DC2626;border-radius:2px;border-style:dashed"></span>Bear — Stop Investing ✗</span>
+      </div>
+      <div class="chart-wrap" style="height:310px"><canvas id="bearChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FUND LIBRARY ══ -->
+<div id="funds" class="section-mb">
+  <div class="sh">
+    <div class="sh-title">Fund Library — All Available Funds</div>
+    <div class="sh-sub">Every fund in your Miami DROP plan with historical returns. Use this as a reference when building your portfolios above.</div>
+    <div class="sh-bar"></div>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding-bottom:.5rem">
+      <div class="ftbl-filters">
+        <button class="ftbl-btn on" onclick="fFilter('all',this)">All Funds</button>
+        <button class="ftbl-btn" onclick="fFilter('Stable Value',this)">Stable Value</button>
+        <button class="ftbl-btn" onclick="fFilter('Bond',this)">Bond</button>
+        <button class="ftbl-btn" onclick="fFilter('Balanced',this)">Balanced</button>
+        <button class="ftbl-btn" onclick="fFilter('U.S. Stock',this)">U.S. Stock</button>
+        <button class="ftbl-btn" onclick="fFilter('International',this)">International</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="ftbl" id="fund-table">
+        <thead><tr>
+          <th>Fund Name</th><th>Asset Class</th>
+          <th style="text-align:right">1-Year</th><th style="text-align:right">3-Year</th>
+          <th style="text-align:right">5-Year</th><th style="text-align:right">10-Year</th>
+          <th>Risk</th>
+        </tr></thead>
+        <tbody id="fund-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disc">
+  <strong>Important Disclosures:</strong> This portal is for educational purposes and does not constitute investment advice. Historical returns are approximate annualized figures based on publicly available fund data as of 2024–2025 and are not guarantees of future performance. All projections are hypothetical and assume consistent monthly contributions and steady compounding at the blended historical rate. Actual results will vary significantly based on market conditions. This portal was prepared by David Ortiz, Advisor AI Partners, as an educational resource for Richard Pope.
+</div>
+</div>
+
+<div class="footer">
+  Prepared for <strong style="color:var(--navy)">Richard A. Pope</strong> · City of Miami GESE DROP Plan · By <strong style="color:var(--teal)">David Ortiz, Advisor AI Partners</strong>
+  &nbsp;|&nbsp; <a href="https://meetings.advisoraipartners.com">Schedule a Meeting →</a>
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════
-// DATA
-// ════════════════════════════════════════════════════════
-const START_BALANCE = 15355.72;
-const MONTHLY_CONTRIB = 7000;
-const CURRENT_AGE = 70;
+// ════════════════════════════════════
+// CONFIG & DATA
+// ════════════════════════════════════
+const START = 15355.72, PMT = 7000, AGE = 70;
 
-const ALL_FUNDS = [
-  { id: 'massmutual_gia',     name: 'Massmutual Guaranteed Interest Account', shortName: 'Massmutual GIA',       cls: 'Stable Value',        r1: 3.1,  r3: 3.0,  r5: 2.9,  r10: 3.1,  risk: 1 },
-  { id: 'fidelity_contrafund',name: 'Fidelity Contrafund K',                  shortName: 'Fidelity Contrafund K',cls: 'U.S. Stock',           r1: 14.2, r3: 8.5,  r5: 13.8, r10: 12.5, risk: 4 },
-  { id: 'jpmorgan_us',        name: 'JPMorgan US Equity R6',                  shortName: 'JPMorgan US Equity',   cls: 'U.S. Stock',           r1: 12.8, r3: 9.2,  r5: 12.1, r10: 11.8, risk: 4 },
-  { id: 'ms_aggressive',      name: 'MissionSquare Aggressive Opportun R10',  shortName: 'MS Aggressive Opp.',   cls: 'U.S. Stock',           r1: 11.5, r3: 7.8,  r5: 11.2, r10: 10.3, risk: 5 },
-  { id: 'ms_conservative',    name: 'MissionSquare MP Conservative Growth R10',shortName:'MS Conservative Gr.',  cls: 'Balanced',             r1: 6.2,  r3: 4.1,  r5: 5.8,  r10: 5.8,  risk: 2 },
-  { id: 'ms_longterm',        name: 'MissionSquare MP Long-Term Growth R10',  shortName: 'MS Long-Term Gr.',     cls: 'Balanced',             r1: 9.4,  r3: 6.5,  r5: 9.1,  r10: 8.5,  risk: 3 },
-  { id: 'pgim_jennison',      name: 'PGIM Jennison Small Company R6',         shortName: 'PGIM Jennison Sm.',    cls: 'U.S. Stock',           r1: 9.8,  r3: 5.2,  r5: 8.9,  r10: 7.9,  risk: 5 },
-  { id: 'vanguard_500',       name: 'Vanguard 500 Index Admiral',             shortName: 'Vanguard 500 Index',   cls: 'U.S. Stock',           r1: 24.1, r3: 11.0, r5: 15.5, r10: 13.1, risk: 4 },
-  { id: 'vanguard_explorer',  name: 'Vanguard Explorer Value Investor',       shortName: 'Vanguard Explorer Val',cls: 'U.S. Stock',           r1: 8.9,  r3: 5.8,  r5: 8.2,  r10: 8.1,  risk: 4 },
-  { id: 'vanguard_selected',  name: 'Vanguard Selected Value Investor',       shortName: 'Vanguard Selected Val',cls: 'U.S. Stock',           r1: 9.2,  r3: 5.5,  r5: 8.1,  r10: 7.8,  risk: 4 },
-  { id: 'vanguard_smallcap',  name: 'Vanguard Small-Cap Index Admiral',       shortName: 'Vanguard Small-Cap',   cls: 'U.S. Stock',           r1: 10.8, r3: 4.9,  r5: 9.8,  r10: 9.2,  risk: 5 },
-  { id: 'vanguard_strategic', name: 'Vanguard Strategic Equity Investor',     shortName: 'Vanguard Strategic Eq',cls: 'U.S. Stock',           r1: 12.4, r3: 7.9,  r5: 11.8, r10: 10.5, risk: 4 },
-  { id: 'vanguard_bond',      name: 'Vanguard Total Bond Market Index ADM',   shortName: 'Vanguard Total Bond',  cls: 'Bond',                 r1: 1.2,  r3: -2.1, r5: 0.4,  r10: 1.8,  risk: 1 },
-  { id: 'vanguard_intl',      name: 'Vanguard Total Intl Stock Index Admiral',shortName: 'Vanguard Intl Stock',  cls: 'International Stock',  r1: 8.5,  r3: 4.2,  r5: 6.8,  r10: 5.6,  risk: 4 },
-  { id: 'vanguard_wellington',name: 'Vanguard Wellington Admiral',            shortName: 'Vanguard Wellington',  cls: 'Balanced',             r1: 10.8, r3: 6.2,  r5: 9.5,  r10: 8.9,  risk: 3 },
-  { id: 'vanguard_windsor2',  name: 'Vanguard Windsor II Admiral',            shortName: 'Vanguard Windsor II',  cls: 'U.S. Stock',           r1: 9.5,  r3: 6.8,  r5: 9.2,  r10: 8.4,  risk: 4 },
-  { id: 'victory_rs',         name: 'Victory RS Partners R6',                 shortName: 'Victory RS Partners',  cls: 'U.S. Stock',           r1: 11.2, r3: 7.5,  r5: 10.8, r10: 9.1,  risk: 4 },
+const FUNDS = [
+  {id:'gua',name:'Massmutual Guaranteed Interest Account',short:'Massmutual GIA',       cls:'Stable Value',r1:3.1, r3:3.0, r5:2.9, r10:3.1, risk:1},
+  {id:'fcn',name:'Fidelity Contrafund K',                  short:'Fidelity Contrafund', cls:'U.S. Stock',  r1:14.2,r3:8.5, r5:13.8,r10:12.5,risk:4},
+  {id:'jpm',name:'JPMorgan US Equity R6',                  short:'JPMorgan US Equity',  cls:'U.S. Stock',  r1:12.8,r3:9.2, r5:12.1,r10:11.8,risk:4},
+  {id:'msa',name:'MissionSquare Aggressive Opportun R10',   short:'MS Aggressive',       cls:'U.S. Stock',  r1:11.5,r3:7.8, r5:11.2,r10:10.3,risk:5},
+  {id:'msc',name:'MissionSquare MP Conservative Growth R10',short:'MS Conservative',     cls:'Balanced',    r1:6.2, r3:4.1, r5:5.8, r10:5.8, risk:2},
+  {id:'msl',name:'MissionSquare MP Long-Term Growth R10',   short:'MS Long-Term Gr.',    cls:'Balanced',    r1:9.4, r3:6.5, r5:9.1, r10:8.5, risk:3},
+  {id:'pgm',name:'PGIM Jennison Small Company R6',          short:'PGIM Jennison',       cls:'U.S. Stock',  r1:9.8, r3:5.2, r5:8.9, r10:7.9, risk:5},
+  {id:'v5',  name:'Vanguard 500 Index Admiral',             short:'Vanguard 500 Index',  cls:'U.S. Stock',  r1:24.1,r3:11.0,r5:15.5,r10:13.1,risk:4},
+  {id:'vev',name:'Vanguard Explorer Value Investor',         short:'Vanguard Expl. Value',cls:'U.S. Stock',  r1:8.9, r3:5.8, r5:8.2, r10:8.1, risk:4},
+  {id:'vsv',name:'Vanguard Selected Value Investor',         short:'Vanguard Sel. Value', cls:'U.S. Stock',  r1:9.2, r3:5.5, r5:8.1, r10:7.8, risk:4},
+  {id:'vsc',name:'Vanguard Small-Cap Index Admiral',         short:'Vanguard Small-Cap',  cls:'U.S. Stock',  r1:10.8,r3:4.9, r5:9.8, r10:9.2, risk:5},
+  {id:'vst',name:'Vanguard Strategic Equity Investor',       short:'Vanguard Strategic',  cls:'U.S. Stock',  r1:12.4,r3:7.9, r5:11.8,r10:10.5,risk:4},
+  {id:'vbd',name:'Vanguard Total Bond Market Index ADM',     short:'Vanguard Total Bond', cls:'Bond',        r1:1.2, r3:-2.1,r5:0.4, r10:1.8, risk:1},
+  {id:'vit',name:'Vanguard Total Intl Stock Index Admiral',  short:'Vanguard Intl Stock', cls:'International Stock',r1:8.5,r3:4.2,r5:6.8,r10:5.6,risk:4},
+  {id:'vwl',name:'Vanguard Wellington Admiral',              short:'Vanguard Wellington', cls:'Balanced',    r1:10.8,r3:6.2, r5:9.5, r10:8.9, risk:3},
+  {id:'vw2',name:'Vanguard Windsor II Admiral',              short:'Vanguard Windsor II', cls:'U.S. Stock',  r1:9.5, r3:6.8, r5:9.2, r10:8.4, risk:4},
+  {id:'vrs',name:'Victory RS Partners R6',                   short:'Victory RS Partners', cls:'U.S. Stock',  r1:11.2,r3:7.5, r5:10.8,r10:9.1, risk:4},
 ];
+const FM = {}; FUNDS.forEach(f=>FM[f.id]=f);
 
-const FUND_MAP = {};
-ALL_FUNDS.forEach(f => FUND_MAP[f.id] = f);
+// Portfolio allocations per tab {id: %}
+const PORTFOLIOS = { A: {}, B: {}, C: {} };
+let activeTab = 'A';
+let appliedReturn = null;
+let growthChart = null, bearChart = null, donutChart = null;
+let ftblFilter = 'all', pickerFilter = 'all';
 
-const PORTFOLIOS = {
-  A: {
-    name: 'Steady Growth',
-    annualReturn: 7.1,
-    color: '#0097A7',
-    donutColors: ['#0097A7','#4FC3CA','#1B3A6B','#EBF0F8'],
-    holdings: [
-      { id: 'massmutual_gia',     alloc: 25 },
-      { id: 'vanguard_bond',      alloc: 20 },
-      { id: 'vanguard_wellington',alloc: 30 },
-      { id: 'vanguard_500',       alloc: 25 },
-    ]
-  },
-  B: {
-    name: 'Balanced Builder',
-    annualReturn: 9.0,
-    color: '#1B3A6B',
-    donutColors: ['#1B3A6B','#2E5FA3','#0097A7','#4FC3CA','#94A3B8'],
-    holdings: [
-      { id: 'vanguard_500',       alloc: 40 },
-      { id: 'vanguard_wellington',alloc: 20 },
-      { id: 'vanguard_intl',      alloc: 15 },
-      { id: 'vanguard_bond',      alloc: 15 },
-      { id: 'vanguard_windsor2',  alloc: 10 },
-    ]
-  },
-  C: {
-    name: 'Growth Maximizer',
-    annualReturn: 11.1,
-    color: '#C9A84C',
-    donutColors: ['#C9A84C','#1B3A6B','#0097A7','#E67E22','#8B5CF6'],
-    holdings: [
-      { id: 'vanguard_500',        alloc: 35 },
-      { id: 'fidelity_contrafund', alloc: 20 },
-      { id: 'jpmorgan_us',         alloc: 15 },
-      { id: 'vanguard_smallcap',   alloc: 15 },
-      { id: 'vanguard_intl',       alloc: 15 },
-    ]
-  }
+// Presets
+const PRESETS = {
+  conservative: { gua:25, vbd:20, vwl:30, v5:25 },
+  moderate:     { v5:40, vwl:20, vit:15, vbd:15, vw2:10 },
+  growth:       { v5:35, fcn:20, jpm:15, vsc:15, vit:15 }
 };
 
-// ════════════════════════════════════════════════════════
-// UTILITY
-// ════════════════════════════════════════════════════════
-function fmt(n) {
-  if (n === null || n === undefined || isNaN(n)) return '—';
-  return '$' + Math.round(n).toLocaleString('en-US');
+// ════════════════════════════════════
+// GUIDE
+// ════════════════════════════════════
+function openGuide(){ document.getElementById('guide-overlay').classList.add('open'); }
+function closeGuide(){ document.getElementById('guide-overlay').classList.remove('open'); }
+function closeGuideOnBg(e){ if(e.target===document.getElementById('guide-overlay')) closeGuide(); }
+
+// ════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════
+function switchTab(t){
+  activeTab = t;
+  ['A','B','C'].forEach(k=>{
+    document.getElementById('ptab-'+k).classList.toggle('active', k===t);
+  });
+  document.getElementById('preview-tab-label').textContent = t;
+  renderPicker();
+  updatePreview();
 }
 
-function calcGrowth(annualReturn, months, startBal, monthlyC) {
-  const r = annualReturn / 100 / 12;
+// ════════════════════════════════════
+// FUND PICKER
+// ════════════════════════════════════
+function pFilter(cls, btn){
+  pickerFilter = cls;
+  document.querySelectorAll('.pf-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderPicker();
+}
+
+function renderPicker(){
+  const search = document.getElementById('fund-search').value.toLowerCase();
+  const alloc = PORTFOLIOS[activeTab];
+  const rows = document.getElementById('fund-rows');
+  rows.innerHTML = '';
+
+  const visible = FUNDS.filter(f => {
+    if(pickerFilter !== 'all' && pickerFilter !== 'International' && f.cls !== pickerFilter) return false;
+    if(pickerFilter === 'International' && !f.cls.startsWith('International')) return false;
+    if(search && !f.name.toLowerCase().includes(search) && !f.cls.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  visible.forEach(f => {
+    const val = alloc[f.id] || 0;
+    const included = val > 0;
+    const div = document.createElement('div');
+    div.className = 'fund-row' + (included ? ' included' : '');
+    div.innerHTML = `
+      <div class="fr-info">
+        <div class="fr-name">${f.name}</div>
+        <span class="fr-cls ${clsBadge(f.cls)}">${f.cls}</span>
+      </div>
+      <span class="fr-ret${f.r10<0?' neg':''}">${f.r10>0?'+':''}${f.r10.toFixed(1)}%</span>
+      <input type="number" class="alloc-input${included?' has-val':''}" min="0" max="100"
+        value="${val>0?val:''}" placeholder="0"
+        data-id="${f.id}"
+        oninput="onAllocInput(this)"
+        onfocus="this.select()"
+      />
+      <span class="alloc-suffix">%</span>
+    `;
+    rows.appendChild(div);
+  });
+}
+
+function onAllocInput(inp){
+  const id = inp.dataset.id;
+  let v = parseInt(inp.value) || 0;
+  if(v < 0) v = 0;
+  if(v > 100) v = 100;
+  if(v === 0) delete PORTFOLIOS[activeTab][id];
+  else PORTFOLIOS[activeTab][id] = v;
+  // update visual on this row
+  inp.classList.toggle('has-val', v > 0);
+  inp.closest('.fund-row').classList.toggle('included', v > 0);
+  updatePreview();
+}
+
+// ════════════════════════════════════
+// PREVIEW PANEL
+// ════════════════════════════════════
+function getTotal(tab){ return Object.values(PORTFOLIOS[tab]||{}).reduce((a,b)=>a+b,0); }
+function getBlended(tab){
+  const alloc = PORTFOLIOS[tab];
+  return Object.entries(alloc).reduce((sum,[id,pct])=>{
+    return sum + (FM[id]?.r10||0) * pct / 100;
+  }, 0);
+}
+
+function updatePreview(){
+  const alloc = PORTFOLIOS[activeTab];
+  const total = getTotal(activeTab);
+  const blended = getBlended(activeTab);
+  const hasHoldings = Object.keys(alloc).length > 0;
+
+  // Allocation meter
+  const pct = Math.min(total, 120);
+  const amVal = document.getElementById('am-val');
+  const amBar = document.getElementById('am-bar');
+  const amHint = document.getElementById('am-hint');
+  amVal.textContent = total + '%';
+  amBar.style.width = Math.min(pct, 100) + '%';
+  if(total === 100){
+    amVal.className='am-value ok'; amBar.className='am-bar ok';
+    amHint.textContent='✓ Perfect — ready to apply!';
+  } else if(total > 100){
+    amVal.className='am-value over'; amBar.className='am-bar over';
+    amHint.textContent=`${total-100}% over — reduce some funds`;
+  } else {
+    amVal.className='am-value under'; amBar.className='am-bar under';
+    amHint.textContent=`${100-total}% remaining to allocate`;
+  }
+
+  // Blended return
+  const brEl = document.getElementById('br-val');
+  brEl.textContent = hasHoldings ? blended.toFixed(1)+'%' : '—';
+
+  // Apply button
+  const btn = document.getElementById('apply-btn');
+  const status = document.getElementById('apply-status');
+  btn.disabled = total !== 100;
+  status.textContent = total===100 ? `Portfolio ${activeTab} ready — click to update projections` : 'Allocations must total 100% to apply';
+
+  // Tab label update
+  document.getElementById('ptab-ret-'+activeTab).textContent = hasHoldings ? `(${blended.toFixed(1)}%)` : '(—)';
+
+  // Donut
+  updateDonut(alloc);
+
+  // Holdings list
+  const ph = document.getElementById('preview-holdings');
+  ph.innerHTML = '';
+  const colors = ['#1B3A6B','#0097A7','#C9A84C','#16A34A','#8B5CF6','#E67E22','#DC2626','#64748B'];
+  let i=0;
+  Object.entries(alloc).filter(([,v])=>v>0).forEach(([id,pct])=>{
+    const f = FM[id];
+    const c = colors[i%colors.length]; i++;
+    const row = document.createElement('div');
+    row.className='ph-row';
+    row.innerHTML=`<span class="ph-dot" style="background:${c}"></span><span class="ph-name">${f.short}</span><span class="ph-pct">${pct}%</span>`;
+    ph.appendChild(row);
+  });
+}
+
+function updateDonut(alloc){
+  const entries = Object.entries(alloc).filter(([,v])=>v>0);
+  const colors = ['#1B3A6B','#0097A7','#C9A84C','#16A34A','#8B5CF6','#E67E22','#DC2626','#64748B'];
+  const data = entries.map(([,v])=>v);
+  const labels = entries.map(([id])=>FM[id].short);
+  const bgColors = entries.map((_,i)=>colors[i%colors.length]);
+
+  const ctx = document.getElementById('preview-donut');
+  if(donutChart) donutChart.destroy();
+  donutChart = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels, datasets:[{data, backgroundColor:bgColors, borderWidth:2, borderColor:'#fff'}] },
+    options:{
+      responsive:false, cutout:'65%',
+      plugins:{legend:{display:false}, tooltip:{enabled:entries.length>0}},
+      animation:{duration:400}
+    }
+  });
+}
+
+// ════════════════════════════════════
+// PRESETS
+// ════════════════════════════════════
+function loadPreset(key){
+  PORTFOLIOS[activeTab] = {...PRESETS[key]};
+  renderPicker();
+  updatePreview();
+}
+function clearPortfolio(){
+  PORTFOLIOS[activeTab] = {};
+  renderPicker();
+  updatePreview();
+}
+
+// ════════════════════════════════════
+// APPLY PORTFOLIO
+// ════════════════════════════════════
+function applyPortfolio(){
+  const blended = getBlended(activeTab);
+  appliedReturn = blended;
+  const label = `Portfolio ${activeTab} — ${blended.toFixed(1)}% blended`;
+  document.getElementById('proj-lbl').textContent = label;
+  updateGrowthChart(blended);
+  updateMilestones(blended);
+  updateBear();
+  // Hero stats
+  const d = calcGrowth(blended, 84);
+  document.getElementById('h-3yr').textContent = fmt(d[36]);
+  document.getElementById('h-7yr').textContent = fmt(d[84]);
+  document.getElementById('h-3yr-lbl').textContent = `Portfolio ${activeTab} — 3 years`;
+  document.getElementById('h-7yr-lbl').textContent = `Portfolio ${activeTab} — 7 years`;
+  document.getElementById('apply-status').textContent = `✓ Applied! Projections updated.`;
+  // Smooth scroll to projections
+  document.getElementById('projections').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ════════════════════════════════════
+// CALCULATIONS
+// ════════════════════════════════════
+function calcGrowth(annualPct, months){
+  const r = annualPct / 100 / 12;
   const data = [];
-  let bal = startBal;
-  for (let m = 0; m <= months; m++) {
+  let bal = START;
+  for(let m=0; m<=months; m++){
     data.push(bal);
-    bal = bal * (1 + r) + monthlyC;
+    bal = bal*(1+r)+PMT;
   }
   return data;
 }
 
-// ════════════════════════════════════════════════════════
-// PORTFOLIO CARDS RENDER
-// ════════════════════════════════════════════════════════
-const donutCharts = {};
+function fmt(n){
+  if(n==null||isNaN(n)) return '—';
+  if(n>=1000000) return '$'+(n/1000000).toFixed(2)+'M';
+  return '$'+Math.round(n).toLocaleString('en-US');
+}
 
-function renderPortfolioCards() {
-  ['A','B','C'].forEach(key => {
-    const p = PORTFOLIOS[key];
-    const holdEl = document.getElementById('holdings-' + key);
-    const legendEl = document.getElementById('legend-' + key);
-    holdEl.innerHTML = '';
-    legendEl.innerHTML = '';
-
-    p.holdings.forEach((h, i) => {
-      const fund = FUND_MAP[h.id];
-      const color = p.donutColors[i] || '#94A3B8';
-
-      // holding bar row
-      const row = document.createElement('div');
-      row.className = 'holding-row';
-      row.innerHTML = `
-        <span style="flex:0 0 110px;font-size:.75rem;">${fund.shortName}</span>
-        <div class="holding-bar-wrap"><div class="holding-bar" style="width:${h.alloc}%;background:${color};"></div></div>
-        <span class="holding-pct">${h.alloc}%</span>
-      `;
-      holdEl.appendChild(row);
-
-      // legend
-      const li = document.createElement('div');
-      li.className = 'legend-item';
-      li.innerHTML = `<span class="legend-dot" style="background:${color};"></span><span class="legend-label">${fund.shortName}</span><span class="legend-pct">${h.alloc}%</span>`;
-      legendEl.appendChild(li);
-    });
-
-    // donut chart
-    const ctx = document.getElementById('donut-' + key).getContext('2d');
-    if (donutCharts[key]) donutCharts[key].destroy();
-    donutCharts[key] = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: p.holdings.map(h => FUND_MAP[h.id].shortName),
-        datasets: [{ data: p.holdings.map(h => h.alloc), backgroundColor: p.donutColors, borderWidth: 2, borderColor: '#fff' }]
+// ════════════════════════════════════
+// GROWTH CHART
+// ════════════════════════════════════
+function updateGrowthChart(annualPct){
+  const months=84, data=calcGrowth(annualPct, months);
+  const contrib=[]; for(let m=0;m<=months;m++) contrib.push(START+PMT*m);
+  const labels=[]; for(let m=0;m<=months;m++) labels.push(m%12===0?`Yr ${m/12}`:'');
+  const ctx=document.getElementById('growthChart');
+  if(growthChart) growthChart.destroy();
+  growthChart=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Portfolio Growth',data,borderColor:'#0097A7',backgroundColor:'rgba(0,151,167,.08)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:0,pointHoverRadius:5},
+      {label:'Contributions Only',data:contrib,borderColor:'#94A3B8',borderWidth:1.5,borderDash:[4,4],fill:false,tension:0,pointRadius:0}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:10},color:'#94A3B8'}},
+        y:{grid:{color:'#F1F5F9'},ticks:{font:{size:10},color:'#94A3B8',callback:v=>v>=1000000?'$'+(v/1000000).toFixed(1)+'M':'$'+(v/1000).toFixed(0)+'K'}}
       },
-      options: {
-        responsive: false,
-        cutout: '65%',
-        plugins: { legend: { display: false }, tooltip: { enabled: true } },
-        animation: { animateRotate: true, duration: 600 }
-      }
-    });
-  });
-}
-
-// ════════════════════════════════════════════════════════
-// PORTFOLIO SELECTION
-// ════════════════════════════════════════════════════════
-let selectedPortfolio = null;
-let growthChart = null;
-
-function selectPortfolio(key) {
-  if (selectedPortfolio === key) return;
-  selectedPortfolio = key;
-
-  ['A','B','C'].forEach(k => {
-    document.getElementById('card-' + k).classList.toggle('selected', k === key);
-  });
-
-  const p = PORTFOLIOS[key];
-  document.getElementById('proj-portfolio-label').textContent = `Portfolio ${key} — ${p.name}`;
-  updateGrowthChart();
-  updateMilestones();
-  updateBear();
-}
-
-function updateMilestones() {
-  const p = PORTFOLIOS[selectedPortfolio];
-  const r = p.annualReturn;
-  const data = calcGrowth(r, 84, START_BALANCE, MONTHLY_CONTRIB);
-
-  const v1 = data[12];
-  const v3 = data[36];
-  const v5 = data[60];
-  const v7 = data[84];
-  const totalContribs = MONTHLY_CONTRIB * 84 + START_BALANCE;
-  const gains = v7 - totalContribs;
-
-  document.getElementById('milestone-1yr').textContent = fmt(v1);
-  document.getElementById('milestone-3yr').textContent = fmt(v3);
-  document.getElementById('milestone-5yr').textContent = fmt(v5);
-  document.getElementById('milestone-7yr').textContent = fmt(v7);
-  document.getElementById('total-gains').textContent = fmt(gains);
-
-  document.getElementById('stat-3yr').textContent = fmt(v3);
-  document.getElementById('stat-7yr').textContent = fmt(v7);
-  document.getElementById('stat-3yr-lbl').textContent = `Portfolio ${selectedPortfolio} at 3 years`;
-  document.getElementById('stat-7yr-lbl').textContent = `Portfolio ${selectedPortfolio} at 7 years`;
-}
-
-function updateGrowthChart() {
-  const p = PORTFOLIOS[selectedPortfolio];
-  const months = 84;
-  const labels = [];
-  for (let m = 0; m <= months; m++) {
-    if (m % 6 === 0) labels.push(m === 0 ? 'Start' : `Mo ${m}`);
-    else labels.push('');
-  }
-
-  const data = calcGrowth(p.annualReturn, months, START_BALANCE, MONTHLY_CONTRIB);
-  const contribLine = [];
-  for (let m = 0; m <= months; m++) {
-    contribLine.push(START_BALANCE + MONTHLY_CONTRIB * m);
-  }
-
-  const ctx = document.getElementById('growthChart');
-  if (growthChart) growthChart.destroy();
-  growthChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: `Portfolio ${selectedPortfolio} Growth`,
-          data,
-          borderColor: p.color,
-          backgroundColor: hexToRgba(p.color, 0.08),
-          borderWidth: 2.5,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-        },
-        {
-          label: 'Contributions Only',
-          data: contribLine,
-          borderColor: '#94A3B8',
-          borderWidth: 1.5,
-          borderDash: [4, 4],
-          fill: false,
-          tension: 0.4,
-          pointRadius: 0,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
-        y: {
-          grid: { color: '#F1F5F9' },
-          ticks: {
-            font: { size: 10 }, color: '#94A3B8',
-            callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'K')
-          }
-        }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`
-          }
-        },
-        annotation: {}
-      }
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}}
     }
   });
 }
 
-// ════════════════════════════════════════════════════════
+function updateMilestones(annualPct){
+  const d=calcGrowth(annualPct,84);
+  document.getElementById('ms-1yr').textContent=fmt(d[12]);
+  document.getElementById('ms-3yr').textContent=fmt(d[36]);
+  document.getElementById('ms-5yr').textContent=fmt(d[60]);
+  document.getElementById('ms-7yr').textContent=fmt(d[84]);
+  const invested=START+PMT*84;
+  document.getElementById('ms-gains').textContent=fmt(d[84]-invested);
+}
+
+// ════════════════════════════════════
 // BEAR MARKET SIMULATOR
-// ════════════════════════════════════════════════════════
-let bearChart = null;
+// ════════════════════════════════════
+function updateBear(){
+  const decline=parseInt(document.getElementById('dc-slider').value);
+  const dur=parseInt(document.getElementById('dur-slider').value);
+  const start=parseInt(document.getElementById('st-slider').value);
+  document.getElementById('dc-val').textContent=`−${decline}%`;
+  document.getElementById('dur-val').textContent=`${dur} months`;
+  document.getElementById('st-val').textContent=`Month ${start}`;
 
-function updateBear() {
-  const decline = parseInt(document.getElementById('decline-slider').value);
-  const duration = parseInt(document.getElementById('duration-slider').value);
-  const bearStart = parseInt(document.getElementById('start-slider').value);
+  const ar = appliedReturn || 9.0;
+  const r=ar/100/12, months=84;
+  const bearR=Math.pow(1-decline/100,1/dur)-1;
+  const recDur=Math.round(dur*1.2);
+  const recR=Math.pow(1/(1-decline/100),1/recDur)-1;
 
-  document.getElementById('decline-val').textContent = `−${decline}%`;
-  document.getElementById('duration-val').textContent = `${duration} months`;
-  document.getElementById('start-val').textContent = `Month ${bearStart}`;
+  const norm=[], dca=[], stop=[];
+  let bN=START, bD=START, bS=START, low=Infinity;
 
-  const annualReturn = selectedPortfolio ? PORTFOLIOS[selectedPortfolio].annualReturn : 9.0;
-  const portfolioColor = selectedPortfolio ? PORTFOLIOS[selectedPortfolio].color : '#1B3A6B';
-  const months = 84;
-  const r = annualReturn / 100 / 12;
-
-  // Monthly decline rate over duration
-  const bearMonthlyReturn = Math.pow(1 - decline / 100, 1 / duration) - 1;
-  const recoveryDuration = Math.round(duration * 1.2); // recovery takes a bit longer
-  const peakFactor = 1 / (1 - decline / 100);
-  const recoveryMonthlyReturn = Math.pow(peakFactor, 1 / recoveryDuration) - 1;
-
-  const normalData = [];
-  const dcaData = [];
-  const stopData = [];
-
-  let bNorm = START_BALANCE;
-  let bDca = START_BALANCE;
-  let bStop = START_BALANCE;
-  let bearLow = Infinity;
-
-  for (let m = 0; m <= months; m++) {
-    normalData.push(bNorm);
-    dcaData.push(bDca);
-    stopData.push(bStop);
-
-    // Track low point for DCA portfolio
-    if (m >= bearStart && m < bearStart + duration) {
-      bearLow = Math.min(bearLow, bDca);
-    }
-
-    const inBear = m >= bearStart && m < bearStart + duration;
-    const inRecovery = m >= bearStart + duration && m < bearStart + duration + recoveryDuration;
-    const mr = inBear ? bearMonthlyReturn : inRecovery ? recoveryMonthlyReturn : r;
-
-    bNorm = bNorm * (1 + r) + MONTHLY_CONTRIB;
-    bDca = bDca * (1 + mr) + MONTHLY_CONTRIB;
-    // Stop investing: no contribution during bear AND recovery
-    const stoppedInvesting = m >= bearStart && m < bearStart + duration + recoveryDuration;
-    bStop = bStop * (1 + mr) + (stoppedInvesting ? 0 : MONTHLY_CONTRIB);
+  for(let m=0;m<=months;m++){
+    norm.push(bN); dca.push(bD); stop.push(bS);
+    const inBear=m>=start&&m<start+dur;
+    const inRec=m>=start+dur&&m<start+dur+recDur;
+    const mr=inBear?bearR:inRec?recR:r;
+    if(inBear) low=Math.min(low,bD);
+    const stopped=m>=start&&m<start+dur+recDur;
+    bN=bN*(1+r)+PMT;
+    bD=bD*(1+mr)+PMT;
+    bS=bS*(1+mr)+(stopped?0:PMT);
   }
 
-  const labels = [];
-  for (let m = 0; m <= months; m++) {
-    labels.push(m % 12 === 0 ? `Yr ${m/12}` : '');
-  }
+  const labels=[]; for(let m=0;m<=months;m++) labels.push(m%12===0?`Yr ${m/12}`:'');
 
-  // Update stats
-  document.getElementById('bear-low').textContent = fmt(bearLow === Infinity ? null : bearLow);
-  document.getElementById('bear-dca-end').textContent = fmt(dcaData[months]);
-  document.getElementById('bear-normal-end').textContent = fmt(normalData[months]);
-  document.getElementById('bear-stop-end').textContent = fmt(stopData[months]);
+  document.getElementById('b-low').textContent=fmt(low===Infinity?null:low);
+  document.getElementById('b-dca').textContent=fmt(dca[months]);
+  document.getElementById('b-norm').textContent=fmt(norm[months]);
+  document.getElementById('b-stop').textContent=fmt(stop[months]);
 
-  // Insight text
-  const dcaVsStop = dcaData[months] - stopData[months];
-  const dcaVsNormal = dcaData[months] - normalData[months];
-  let insight = `By continuing to invest $7,000/month through a −${decline}% bear market lasting ${duration} months, Richard's portfolio ends at ${fmt(dcaData[months])} — `;
-  if (dcaVsStop > 0) {
-    insight += `<strong>$${Math.round(dcaVsStop).toLocaleString()} more</strong> than if he had stopped investing during the downturn. `;
-  }
-  insight += `Buying at lower prices during the dip accelerates recovery and long-term growth. This is the power of dollar cost averaging.`;
-  document.getElementById('bear-insight-text').innerHTML = insight;
+  const diff=dca[months]-stop[months];
+  const insight=`By continuing your $7,000/month contributions through a −${decline}% bear market lasting ${dur} months, your portfolio finishes at <strong>${fmt(dca[months])}</strong> — that's <strong>${fmt(Math.abs(diff))} ${diff>=0?'more':'less'}</strong> than if you had stopped investing during the downturn. Buying cheap shares while prices are low is what turns a scary bear market into a long-term advantage.`;
+  document.getElementById('bear-insight').innerHTML=insight;
 
-  const ctx = document.getElementById('bearChart');
-  if (bearChart) bearChart.destroy();
-  bearChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'No Bear Market',
-          data: normalData,
-          borderColor: '#1B3A6B',
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          tension: 0.4,
-          pointRadius: 0,
-        },
-        {
-          label: 'Bear Market — Keep DCA',
-          data: dcaData,
-          borderColor: '#16A34A',
-          backgroundColor: hexToRgba('#16A34A', 0.06),
-          borderWidth: 2.5,
-          fill: true,
-          tension: 0.4,
-          pointRadius: 0,
-        },
-        {
-          label: 'Bear Market — Stop Investing',
-          data: stopData,
-          borderColor: '#DC2626',
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          borderDash: [5, 5],
-          tension: 0.4,
-          pointRadius: 0,
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#94A3B8' } },
-        y: {
-          grid: { color: '#F1F5F9' },
-          ticks: {
-            font: { size: 10 }, color: '#94A3B8',
-            callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : (v/1000).toFixed(0)+'K')
-          }
-        }
+  const ctx=document.getElementById('bearChart');
+  if(bearChart) bearChart.destroy();
+  bearChart=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'No Bear',data:norm,borderColor:'#1B3A6B',backgroundColor:'transparent',borderWidth:2,tension:0.4,pointRadius:0},
+      {label:'Bear—Keep DCA',data:dca,borderColor:'#16A34A',backgroundColor:'rgba(22,163,74,.06)',borderWidth:2.5,fill:true,tension:0.4,pointRadius:0},
+      {label:'Bear—Stop',data:stop,borderColor:'#DC2626',backgroundColor:'transparent',borderWidth:2,borderDash:[5,5],tension:0.4,pointRadius:0}
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:10},color:'#94A3B8'}},
+        y:{grid:{color:'#F1F5F9'},ticks:{font:{size:10},color:'#94A3B8',callback:v=>v>=1000000?'$'+(v/1000000).toFixed(1)+'M':'$'+(v/1000).toFixed(0)+'K'}}
       },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`
-          }
-        }
-      }
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)}`}}}
     }
   });
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════
 // FUND TABLE
-// ════════════════════════════════════════════════════════
-const CLASS_STYLE = {
-  'Stable Value':       'class-stable',
-  'Bond':               'class-bond',
-  'Balanced':           'class-balanced',
-  'U.S. Stock':         'class-us',
-  'International Stock':'class-intl',
-};
+// ════════════════════════════════════
+const CLS_MAP={'Stable Value':'c-sv','Bond':'c-bd','Balanced':'c-ba','U.S. Stock':'c-us','International Stock':'c-in'};
+function clsBadge(cls){ return CLS_MAP[cls]||'c-us'; }
+function rdots(r){ let h='<div class="rdots">'; for(let i=1;i<=5;i++) h+=`<div class="rdot${i<=r?' on':''}"></div>`; return h+'</div>'; }
+function rc(v){ if(v==null) return '<td style="text-align:right">—</td>'; const c=v>0?'rp':v<0?'rn':'r0'; return `<td class="rc ${c}" style="text-align:right">${v>0?'+':''}${v.toFixed(1)}%</td>`; }
 
-function returnCell(v) {
-  if (v === null || v === undefined) return '<td style="text-align:right;">—</td>';
-  const cls = v > 0 ? 'positive' : v < 0 ? 'negative' : 'neutral';
-  return `<td class="return-cell ${cls}" style="text-align:right;">${v > 0 ? '+' : ''}${v.toFixed(1)}%</td>`;
-}
-
-function riskDots(r) {
-  let html = '<div class="risk-dots">';
-  for (let i = 1; i <= 5; i++) {
-    html += `<div class="risk-dot${i <= r ? ' filled' : ''}"></div>`;
-  }
-  html += '</div>';
-  return html;
-}
-
-let currentFilter = 'all';
-
-function filterFunds(cls, btn) {
-  currentFilter = cls;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+function fFilter(cls, btn){
+  ftblFilter=cls;
+  document.querySelectorAll('.ftbl-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
   renderFundTable();
 }
 
-function renderFundTable() {
-  const tbody = document.getElementById('fund-tbody');
-  tbody.innerHTML = '';
-  const funds = currentFilter === 'all'
-    ? ALL_FUNDS
-    : ALL_FUNDS.filter(f => {
-        if (currentFilter === 'International') return f.cls.startsWith('International');
-        return f.cls === currentFilter;
-      });
-
-  funds.forEach(f => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>
-        <div class="fund-name-cell">${f.name}</div>
-        <span class="fund-class-badge ${CLASS_STYLE[f.cls] || 'class-us'}">${f.cls}</span>
-      </td>
+function renderFundTable(){
+  const tbody=document.getElementById('fund-tbody');
+  tbody.innerHTML='';
+  const visible=ftblFilter==='all'?FUNDS:FUNDS.filter(f=>ftblFilter==='International'?f.cls.startsWith('International'):f.cls===ftblFilter);
+  visible.forEach(f=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="fn">${f.name}</div><span class="cls-badge ${clsBadge(f.cls)}">${f.cls}</span></td>
       <td>${f.cls}</td>
-      ${returnCell(f.r1)}
-      ${returnCell(f.r3)}
-      ${returnCell(f.r5)}
-      ${returnCell(f.r10)}
-      <td>${riskDots(f.risk)}</td>
+      ${rc(f.r1)}${rc(f.r3)}${rc(f.r5)}${rc(f.r10)}
+      <td>${rdots(f.risk)}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// ════════════════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════════════════
-function hexToRgba(hex, alpha) {
-  const r = parseInt(hex.slice(1,3), 16);
-  const g = parseInt(hex.slice(3,5), 16);
-  const b = parseInt(hex.slice(5,7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
+// ════════════════════════════════════
+// EDUCATION TOGGLES
+// ════════════════════════════════════
+function toggleEdu(card){
+  const exp=card.querySelector('.edu-expand');
+  exp.classList.toggle('open');
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════════════
 // INIT
-// ════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  renderPortfolioCards();
+// ════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  renderPicker();
+  updatePreview();
+  updateDonut({});
   renderFundTable();
-  // Default: select portfolio B
-  selectPortfolio('B');
+  updateBear();
+  // Seed Portfolio B with moderate preset so bear sim has a default
+  PORTFOLIOS['B']={...PRESETS.moderate};
+  PORTFOLIOS['C']={...PRESETS.growth};
+  // Apply moderate as default for charts
+  appliedReturn=9.0;
+  updateGrowthChart(9.0);
+  updateMilestones(9.0);
+  updateBear();
+  document.getElementById('h-3yr').textContent=fmt(calcGrowth(9.0,84)[36]);
+  document.getElementById('h-7yr').textContent=fmt(calcGrowth(9.0,84)[84]);
+  document.getElementById('h-3yr-lbl').textContent='Portfolio B preset (moderate)';
+  document.getElementById('h-7yr-lbl').textContent='Portfolio B preset (moderate)';
+  document.getElementById('proj-lbl').textContent='Portfolio B (Moderate Preset — 9.0% blended)';
 });
 </script>
 </body>

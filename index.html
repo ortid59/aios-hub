@@ -281,10 +281,10 @@
   <p>Every dashboard, tool, and deliverable in one place. Filter by category or date — demo-ready at any time.</p>
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-num" id="stat-total">40</div>
+      <div class="stat-num" id="stat-total">58</div>
       <div class="stat-label">Total Outputs</div>
     </div>
-    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Dashboards</div></div><div class="stat"><div class="stat-num">26</div><div class="stat-label">Sales & Proposals</div></div><div class="stat"><div class="stat-num">6</div><div class="stat-label">Operations</div></div>
+    <div class="stat"><div class="stat-num">9</div><div class="stat-label">Dashboards</div></div><div class="stat"><div class="stat-num">26</div><div class="stat-label">Sales & Proposals</div></div><div class="stat"><div class="stat-num">23</div><div class="stat-label">Operations</div></div>
   </div>
 </div>
 
@@ -295,7 +295,9 @@
     <button class="cat-pill" data-cat="dashboard" onclick="filterCat(this)">📊 Dashboards</button><button class="cat-pill" data-cat="sales" onclick="filterCat(this)">💼 Sales & Proposals</button><button class="cat-pill" data-cat="operations" onclick="filterCat(this)">⚙️ Operations</button>
     <div class="filter-divider"></div>
     <span class="filter-label">Date</span>
-    <button class="date-pill" data-date="2026-04-24" onclick="filterDate(this)">Apr 24</button>
+    <button class="date-pill" data-date="2026-04-26" onclick="filterDate(this)">Today</button>
+<button class="date-pill" data-date="2026-04-25" onclick="filterDate(this)">Yesterday</button>
+<button class="date-pill" data-date="2026-04-24" onclick="filterDate(this)">Apr 24</button>
 <button class="date-pill" data-date="2026-04-22" onclick="filterDate(this)">Apr 22</button>
 <button class="date-pill" data-date="2026-04-21" onclick="filterDate(this)">Apr 21</button>
 <button class="date-pill" data-date="2026-04-20" onclick="filterDate(this)">Apr 20</button>
@@ -307,12 +309,282 @@
 </div>
 
 <div class="results-bar">
-  <div class="results-count">Showing <span id="visible-count">40</span> of 40 outputs</div>
+  <div class="results-count">Showing <span id="visible-count">58</span> of 58 outputs</div>
   <button class="clear-btn" onclick="clearFilters()">Clear filters</button>
 </div>
 
 <div class="grid" id="card-grid">
 
+    <a class="card" href="richard-pope-portal.html" target="_blank"
+       data-category="operations" data-date="2026-04-26">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Richard Pope — Miami DROP Investment Portal</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 26</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-playbook.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">The AIOS Playbook — Advisor AI Partners</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-agency.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">AIOS for Agency Owners — Advisor AI Partners</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-guide.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">AIOS Practitioner's Guide — Advisor AI Partners</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-index.html" target="_blank"
+       data-category="dashboard" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#EEF3FF">📊</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Learn AIOS — Module Library</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#EEF3FF;color:#1B4FD8">Dashboards</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-build-skill.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Turn Business Process into Skill — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-token-optimisation.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Token Optimisation for AIOS — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-mastermind-recap.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">AIOS Mastermind Recap — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-delivery-spectrum.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">The AIOS Delivery Spectrum — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-service-model.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">The $30,000+ AIOS Service Model — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-quick-setup.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Quick Setup with Plug & Play Modules — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-workflows.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Workflows & Recurring Tasks — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-data-os.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Data OS — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-automate-agency.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Automate Your Entire Agency with Claude Code — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-setup.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Setup & Context OS — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-builder-mindset.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Thinking Like an AIOS Builder — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-security.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Claude Code Security Basics — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
+    <a class="card" href="pages/learn-aios-primitives.html" target="_blank"
+       data-category="operations" data-date="2026-04-25">
+      <div class="card-top">
+        <div class="card-icon" style="background:#F0F4FF">⚙️</div>
+        <div class="card-arrow">↗</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">AIOS Automation Primitives — Learn AIOS</div>
+        <div class="card-desc"></div>
+      </div>
+      <div class="card-meta">
+        <span class="card-tag" style="background:#F0F4FF;color:#3B5FC0">Operations</span>
+        <span class="card-date">Apr 25</span>
+      </div>
+    </a>
     <a class="card" href="emyth-blueprint.html" target="_blank"
        data-category="operations" data-date="2026-04-24">
       <div class="card-top">
