@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Integration Agreement — The Morris Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --teal:        #2B7E7C;
+  --teal-light:  #3D9E9C;
+  --teal-dark:   #1C5250;
+  --teal-glow:   rgba(43,126,124,0.10);
+  --teal-border: rgba(43,126,124,0.22);
+  --seafoam:     #EEF6F6;
+  --white:       #FFFFFF;
+  --text:        #2D3A3A;
+  --text-light:  #4A5E5D;
+  --text-muted:  #7A8E8D;
+  --border:      #D0E4E4;
+  --border-light:#E8F0F0;
+  --red:         #C0392B;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: #F4F4F2;
+}
+
+/* ── NAV ── */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(12px);
+  padding: 10px 24px;
+  display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;
+  border-bottom: 2px solid var(--teal);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+}
+.topnav a {
+  color: var(--text-light); text-decoration: none;
+  font-size: 11px; font-weight: 700;
+  padding: 6px 13px; border-radius: 4px;
+  transition: all 0.2s; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.topnav a:hover { color: var(--teal); background: var(--teal-glow); }
+
+/* ── PAGE WRAPPER ── */
+.page {
+  max-width: 860px;
+  margin: 40px auto;
+  background: var(--white);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.10);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* ── DOCUMENT HEADER ── */
+.doc-header {
+  background: var(--teal-dark);
+  padding: 52px 60px 44px;
+  color: var(--white);
+}
+.doc-header-label {
+  font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--teal-light); font-weight: 700; margin-bottom: 14px;
+}
+.doc-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px; font-weight: 800;
+  color: var(--white); line-height: 1.15;
+  margin-bottom: 28px;
+}
+.doc-meta {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px; padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+}
+.doc-meta-item {}
+.doc-meta-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); font-weight: 700; margin-bottom: 4px;
+}
+.doc-meta-value {
+  font-size: 13px; color: var(--white); font-weight: 500; line-height: 1.5;
+}
+
+/* ── DOCUMENT BODY ── */
+.doc-body { padding: 60px; }
+
+/* ── PART DIVIDER ── */
+.part-divider {
+  background: var(--seafoam);
+  border-left: 4px solid var(--teal);
+  padding: 14px 24px;
+  margin: 48px -60px 40px;
+  display: flex; align-items: center; gap: 14px;
+}
+.part-num {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--teal); font-weight: 800;
+}
+.part-title {
+  font-size: 15px; font-weight: 800; color: var(--teal-dark);
+}
+
+/* ── SECTION HEADERS ── */
+.section-block { margin-bottom: 40px; }
+.section-num {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--teal); font-weight: 800; margin-bottom: 6px;
+}
+.section-heading {
+  font-size: 18px; font-weight: 800; color: var(--teal-dark);
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* ── TYPOGRAPHY ── */
+p { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 14px; }
+p:last-child { margin-bottom: 0; }
+
+.sub-heading {
+  font-size: 12px; font-weight: 800; color: var(--teal-dark);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin: 22px 0 8px;
+}
+
+ul.doc-list { list-style: none; margin: 10px 0 16px; }
+ul.doc-list li {
+  font-size: 14px; color: var(--text-light); line-height: 1.7;
+  padding: 4px 0 4px 20px; position: relative;
+}
+ul.doc-list li::before {
+  content: '✓'; position: absolute; left: 0;
+  color: var(--teal); font-weight: 700; font-size: 11px;
+  top: 6px;
+}
+ul.doc-list.dash li::before { content: '—'; color: var(--text-muted); font-size: 12px; top: 5px; }
+ul.doc-list.cross li::before { content: '✕'; color: var(--red); font-size: 11px; top: 6px; }
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  background: var(--seafoam);
+  border: 1px solid var(--teal-border);
+  border-left: 3px solid var(--teal);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.callout p { font-size: 13px; color: var(--text-light); margin-bottom: 0; }
+.callout strong { color: var(--teal-dark); }
+
+.callout.warning {
+  background: rgba(192,57,43,0.04);
+  border-color: rgba(192,57,43,0.2);
+  border-left-color: var(--red);
+}
+.callout.warning p { color: var(--text); }
+.callout.warning strong { color: var(--red); }
+
+/* ── PILLAR BLOCKS ── */
+.pillar-block {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+.pillar-header {
+  background: var(--teal-glow);
+  padding: 12px 20px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.pillar-icon { font-size: 18px; }
+.pillar-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal);
+}
+.pillar-name {
+  font-size: 15px; font-weight: 800; color: var(--teal-dark);
+  margin-left: auto; margin-right: 0;
+}
+.pillar-body { padding: 16px 20px; }
+.pillar-body p { font-size: 13px; margin-bottom: 10px; }
+.pillar-body ul.doc-list li { font-size: 13px; }
+
+/* ── FEE TABLE ── */
+.fee-table {
+  width: 100%; border-collapse: collapse;
+  margin: 16px 0; font-size: 14px;
+}
+.fee-table th {
+  text-align: left; padding: 10px 16px;
+  background: var(--teal-dark); color: var(--white);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+}
+.fee-table td {
+  padding: 11px 16px; border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+.fee-table tr:last-child td { border-bottom: none; }
+.fee-table tr:nth-child(even) td { background: var(--seafoam); }
+.fee-table .amount { font-weight: 700; color: var(--teal-dark); white-space: nowrap; }
+.fee-table .note { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.fee-total {
+  background: var(--teal-dark);
+  padding: 14px 20px;
+  border-radius: 6px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin: 12px 0 20px;
+}
+.fee-total-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.8); }
+.fee-total-amount { font-size: 22px; font-weight: 800; color: var(--white); }
+
+.usage-table {
+  width: 100%; border-collapse: collapse;
+  margin: 10px 0; font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+}
+.usage-table th {
+  text-align: left; padding: 8px 14px;
+  background: var(--seafoam);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.usage-table td {
+  padding: 8px 14px; border-top: 1px solid var(--border-light);
+  color: var(--text-light);
+}
+.usage-table td.rate { font-weight: 600; color: var(--teal-dark); }
+
+/* ── RESPONSIBILITIES SPLIT ── */
+.resp-split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.resp-col { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.resp-col-header {
+  padding: 10px 16px;
+  font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+}
+.resp-col.ours .resp-col-header { background: var(--teal-dark); color: var(--white); }
+.resp-col.theirs .resp-col-header { background: var(--seafoam); color: var(--teal-dark); }
+.resp-col-body { padding: 14px 16px; }
+.resp-col-body ul.doc-list li { font-size: 13px; }
+
+/* ── HORIZONTAL RULE ── */
+.doc-rule {
+  height: 1px; background: var(--border-light);
+  margin: 36px 0;
+}
+
+/* ── LEGAL SECTION ── */
+.legal-section { margin-bottom: 32px; }
+.legal-heading {
+  font-size: 13px; font-weight: 800; color: var(--teal-dark);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.legal-section p { font-size: 13px; color: var(--text-light); }
+
+/* ── SIGNATURE BLOCK ── */
+.sig-block {
+  margin-top: 48px;
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.sig-block-header {
+  background: var(--teal-dark);
+  padding: 14px 24px;
+  font-size: 13px; font-weight: 800;
+  color: var(--white); letter-spacing: 0.5px;
+}
+.sig-body { padding: 28px 24px; }
+.sig-body p { font-size: 13px; color: var(--text-light); margin-bottom: 24px; }
+.sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.sig-party-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--teal); margin-bottom: 16px;
+}
+.sig-field { margin-bottom: 20px; }
+.sig-line {
+  border-bottom: 1px solid var(--text);
+  height: 36px; margin-bottom: 4px;
+}
+.sig-field-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
+/* ── CONTACT BLOCK ── */
+.contact-block {
+  margin-top: 32px;
+  background: var(--seafoam);
+  border: 1px solid var(--teal-border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.contact-item { font-size: 13px; color: var(--text-light); }
+.contact-item strong { color: var(--teal-dark); display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+.contact-item a { color: var(--teal); text-decoration: none; font-weight: 600; }
+
+/* ── FOOTER ── */
+.doc-footer {
+  background: var(--teal-dark);
+  padding: 20px 60px;
+  text-align: center;
+  font-size: 11px; color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+}
+
+/* ── PRINT ── */
+@media print {
+  body { background: white; }
+  .page { box-shadow: none; margin: 0; border-radius: 0; }
+  .topnav { display: none; }
+  .part-divider { margin: 40px 0 32px; }
+  .doc-body { padding: 48px; }
+  .doc-header { padding: 40px 48px 36px; }
+  .doc-footer { padding: 16px 48px; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 720px) {
+  .doc-body { padding: 32px 24px; }
+  .doc-header { padding: 40px 24px 32px; }
+  .doc-header h1 { font-size: 26px; }
+  .doc-meta { grid-template-columns: 1fr 1fr; }
+  .resp-split { grid-template-columns: 1fr; }
+  .sig-grid { grid-template-columns: 1fr; }
+  .part-divider { margin: 40px -24px 32px; }
+  .doc-footer { padding: 16px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<nav class="topnav">
+  <a href="#cover">Cover Letter</a>
+  <a href="#scope">Scope of Work</a>
+  <a href="#agreement">Agreement</a>
+  <a href="#payment">Payment</a>
+  <a href="#cancellation">Cancellation</a>
+  <a href="#responsibilities">Responsibilities</a>
+  <a href="#signatures">Signatures</a>
+</nav>
+
+<div class="page">
+
+<!-- ══════════ DOCUMENT HEADER ══════════ -->
+<div class="doc-header">
+  <div class="doc-header-label">AI Integration Agreement — Service Package</div>
+  <h1>The Morris Center<br>& Advisor AI Partners</h1>
+  <div class="doc-meta">
+    <div class="doc-meta-item">
+      <div class="doc-meta-label">Client</div>
+      <div class="doc-meta-value">Dr. Tim Conway<br>The Morris Center</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="doc-meta-label">Prepared By</div>
+      <div class="doc-meta-value">David Ortiz<br>Advisor AI Partners</div>
+    </div>
+    <div class="doc-meta-item">
+      <div class="doc-meta-label">Effective Date</div>
+      <div class="doc-meta-value">April 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ DOCUMENT BODY ══════════ -->
+<div class="doc-body">
+
+<!-- ════════ PART 1: COVER LETTER ════════ -->
+<div class="part-divider" id="cover">
+  <span class="part-num">Part One</span>
+  <span class="part-title">Plain English Summary</span>
+</div>
+
+<div class="section-block">
+  <p>Tim,</p>
+  <p>This package contains two things: a plain English summary of what we have agreed to, followed by the formal service agreement. Read both. If anything here does not match what you understood from our conversation, say so before signing.</p>
+  <p>Here is exactly what is included.</p>
+</div>
+
+<div class="section-block">
+  <div class="section-num">The Platform</div>
+  <div class="section-heading">GoHighLevel — Every Tool in One Place</div>
+
+  <p>Most businesses run on six to twelve tools that do not talk to each other. A separate CRM. A separate phone system. A separate inbox. A separate scheduling tool. A separate review platform. Each with its own login, its own bill, and its own version of the truth.</p>
+
+  <p>GoHighLevel replaces that entire stack with one platform. CRM, voice AI, unified messaging, scheduling, workflow automation, reputation management, social publishing, and payment processing — all connected, all in one place, operating across your entire organization. This is the same platform powering the Advisor AI Partners growth system at advisoraipartners.com/aibos. It serves close to a million businesses worldwide and has over 100 engineers dedicated to its AI infrastructure alone.</p>
+
+  <p>The platform is deployed across all four of your companies: Morris Center Jacksonville, Morris Center Ocala, Morris Center Trinidad and Tobago, and the NOW EdTech company. One system. One subscription. One place for your entire operation.</p>
+</div>
+
+<div class="section-block">
+  <div class="section-num">The Operating System</div>
+  <div class="section-heading">AIOS — Built Around You</div>
+
+  <p>GoHighLevel is the platform. The AIOS is what gets built on top of it, specifically around how The Morris Center operates. It sits on Claude, connects your systems together, and functions as your personal operating environment as the owner of four companies.</p>
+
+  <p>We install it, build your initial applications, and train you to operate and expand it yourself. When this engagement is complete, you are self-sufficient. You understand how it works and you can build on it without depending on us to make changes.</p>
+
+  <div class="callout">
+    <p><strong>System Integration Requirement:</strong> The AIOS connects your existing tools to Claude through APIs and MCP servers. Any system with an available API or MCP server can be integrated. Systems without API or MCP access cannot be connected and are outside the scope of this agreement. We will confirm integration capability for each of your platforms during the onboarding session before the build begins.</p>
+  </div>
+
+  <div class="callout warning">
+    <p><strong>Claude License Requirement:</strong> The AIOS runs on Claude. An active Claude Pro license (or equivalent tier) must be maintained by The Morris Center for the AIOS to function. This is a separate subscription paid directly to Anthropic and is not included in the fees in this agreement. If the Claude license lapses, AIOS functionality will cease until it is reinstated.</p>
+  </div>
+</div>
+
+<!-- ════════ PART 2: SCOPE OF WORK ════════ -->
+<div class="part-divider" id="scope">
+  <span class="part-num">Part Two</span>
+  <span class="part-title">Scope of Work</span>
+</div>
+
+<div class="section-block">
+  <div class="section-num">Section A</div>
+  <div class="section-heading">GoHighLevel — The Five Pillars</div>
+  <p>The platform is organized around five functions, each mapped to a specific part of how families find, engage with, and continue their relationship with The Morris Center.</p>
+
+  <!-- PILLAR 1 -->
+  <div class="pillar-block">
+    <div class="pillar-header">
+      <span class="pillar-icon">🎯</span>
+      <span class="pillar-label">Pillar 1</span>
+      <span class="pillar-name">Capture</span>
+    </div>
+    <div class="pillar-body">
+      <p>No inquiry falls through the cracks. Families searching for help at 10pm get a response. Calls that come in after hours get handled. Every visitor who does not book gets captured.</p>
+      <ul class="doc-list">
+        <li>Voice-enabled AI receptionist configured for all clinic phone lines. Existing numbers will be ported as part of the transition.</li>
+        <li>Voice-enabled chatbot on the TMC website. Because a significant portion of your families have dyslexia, the chatbot speaks as well as types — inquiries can be made and answered out loud.</li>
+        <li>Lead capture for every website visitor who does not book: name, email, area of concern, entered into the CRM automatically with a follow-up sequence initiated.</li>
+        <li>Unified inbox: SMS, email, web chat, Instagram, Facebook, LinkedIn — every message to every location in one place for your team.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PILLAR 2 -->
+  <div class="pillar-block">
+    <div class="pillar-header">
+      <span class="pillar-icon">🌱</span>
+      <span class="pillar-label">Pillar 2</span>
+      <span class="pillar-name">Nurture</span>
+    </div>
+    <div class="pillar-body">
+      <p>Most families do not schedule on the first visit. They research, compare, and come back weeks or months later. Nurture keeps The Morris Center in front of them without anyone on your staff managing it manually.</p>
+      <ul class="doc-list">
+        <li>Automated follow-up sequences for families who inquire but do not schedule</li>
+        <li>Multi-channel workflows across email, SMS, and voice — timed to how families make decisions about services like yours</li>
+        <li>Long-cycle nurture for slow-moving leads — consistent and in your voice until they are ready or ask to stop</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PILLAR 3 -->
+  <div class="pillar-block">
+    <div class="pillar-header">
+      <span class="pillar-icon">🤝</span>
+      <span class="pillar-label">Pillar 3</span>
+      <span class="pillar-name">Close</span>
+    </div>
+    <div class="pillar-body">
+      <p>TMC schedules multiple service types, each with different protocols, staff requirements, and preparation steps. This pillar brings order to that complexity.</p>
+      <ul class="doc-list">
+        <li>Separate booking flows for each appointment type: virtual tours, in-person tours, initial screenings, full evaluations, partial evaluations</li>
+        <li>Intake forms, confirmation emails, and preparation instructions automated per service type</li>
+        <li>Calendar integration with your existing Google-based system</li>
+        <li>Efficiency tracking from first contact through services purchased: when they called, time to schedule, time to assessment, whether they moved to the next level of services</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PILLAR 4 -->
+  <div class="pillar-block">
+    <div class="pillar-header">
+      <span class="pillar-icon">📣</span>
+      <span class="pillar-label">Pillar 4</span>
+      <span class="pillar-name">Evangelize</span>
+    </div>
+    <div class="pillar-body">
+      <p>The Morris Center has 38 years of outcomes and a near-empty Google Review profile. This pillar addresses that, and builds the infrastructure for consistent content distribution across all channels.</p>
+      <ul class="doc-list">
+        <li>Google Review automation: every client receives a request after their first service; AI drafts and posts responses to every review received</li>
+        <li>Database reactivation for reviews: a drip campaign to past clients paced at approximately 50 requests per day so the volume looks organic</li>
+        <li>Unified social media publishing system configured across Instagram, LinkedIn, Facebook, X, and TikTok — content scheduled and published from one place</li>
+        <li>Content generation infrastructure built inside the AIOS (see Section B): blog posts, newsletter drafts, and social content generated from your knowledge base</li>
+      </ul>
+      <div class="callout">
+        <p><strong>Important:</strong> We build the content generation system and train you to manage and grow it. The ongoing content work — deciding what to publish, reviewing and approving drafts, managing your posting calendar — is yours to run through the AIOS. Ongoing content creation is not included in this agreement. We build the machine and hand you the controls.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 5 -->
+  <div class="pillar-block">
+    <div class="pillar-header">
+      <span class="pillar-icon">🔄</span>
+      <span class="pillar-label">Pillar 5</span>
+      <span class="pillar-name">Reactivate</span>
+    </div>
+    <div class="pillar-body">
+      <p>Past clients and cold leads represent revenue that requires no new acquisition cost. This pillar brings them back into the flow automatically.</p>
+      <ul class="doc-list">
+        <li>Past client re-engagement campaigns</li>
+        <li>Win-back sequences for families who went quiet during the intake process</li>
+        <li>Milestone and seasonal outreach triggers</li>
+        <li>All running in the background without manual input</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section-block">
+  <div class="section-num">Section B</div>
+  <div class="section-heading">AIOS — What Gets Built</div>
+
+  <div class="sub-heading">Morning Brief Dashboard</div>
+  <p>Every morning: your numbers, your appointments, emails that need your attention, and staff activity across all four companies in one view. QuickBooks connects into it. The information comes to you instead of you going to find it. You define what lives on the dashboard.</p>
+
+  <div class="sub-heading">Communication Vocabulary Library</div>
+  <p>Your terminology locked in across every client-facing communication. The correct language goes out every time regardless of who handles the inbox. One voice, all locations, all staff.</p>
+
+  <div class="sub-heading">AI Trained in Your Voice</div>
+  <p>Your LinkedIn articles, Facebook group responses, podcast transcripts, and written content fed into the system. The content engine generates material that sounds like you wrote it because it learned from everything you have written. This feeds the Evangelize content system above.</p>
+
+  <div class="sub-heading">QuickBooks Integration</div>
+  <p>Financial data flowing into your dashboard. We will also assess your current supplemental accounting workload and identify what can be automated inside the system, subject to API availability.</p>
+
+  <div class="sub-heading">EdTech Scheduling</div>
+  <p>The clinic scheduling is well within the scope of what GHL handles. The EdTech scheduling — with its instructor matrix, program certification levels, time slot consistency requirements, and client matching variables — is a more complex problem. We will map it together during onboarding. Depending on what that mapping reveals, a full solution may require additional work outside this agreement.</p>
+
+  <div class="callout warning">
+    <p><strong>EdTech Scheduling Caveat:</strong> The EdTech scheduling system is included in the onboarding mapping process. However, given the complexity of the multi-variable instructor matching required, a complete automated solution may fall outside the current scope. If additional work is required, it will be defined and scoped separately before any additional work begins. Nothing additional gets built without a written agreement on what it is and what it costs.</p>
+  </div>
+</div>
+
+<div class="section-block">
+  <div class="section-num">Section C</div>
+  <div class="section-heading">What Each Party Is Responsible For</div>
+
+  <div class="resp-split">
+    <div class="resp-col ours">
+      <div class="resp-col-header">Advisor AI Partners</div>
+      <div class="resp-col-body">
+        <ul class="doc-list">
+          <li>Deploy and configure the GoHighLevel platform across all four entities</li>
+          <li>Build and install the AIOS on Claude</li>
+          <li>Configure all five pillars per this scope</li>
+          <li>Train The Morris Center team to operate the system independently</li>
+          <li>Manage the GHL platform infrastructure on an ongoing basis</li>
+          <li>Provide support for platform-level issues under the monthly subscription</li>
+          <li>Define any out-of-scope work in writing before beginning it</li>
+        </ul>
+      </div>
+    </div>
+    <div class="resp-col theirs">
+      <div class="resp-col-header">The Morris Center</div>
+      <div class="resp-col-body">
+        <ul class="doc-list">
+          <li>Manage day-to-day content decisions and publishing approvals</li>
+          <li>Operate the system through the training provided</li>
+          <li>Maintain an active Claude Pro license for the duration of this agreement</li>
+          <li>Complete the onboarding form within 3 days of signing</li>
+          <li>Provide login access, materials, and information as requested</li>
+          <li>Respond to build requests within 48 hours or the project pauses</li>
+          <li>Ensure all decision makers are available for key onboarding sessions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PART 3: FORMAL AGREEMENT ════════ -->
+<div class="part-divider" id="agreement">
+  <span class="part-num">Part Three</span>
+  <span class="part-title">Service Agreement</span>
+</div>
+
+<div class="section-block" id="payment">
+  <div class="section-num">1</div>
+  <div class="section-heading">What You're Paying</div>
+
+  <table class="fee-table">
+    <thead>
+      <tr>
+        <th style="width:50%">Fee</th>
+        <th style="width:25%">Type</th>
+        <th style="width:25%">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <strong>GHL Platform Setup & Configuration</strong>
+          <div class="note">All four companies and locations, full platform build</div>
+        </td>
+        <td>One-time</td>
+        <td class="amount">$2,500</td>
+      </tr>
+      <tr>
+        <td>
+          <strong>AIOS Installation, Build-Out & Training</strong>
+          <div class="note">Dashboard, vocabulary library, voice training, QuickBooks integration, content engine</div>
+        </td>
+        <td>One-time</td>
+        <td class="amount">$5,000</td>
+      </tr>
+      <tr>
+        <td>
+          <strong>Monthly Platform Fee</strong>
+          <div class="note">Covers all four entities. Billing begins on the date of this agreement.</div>
+        </td>
+        <td>Monthly</td>
+        <td class="amount">$2,000/mo</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="fee-total">
+    <span class="fee-total-label">Total Due at Signing (Setup + AIOS + First Month)</span>
+    <span class="fee-total-amount">$9,500</span>
+  </div>
+
+  <div class="sub-heading">Usage Costs — Billed Separately at Cost</div>
+  <p style="font-size:13px; margin-bottom:10px;">The following are pay-as-you-go costs billed directly by the platform provider. You pay only for what you actually use.</p>
+
+  <table class="usage-table">
+    <thead>
+      <tr>
+        <th>Usage Type</th>
+        <th>Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Outbound phone calls</td><td class="rate">$0.0168 / min</td></tr>
+      <tr><td>Inbound phone calls</td><td class="rate">$0.102 / min</td></tr>
+      <tr><td>Email</td><td class="rate">$10 per 12,500 emails</td></tr>
+      <tr><td>AI Chat messages</td><td class="rate">$0.03 / message</td></tr>
+      <tr><td>AI Voice</td><td class="rate">$0.17 / min</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <p><strong>Claude License:</strong> An active Claude Pro license must be maintained by The Morris Center for the AIOS to function. This is a separate cost paid directly to Anthropic and is not included above. Current pricing is available at anthropic.com.</p>
+  </div>
+
+  <div class="sub-heading">No Refunds</div>
+  <p>All fees are non-refundable. The setup fee and AIOS installation fee are due at signing and are non-refundable once the onboarding session has been scheduled. The monthly platform fee is non-refundable for any partial or completed billing period.</p>
+</div>
+
+<div class="doc-rule"></div>
+
+<div class="section-block" id="cancellation">
+  <div class="section-num">2</div>
+  <div class="section-heading">Cancellation</div>
+
+  <p>This agreement has a minimum term of three months from the effective date. After the three-month minimum, either party may cancel with 30 days written notice sent to the contact information below.</p>
+
+  <div class="sub-heading">What Happens When You Cancel</div>
+  <ul class="doc-list">
+    <li>Your 30-day notice period begins on the date written notice is received</li>
+    <li>You keep full platform access through the end of your final paid month</li>
+    <li>All automations and platform features cease when that period ends</li>
+    <li>You have 30 days from cancellation to request a data export at no charge</li>
+    <li>After 30 days, your data may be permanently deleted</li>
+  </ul>
+
+  <div class="sub-heading">What You Keep</div>
+  <ul class="doc-list">
+    <li>All content, materials, and data you provided to us</li>
+    <li>Any exported data you requested within the 30-day window</li>
+  </ul>
+
+  <div class="sub-heading">What You Do Not Keep</div>
+  <ul class="doc-list cross">
+    <li>Access to the GoHighLevel platform</li>
+    <li>Our automation frameworks, workflows, and templates (these remain the property of Advisor AI Partners)</li>
+    <li>The underlying GHL software license</li>
+  </ul>
+</div>
+
+<div class="doc-rule"></div>
+
+<div class="section-block" id="responsibilities">
+  <div class="section-num">3</div>
+  <div class="section-heading">Your Responsibilities</div>
+
+  <div class="sub-heading">To Get Your System Built</div>
+  <ul class="doc-list">
+    <li>Complete the onboarding form within 3 days of signing</li>
+    <li>Provide accurate information, login access, and materials as requested</li>
+    <li>Respond to our requests within 48 hours — if we do not hear back, the project pauses until we do</li>
+    <li>Have all decision makers available for key onboarding and build sessions</li>
+    <li>Maintain an active Claude Pro license for the duration of this agreement</li>
+  </ul>
+
+  <div class="sub-heading">To Use Your System Legally</div>
+  <ul class="doc-list">
+    <li>Obtain proper consent before sending texts or emails to contacts</li>
+    <li>Honor opt-out requests immediately and without exception</li>
+    <li>Follow all applicable laws including TCPA and CAN-SPAM</li>
+    <li>Do not use the system for any illegal, harmful, or deceptive purpose</li>
+  </ul>
+
+  <div class="callout warning">
+    <p><strong>If you do not:</strong> We reserve the right to suspend or terminate your account. You are responsible for any fines, penalties, or legal issues arising from your use of the system.</p>
+  </div>
+</div>
+
+<div class="doc-rule"></div>
+
+<div class="section-block">
+  <div class="section-num">4</div>
+  <div class="section-heading">Using Our Work</div>
+  <p>We may reference The Morris Center in our portfolio — including screenshots, case study results, and system examples — unless you notify us in writing within 30 days of project completion that you prefer to remain anonymous.</p>
+  <p>We may also request a testimonial when the build phase is complete. You may request to provide it anonymously.</p>
+</div>
+
+<div class="doc-rule"></div>
+
+<div class="section-block">
+  <div class="section-num">5</div>
+  <div class="section-heading">The Legal Stuff</div>
+
+  <div class="legal-section">
+    <div class="legal-heading">Entire Agreement</div>
+    <p>This agreement is the complete record of what we have agreed to. If something was discussed but did not make it into this document, it is not part of our agreement. Any changes to this scope will be put in writing and agreed to by both parties before any additional work begins. If any part of this agreement is found to be unenforceable, everything else stays in place.</p>
+  </div>
+
+  <div class="legal-section">
+    <div class="legal-heading">Disputes</div>
+    <p>If something comes up, we talk it out first. We both agree to attempt good-faith resolution through direct discussion before taking any further steps. If we cannot resolve it together, any dispute arising from this agreement shall be settled by binding arbitration under the Commercial Arbitration Rules of the American Arbitration Association, conducted in the State of Florida. Each party covers their own legal costs. Any claim must be filed within one year of when the issue was known or should have been known.</p>
+  </div>
+
+  <div class="legal-section">
+    <div class="legal-heading">Changes</div>
+    <p>Any changes to this agreement will be put in writing and shared with both parties before taking effect.</p>
+  </div>
+</div>
+
+<div class="doc-rule"></div>
+
+<!-- ════════ SIGNATURES ════════ -->
+<div class="sig-block" id="signatures">
+  <div class="sig-block-header">Signatures — Let's Make It Official</div>
+  <div class="sig-body">
+    <p>By signing below, both parties acknowledge they have read this agreement in full, understand its terms, and agree to be bound by them.</p>
+
+    <div class="sig-grid">
+      <div>
+        <div class="sig-party-label">Client — The Morris Center</div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Signature</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Printed Name</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Title</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Date</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sig-party-label">Advisor AI Partners</div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Signature</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Printed Name — David Ortiz</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Title — Fractional AI Officer</div>
+        </div>
+        <div class="sig-field">
+          <div class="sig-line"></div>
+          <div class="sig-field-label">Date</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-block">
+      <div class="contact-item">
+        <strong>Questions</strong>
+        <a href="mailto:david@advisoraipartners.com">david@advisoraipartners.com</a>
+      </div>
+      <div class="contact-item">
+        <strong>Phone</strong>
+        <a href="tel:3052544455">(305) 254-4455</a>
+      </div>
+      <div class="contact-item">
+        <strong>Website</strong>
+        <a href="https://advisoraipartners.com">advisoraipartners.com</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .doc-body -->
+
+<div class="doc-footer">
+  ADVISOR AI PARTNERS &nbsp;·&nbsp; The Morris Center AI Integration Agreement &nbsp;·&nbsp; Confidential
+</div>
+
+</div><!-- .page -->
+</body>
+</html>
